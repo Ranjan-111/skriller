@@ -1,0 +1,23 @@
+name: skriller-egress
+services:
+  proxy:
+    build:
+      context: ../..
+      dockerfile: infra/egress/Dockerfile.proxy
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
+    pids_limit: 64
+    networks:
+      workers:
+        ipv4_address: 172.29.0.2
+      outbound: {}
+    # No host port or credentials are exposed.
+networks:
+  workers:
+    name: skriller_egress_workers
+    internal: true
+    ipam:
+      config: [{subnet: 172.29.0.0/24}]
+  outbound: {}

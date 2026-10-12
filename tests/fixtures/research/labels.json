@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "companies": [
+    {"id":"company-aurora","name":"Aurora Ledger","industry":"fintech","location":"Bengaluru","employees":25,"hiring":true,"published_at":"2026-10-10","founder":"Mira Rao","url":"https://aurora.example/about"},
+    {"id":"company-north","name":"North Studio","industry":"agency","location":"Bengaluru","employees":18,"hiring":false,"founder":"Mira Rao","url":"https://north.example/about"},
+    {"id":"company-unknown","name":"Cedar Payments","industry":"fintech","location":"Bengaluru","employees":null,"hiring":null,"founder":"Dev Shah","url":"https://cedar.example/about"}
+  ],
+  "expected": {"confirmed":["company-aurora"],"near_match":["company-unknown"],"rejected":["company-north"],"distinct_people":2},
+  "prompt":"Find fintech founders in Bengaluru at companies with 10 to 50 employees, prioritise recent engineering hiring, exclude agencies.",
+  "criteria":{"industry":"fintech","location":"Bengaluru","employees_min":10,"employees_max":50,"exclude":["agency"]}
+}

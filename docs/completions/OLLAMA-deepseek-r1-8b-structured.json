@@ -1,0 +1,23 @@
+{
+  "model": "deepseek-r1:8b",
+  "provider": "local_ollama",
+  "synthetic_fixture": true,
+  "structured_data_preserved": true,
+  "copied_graph": "third_party/scrapegraph-ai/scrapegraphai/graphs/smart_scraper_graph.py",
+  "answer": {
+    "company": "Aurora Ledger",
+    "founder": "Mira Rao",
+    "city": "Bengaluru",
+    "employees": 25,
+    "private_email": null
+  },
+  "checks": {
+    "company": true,
+    "founder": true,
+    "city": true,
+    "employees": true,
+    "private_email": true
+  },
+  "status": "passed",
+  "elapsed_seconds": 84.871
+}

@@ -1,0 +1,22 @@
+{
+  "model": "llama3.2:3b",
+  "provider": "local_ollama",
+  "synthetic_fixture": true,
+  "copied_graph": "third_party/scrapegraph-ai/scrapegraphai/graphs/smart_scraper_graph.py",
+  "answer": {
+    "company": "Aurora Ledger",
+    "founder": "Mira Rao",
+    "city": "",
+    "employees": 0,
+    "private_email": null
+  },
+  "checks": {
+    "company": true,
+    "founder": true,
+    "city": false,
+    "employees": false,
+    "private_email": true
+  },
+  "status": "quality_failed",
+  "elapsed_seconds": 19.116
+}

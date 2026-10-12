@@ -1,0 +1,30 @@
+name: skriller
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: skriller
+      POSTGRES_PASSWORD: local-development
+      POSTGRES_DB: skriller
+    ports: ["127.0.0.1:54329:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skriller -d skriller"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: skriller
+      RABBITMQ_DEFAULT_PASS: local-development
+    ports: ["127.0.0.1:56729:5672", "127.0.0.1:15679:15672"]
+    volumes: ["rabbitmq_data:/var/lib/rabbitmq"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+volumes:
+  postgres_data:
+  rabbitmq_data:

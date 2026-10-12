@@ -1,8 +1,8 @@
 # Skriller implementation tickets
 
-Version: 0.1 · 12 October 2026 · All tickets are **planned**, not implemented.
+Version: 0.1 · 12 October 2026 · Implementation is in progress; [verified execution status](TICKET_STATUS.md) is authoritative.
 
-96 tickets: 80 P0, 12 P1, 4 P2. All include explicit verification scenarios. Application tests are **not written or run yet**.
+96 tickets: 80 P0, 12 P1, 4 P2. All include verification scenarios; actual results are recorded per ticket in the execution status.
 
 Related: [PRD](PRD.md), [stack](TECH_STACK.md), [source reuse map](REUSE_MAP.md), [machine-readable tickets](tickets.json), [reference hashes](REFERENCE_INVENTORY.json).
 
@@ -173,7 +173,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-001"></a>
 #### SKR-001 — Register supplied snapshots and import provenance
 
-**Phase:** P0 · **Size:** S · **Status:** planned
+**Phase:** P0 · **Size:** S · **Status:** done
 
 **Dependencies:** None
 
@@ -196,7 +196,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-002"></a>
 #### SKR-002 — Copy and package Scrapling source and baseline tests
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-001](#skr-001)
 
@@ -219,7 +219,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-003"></a>
 #### SKR-003 — Copy and package Agent-Reach source and baseline tests
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-001](#skr-001)
 
@@ -242,7 +242,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-004"></a>
 #### SKR-004 — Copy and package ScrapeGraph-AI with telemetry isolation
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-001](#skr-001)
 
@@ -265,7 +265,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-005"></a>
 #### SKR-005 — Resolve local source dependencies and lock runtime environments
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-002](#skr-002), [SKR-003](#skr-003), [SKR-004](#skr-004)
 
@@ -288,7 +288,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-006"></a>
 #### SKR-006 — Bootstrap web, API and local services
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-005](#skr-005)
 
@@ -311,7 +311,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-007"></a>
 #### SKR-007 — Create labelled fixtures and no-network test harness
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-001](#skr-001)
 
@@ -334,7 +334,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-008"></a>
 #### SKR-008 — Set up ticket-level CI and artifact reporting
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-006](#skr-006), [SKR-007](#skr-007)
 
@@ -359,7 +359,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-009"></a>
 #### SKR-009 — Validate LinkedIn backend route and acquire missing implementation
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-003](#skr-003), [SKR-007](#skr-007)
 
@@ -382,7 +382,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-010"></a>
 #### SKR-010 — Validate Reddit route and acquire missing implementation
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-003](#skr-003), [SKR-007](#skr-007)
 
@@ -405,7 +405,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-011"></a>
 #### SKR-011 — Validate search coverage, operators and provider terms
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-007](#skr-007)
 
@@ -428,7 +428,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-012"></a>
 #### SKR-012 — Validate cloud/local models against copied extraction code
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-004](#skr-004), [SKR-005](#skr-005), [SKR-007](#skr-007)
 
@@ -453,7 +453,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-013"></a>
 #### SKR-013 — Verify Firebase identity on API requests
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-006](#skr-006), [SKR-007](#skr-007)
 
@@ -476,7 +476,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-014"></a>
 #### SKR-014 — Create workspaces, memberships and row-level isolation
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-013](#skr-013)
 
@@ -499,7 +499,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-015"></a>
 #### SKR-015 — Persist conversations and immutable plan revisions
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-014](#skr-014)
 
@@ -522,7 +522,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-016"></a>
 #### SKR-016 — Persist entities, evidence, claims and qualifications
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-014](#skr-014)
 
@@ -545,7 +545,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-017"></a>
 #### SKR-017 — Persist jobs, attempts, events and usage records
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-014](#skr-014), [SKR-015](#skr-015)
 
@@ -568,7 +568,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-018"></a>
 #### SKR-018 — Implement private evidence object storage
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-014](#skr-014), [SKR-016](#skr-016)
 
@@ -593,7 +593,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-019"></a>
 #### SKR-019 — Define typed plans, connector contexts and error schemas
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-015](#skr-015), [SKR-017](#skr-017)
 
@@ -616,7 +616,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-020"></a>
 #### SKR-020 — Implement canonical job state machine
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-017](#skr-017), [SKR-019](#skr-019)
 
@@ -639,7 +639,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-021"></a>
 #### SKR-021 — Dispatch jobs through transactional outbox
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-017](#skr-017), [SKR-020](#skr-020)
 
@@ -662,7 +662,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-022"></a>
 #### SKR-022 — Execute checkpointed idempotent worker stages
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** in_progress
 
 **Dependencies:** [SKR-021](#skr-021)
 
@@ -708,7 +708,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-024"></a>
 #### SKR-024 — Reserve and reconcile job spending budgets
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-017](#skr-017), [SKR-022](#skr-022)
 
@@ -754,7 +754,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-026"></a>
 #### SKR-026 — Stream persisted progress with reconnect cursors
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-013](#skr-013), [SKR-017](#skr-017), [SKR-020](#skr-020)
 
@@ -779,7 +779,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-027"></a>
 #### SKR-027 — Adapt public URL validation and network egress controls
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-003](#skr-003), [SKR-006](#skr-006), [SKR-007](#skr-007)
 
@@ -802,7 +802,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-028"></a>
 #### SKR-028 — Adapt subprocess helpers into isolated backend runner
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-003](#skr-003), [SKR-005](#skr-005), [SKR-027](#skr-027)
 
@@ -873,7 +873,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-031"></a>
 #### SKR-031 — Adapt channel registry to typed product capabilities
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-003](#skr-003), [SKR-019](#skr-019)
 
@@ -1130,7 +1130,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-042"></a>
 #### SKR-042 — Adapt copied adaptive storage to tenant/template scope
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-002](#skr-002), [SKR-014](#skr-014), [SKR-016](#skr-016)
 
@@ -1176,7 +1176,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-044"></a>
 #### SKR-044 — Adapt copied HTML cleanup and chunking without evidence loss
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** in_progress
 
 **Dependencies:** [SKR-004](#skr-004), [SKR-036](#skr-036)
 

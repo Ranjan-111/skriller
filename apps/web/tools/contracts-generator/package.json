@@ -1,0 +1,9 @@
+{
+  "name": "@skriller/contracts-generator",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "openapi-typescript": "7.10.1",
+    "typescript": "5.9.3"
+  }
+}

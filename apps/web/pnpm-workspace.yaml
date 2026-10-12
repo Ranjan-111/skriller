@@ -1,0 +1,5 @@
+packages:
+  - tools/contracts-generator
+allowBuilds:
+  '@firebase/util': false
+  protobufjs: false

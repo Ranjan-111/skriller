@@ -120,7 +120,7 @@ def validate(root: Path, ticket_path: Path) -> dict:
         "reference_files_unchanged": checked_files,
         "dependency_graph": "acyclic",
         "first_dependency_order": order[:12],
-        "application_tests_run": False,
+        "application_tests_executed_by_this_check": False,
     }
 
 

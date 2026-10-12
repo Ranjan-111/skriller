@@ -1,0 +1,2083 @@
+{
+  "project": "scrapegraph-ai",
+  "verified_upstream_commit": null,
+  "source_root": "reference/Scrapegraph-ai-main",
+  "files": [
+    {
+      "path": "scrapegraphai/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/__init__.py",
+      "source_sha256": "561255255b277e180b0ede52d2ff705e17fd0d67f555cc116b0d4cda5b51852b",
+      "copied_sha256": "561255255b277e180b0ede52d2ff705e17fd0d67f555cc116b0d4cda5b51852b"
+    },
+    {
+      "path": "scrapegraphai/builders/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/builders/__init__.py",
+      "source_sha256": "bbc10e9e0105f85a226e20258c34adf11dbb7fa01fe2f36ef96b56e73055cbce",
+      "copied_sha256": "bbc10e9e0105f85a226e20258c34adf11dbb7fa01fe2f36ef96b56e73055cbce"
+    },
+    {
+      "path": "scrapegraphai/builders/graph_builder.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/builders/graph_builder.py",
+      "source_sha256": "165d68d30d733d4e63904e24a7d46724fe6df7816cd63f12d41910b89b5cdefc",
+      "copied_sha256": "165d68d30d733d4e63904e24a7d46724fe6df7816cd63f12d41910b89b5cdefc"
+    },
+    {
+      "path": "scrapegraphai/docloaders/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/__init__.py",
+      "source_sha256": "c2019c89db3e584898feeee4ec97372de8c21e067e26be8b728857e809b4444b",
+      "copied_sha256": "c2019c89db3e584898feeee4ec97372de8c21e067e26be8b728857e809b4444b"
+    },
+    {
+      "path": "scrapegraphai/docloaders/browser_base.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/browser_base.py",
+      "source_sha256": "3cdcb04ca29365ee1925c9a83bd464b8ce2ff6e8a9c182e114031e864b826494",
+      "copied_sha256": "3cdcb04ca29365ee1925c9a83bd464b8ce2ff6e8a9c182e114031e864b826494"
+    },
+    {
+      "path": "scrapegraphai/docloaders/chromium.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/chromium.py",
+      "source_sha256": "dbe4d0841d9c047bcc23ed40b6fc6b446b4aff1e3ff43af906a7b5649cdec8c4",
+      "copied_sha256": "dbe4d0841d9c047bcc23ed40b6fc6b446b4aff1e3ff43af906a7b5649cdec8c4"
+    },
+    {
+      "path": "scrapegraphai/docloaders/plasmate.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/plasmate.py",
+      "source_sha256": "cdc066e5891bb23912120a46403b784d1a491a32e23bd92aa0d2316463ba741a",
+      "copied_sha256": "cdc066e5891bb23912120a46403b784d1a491a32e23bd92aa0d2316463ba741a"
+    },
+    {
+      "path": "scrapegraphai/docloaders/scrape_do.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/scrape_do.py",
+      "source_sha256": "5cc38154b960c1ad808d2279adc0579546fe2bc0812fe452a2f71253d4349b97",
+      "copied_sha256": "5cc38154b960c1ad808d2279adc0579546fe2bc0812fe452a2f71253d4349b97"
+    },
+    {
+      "path": "scrapegraphai/graphs/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/__init__.py",
+      "source_sha256": "e2b700e9d5b10f60016d12fcece8a937d785919864c265d4c774b019f84162ef",
+      "copied_sha256": "e2b700e9d5b10f60016d12fcece8a937d785919864c265d4c774b019f84162ef"
+    },
+    {
+      "path": "scrapegraphai/graphs/abstract_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/abstract_graph.py",
+      "source_sha256": "6da8a74ad3cb216323f7f56d60bb2624c02b8a8b1931b848566cc5394d600a28",
+      "copied_sha256": "6da8a74ad3cb216323f7f56d60bb2624c02b8a8b1931b848566cc5394d600a28"
+    },
+    {
+      "path": "scrapegraphai/graphs/base_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/base_graph.py",
+      "source_sha256": "e10d40c8bdf204dc56e1a3eee457c6bc581ec9f1b8c26d0bd363be11343e58ec",
+      "copied_sha256": "e10d40c8bdf204dc56e1a3eee457c6bc581ec9f1b8c26d0bd363be11343e58ec"
+    },
+    {
+      "path": "scrapegraphai/graphs/code_generator_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/code_generator_graph.py",
+      "source_sha256": "963104902eb13891bb876064cf0a22b1fac37f86fd11dcaf67eb69dc3257caa8",
+      "copied_sha256": "963104902eb13891bb876064cf0a22b1fac37f86fd11dcaf67eb69dc3257caa8"
+    },
+    {
+      "path": "scrapegraphai/graphs/csv_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/csv_scraper_graph.py",
+      "source_sha256": "be5d5affab9c45dc92e1a3ef186080687313fb635d20108265a4ad9e39f0c4f3",
+      "copied_sha256": "be5d5affab9c45dc92e1a3ef186080687313fb635d20108265a4ad9e39f0c4f3"
+    },
+    {
+      "path": "scrapegraphai/graphs/csv_scraper_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/csv_scraper_multi_graph.py",
+      "source_sha256": "6659b2a501a189844c4f441d0098173c91cfb4d063a69cba4f7eb54f694eacaf",
+      "copied_sha256": "6659b2a501a189844c4f441d0098173c91cfb4d063a69cba4f7eb54f694eacaf"
+    },
+    {
+      "path": "scrapegraphai/graphs/depth_search_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/depth_search_graph.py",
+      "source_sha256": "8e30770ac1d41ab711edefccd673ff5abab12de88db235d8b1420921be4efcc7",
+      "copied_sha256": "8e30770ac1d41ab711edefccd673ff5abab12de88db235d8b1420921be4efcc7"
+    },
+    {
+      "path": "scrapegraphai/graphs/document_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/document_scraper_graph.py",
+      "source_sha256": "ffee6da6a91abe7faa0916f076d0e690a74ca031f230124c12ea9c5d196af3f2",
+      "copied_sha256": "ffee6da6a91abe7faa0916f076d0e690a74ca031f230124c12ea9c5d196af3f2"
+    },
+    {
+      "path": "scrapegraphai/graphs/document_scraper_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/document_scraper_multi_graph.py",
+      "source_sha256": "771451adeb718c5129d7cc7ce85af845d09ceb3a7928d68134eef5d0446b918b",
+      "copied_sha256": "771451adeb718c5129d7cc7ce85af845d09ceb3a7928d68134eef5d0446b918b"
+    },
+    {
+      "path": "scrapegraphai/graphs/json_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/json_scraper_graph.py",
+      "source_sha256": "a29f2a4ebdc3d7cab6ac1dfec968bfdff76cb3ada5a5a414ccd95a1cef1d044d",
+      "copied_sha256": "a29f2a4ebdc3d7cab6ac1dfec968bfdff76cb3ada5a5a414ccd95a1cef1d044d"
+    },
+    {
+      "path": "scrapegraphai/graphs/json_scraper_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/json_scraper_multi_graph.py",
+      "source_sha256": "5b04e885861705942b10fc23963897d89ea60290be9a48a78b5d62e1d3c0453f",
+      "copied_sha256": "5b04e885861705942b10fc23963897d89ea60290be9a48a78b5d62e1d3c0453f"
+    },
+    {
+      "path": "scrapegraphai/graphs/markdownify_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/markdownify_graph.py",
+      "source_sha256": "635fb479cc73a82a3942dd87a19f6e1a44c0a821145b0f2ec2eee6b0d1a3a5c8",
+      "copied_sha256": "635fb479cc73a82a3942dd87a19f6e1a44c0a821145b0f2ec2eee6b0d1a3a5c8"
+    },
+    {
+      "path": "scrapegraphai/graphs/omni_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/omni_scraper_graph.py",
+      "source_sha256": "6af4b5e6214e39d0cde140feb7ae9f9a8f84b95f4ef154d12dbc734cb6806ed7",
+      "copied_sha256": "6af4b5e6214e39d0cde140feb7ae9f9a8f84b95f4ef154d12dbc734cb6806ed7"
+    },
+    {
+      "path": "scrapegraphai/graphs/omni_search_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/omni_search_graph.py",
+      "source_sha256": "ef23c8b8450aed8affa4846920bc622255b7b7cc5643c22e8d79e3885c8f1364",
+      "copied_sha256": "ef23c8b8450aed8affa4846920bc622255b7b7cc5643c22e8d79e3885c8f1364"
+    },
+    {
+      "path": "scrapegraphai/graphs/screenshot_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/screenshot_scraper_graph.py",
+      "source_sha256": "3c18a2954f599110232aa66f6cd75ec5d5d187d02007a5f530b891dc6aa4719b",
+      "copied_sha256": "3c18a2954f599110232aa66f6cd75ec5d5d187d02007a5f530b891dc6aa4719b"
+    },
+    {
+      "path": "scrapegraphai/graphs/script_creator_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/script_creator_graph.py",
+      "source_sha256": "23b21d7ba6232933bd4c00107c82d26d838942aa4fb62937420804f131c9f97e",
+      "copied_sha256": "23b21d7ba6232933bd4c00107c82d26d838942aa4fb62937420804f131c9f97e"
+    },
+    {
+      "path": "scrapegraphai/graphs/script_creator_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/script_creator_multi_graph.py",
+      "source_sha256": "adb7699c1c0e39bb2132ed13a49bfdd0b3e9e68424125e95cc22a6546c1dac6a",
+      "copied_sha256": "adb7699c1c0e39bb2132ed13a49bfdd0b3e9e68424125e95cc22a6546c1dac6a"
+    },
+    {
+      "path": "scrapegraphai/graphs/search_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/search_graph.py",
+      "source_sha256": "1f28ffcd5e6fd1e3d51c086d8d467719757aa825151f4bc918652c44d6e8485f",
+      "copied_sha256": "1f28ffcd5e6fd1e3d51c086d8d467719757aa825151f4bc918652c44d6e8485f"
+    },
+    {
+      "path": "scrapegraphai/graphs/search_link_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/search_link_graph.py",
+      "source_sha256": "1b32d912a8263090615f8af52246fc7b848a0e5d0d1c72ef6578f3327bcd764f",
+      "copied_sha256": "1b32d912a8263090615f8af52246fc7b848a0e5d0d1c72ef6578f3327bcd764f"
+    },
+    {
+      "path": "scrapegraphai/graphs/smart_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_graph.py",
+      "source_sha256": "1e9cd02492172c3ea629b8745d685203776351afe3f783458a5f33e1acd706dc",
+      "copied_sha256": "1e9cd02492172c3ea629b8745d685203776351afe3f783458a5f33e1acd706dc"
+    },
+    {
+      "path": "scrapegraphai/graphs/smart_scraper_lite_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_lite_graph.py",
+      "source_sha256": "011dcd387b9b2d5860c17b333e57a96c3510f41745f536241e9eed79a2c7d1ea",
+      "copied_sha256": "011dcd387b9b2d5860c17b333e57a96c3510f41745f536241e9eed79a2c7d1ea"
+    },
+    {
+      "path": "scrapegraphai/graphs/smart_scraper_multi_batch_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_batch_graph.py",
+      "source_sha256": "2b48a1ef7eef70dbec9a72bd3662c8a9aec9e0053bd82b9f4aa49b620e89feec",
+      "copied_sha256": "2b48a1ef7eef70dbec9a72bd3662c8a9aec9e0053bd82b9f4aa49b620e89feec"
+    },
+    {
+      "path": "scrapegraphai/graphs/smart_scraper_multi_concat_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_concat_graph.py",
+      "source_sha256": "6f1993bd48179fbf564730987ea117622fd65779fa2a377d979226ebfe08177a",
+      "copied_sha256": "6f1993bd48179fbf564730987ea117622fd65779fa2a377d979226ebfe08177a"
+    },
+    {
+      "path": "scrapegraphai/graphs/smart_scraper_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_graph.py",
+      "source_sha256": "f76c3e84a84f1bbc9282e3002dd5d5be3cefdc46531a554b529dace5f5b8ae80",
+      "copied_sha256": "f76c3e84a84f1bbc9282e3002dd5d5be3cefdc46531a554b529dace5f5b8ae80"
+    },
+    {
+      "path": "scrapegraphai/graphs/smart_scraper_multi_lite_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_lite_graph.py",
+      "source_sha256": "4599a2e43217baaa2dc13b2ee17d9dded1e4393cb674cb8555239c6e587d3a25",
+      "copied_sha256": "4599a2e43217baaa2dc13b2ee17d9dded1e4393cb674cb8555239c6e587d3a25"
+    },
+    {
+      "path": "scrapegraphai/graphs/speech_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/speech_graph.py",
+      "source_sha256": "5ec4f19f3f12faec1e3beb850f56e0067d50a97ce1efc4d15cf4c4fb26ab4eda",
+      "copied_sha256": "5ec4f19f3f12faec1e3beb850f56e0067d50a97ce1efc4d15cf4c4fb26ab4eda"
+    },
+    {
+      "path": "scrapegraphai/graphs/xml_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/xml_scraper_graph.py",
+      "source_sha256": "5e5169f3a57a22e6e2c5992ac05540ab7bd661428dd69dc949a94f662350f555",
+      "copied_sha256": "5e5169f3a57a22e6e2c5992ac05540ab7bd661428dd69dc949a94f662350f555"
+    },
+    {
+      "path": "scrapegraphai/graphs/xml_scraper_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/xml_scraper_multi_graph.py",
+      "source_sha256": "03518b7fa9a3d15322f1284b5e7522d441426dd7c945636dfeeeffdb414c0b5f",
+      "copied_sha256": "03518b7fa9a3d15322f1284b5e7522d441426dd7c945636dfeeeffdb414c0b5f"
+    },
+    {
+      "path": "scrapegraphai/helpers/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/__init__.py",
+      "source_sha256": "b69e0a776958ac971588672ace0bfe12f5df4324bbbf403ffd94f43507c41306",
+      "copied_sha256": "b69e0a776958ac971588672ace0bfe12f5df4324bbbf403ffd94f43507c41306"
+    },
+    {
+      "path": "scrapegraphai/helpers/default_filters.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/default_filters.py",
+      "source_sha256": "a6079e243144c56eb5a9a95c81a2d6be9948f5c0ab132691762b349216ee1e28",
+      "copied_sha256": "a6079e243144c56eb5a9a95c81a2d6be9948f5c0ab132691762b349216ee1e28"
+    },
+    {
+      "path": "scrapegraphai/helpers/models_tokens.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/models_tokens.py",
+      "source_sha256": "7c7d110731be719b0a1553179e1120bdf3ae243b2fae63283db3a9eae16f2b57",
+      "copied_sha256": "7c7d110731be719b0a1553179e1120bdf3ae243b2fae63283db3a9eae16f2b57"
+    },
+    {
+      "path": "scrapegraphai/helpers/nodes_metadata.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/nodes_metadata.py",
+      "source_sha256": "a269399fdf599159e0580d3fc5978881b8fc4de1d9fe46e3a3e2e94f225ad69f",
+      "copied_sha256": "a269399fdf599159e0580d3fc5978881b8fc4de1d9fe46e3a3e2e94f225ad69f"
+    },
+    {
+      "path": "scrapegraphai/helpers/robots.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/robots.py",
+      "source_sha256": "6c59659a882e8dd74c8fdeea263c8efb346c64ac1cf8f1a39105f0b9c772b4a9",
+      "copied_sha256": "6c59659a882e8dd74c8fdeea263c8efb346c64ac1cf8f1a39105f0b9c772b4a9"
+    },
+    {
+      "path": "scrapegraphai/helpers/schemas.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/schemas.py",
+      "source_sha256": "d50f4d65b530b72bd758168d76d03397eec704adf626de8fbfa37f47a31bb9cd",
+      "copied_sha256": "d50f4d65b530b72bd758168d76d03397eec704adf626de8fbfa37f47a31bb9cd"
+    },
+    {
+      "path": "scrapegraphai/integrations/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/__init__.py",
+      "source_sha256": "87a5febcce55996e17783ebde723551f2250bee82157f7fb8b5bc0e8ca85f934",
+      "copied_sha256": "87a5febcce55996e17783ebde723551f2250bee82157f7fb8b5bc0e8ca85f934"
+    },
+    {
+      "path": "scrapegraphai/integrations/burr_bridge.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/burr_bridge.py",
+      "source_sha256": "7d871c99c6f17751253db7776463ba7ac243affe18770f0a633b7bb1f6a64cd6",
+      "copied_sha256": "7d871c99c6f17751253db7776463ba7ac243affe18770f0a633b7bb1f6a64cd6"
+    },
+    {
+      "path": "scrapegraphai/integrations/indexify_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/indexify_node.py",
+      "source_sha256": "ae4698c8afa4616dcc850b41b324d0f1801a68b28f19c295720a32002995b0a2",
+      "copied_sha256": "ae4698c8afa4616dcc850b41b324d0f1801a68b28f19c295720a32002995b0a2"
+    },
+    {
+      "path": "scrapegraphai/integrations/scrapegraph_py_compat.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/scrapegraph_py_compat.py",
+      "source_sha256": "be9cc23a9987f03cd0624ddf941c478bc61d3640048c45d6bdae94dcf07824d5",
+      "copied_sha256": "be9cc23a9987f03cd0624ddf941c478bc61d3640048c45d6bdae94dcf07824d5"
+    },
+    {
+      "path": "scrapegraphai/models/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/__init__.py",
+      "source_sha256": "f08b93173e4363f63197190da754691dd569e199b8ccd764dac9b922da48405a",
+      "copied_sha256": "f08b93173e4363f63197190da754691dd569e199b8ccd764dac9b922da48405a"
+    },
+    {
+      "path": "scrapegraphai/models/atlascloud.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/atlascloud.py",
+      "source_sha256": "12dfa5c1eebc559c1718e8366449d1fc30b3473e286c167b06fd37af5a536f1a",
+      "copied_sha256": "12dfa5c1eebc559c1718e8366449d1fc30b3473e286c167b06fd37af5a536f1a"
+    },
+    {
+      "path": "scrapegraphai/models/cheaperinference.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/cheaperinference.py",
+      "source_sha256": "7067b2961fd5706d792b8613f5a3abae6a685f1f1aecb0d1d64c275365d3d806",
+      "copied_sha256": "7067b2961fd5706d792b8613f5a3abae6a685f1f1aecb0d1d64c275365d3d806"
+    },
+    {
+      "path": "scrapegraphai/models/clod.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/clod.py",
+      "source_sha256": "ff9e23cdaedec9a549b19ebaf7a0314b83617cec19149fa40566dc064f2f1b34",
+      "copied_sha256": "ff9e23cdaedec9a549b19ebaf7a0314b83617cec19149fa40566dc064f2f1b34"
+    },
+    {
+      "path": "scrapegraphai/models/deepseek.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/deepseek.py",
+      "source_sha256": "157e2eb37e97b25a2c1312482d5173e1c7873e969404eaffc6bf18b6baeb411e",
+      "copied_sha256": "157e2eb37e97b25a2c1312482d5173e1c7873e969404eaffc6bf18b6baeb411e"
+    },
+    {
+      "path": "scrapegraphai/models/minimax.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/minimax.py",
+      "source_sha256": "a640f9db18bb4877bd3b0de5303a4cf0305b5db2cde848c12bdc24ba986f102b",
+      "copied_sha256": "a640f9db18bb4877bd3b0de5303a4cf0305b5db2cde848c12bdc24ba986f102b"
+    },
+    {
+      "path": "scrapegraphai/models/nvidia.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/nvidia.py",
+      "source_sha256": "209e3285b7fb16524ec2e3a781022df79f710d541810f5fab6fbfc7443443fd5",
+      "copied_sha256": "209e3285b7fb16524ec2e3a781022df79f710d541810f5fab6fbfc7443443fd5"
+    },
+    {
+      "path": "scrapegraphai/models/oneapi.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/oneapi.py",
+      "source_sha256": "9a12751a1d5d882709697a53a169a933d23434f1ad80587f6a007248438d988e",
+      "copied_sha256": "9a12751a1d5d882709697a53a169a933d23434f1ad80587f6a007248438d988e"
+    },
+    {
+      "path": "scrapegraphai/models/openai_itt.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/openai_itt.py",
+      "source_sha256": "a68079c6bc05b32a5792b250dd6a864cfd74e18ba13b8b4197cc97a7d9ad35d2",
+      "copied_sha256": "a68079c6bc05b32a5792b250dd6a864cfd74e18ba13b8b4197cc97a7d9ad35d2"
+    },
+    {
+      "path": "scrapegraphai/models/openai_tts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/openai_tts.py",
+      "source_sha256": "9fd0e0d320e34f8c18beaadd8465c8900be09945417039f314d482f0bec39597",
+      "copied_sha256": "9fd0e0d320e34f8c18beaadd8465c8900be09945417039f314d482f0bec39597"
+    },
+    {
+      "path": "scrapegraphai/models/xai.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/models/xai.py",
+      "source_sha256": "fd7e0bff74d2e8b678e9ec2d46720b4f0e2098a11900fa6dec17cb6f788338c2",
+      "copied_sha256": "fd7e0bff74d2e8b678e9ec2d46720b4f0e2098a11900fa6dec17cb6f788338c2"
+    },
+    {
+      "path": "scrapegraphai/nodes/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/__init__.py",
+      "source_sha256": "822a8f9f4f4592bf52dfcc8382e88e20cded173084b02c86540231efdaa1f124",
+      "copied_sha256": "822a8f9f4f4592bf52dfcc8382e88e20cded173084b02c86540231efdaa1f124"
+    },
+    {
+      "path": "scrapegraphai/nodes/base_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/base_node.py",
+      "source_sha256": "f7b1f4b8490e939dbe17509e07febc198d1a5ed0bf77ababab89132d64398f4f",
+      "copied_sha256": "f7b1f4b8490e939dbe17509e07febc198d1a5ed0bf77ababab89132d64398f4f"
+    },
+    {
+      "path": "scrapegraphai/nodes/batch_generate_answer_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/batch_generate_answer_node.py",
+      "source_sha256": "4a986a7977881debd573f07c824c65f6990e3519da4d167953942c72cac35c2a",
+      "copied_sha256": "4a986a7977881debd573f07c824c65f6990e3519da4d167953942c72cac35c2a"
+    },
+    {
+      "path": "scrapegraphai/nodes/concat_answers_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/concat_answers_node.py",
+      "source_sha256": "dd74a93cfefe2e443ba82c404e6e385c33ad4a1b55c691821bdcfe2aaad13804",
+      "copied_sha256": "dd74a93cfefe2e443ba82c404e6e385c33ad4a1b55c691821bdcfe2aaad13804"
+    },
+    {
+      "path": "scrapegraphai/nodes/conditional_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/conditional_node.py",
+      "source_sha256": "b33b6a35caba70680de2152d4e5a01bf727735e3dd887468ba299cc507aa1e26",
+      "copied_sha256": "b33b6a35caba70680de2152d4e5a01bf727735e3dd887468ba299cc507aa1e26"
+    },
+    {
+      "path": "scrapegraphai/nodes/description_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/description_node.py",
+      "source_sha256": "69ef84d9ed97cd600fcc4f00679e2cf5407727ee139dde0e93b49d79219388c0",
+      "copied_sha256": "69ef84d9ed97cd600fcc4f00679e2cf5407727ee139dde0e93b49d79219388c0"
+    },
+    {
+      "path": "scrapegraphai/nodes/fetch_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/fetch_node.py",
+      "source_sha256": "7af6ace631496d760774957c75177aff4d36d8317ea845767ce17cc68c9d0045",
+      "copied_sha256": "7af6ace631496d760774957c75177aff4d36d8317ea845767ce17cc68c9d0045"
+    },
+    {
+      "path": "scrapegraphai/nodes/fetch_node_level_k.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/fetch_node_level_k.py",
+      "source_sha256": "1b56d6eb896b3a39983ad06cd62734cfbe40a9dd04e12534539707ed4fcc0ee1",
+      "copied_sha256": "1b56d6eb896b3a39983ad06cd62734cfbe40a9dd04e12534539707ed4fcc0ee1"
+    },
+    {
+      "path": "scrapegraphai/nodes/fetch_screen_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/fetch_screen_node.py",
+      "source_sha256": "6bb15dde5b24bd75eaf5ca28ba77cfdaffed2968a76fd53954d0b75c70e9ddc9",
+      "copied_sha256": "6bb15dde5b24bd75eaf5ca28ba77cfdaffed2968a76fd53954d0b75c70e9ddc9"
+    },
+    {
+      "path": "scrapegraphai/nodes/generate_answer_csv_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_csv_node.py",
+      "source_sha256": "9c5f061c0b9b2c66a5b7ed2e79026e631bda88027dd613b400d2c62f882572a4",
+      "copied_sha256": "9c5f061c0b9b2c66a5b7ed2e79026e631bda88027dd613b400d2c62f882572a4"
+    },
+    {
+      "path": "scrapegraphai/nodes/generate_answer_from_image_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_from_image_node.py",
+      "source_sha256": "e7195ba019ffef6d23a1e7be94b8bd9f6a0243b8c69f8bf2a21ce6d4a30b5409",
+      "copied_sha256": "e7195ba019ffef6d23a1e7be94b8bd9f6a0243b8c69f8bf2a21ce6d4a30b5409"
+    },
+    {
+      "path": "scrapegraphai/nodes/generate_answer_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_node.py",
+      "source_sha256": "ab35fd2a34ec61fef2ad590ad2f9cb2b4d08a7ccd1c673d9875d962c12939a63",
+      "copied_sha256": "ab35fd2a34ec61fef2ad590ad2f9cb2b4d08a7ccd1c673d9875d962c12939a63"
+    },
+    {
+      "path": "scrapegraphai/nodes/generate_answer_node_k_level.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_node_k_level.py",
+      "source_sha256": "7d34dec0d931c45c2365796f71fd6f9f7a593cb5206b6dbc18b955ef72f32d8c",
+      "copied_sha256": "7d34dec0d931c45c2365796f71fd6f9f7a593cb5206b6dbc18b955ef72f32d8c"
+    },
+    {
+      "path": "scrapegraphai/nodes/generate_answer_omni_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_omni_node.py",
+      "source_sha256": "8b4215e67dc047c192159d4d04bcd64c06de6f9f486f41b59135d026019f4e78",
+      "copied_sha256": "8b4215e67dc047c192159d4d04bcd64c06de6f9f486f41b59135d026019f4e78"
+    },
+    {
+      "path": "scrapegraphai/nodes/generate_code_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_code_node.py",
+      "source_sha256": "5d151df7be2d9deee75a925c8d12160561da2ed0f8322079a9581118f28226b2",
+      "copied_sha256": "5d151df7be2d9deee75a925c8d12160561da2ed0f8322079a9581118f28226b2"
+    },
+    {
+      "path": "scrapegraphai/nodes/generate_scraper_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_scraper_node.py",
+      "source_sha256": "1b5e9edb9eb9677853f690ac8e29e60c33b19836b86d15a29c38548f61abe539",
+      "copied_sha256": "1b5e9edb9eb9677853f690ac8e29e60c33b19836b86d15a29c38548f61abe539"
+    },
+    {
+      "path": "scrapegraphai/nodes/get_probable_tags_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/get_probable_tags_node.py",
+      "source_sha256": "49f71e7c0e40a7387af00cf09b98fecb7b8266d79d0272f0df37d1cda206967b",
+      "copied_sha256": "49f71e7c0e40a7387af00cf09b98fecb7b8266d79d0272f0df37d1cda206967b"
+    },
+    {
+      "path": "scrapegraphai/nodes/graph_iterator_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/graph_iterator_node.py",
+      "source_sha256": "b7b5e876db95695cb8c221f603e0651bf8df51890732cc028b09f40e04cf579d",
+      "copied_sha256": "b7b5e876db95695cb8c221f603e0651bf8df51890732cc028b09f40e04cf579d"
+    },
+    {
+      "path": "scrapegraphai/nodes/html_analyzer_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/html_analyzer_node.py",
+      "source_sha256": "5542a8d34fdf4ef253f88e276313d228888af4b954899f5e4d266fa3b46f2140",
+      "copied_sha256": "5542a8d34fdf4ef253f88e276313d228888af4b954899f5e4d266fa3b46f2140"
+    },
+    {
+      "path": "scrapegraphai/nodes/image_to_text_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/image_to_text_node.py",
+      "source_sha256": "fd40b44e429855ea4a1d8c72b5ca769954ee070a190cc620fa13249081723145",
+      "copied_sha256": "fd40b44e429855ea4a1d8c72b5ca769954ee070a190cc620fa13249081723145"
+    },
+    {
+      "path": "scrapegraphai/nodes/markdownify_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/markdownify_node.py",
+      "source_sha256": "3e00eddee84c989ee2a73c3b4dbd1e926e90bfc0f5aefe98457556cbbeb2f551",
+      "copied_sha256": "3e00eddee84c989ee2a73c3b4dbd1e926e90bfc0f5aefe98457556cbbeb2f551"
+    },
+    {
+      "path": "scrapegraphai/nodes/merge_answers_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/merge_answers_node.py",
+      "source_sha256": "0735c9adaca646c350a0846d71aaebf160cf519e2fa252bb4d6785e27e00ca07",
+      "copied_sha256": "0735c9adaca646c350a0846d71aaebf160cf519e2fa252bb4d6785e27e00ca07"
+    },
+    {
+      "path": "scrapegraphai/nodes/merge_generated_scripts_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/merge_generated_scripts_node.py",
+      "source_sha256": "139a299203b9af93da941296f98eef2bfef535350a8fd6638d1f98898ea04845",
+      "copied_sha256": "139a299203b9af93da941296f98eef2bfef535350a8fd6638d1f98898ea04845"
+    },
+    {
+      "path": "scrapegraphai/nodes/parse_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/parse_node.py",
+      "source_sha256": "5f15ed6a1ecc5cc9ed43ffdf4db763624645a7e96a2c366fee5936f0feaebc1a",
+      "copied_sha256": "5f15ed6a1ecc5cc9ed43ffdf4db763624645a7e96a2c366fee5936f0feaebc1a"
+    },
+    {
+      "path": "scrapegraphai/nodes/parse_node_depth_k_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/parse_node_depth_k_node.py",
+      "source_sha256": "8bb915b2276fb738f07548b50b4dda451d05d3d0d278df5688532b8c0685f20f",
+      "copied_sha256": "8bb915b2276fb738f07548b50b4dda451d05d3d0d278df5688532b8c0685f20f"
+    },
+    {
+      "path": "scrapegraphai/nodes/prompt_refiner_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/prompt_refiner_node.py",
+      "source_sha256": "71e45c78029293144bef4f349aa7cc526a7f4a43e7d6f10194cbcb6deb2f1ffa",
+      "copied_sha256": "71e45c78029293144bef4f349aa7cc526a7f4a43e7d6f10194cbcb6deb2f1ffa"
+    },
+    {
+      "path": "scrapegraphai/nodes/rag_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/rag_node.py",
+      "source_sha256": "4d9d3a0955a14a3ee968a6608fbb06226b2cfd0e3ecb604113e93c755ed9a6ee",
+      "copied_sha256": "4d9d3a0955a14a3ee968a6608fbb06226b2cfd0e3ecb604113e93c755ed9a6ee"
+    },
+    {
+      "path": "scrapegraphai/nodes/reasoning_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/reasoning_node.py",
+      "source_sha256": "ef3bb6f4f41bea66a0b438d7ea6e94d0423d6e6d0230a40f8607f4ab2f63481f",
+      "copied_sha256": "ef3bb6f4f41bea66a0b438d7ea6e94d0423d6e6d0230a40f8607f4ab2f63481f"
+    },
+    {
+      "path": "scrapegraphai/nodes/robots_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/robots_node.py",
+      "source_sha256": "3a5241b40ccf6a9d59817e4b9659b5a0f92fbb3a64ed020a8f1784f2b783eec7",
+      "copied_sha256": "3a5241b40ccf6a9d59817e4b9659b5a0f92fbb3a64ed020a8f1784f2b783eec7"
+    },
+    {
+      "path": "scrapegraphai/nodes/search_internet_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/search_internet_node.py",
+      "source_sha256": "2ce8565f35535b8e8548fd6432f020a36384c2990771b973359d46a847cfb174",
+      "copied_sha256": "2ce8565f35535b8e8548fd6432f020a36384c2990771b973359d46a847cfb174"
+    },
+    {
+      "path": "scrapegraphai/nodes/search_link_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/search_link_node.py",
+      "source_sha256": "8e5619736b8681605a491fd291ca3865c44c24a8fb44c365834908187b1679ad",
+      "copied_sha256": "8e5619736b8681605a491fd291ca3865c44c24a8fb44c365834908187b1679ad"
+    },
+    {
+      "path": "scrapegraphai/nodes/search_node_with_context.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/search_node_with_context.py",
+      "source_sha256": "9d7c699409c7b08a1172543c1243dd28018be3fdbe5dd7723fe9c0799faf08fb",
+      "copied_sha256": "9d7c699409c7b08a1172543c1243dd28018be3fdbe5dd7723fe9c0799faf08fb"
+    },
+    {
+      "path": "scrapegraphai/nodes/text_to_speech_node.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/text_to_speech_node.py",
+      "source_sha256": "a2611a406c3b04b8ea9e0328b0f87a03f8bc8fe1fc63623b363c37677b4d2dc5",
+      "copied_sha256": "a2611a406c3b04b8ea9e0328b0f87a03f8bc8fe1fc63623b363c37677b4d2dc5"
+    },
+    {
+      "path": "scrapegraphai/prompts/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/__init__.py",
+      "source_sha256": "ff78aecbf297f0cb55aaecdb94d62340afb6c96ab7098346bdcbcaafe787011c",
+      "copied_sha256": "ff78aecbf297f0cb55aaecdb94d62340afb6c96ab7098346bdcbcaafe787011c"
+    },
+    {
+      "path": "scrapegraphai/prompts/description_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/description_node_prompts.py",
+      "source_sha256": "cd93375dfe49aa5ebfb1730d9c0273b8727e73789f5c58597193e6d1b62ffd25",
+      "copied_sha256": "cd93375dfe49aa5ebfb1730d9c0273b8727e73789f5c58597193e6d1b62ffd25"
+    },
+    {
+      "path": "scrapegraphai/prompts/generate_answer_node_csv_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_csv_prompts.py",
+      "source_sha256": "94b8858f38682f72250152a2b2d853ed20e79f8db752fdb259c30f6852f9434e",
+      "copied_sha256": "94b8858f38682f72250152a2b2d853ed20e79f8db752fdb259c30f6852f9434e"
+    },
+    {
+      "path": "scrapegraphai/prompts/generate_answer_node_omni_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_omni_prompts.py",
+      "source_sha256": "593b54c934eedc745dffc38412cbbedecd1b5ae31bdb26f91e21eaa53752bdbd",
+      "copied_sha256": "593b54c934eedc745dffc38412cbbedecd1b5ae31bdb26f91e21eaa53752bdbd"
+    },
+    {
+      "path": "scrapegraphai/prompts/generate_answer_node_pdf_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_pdf_prompts.py",
+      "source_sha256": "8cb423b07e9cd8737187306e926236b69f4f069261c5bb4eea7f08fea727bfe6",
+      "copied_sha256": "8cb423b07e9cd8737187306e926236b69f4f069261c5bb4eea7f08fea727bfe6"
+    },
+    {
+      "path": "scrapegraphai/prompts/generate_answer_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_prompts.py",
+      "source_sha256": "51a22c86d03308b289de48a76736d1a06c4c79cb33603373b815d6b5ee252111",
+      "copied_sha256": "51a22c86d03308b289de48a76736d1a06c4c79cb33603373b815d6b5ee252111"
+    },
+    {
+      "path": "scrapegraphai/prompts/generate_code_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_code_node_prompts.py",
+      "source_sha256": "019032a09d2d0633db564f159862b90836f70cc44d80cf3f93989778af9e5eba",
+      "copied_sha256": "019032a09d2d0633db564f159862b90836f70cc44d80cf3f93989778af9e5eba"
+    },
+    {
+      "path": "scrapegraphai/prompts/get_probable_tags_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/get_probable_tags_node_prompts.py",
+      "source_sha256": "1125cdffead2dfe3be278b6541022abef0fab3190457d2a96338efe69660a10d",
+      "copied_sha256": "1125cdffead2dfe3be278b6541022abef0fab3190457d2a96338efe69660a10d"
+    },
+    {
+      "path": "scrapegraphai/prompts/html_analyzer_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/html_analyzer_node_prompts.py",
+      "source_sha256": "48fab44402ca71f969318684dd3ef62d732e43b600df6feab22c7e740835687f",
+      "copied_sha256": "48fab44402ca71f969318684dd3ef62d732e43b600df6feab22c7e740835687f"
+    },
+    {
+      "path": "scrapegraphai/prompts/merge_answer_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/merge_answer_node_prompts.py",
+      "source_sha256": "3a68c6b4687a87900fac3f9855ef0ac14b92ac31d91c04edd633327953104a86",
+      "copied_sha256": "3a68c6b4687a87900fac3f9855ef0ac14b92ac31d91c04edd633327953104a86"
+    },
+    {
+      "path": "scrapegraphai/prompts/merge_generated_scripts_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/merge_generated_scripts_prompts.py",
+      "source_sha256": "feb722fd20e0a7bac8d9ee74e522739e98128aa3e0c5c9d9fd38c1b1f81b6323",
+      "copied_sha256": "feb722fd20e0a7bac8d9ee74e522739e98128aa3e0c5c9d9fd38c1b1f81b6323"
+    },
+    {
+      "path": "scrapegraphai/prompts/prompt_refiner_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/prompt_refiner_node_prompts.py",
+      "source_sha256": "3a0bae173b8a57fa6bbd9c32a773b4c3dcd7f1ee0166d68b39ee5f65e11b5575",
+      "copied_sha256": "3a0bae173b8a57fa6bbd9c32a773b4c3dcd7f1ee0166d68b39ee5f65e11b5575"
+    },
+    {
+      "path": "scrapegraphai/prompts/reasoning_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/reasoning_node_prompts.py",
+      "source_sha256": "aaa8ce6ba799a148e639479aed0d57ac6cc4e3a910d2402d18b0b54006b7d033",
+      "copied_sha256": "aaa8ce6ba799a148e639479aed0d57ac6cc4e3a910d2402d18b0b54006b7d033"
+    },
+    {
+      "path": "scrapegraphai/prompts/robots_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/robots_node_prompts.py",
+      "source_sha256": "61bd29fccf1718436f3eb06800c8ddcfe02dddc6ba3e1e24a40fe15e26ab8ecc",
+      "copied_sha256": "61bd29fccf1718436f3eb06800c8ddcfe02dddc6ba3e1e24a40fe15e26ab8ecc"
+    },
+    {
+      "path": "scrapegraphai/prompts/search_internet_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/search_internet_node_prompts.py",
+      "source_sha256": "82125d9ef619f9d038004706d474a274a1e4fa38e516dcdae9b2cf23a131114a",
+      "copied_sha256": "82125d9ef619f9d038004706d474a274a1e4fa38e516dcdae9b2cf23a131114a"
+    },
+    {
+      "path": "scrapegraphai/prompts/search_link_node_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/search_link_node_prompts.py",
+      "source_sha256": "238bb803759f3bfe7d043215e255fdb4d08aa391e19d4b97c224303c02496afd",
+      "copied_sha256": "238bb803759f3bfe7d043215e255fdb4d08aa391e19d4b97c224303c02496afd"
+    },
+    {
+      "path": "scrapegraphai/prompts/search_node_with_context_prompts.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/search_node_with_context_prompts.py",
+      "source_sha256": "00e024dc6fec3b37653d29b00c165310a7793a3f9abed4bb8dd88f0543bfe12a",
+      "copied_sha256": "00e024dc6fec3b37653d29b00c165310a7793a3f9abed4bb8dd88f0543bfe12a"
+    },
+    {
+      "path": "scrapegraphai/telemetry/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/telemetry/__init__.py",
+      "source_sha256": "6c44b4f9ec0e7fbf0fbf46c08672762f225fb25de3e29b5d19675bbdf227bef4",
+      "copied_sha256": "6c44b4f9ec0e7fbf0fbf46c08672762f225fb25de3e29b5d19675bbdf227bef4"
+    },
+    {
+      "path": "scrapegraphai/telemetry/telemetry.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/telemetry/telemetry.py",
+      "source_sha256": "84537644eba4f0c3e621c960bd12aa29fa2a341f4c431431f25d8891408a9e22",
+      "copied_sha256": "84537644eba4f0c3e621c960bd12aa29fa2a341f4c431431f25d8891408a9e22"
+    },
+    {
+      "path": "scrapegraphai/utils/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/__init__.py",
+      "source_sha256": "30d5e460bdd1c8267bdc1e4d74921602b7d6e762c026b0623c42549116536dcd",
+      "copied_sha256": "30d5e460bdd1c8267bdc1e4d74921602b7d6e762c026b0623c42549116536dcd"
+    },
+    {
+      "path": "scrapegraphai/utils/batch_api.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/batch_api.py",
+      "source_sha256": "cbde5f0526e553e5cc950d43fdad7df9a6d95c22be41ec5a3615868320931847",
+      "copied_sha256": "cbde5f0526e553e5cc950d43fdad7df9a6d95c22be41ec5a3615868320931847"
+    },
+    {
+      "path": "scrapegraphai/utils/cleanup_code.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/cleanup_code.py",
+      "source_sha256": "44d241aad43a7b442ee4c365b5117425d40fc80bf7a42a50cdda04b022a9503a",
+      "copied_sha256": "44d241aad43a7b442ee4c365b5117425d40fc80bf7a42a50cdda04b022a9503a"
+    },
+    {
+      "path": "scrapegraphai/utils/cleanup_html.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/cleanup_html.py",
+      "source_sha256": "75c3f08842d8b46723d78820cd93cc518ddb04445bf545c5b459376080d0d82a",
+      "copied_sha256": "75c3f08842d8b46723d78820cd93cc518ddb04445bf545c5b459376080d0d82a"
+    },
+    {
+      "path": "scrapegraphai/utils/code_error_analysis.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/code_error_analysis.py",
+      "source_sha256": "58b05fc0bcd39f72bb0551632cb7e4f305280a6cbd6d01849f031684546d99ce",
+      "copied_sha256": "58b05fc0bcd39f72bb0551632cb7e4f305280a6cbd6d01849f031684546d99ce"
+    },
+    {
+      "path": "scrapegraphai/utils/code_error_correction.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/code_error_correction.py",
+      "source_sha256": "16086ad5a0fec7b772b07c153fb49c296183f930c7518c7b0b02e64d793cb332",
+      "copied_sha256": "16086ad5a0fec7b772b07c153fb49c296183f930c7518c7b0b02e64d793cb332"
+    },
+    {
+      "path": "scrapegraphai/utils/convert_to_md.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/convert_to_md.py",
+      "source_sha256": "bb1d18d7a2755eeb7035d73fcb2751295f8e18f8fb1eaffafe654ae7943e1917",
+      "copied_sha256": "bb1d18d7a2755eeb7035d73fcb2751295f8e18f8fb1eaffafe654ae7943e1917"
+    },
+    {
+      "path": "scrapegraphai/utils/copy.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/copy.py",
+      "source_sha256": "b92dc46011b6aa08df650121fb6c9434cee0980a28150945a72084a573ec0305",
+      "copied_sha256": "b92dc46011b6aa08df650121fb6c9434cee0980a28150945a72084a573ec0305"
+    },
+    {
+      "path": "scrapegraphai/utils/custom_callback.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/custom_callback.py",
+      "source_sha256": "fed991ee030d567d9d9804ae2a6918b0375e8b59bc65f8d3dce8562d9984a5b6",
+      "copied_sha256": "fed991ee030d567d9d9804ae2a6918b0375e8b59bc65f8d3dce8562d9984a5b6"
+    },
+    {
+      "path": "scrapegraphai/utils/data_export.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/data_export.py",
+      "source_sha256": "ad99dc1cec43547c5882ba44b953524e7c65ed54f63e83c237490c5d975b936d",
+      "copied_sha256": "ad99dc1cec43547c5882ba44b953524e7c65ed54f63e83c237490c5d975b936d"
+    },
+    {
+      "path": "scrapegraphai/utils/dict_content_compare.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/dict_content_compare.py",
+      "source_sha256": "25041f64ce469b117e0c0c3c21b2a201b7e30e34f564fd78510672f88392194c",
+      "copied_sha256": "25041f64ce469b117e0c0c3c21b2a201b7e30e34f564fd78510672f88392194c"
+    },
+    {
+      "path": "scrapegraphai/utils/llm_callback_manager.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/llm_callback_manager.py",
+      "source_sha256": "e290410828b7cd34a7fbd9612650300a045fda20077c2a911e9ce1c93a14578d",
+      "copied_sha256": "e290410828b7cd34a7fbd9612650300a045fda20077c2a911e9ce1c93a14578d"
+    },
+    {
+      "path": "scrapegraphai/utils/logging.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/logging.py",
+      "source_sha256": "08e5830b90c017b939ce133ea1863f1632eba01ba6c11a02a5a70e401ab5a323",
+      "copied_sha256": "08e5830b90c017b939ce133ea1863f1632eba01ba6c11a02a5a70e401ab5a323"
+    },
+    {
+      "path": "scrapegraphai/utils/model_costs.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/model_costs.py",
+      "source_sha256": "f8f9669620fa7d5e3a3271f03bbadee0a99caf114cdc02f91bb656a0fbb383ee",
+      "copied_sha256": "f8f9669620fa7d5e3a3271f03bbadee0a99caf114cdc02f91bb656a0fbb383ee"
+    },
+    {
+      "path": "scrapegraphai/utils/output_parser.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/output_parser.py",
+      "source_sha256": "6821520c1102cfd6990ca2f6621b6a6c62da454e4cf500b4c37177c32069ac79",
+      "copied_sha256": "6821520c1102cfd6990ca2f6621b6a6c62da454e4cf500b4c37177c32069ac79"
+    },
+    {
+      "path": "scrapegraphai/utils/parse_state_keys.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/parse_state_keys.py",
+      "source_sha256": "d00ce0b3fad17eabc963ac3922b21b870cbd4ba66daed165c0d723e32646846c",
+      "copied_sha256": "d00ce0b3fad17eabc963ac3922b21b870cbd4ba66daed165c0d723e32646846c"
+    },
+    {
+      "path": "scrapegraphai/utils/prettify_exec_info.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/prettify_exec_info.py",
+      "source_sha256": "87cf61843cc0c2e1b25c28a8272d3c5dcd67e376a5b531b242169bddd3d7b445",
+      "copied_sha256": "87cf61843cc0c2e1b25c28a8272d3c5dcd67e376a5b531b242169bddd3d7b445"
+    },
+    {
+      "path": "scrapegraphai/utils/proxy_rotation.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/proxy_rotation.py",
+      "source_sha256": "40f7d0c0f9c5102970225b640276b23507cdbb4a41df1a5a68392860dc5b6b10",
+      "copied_sha256": "40f7d0c0f9c5102970225b640276b23507cdbb4a41df1a5a68392860dc5b6b10"
+    },
+    {
+      "path": "scrapegraphai/utils/research_web.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/research_web.py",
+      "source_sha256": "f59a881713f61893786c26962a80ad9604650aed87b443c47cab6161153b51a5",
+      "copied_sha256": "f59a881713f61893786c26962a80ad9604650aed87b443c47cab6161153b51a5"
+    },
+    {
+      "path": "scrapegraphai/utils/save_audio_from_bytes.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/save_audio_from_bytes.py",
+      "source_sha256": "02b62e876a153d6e6816ba99fab38293a7b6d374502c436cc7e34d3aaf7987e8",
+      "copied_sha256": "02b62e876a153d6e6816ba99fab38293a7b6d374502c436cc7e34d3aaf7987e8"
+    },
+    {
+      "path": "scrapegraphai/utils/save_code_to_file.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/save_code_to_file.py",
+      "source_sha256": "bfe93aea291d1a4408b663b531e89de98550cd3fdef9decb01b4d86b32cb7e40",
+      "copied_sha256": "bfe93aea291d1a4408b663b531e89de98550cd3fdef9decb01b4d86b32cb7e40"
+    },
+    {
+      "path": "scrapegraphai/utils/schema_trasform.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/schema_trasform.py",
+      "source_sha256": "42e19f5944553db73cf96345c7006241cb69c3a595dc4ff343eceef35aa794c5",
+      "copied_sha256": "42e19f5944553db73cf96345c7006241cb69c3a595dc4ff343eceef35aa794c5"
+    },
+    {
+      "path": "scrapegraphai/utils/screenshot_scraping/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/screenshot_scraping/__init__.py",
+      "source_sha256": "5691d9d4e0388a95b32f2f7e019afdcac0265bafdb36fbe591600f92d490c76f",
+      "copied_sha256": "5691d9d4e0388a95b32f2f7e019afdcac0265bafdb36fbe591600f92d490c76f"
+    },
+    {
+      "path": "scrapegraphai/utils/screenshot_scraping/screenshot_preparation.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/screenshot_scraping/screenshot_preparation.py",
+      "source_sha256": "c5e8c5fa818b7d6c15c47c32ef9b5cfc01a5737af582cf3c95b3fc3dfb7d6e73",
+      "copied_sha256": "c5e8c5fa818b7d6c15c47c32ef9b5cfc01a5737af582cf3c95b3fc3dfb7d6e73"
+    },
+    {
+      "path": "scrapegraphai/utils/screenshot_scraping/text_detection.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/screenshot_scraping/text_detection.py",
+      "source_sha256": "628d9093596863baca2af600b3741bff713d6c0684f43bbdce5a9c353e5e20f4",
+      "copied_sha256": "628d9093596863baca2af600b3741bff713d6c0684f43bbdce5a9c353e5e20f4"
+    },
+    {
+      "path": "scrapegraphai/utils/split_text_into_chunks.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/split_text_into_chunks.py",
+      "source_sha256": "a47fe0cc8d6d9d2d29ad02f09dbdb9a836d9a17287cff2437edee04e54ebe636",
+      "copied_sha256": "a47fe0cc8d6d9d2d29ad02f09dbdb9a836d9a17287cff2437edee04e54ebe636"
+    },
+    {
+      "path": "scrapegraphai/utils/sys_dynamic_import.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/sys_dynamic_import.py",
+      "source_sha256": "fcfb2ecaee227a991abc67d0b4a04d7ab049e4fc9ba3ed0a2e3fb4abfa26818e",
+      "copied_sha256": "fcfb2ecaee227a991abc67d0b4a04d7ab049e4fc9ba3ed0a2e3fb4abfa26818e"
+    },
+    {
+      "path": "scrapegraphai/utils/tokenizer.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizer.py",
+      "source_sha256": "42cd76555818d423db2dbef16cb965b87873362929909badc9d7d17879746c6e",
+      "copied_sha256": "42cd76555818d423db2dbef16cb965b87873362929909badc9d7d17879746c6e"
+    },
+    {
+      "path": "scrapegraphai/utils/tokenizers/tokenizer_mistral.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizers/tokenizer_mistral.py",
+      "source_sha256": "dbaacb848fdbf442921a87088bc36cfdd20c2ee52c86492bbe8537bfc543fcef",
+      "copied_sha256": "dbaacb848fdbf442921a87088bc36cfdd20c2ee52c86492bbe8537bfc543fcef"
+    },
+    {
+      "path": "scrapegraphai/utils/tokenizers/tokenizer_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizers/tokenizer_ollama.py",
+      "source_sha256": "766553caa7bb4dfaa69d746687620caf7f3128c72843867efe54ca6243953065",
+      "copied_sha256": "766553caa7bb4dfaa69d746687620caf7f3128c72843867efe54ca6243953065"
+    },
+    {
+      "path": "scrapegraphai/utils/tokenizers/tokenizer_openai.py",
+      "source": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizers/tokenizer_openai.py",
+      "source_sha256": "affd0542feaaecce953e8f28b5e03e377dc4c1753c0d90269977a079d3026c2f",
+      "copied_sha256": "affd0542feaaecce953e8f28b5e03e377dc4c1753c0d90269977a079d3026c2f"
+    },
+    {
+      "path": "tests/QUICKSTART.md",
+      "source": "reference/Scrapegraph-ai-main/tests/QUICKSTART.md",
+      "source_sha256": "a43197d5f2221a90b28bea5ac607b36968117a3dfd917663828475a20bbc1e77",
+      "copied_sha256": "a43197d5f2221a90b28bea5ac607b36968117a3dfd917663828475a20bbc1e77"
+    },
+    {
+      "path": "tests/README_TESTING.md",
+      "source": "reference/Scrapegraph-ai-main/tests/README_TESTING.md",
+      "source_sha256": "a9eff484cd5a7d7193a88603f6f2bc720ba0fdd4d35239320f402d4e0d131b22",
+      "copied_sha256": "a9eff484cd5a7d7193a88603f6f2bc720ba0fdd4d35239320f402d4e0d131b22"
+    },
+    {
+      "path": "tests/Readme.md",
+      "source": "reference/Scrapegraph-ai-main/tests/Readme.md",
+      "source_sha256": "fe6d94037ed217b01ff1ea0e3b3e244a367e01d18e64c78cc34fd9044a527e57",
+      "copied_sha256": "fe6d94037ed217b01ff1ea0e3b3e244a367e01d18e64c78cc34fd9044a527e57"
+    },
+    {
+      "path": "tests/conftest.py",
+      "source": "reference/Scrapegraph-ai-main/tests/conftest.py",
+      "source_sha256": "bf60318a2e42ef62c5817cf806035897ccf55cb07c93364006731f73a94ca78e",
+      "copied_sha256": "bf60318a2e42ef62c5817cf806035897ccf55cb07c93364006731f73a94ca78e"
+    },
+    {
+      "path": "tests/fixtures/benchmarking.py",
+      "source": "reference/Scrapegraph-ai-main/tests/fixtures/benchmarking.py",
+      "source_sha256": "2a0bded2ec53df9fa0d930a521422862509b1a1f843c8c871f36b394c6e664f7",
+      "copied_sha256": "2a0bded2ec53df9fa0d930a521422862509b1a1f843c8c871f36b394c6e664f7"
+    },
+    {
+      "path": "tests/fixtures/helpers.py",
+      "source": "reference/Scrapegraph-ai-main/tests/fixtures/helpers.py",
+      "source_sha256": "83c622740edbc903721fed867df45fd31d2d83dfbed559dd37e628c550d296df",
+      "copied_sha256": "83c622740edbc903721fed867df45fd31d2d83dfbed559dd37e628c550d296df"
+    },
+    {
+      "path": "tests/fixtures/mock_server/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/tests/fixtures/mock_server/__init__.py",
+      "source_sha256": "1ab7bc5b775285eb3aca753e044339ef49d5d33e18f953cd15f73b5451afb3e4",
+      "copied_sha256": "1ab7bc5b775285eb3aca753e044339ef49d5d33e18f953cd15f73b5451afb3e4"
+    },
+    {
+      "path": "tests/fixtures/mock_server/server.py",
+      "source": "reference/Scrapegraph-ai-main/tests/fixtures/mock_server/server.py",
+      "source_sha256": "e3e45174047065ded9f0056c678163493b019d2b1f5e20a47cc0381225b9b2d9",
+      "copied_sha256": "e3e45174047065ded9f0056c678163493b019d2b1f5e20a47cc0381225b9b2d9"
+    },
+    {
+      "path": "tests/graphs/.env.example",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/.env.example",
+      "source_sha256": "932f4f38e6145c23e3848cbb220a3bae3cb348014871ce9342e0179b5100fdeb",
+      "copied_sha256": "932f4f38e6145c23e3848cbb220a3bae3cb348014871ce9342e0179b5100fdeb"
+    },
+    {
+      "path": "tests/graphs/abstract_graph_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/abstract_graph_test.py",
+      "source_sha256": "8814b2ab91e800d4aa7287bd1693b55aad06c4fb23fe734ea4806f678f5d83a4",
+      "copied_sha256": "8814b2ab91e800d4aa7287bd1693b55aad06c4fb23fe734ea4806f678f5d83a4"
+    },
+    {
+      "path": "tests/graphs/code_generator_graph_openai_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/code_generator_graph_openai_test.py",
+      "source_sha256": "50fade1dc9a76d238f8da09764de5b14c877bd65c1ddc58e2cbe1894d5d8259c",
+      "copied_sha256": "50fade1dc9a76d238f8da09764de5b14c877bd65c1ddc58e2cbe1894d5d8259c"
+    },
+    {
+      "path": "tests/graphs/depth_search_graph_openai_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/depth_search_graph_openai_test.py",
+      "source_sha256": "b21287b29579e531195de45c1ec4f29a60f4499fad432c0815f343f610708bad",
+      "copied_sha256": "b21287b29579e531195de45c1ec4f29a60f4499fad432c0815f343f610708bad"
+    },
+    {
+      "path": "tests/graphs/inputs/books.xml",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/inputs/books.xml",
+      "source_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+      "copied_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e"
+    },
+    {
+      "path": "tests/graphs/inputs/example.json",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/inputs/example.json",
+      "source_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+      "copied_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51"
+    },
+    {
+      "path": "tests/graphs/inputs/plain_html_example.txt",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/inputs/plain_html_example.txt",
+      "source_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+      "copied_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536"
+    },
+    {
+      "path": "tests/graphs/inputs/username.csv",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/inputs/username.csv",
+      "source_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+      "copied_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c"
+    },
+    {
+      "path": "tests/graphs/scrape_plain_text_mistral_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/scrape_plain_text_mistral_test.py",
+      "source_sha256": "cec9584204ddbddf05b9ba7baf6a7301a0b94575b500880a0bf4a51f1244b622",
+      "copied_sha256": "cec9584204ddbddf05b9ba7baf6a7301a0b94575b500880a0bf4a51f1244b622"
+    },
+    {
+      "path": "tests/graphs/scrape_xml_ollama_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/scrape_xml_ollama_test.py",
+      "source_sha256": "732833356f86b249adac6d166e5977f53d9415c75cfb2658cbd4974c511fc77a",
+      "copied_sha256": "732833356f86b249adac6d166e5977f53d9415c75cfb2658cbd4974c511fc77a"
+    },
+    {
+      "path": "tests/graphs/screenshot_scraper_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/screenshot_scraper_test.py",
+      "source_sha256": "c6630e477ae470da882b2d7d67e09bbf8d227bc9cc89ca20f50c53eaa97ddc6a",
+      "copied_sha256": "c6630e477ae470da882b2d7d67e09bbf8d227bc9cc89ca20f50c53eaa97ddc6a"
+    },
+    {
+      "path": "tests/graphs/script_generator_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/script_generator_test.py",
+      "source_sha256": "55ccf400e5567148c393d5ebb4a0e9ed362ea19d9cda04eb268ef3d2afb5d29d",
+      "copied_sha256": "55ccf400e5567148c393d5ebb4a0e9ed362ea19d9cda04eb268ef3d2afb5d29d"
+    },
+    {
+      "path": "tests/graphs/search_graph_openai_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/search_graph_openai_test.py",
+      "source_sha256": "a24e0c83e742679d930bfe8291ed5b3d75ce8bf2f00bfc3b6b98a27ec2da3093",
+      "copied_sha256": "a24e0c83e742679d930bfe8291ed5b3d75ce8bf2f00bfc3b6b98a27ec2da3093"
+    },
+    {
+      "path": "tests/graphs/search_link_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/search_link_ollama.py",
+      "source_sha256": "e937eb8cb401186e08ede5187f768db6015feb1e153efb93edd300e52944c09f",
+      "copied_sha256": "e937eb8cb401186e08ede5187f768db6015feb1e153efb93edd300e52944c09f"
+    },
+    {
+      "path": "tests/graphs/smart_scraper_clod_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_clod_test.py",
+      "source_sha256": "fba01ecffed0e3f396504137ff8597cc62e4284b9066dd4b0283e902fb429f81",
+      "copied_sha256": "fba01ecffed0e3f396504137ff8597cc62e4284b9066dd4b0283e902fb429f81"
+    },
+    {
+      "path": "tests/graphs/smart_scraper_ernie_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_ernie_test.py",
+      "source_sha256": "8fbcbf313e038cadb9a0e8d1e5c5324f7edd0eb75507a03769b8e4d073106509",
+      "copied_sha256": "8fbcbf313e038cadb9a0e8d1e5c5324f7edd0eb75507a03769b8e4d073106509"
+    },
+    {
+      "path": "tests/graphs/smart_scraper_fireworks_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_fireworks_test.py",
+      "source_sha256": "2532d744b3c3daa702796647ac1ad2f93a9b4e044465da3d718ba1bfcd4caa09",
+      "copied_sha256": "2532d744b3c3daa702796647ac1ad2f93a9b4e044465da3d718ba1bfcd4caa09"
+    },
+    {
+      "path": "tests/graphs/smart_scraper_multi_lite_graph_openai_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_multi_lite_graph_openai_test.py",
+      "source_sha256": "5ad18a246a683188c882376e6f6cd3ee4b744e503dea4c5555526a3e5d44b928",
+      "copied_sha256": "5ad18a246a683188c882376e6f6cd3ee4b744e503dea4c5555526a3e5d44b928"
+    },
+    {
+      "path": "tests/graphs/smart_scraper_ollama_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_ollama_test.py",
+      "source_sha256": "50940707adf064d4780bc2f9674a466d5db7a0b0e336eb21688e6dd26b6b0a1a",
+      "copied_sha256": "50940707adf064d4780bc2f9674a466d5db7a0b0e336eb21688e6dd26b6b0a1a"
+    },
+    {
+      "path": "tests/graphs/smart_scraper_openai_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_openai_test.py",
+      "source_sha256": "dc19d7546eb1577d7e443d79bd268f260ff59448575534a120871113f7f6c780",
+      "copied_sha256": "dc19d7546eb1577d7e443d79bd268f260ff59448575534a120871113f7f6c780"
+    },
+    {
+      "path": "tests/graphs/xml_scraper_openai_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/graphs/xml_scraper_openai_test.py",
+      "source_sha256": "ada42980a3fdd92e17248d5d11c53405ba889ea899b36d8a1ea970e173096f40",
+      "copied_sha256": "ada42980a3fdd92e17248d5d11c53405ba889ea899b36d8a1ea970e173096f40"
+    },
+    {
+      "path": "tests/inputs/books.xml",
+      "source": "reference/Scrapegraph-ai-main/tests/inputs/books.xml",
+      "source_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+      "copied_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e"
+    },
+    {
+      "path": "tests/inputs/example.json",
+      "source": "reference/Scrapegraph-ai-main/tests/inputs/example.json",
+      "source_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+      "copied_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51"
+    },
+    {
+      "path": "tests/inputs/plain_html_example.txt",
+      "source": "reference/Scrapegraph-ai-main/tests/inputs/plain_html_example.txt",
+      "source_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+      "copied_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536"
+    },
+    {
+      "path": "tests/inputs/username.csv",
+      "source": "reference/Scrapegraph-ai-main/tests/inputs/username.csv",
+      "source_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+      "copied_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c"
+    },
+    {
+      "path": "tests/integration/__init__.py",
+      "source": "reference/Scrapegraph-ai-main/tests/integration/__init__.py",
+      "source_sha256": "ebd30bd2570246dc242fb9970f2596679abf0eeac992993bf2f487e0efb6d2b1",
+      "copied_sha256": "ebd30bd2570246dc242fb9970f2596679abf0eeac992993bf2f487e0efb6d2b1"
+    },
+    {
+      "path": "tests/integration/test_file_formats_integration.py",
+      "source": "reference/Scrapegraph-ai-main/tests/integration/test_file_formats_integration.py",
+      "source_sha256": "63feb749abcabbf3fc0c2a991da8b9711ccc0fbaace4c98c79966c2e4103bc73",
+      "copied_sha256": "63feb749abcabbf3fc0c2a991da8b9711ccc0fbaace4c98c79966c2e4103bc73"
+    },
+    {
+      "path": "tests/integration/test_multi_graph_integration.py",
+      "source": "reference/Scrapegraph-ai-main/tests/integration/test_multi_graph_integration.py",
+      "source_sha256": "4f8bf2e3d145cdc1ee17d1c223c2331213985bc7c396db4486013a833b44fd80",
+      "copied_sha256": "4f8bf2e3d145cdc1ee17d1c223c2331213985bc7c396db4486013a833b44fd80"
+    },
+    {
+      "path": "tests/integration/test_smart_scraper_integration.py",
+      "source": "reference/Scrapegraph-ai-main/tests/integration/test_smart_scraper_integration.py",
+      "source_sha256": "63afa2e2f5dcb4c9cecf708651681b78c9088bb1239f8da48117538eb5d1cc46",
+      "copied_sha256": "63afa2e2f5dcb4c9cecf708651681b78c9088bb1239f8da48117538eb5d1cc46"
+    },
+    {
+      "path": "tests/nodes/fetch_node_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/fetch_node_test.py",
+      "source_sha256": "9dafa6ce439867ddde1a4aa3e5b81decc5c3cb8d53bc3df424f179ebf1e4af80",
+      "copied_sha256": "9dafa6ce439867ddde1a4aa3e5b81decc5c3cb8d53bc3df424f179ebf1e4af80"
+    },
+    {
+      "path": "tests/nodes/inputs/books.xml",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/inputs/books.xml",
+      "source_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+      "copied_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e"
+    },
+    {
+      "path": "tests/nodes/inputs/example.json",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/inputs/example.json",
+      "source_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+      "copied_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51"
+    },
+    {
+      "path": "tests/nodes/inputs/plain_html_example.txt",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/inputs/plain_html_example.txt",
+      "source_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+      "copied_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536"
+    },
+    {
+      "path": "tests/nodes/inputs/username.csv",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/inputs/username.csv",
+      "source_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+      "copied_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c"
+    },
+    {
+      "path": "tests/nodes/robot_node_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/robot_node_test.py",
+      "source_sha256": "54f14751d0537081493b510e119d68b51161c7b4cd6c6d71509434df9963b146",
+      "copied_sha256": "54f14751d0537081493b510e119d68b51161c7b4cd6c6d71509434df9963b146"
+    },
+    {
+      "path": "tests/nodes/search_internet_node_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/search_internet_node_test.py",
+      "source_sha256": "f7b5dc223874eb189d8bdbdf0a883637cee43146bb54d88ab233d2285238681d",
+      "copied_sha256": "f7b5dc223874eb189d8bdbdf0a883637cee43146bb54d88ab233d2285238681d"
+    },
+    {
+      "path": "tests/nodes/search_link_node_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/nodes/search_link_node_test.py",
+      "source_sha256": "1e6a703751aa6683efdca96ea86dea8342557cef97bc758dcad3c2644e5a0471",
+      "copied_sha256": "1e6a703751aa6683efdca96ea86dea8342557cef97bc758dcad3c2644e5a0471"
+    },
+    {
+      "path": "tests/test_atlascloud_model.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_atlascloud_model.py",
+      "source_sha256": "eee813fec1de04d2fca8c49d3025e569bf38d8717bdaf8e49b4a3b19216c544d",
+      "copied_sha256": "eee813fec1de04d2fca8c49d3025e569bf38d8717bdaf8e49b4a3b19216c544d"
+    },
+    {
+      "path": "tests/test_batch_api.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_batch_api.py",
+      "source_sha256": "18a16c8002f4a2f3ef82a3e51a39cf248d0d6f156f0798732cbdde9deee994b0",
+      "copied_sha256": "18a16c8002f4a2f3ef82a3e51a39cf248d0d6f156f0798732cbdde9deee994b0"
+    },
+    {
+      "path": "tests/test_cheaperinference_model.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_cheaperinference_model.py",
+      "source_sha256": "e6ea6d47ccde7f1d1c010ffc2e1277fdcc00e7cc35ab72c9e655c413c2949a06",
+      "copied_sha256": "e6ea6d47ccde7f1d1c010ffc2e1277fdcc00e7cc35ab72c9e655c413c2949a06"
+    },
+    {
+      "path": "tests/test_chromium.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_chromium.py",
+      "source_sha256": "17b3d9156b5f9d5c96376e08b8a6153b92a95c294fcb1ffc9a39d2c6a8970d7b",
+      "copied_sha256": "17b3d9156b5f9d5c96376e08b8a6153b92a95c294fcb1ffc9a39d2c6a8970d7b"
+    },
+    {
+      "path": "tests/test_cleanup_html.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_cleanup_html.py",
+      "source_sha256": "67f2088312064d826db902e60f216335f053dddaaed23b348f5a2355032f1033",
+      "copied_sha256": "67f2088312064d826db902e60f216335f053dddaaed23b348f5a2355032f1033"
+    },
+    {
+      "path": "tests/test_csv_scraper_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_csv_scraper_multi_graph.py",
+      "source_sha256": "72061848d42dea5ebf579e9bbf419d605a2f4356825bebf5b3196a3bb8944bd0",
+      "copied_sha256": "72061848d42dea5ebf579e9bbf419d605a2f4356825bebf5b3196a3bb8944bd0"
+    },
+    {
+      "path": "tests/test_depth_search_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_depth_search_graph.py",
+      "source_sha256": "c9db8d5312df272a92099482c2bc316f54c1f003580d0d881992a51328aba861",
+      "copied_sha256": "c9db8d5312df272a92099482c2bc316f54c1f003580d0d881992a51328aba861"
+    },
+    {
+      "path": "tests/test_error_page_detection.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_error_page_detection.py",
+      "source_sha256": "b5daad78a8bb2d56c35a4bf99f036388dc1bf770c442139b482be815eab9ff4d",
+      "copied_sha256": "b5daad78a8bb2d56c35a4bf99f036388dc1bf770c442139b482be815eab9ff4d"
+    },
+    {
+      "path": "tests/test_fetch_node_timeout.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_fetch_node_timeout.py",
+      "source_sha256": "25f227dfbfa3aee8877761aefd259e315e870f528fbc6343a90c7f2c5e3304bf",
+      "copied_sha256": "25f227dfbfa3aee8877761aefd259e315e870f528fbc6343a90c7f2c5e3304bf"
+    },
+    {
+      "path": "tests/test_generate_answer_node.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_generate_answer_node.py",
+      "source_sha256": "484abde40503cdc0cd34f501b769ed5f54cff7e668ddff1f19bff568c1c9d6d3",
+      "copied_sha256": "484abde40503cdc0cd34f501b769ed5f54cff7e668ddff1f19bff568c1c9d6d3"
+    },
+    {
+      "path": "tests/test_json_scraper_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_json_scraper_graph.py",
+      "source_sha256": "03402bd971570d492c6f1d3854ec3680850489348b45233bcfa45f3310ef0391",
+      "copied_sha256": "03402bd971570d492c6f1d3854ec3680850489348b45233bcfa45f3310ef0391"
+    },
+    {
+      "path": "tests/test_json_scraper_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_json_scraper_multi_graph.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/test_minimax_models.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_minimax_models.py",
+      "source_sha256": "466baf41211e260ee67bd1886ba74e3685bc56d808f6e220aa71410f22b76110",
+      "copied_sha256": "466baf41211e260ee67bd1886ba74e3685bc56d808f6e220aa71410f22b76110"
+    },
+    {
+      "path": "tests/test_models_tokens.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_models_tokens.py",
+      "source_sha256": "7dff87e9314e332c5afcba7598d9d8207ec88e2490fa5f3e158d79c9fb29b88c",
+      "copied_sha256": "7dff87e9314e332c5afcba7598d9d8207ec88e2490fa5f3e158d79c9fb29b88c"
+    },
+    {
+      "path": "tests/test_omni_search_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_omni_search_graph.py",
+      "source_sha256": "24ccfcb839703365400e5235d2d740978cb620faa4f86b52ac588bf6dac4151a",
+      "copied_sha256": "24ccfcb839703365400e5235d2d740978cb620faa4f86b52ac588bf6dac4151a"
+    },
+    {
+      "path": "tests/test_plasmate.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_plasmate.py",
+      "source_sha256": "b480055eece2e4ef3ba0243f6bd089de321c387f5469c09abcc8397e3e16fccc",
+      "copied_sha256": "b480055eece2e4ef3ba0243f6bd089de321c387f5469c09abcc8397e3e16fccc"
+    },
+    {
+      "path": "tests/test_scrape_do.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_scrape_do.py",
+      "source_sha256": "33fef1c2d42fcbd330eccecdf8580bea4665157249abfafff311092d8bae892a",
+      "copied_sha256": "33fef1c2d42fcbd330eccecdf8580bea4665157249abfafff311092d8bae892a"
+    },
+    {
+      "path": "tests/test_script_creator_multi_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_script_creator_multi_graph.py",
+      "source_sha256": "55f6d84489e83f4dc6eb2ecc68b6fe0cf454bd940120c6cb8698255e87814d18",
+      "copied_sha256": "55f6d84489e83f4dc6eb2ecc68b6fe0cf454bd940120c6cb8698255e87814d18"
+    },
+    {
+      "path": "tests/test_search_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_search_graph.py",
+      "source_sha256": "d0b875104968fedcd3a2369df8d8bb18e472eb051eaf2283cfb71dad0735e020",
+      "copied_sha256": "d0b875104968fedcd3a2369df8d8bb18e472eb051eaf2283cfb71dad0735e020"
+    },
+    {
+      "path": "tests/test_smart_scraper_multi_concat_graph.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_smart_scraper_multi_concat_graph.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/test_telemetry_flag.py",
+      "source": "reference/Scrapegraph-ai-main/tests/test_telemetry_flag.py",
+      "source_sha256": "1ed66316f44b7bdb780d29abb8ab21b2c65b16b31aa68309c74d9dda9dd2ecfe",
+      "copied_sha256": "1ed66316f44b7bdb780d29abb8ab21b2c65b16b31aa68309c74d9dda9dd2ecfe"
+    },
+    {
+      "path": "tests/utils/convert_to_md_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/convert_to_md_test.py",
+      "source_sha256": "d2e0698c07fb329abfb5dfc87bbd4552d24795e33b2e8b985c3285161af0b174",
+      "copied_sha256": "d2e0698c07fb329abfb5dfc87bbd4552d24795e33b2e8b985c3285161af0b174"
+    },
+    {
+      "path": "tests/utils/copy_utils_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/copy_utils_test.py",
+      "source_sha256": "a101061f86dee7deb5b1ade7b152ef36870525e01d99b3694d5b7973ec0c35f7",
+      "copied_sha256": "a101061f86dee7deb5b1ade7b152ef36870525e01d99b3694d5b7973ec0c35f7"
+    },
+    {
+      "path": "tests/utils/output_parser_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/output_parser_test.py",
+      "source_sha256": "7d9cd880465aeaeaaea6766c3c6b612e638462cc98985574b989d276f2572a1b",
+      "copied_sha256": "7d9cd880465aeaeaaea6766c3c6b612e638462cc98985574b989d276f2572a1b"
+    },
+    {
+      "path": "tests/utils/parse_state_keys_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/parse_state_keys_test.py",
+      "source_sha256": "ea767f5d33772e173d9281931085b2801c6c74e0dd4e8e8b0eac8faac7423958",
+      "copied_sha256": "ea767f5d33772e173d9281931085b2801c6c74e0dd4e8e8b0eac8faac7423958"
+    },
+    {
+      "path": "tests/utils/research_web_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/research_web_test.py",
+      "source_sha256": "4f8b58035f54daea4b0b5bbfd14e85b76e1bbc97f1e04ed5ae0d021d773b3f43",
+      "copied_sha256": "4f8b58035f54daea4b0b5bbfd14e85b76e1bbc97f1e04ed5ae0d021d773b3f43"
+    },
+    {
+      "path": "tests/utils/schema_transform_test.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/schema_transform_test.py",
+      "source_sha256": "b136bd4ceaf9a892c54563f7c4a358b9af281acb10c277101e7bb85ae5569255",
+      "copied_sha256": "b136bd4ceaf9a892c54563f7c4a358b9af281acb10c277101e7bb85ae5569255"
+    },
+    {
+      "path": "tests/utils/test_proxy_rotation.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/test_proxy_rotation.py",
+      "source_sha256": "7ac69a06e984fbf9d45d669447de8e2e4bd0de5d96208042ef681ca3d6802fc3",
+      "copied_sha256": "7ac69a06e984fbf9d45d669447de8e2e4bd0de5d96208042ef681ca3d6802fc3"
+    },
+    {
+      "path": "tests/utils/test_sys_dynamic_import.py",
+      "source": "reference/Scrapegraph-ai-main/tests/utils/test_sys_dynamic_import.py",
+      "source_sha256": "73c3c6200f5566f0c9bbeb782aa0894964edc1c9dd0c4c1569a2a118213378ea",
+      "copied_sha256": "73c3c6200f5566f0c9bbeb782aa0894964edc1c9dd0c4c1569a2a118213378ea"
+    },
+    {
+      "path": "examples/ScrapegraphAI_cookbook.ipynb",
+      "source": "reference/Scrapegraph-ai-main/examples/ScrapegraphAI_cookbook.ipynb",
+      "source_sha256": "bcbe9136e54392a9a2b75c74a0ea1e30d5fcc26cb7c1ac55ea3ab14378841817",
+      "copied_sha256": "bcbe9136e54392a9a2b75c74a0ea1e30d5fcc26cb7c1ac55ea3ab14378841817"
+    },
+    {
+      "path": "examples/code_generator_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/code_generator_graph/.env.example",
+      "source_sha256": "762c822099944e99fcde71839466a351f525de798243ca04ba57ed881a0c0917",
+      "copied_sha256": "762c822099944e99fcde71839466a351f525de798243ca04ba57ed881a0c0917"
+    },
+    {
+      "path": "examples/code_generator_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/code_generator_graph/README.md",
+      "source_sha256": "4c72a3102278bc657a8f3e66525a48532f8cf8aa73702414eda486c325e9120c",
+      "copied_sha256": "4c72a3102278bc657a8f3e66525a48532f8cf8aa73702414eda486c325e9120c"
+    },
+    {
+      "path": "examples/code_generator_graph/ollama/code_generator_graph_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/code_generator_graph/ollama/code_generator_graph_ollama.py",
+      "source_sha256": "b74f6ff68c9405bea0b42d6338eb21d77691090ce4f5c96d143318e559daca20",
+      "copied_sha256": "b74f6ff68c9405bea0b42d6338eb21d77691090ce4f5c96d143318e559daca20"
+    },
+    {
+      "path": "examples/code_generator_graph/openai/code_generator_graph_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/code_generator_graph/openai/code_generator_graph_openai.py",
+      "source_sha256": "b21abc245d3411413835c9a0e6becdb561380df93b9292ec8fe4890401d297c3",
+      "copied_sha256": "b21abc245d3411413835c9a0e6becdb561380df93b9292ec8fe4890401d297c3"
+    },
+    {
+      "path": "examples/csv_scraper_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/.env.example",
+      "source_sha256": "9920c3d1b8190ff2bb2ded00d6412a18cba79c59f7a0c916c498090fc24186d0",
+      "copied_sha256": "9920c3d1b8190ff2bb2ded00d6412a18cba79c59f7a0c916c498090fc24186d0"
+    },
+    {
+      "path": "examples/csv_scraper_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/README.md",
+      "source_sha256": "64be3083186fb886767bae208b66ca65265a6a6e129f6a73ca034de1ef9da91f",
+      "copied_sha256": "64be3083186fb886767bae208b66ca65265a6a6e129f6a73ca034de1ef9da91f"
+    },
+    {
+      "path": "examples/csv_scraper_graph/ollama/csv_scraper_graph_multi_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/ollama/csv_scraper_graph_multi_ollama.py",
+      "source_sha256": "500d0d93559c7a11ff906066a806d9b3644311adb4e42c210a8b405a0938b35b",
+      "copied_sha256": "500d0d93559c7a11ff906066a806d9b3644311adb4e42c210a8b405a0938b35b"
+    },
+    {
+      "path": "examples/csv_scraper_graph/ollama/csv_scraper_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/ollama/csv_scraper_ollama.py",
+      "source_sha256": "ade4f0e708af6c81e117edd6e63ce3abcfb3b383ebf454a3ccf3161d2e1a7564",
+      "copied_sha256": "ade4f0e708af6c81e117edd6e63ce3abcfb3b383ebf454a3ccf3161d2e1a7564"
+    },
+    {
+      "path": "examples/csv_scraper_graph/ollama/inputs/username.csv",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/ollama/inputs/username.csv",
+      "source_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+      "copied_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c"
+    },
+    {
+      "path": "examples/csv_scraper_graph/openai/csv_scraper_graph_multi_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/openai/csv_scraper_graph_multi_openai.py",
+      "source_sha256": "54321f0206b05137e8e746a0a0104cc35f051f9b536aeaa5adcc96b23f94167b",
+      "copied_sha256": "54321f0206b05137e8e746a0a0104cc35f051f9b536aeaa5adcc96b23f94167b"
+    },
+    {
+      "path": "examples/csv_scraper_graph/openai/csv_scraper_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/openai/csv_scraper_openai.py",
+      "source_sha256": "c95685026b38388bb403e6eba27e0cb88adec52e0696c9ead2383d3050988469",
+      "copied_sha256": "c95685026b38388bb403e6eba27e0cb88adec52e0696c9ead2383d3050988469"
+    },
+    {
+      "path": "examples/csv_scraper_graph/openai/inputs/username.csv",
+      "source": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/openai/inputs/username.csv",
+      "source_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+      "copied_sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c"
+    },
+    {
+      "path": "examples/custom_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/custom_graph/.env.example",
+      "source_sha256": "4c5e939b3b334c7af21cf2a225b2f1e77077528f92e6283cea9155a7af55de92",
+      "copied_sha256": "4c5e939b3b334c7af21cf2a225b2f1e77077528f92e6283cea9155a7af55de92"
+    },
+    {
+      "path": "examples/custom_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/custom_graph/README.md",
+      "source_sha256": "2d05e72507b2ce75ce9c1719fe00c497965f7a35b466dc691af02e606cf05af0",
+      "copied_sha256": "2d05e72507b2ce75ce9c1719fe00c497965f7a35b466dc691af02e606cf05af0"
+    },
+    {
+      "path": "examples/custom_graph/ollama/custom_graph_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/custom_graph/ollama/custom_graph_ollama.py",
+      "source_sha256": "c8437b9552a2875a920dcafcead7e73fb060a9ca843cf5ad62de0b45582d67ae",
+      "copied_sha256": "c8437b9552a2875a920dcafcead7e73fb060a9ca843cf5ad62de0b45582d67ae"
+    },
+    {
+      "path": "examples/custom_graph/openai/custom_graph_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/custom_graph/openai/custom_graph_openai.py",
+      "source_sha256": "a3394ee3150e0dc09e19caaba71f53881dc5b398ef3d12449561d02b69c333df",
+      "copied_sha256": "a3394ee3150e0dc09e19caaba71f53881dc5b398ef3d12449561d02b69c333df"
+    },
+    {
+      "path": "examples/depth_search_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/depth_search_graph/.env.example",
+      "source_sha256": "2ccfc8c5a0865686578c81645226422e8da8457ccb79f931f901e2894a036559",
+      "copied_sha256": "2ccfc8c5a0865686578c81645226422e8da8457ccb79f931f901e2894a036559"
+    },
+    {
+      "path": "examples/depth_search_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/depth_search_graph/README.md",
+      "source_sha256": "025f4e36c9495b1e5b6a9b813a66a401f1b7933cdded6de4440fe10a206070d8",
+      "copied_sha256": "025f4e36c9495b1e5b6a9b813a66a401f1b7933cdded6de4440fe10a206070d8"
+    },
+    {
+      "path": "examples/depth_search_graph/ollama/depth_search_graph_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/depth_search_graph/ollama/depth_search_graph_ollama.py",
+      "source_sha256": "f568a6bdd5838e43316694417af4b51c3c4975d3f1540d1e50d1406963394816",
+      "copied_sha256": "f568a6bdd5838e43316694417af4b51c3c4975d3f1540d1e50d1406963394816"
+    },
+    {
+      "path": "examples/depth_search_graph/openai/depth_search_graph_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/depth_search_graph/openai/depth_search_graph_openai.py",
+      "source_sha256": "8938068219585ccabbf1d4f7d2644a3313ef0efed8d14f177bca66b392edd282",
+      "copied_sha256": "8938068219585ccabbf1d4f7d2644a3313ef0efed8d14f177bca66b392edd282"
+    },
+    {
+      "path": "examples/document_scraper_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/.env.example",
+      "source_sha256": "d8c80dfb0cb671e1cfcf8af4ffe1155c960541f1112002bb0f84b5131198dd26",
+      "copied_sha256": "d8c80dfb0cb671e1cfcf8af4ffe1155c960541f1112002bb0f84b5131198dd26"
+    },
+    {
+      "path": "examples/document_scraper_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/README.md",
+      "source_sha256": "811c2ae10fb5ccf4ab57a7308d5fac8d9278f00c61f0425dad86f95a26ed6ed4",
+      "copied_sha256": "811c2ae10fb5ccf4ab57a7308d5fac8d9278f00c61f0425dad86f95a26ed6ed4"
+    },
+    {
+      "path": "examples/document_scraper_graph/ollama/document_scraper_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/ollama/document_scraper_ollama.py",
+      "source_sha256": "a8e9f0e2e28b1f0887badd730785d849ac66f4555e5917e082dcbc92d8bdbb48",
+      "copied_sha256": "a8e9f0e2e28b1f0887badd730785d849ac66f4555e5917e082dcbc92d8bdbb48"
+    },
+    {
+      "path": "examples/document_scraper_graph/ollama/inputs/plain_html_example.txt",
+      "source": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/ollama/inputs/plain_html_example.txt",
+      "source_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+      "copied_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536"
+    },
+    {
+      "path": "examples/document_scraper_graph/openai/document_scraper_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/openai/document_scraper_openai.py",
+      "source_sha256": "716c23f349974ad1db9caebfb9417fe3979c47b52421e34dbe1b20f9ee91ed9e",
+      "copied_sha256": "716c23f349974ad1db9caebfb9417fe3979c47b52421e34dbe1b20f9ee91ed9e"
+    },
+    {
+      "path": "examples/document_scraper_graph/openai/inputs/markdown_example.md",
+      "source": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/openai/inputs/markdown_example.md",
+      "source_sha256": "f1a7c3b74ace0b7da4cc777bbcd69477cec4b5fa9cbc29b3b97a6052afeaab32",
+      "copied_sha256": "f1a7c3b74ace0b7da4cc777bbcd69477cec4b5fa9cbc29b3b97a6052afeaab32"
+    },
+    {
+      "path": "examples/document_scraper_graph/openai/inputs/plain_html_example.txt",
+      "source": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/openai/inputs/plain_html_example.txt",
+      "source_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+      "copied_sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536"
+    },
+    {
+      "path": "examples/extras/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/.env.example",
+      "source_sha256": "472c1eeb7647cb131decf4f2f14564b875289b261c32d781b51ac4be4814f601",
+      "copied_sha256": "472c1eeb7647cb131decf4f2f14564b875289b261c32d781b51ac4be4814f601"
+    },
+    {
+      "path": "examples/extras/Savedscreenshots/test_image.jpeg",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/Savedscreenshots/test_image.jpeg",
+      "source_sha256": "e6b48d7806ae310d3f23a118181c8db32d379e931d9613c12e977489ea6e54d7",
+      "copied_sha256": "e6b48d7806ae310d3f23a118181c8db32d379e931d9613c12e977489ea6e54d7"
+    },
+    {
+      "path": "examples/extras/authenticated_playwright.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/authenticated_playwright.py",
+      "source_sha256": "6fc7784e4c9a3b34bb18d0661c17ab24e9c36f84f3ec6d4dc0a598608568f7a5",
+      "copied_sha256": "6fc7784e4c9a3b34bb18d0661c17ab24e9c36f84f3ec6d4dc0a598608568f7a5"
+    },
+    {
+      "path": "examples/extras/browser_base_integration.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/browser_base_integration.py",
+      "source_sha256": "30e5999771d0acfa81487243cdfcae89b2291d3549e78b53cb85bd8ec6958ee7",
+      "copied_sha256": "30e5999771d0acfa81487243cdfcae89b2291d3549e78b53cb85bd8ec6958ee7"
+    },
+    {
+      "path": "examples/extras/chromium_selenium.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/chromium_selenium.py",
+      "source_sha256": "e2b76276c96cbec693efbc0eb284c91e3db40d8e57e067e3866bb77bb0973c0e",
+      "copied_sha256": "e2b76276c96cbec693efbc0eb284c91e3db40d8e57e067e3866bb77bb0973c0e"
+    },
+    {
+      "path": "examples/extras/cond_smartscraper_usage.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/cond_smartscraper_usage.py",
+      "source_sha256": "4bf4cbd47f6a7012c128bbe8ae0ab35b7872b6176a3636b676dbbf4481dc3652",
+      "copied_sha256": "4bf4cbd47f6a7012c128bbe8ae0ab35b7872b6176a3636b676dbbf4481dc3652"
+    },
+    {
+      "path": "examples/extras/conditional_usage.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/conditional_usage.py",
+      "source_sha256": "37c9f38d5cf275dbe425fbf3407621cfa1b4d9f290b0bd932d43c0c30a42c85e",
+      "copied_sha256": "37c9f38d5cf275dbe425fbf3407621cfa1b4d9f290b0bd932d43c0c30a42c85e"
+    },
+    {
+      "path": "examples/extras/custom_prompt.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/custom_prompt.py",
+      "source_sha256": "1dc4012ccca044bdd57eb0cd4c9d594c147604a880d3ea211bc99f097bc0e5be",
+      "copied_sha256": "1dc4012ccca044bdd57eb0cd4c9d594c147604a880d3ea211bc99f097bc0e5be"
+    },
+    {
+      "path": "examples/extras/example.yml",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/example.yml",
+      "source_sha256": "022bb309caf0f230a08fa5346c1a31067acf17b4bbc991df2c2c22254cef9556",
+      "copied_sha256": "022bb309caf0f230a08fa5346c1a31067acf17b4bbc991df2c2c22254cef9556"
+    },
+    {
+      "path": "examples/extras/force_mode.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/force_mode.py",
+      "source_sha256": "3fdfddcdeec008d3231467729b190e27164e873151ed9c3b06fa9cc9240580e1",
+      "copied_sha256": "3fdfddcdeec008d3231467729b190e27164e873151ed9c3b06fa9cc9240580e1"
+    },
+    {
+      "path": "examples/extras/html_mode.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/html_mode.py",
+      "source_sha256": "577647dcd693af9919021194c25b84af2f2a29bbf0bfce0490625c6a5b20dc56",
+      "copied_sha256": "577647dcd693af9919021194c25b84af2f2a29bbf0bfce0490625c6a5b20dc56"
+    },
+    {
+      "path": "examples/extras/load_yml.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/load_yml.py",
+      "source_sha256": "f1aa7ed530d4cee25a027e7130a0e69d88af72e963f49927cb62120589b21edb",
+      "copied_sha256": "f1aa7ed530d4cee25a027e7130a0e69d88af72e963f49927cb62120589b21edb"
+    },
+    {
+      "path": "examples/extras/no_cut.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/no_cut.py",
+      "source_sha256": "05db5483ef086d5573f0db5231e9871df93e6b67585bbea351163ac544c07dcf",
+      "copied_sha256": "05db5483ef086d5573f0db5231e9871df93e6b67585bbea351163ac544c07dcf"
+    },
+    {
+      "path": "examples/extras/proxy_rotation.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/proxy_rotation.py",
+      "source_sha256": "cfa66d5ae81343bd623745d876759bddf517c8c3d35f0676a05b54aae602f58a",
+      "copied_sha256": "cfa66d5ae81343bd623745d876759bddf517c8c3d35f0676a05b54aae602f58a"
+    },
+    {
+      "path": "examples/extras/rag_caching.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/rag_caching.py",
+      "source_sha256": "028fd3166b1c4f0abfd882b1ee998deaa08b07eb55eccaf404af78bd5e9b37a9",
+      "copied_sha256": "028fd3166b1c4f0abfd882b1ee998deaa08b07eb55eccaf404af78bd5e9b37a9"
+    },
+    {
+      "path": "examples/extras/reasoning.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/reasoning.py",
+      "source_sha256": "28e47d141be16655d64d3356026adca0591b63c0a27b61582837675c330f8078",
+      "copied_sha256": "28e47d141be16655d64d3356026adca0591b63c0a27b61582837675c330f8078"
+    },
+    {
+      "path": "examples/extras/scrape_do.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/scrape_do.py",
+      "source_sha256": "5a5534bac41e5627b582a0981acbee3b5aafaa982ca21b7fe36bb2af48f82c83",
+      "copied_sha256": "5a5534bac41e5627b582a0981acbee3b5aafaa982ca21b7fe36bb2af48f82c83"
+    },
+    {
+      "path": "examples/extras/screenshot_scaping.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/screenshot_scaping.py",
+      "source_sha256": "f51300aa64a63ece08383f284bfbb9d0a2a8494a652f79981767b5838938a03c",
+      "copied_sha256": "f51300aa64a63ece08383f284bfbb9d0a2a8494a652f79981767b5838938a03c"
+    },
+    {
+      "path": "examples/extras/serch_graph_scehma.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/serch_graph_scehma.py",
+      "source_sha256": "72687c82cd7075b9497566573b6b25456d2463905378df283e2ba5bcbb95e1fd",
+      "copied_sha256": "72687c82cd7075b9497566573b6b25456d2463905378df283e2ba5bcbb95e1fd"
+    },
+    {
+      "path": "examples/extras/slow_mo.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/slow_mo.py",
+      "source_sha256": "2acfc37e4623df627554c5f5b4594dab953ee4c4e142f0c02a0d93c45a2118a8",
+      "copied_sha256": "2acfc37e4623df627554c5f5b4594dab953ee4c4e142f0c02a0d93c45a2118a8"
+    },
+    {
+      "path": "examples/extras/undected_playwright.py",
+      "source": "reference/Scrapegraph-ai-main/examples/extras/undected_playwright.py",
+      "source_sha256": "4789bd5e34590a635a0679f8fca5f600e3184e3cdf411231d001d42c3b8e2313",
+      "copied_sha256": "4789bd5e34590a635a0679f8fca5f600e3184e3cdf411231d001d42c3b8e2313"
+    },
+    {
+      "path": "examples/json_scraper_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/.env.example",
+      "source_sha256": "57541bce238be50a69f0826658904ac845ebb1e39fbdbc082b9e66e35e4fea73",
+      "copied_sha256": "57541bce238be50a69f0826658904ac845ebb1e39fbdbc082b9e66e35e4fea73"
+    },
+    {
+      "path": "examples/json_scraper_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/README.md",
+      "source_sha256": "6fa5c6fef6948edba3ac9ca23c10428030f833233aa2e6761c3f35cc59e9b938",
+      "copied_sha256": "6fa5c6fef6948edba3ac9ca23c10428030f833233aa2e6761c3f35cc59e9b938"
+    },
+    {
+      "path": "examples/json_scraper_graph/ollama/inputs/example.json",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/ollama/inputs/example.json",
+      "source_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+      "copied_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51"
+    },
+    {
+      "path": "examples/json_scraper_graph/ollama/json_scraper_multi_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/ollama/json_scraper_multi_ollama.py",
+      "source_sha256": "7f45cbdd49487e0e32845420e9d9693507119d1cb8f9be6d5adf40d3fbfc3722",
+      "copied_sha256": "7f45cbdd49487e0e32845420e9d9693507119d1cb8f9be6d5adf40d3fbfc3722"
+    },
+    {
+      "path": "examples/json_scraper_graph/ollama/json_scraper_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/ollama/json_scraper_ollama.py",
+      "source_sha256": "f501132e13f34c08a1aa59dc33859a6e05b2dce5fd46552ccc8d60ad0d28aff5",
+      "copied_sha256": "f501132e13f34c08a1aa59dc33859a6e05b2dce5fd46552ccc8d60ad0d28aff5"
+    },
+    {
+      "path": "examples/json_scraper_graph/openai/inputs/example.json",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/inputs/example.json",
+      "source_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+      "copied_sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51"
+    },
+    {
+      "path": "examples/json_scraper_graph/openai/json_scraper_multi_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/json_scraper_multi_openai.py",
+      "source_sha256": "1dc1d97e33904080770d5b748181c6a2b14afb8c6b3116b3d8c7b223bc98b2b9",
+      "copied_sha256": "1dc1d97e33904080770d5b748181c6a2b14afb8c6b3116b3d8c7b223bc98b2b9"
+    },
+    {
+      "path": "examples/json_scraper_graph/openai/json_scraper_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/json_scraper_openai.py",
+      "source_sha256": "1f5943185fc1ad98542c3d659c49faa75557aa6a78febf231352745307a2d7ba",
+      "copied_sha256": "1f5943185fc1ad98542c3d659c49faa75557aa6a78febf231352745307a2d7ba"
+    },
+    {
+      "path": "examples/json_scraper_graph/openai/md_scraper_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/md_scraper_openai.py",
+      "source_sha256": "59330bca169061a43027a35c95366e278a3612b669800bd606c061b1b3067c71",
+      "copied_sha256": "59330bca169061a43027a35c95366e278a3612b669800bd606c061b1b3067c71"
+    },
+    {
+      "path": "examples/json_scraper_graph/openai/omni_scraper_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/omni_scraper_openai.py",
+      "source_sha256": "08f80b16cc4925898506c843e733d39c57e786bf4f029150ba7e15557b307be9",
+      "copied_sha256": "08f80b16cc4925898506c843e733d39c57e786bf4f029150ba7e15557b307be9"
+    },
+    {
+      "path": "examples/markdownify/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/markdownify/.env.example",
+      "source_sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0",
+      "copied_sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0"
+    },
+    {
+      "path": "examples/markdownify/markdownify_scrapegraphai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/markdownify/markdownify_scrapegraphai.py",
+      "source_sha256": "7a31baac8f8cc16698bb875425513644855f5e7605d2c947fce3801ff04d787f",
+      "copied_sha256": "7a31baac8f8cc16698bb875425513644855f5e7605d2c947fce3801ff04d787f"
+    },
+    {
+      "path": "examples/markdownify/markdownify_scrapegraphai_v3.py",
+      "source": "reference/Scrapegraph-ai-main/examples/markdownify/markdownify_scrapegraphai_v3.py",
+      "source_sha256": "558f4f8119599e087387f381c66fd4f5f688a8087dd44537445f804a70639ffb",
+      "copied_sha256": "558f4f8119599e087387f381c66fd4f5f688a8087dd44537445f804a70639ffb"
+    },
+    {
+      "path": "examples/markdownify/readme.md",
+      "source": "reference/Scrapegraph-ai-main/examples/markdownify/readme.md",
+      "source_sha256": "ac2c05e8bd3147ad80057853971fa27aa76d01ce26d8dcc793051f90aa239718",
+      "copied_sha256": "ac2c05e8bd3147ad80057853971fa27aa76d01ce26d8dcc793051f90aa239718"
+    },
+    {
+      "path": "examples/omni_scraper_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/omni_scraper_graph/.env.example",
+      "source_sha256": "8c4b542535688e508cf7f19cf7626d2304420c0da9217e2566b3cdfd96bd3da4",
+      "copied_sha256": "8c4b542535688e508cf7f19cf7626d2304420c0da9217e2566b3cdfd96bd3da4"
+    },
+    {
+      "path": "examples/omni_scraper_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/omni_scraper_graph/README.md",
+      "source_sha256": "453e55542af81cd53494370587fc0c5030374c1dd1a3dd58d7fe32f0cdea7fcb",
+      "copied_sha256": "453e55542af81cd53494370587fc0c5030374c1dd1a3dd58d7fe32f0cdea7fcb"
+    },
+    {
+      "path": "examples/omni_scraper_graph/omni_search_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/omni_scraper_graph/omni_search_openai.py",
+      "source_sha256": "0969f90e7f325c7ee22491b2f033291bc7914633ec85e873ff0840a32c4af2ff",
+      "copied_sha256": "0969f90e7f325c7ee22491b2f033291bc7914633ec85e873ff0840a32c4af2ff"
+    },
+    {
+      "path": "examples/readme.md",
+      "source": "reference/Scrapegraph-ai-main/examples/readme.md",
+      "source_sha256": "6c38dba99840f7a699774dd40fad9897c43249bffc4152a12ed4ea86927d0e10",
+      "copied_sha256": "6c38dba99840f7a699774dd40fad9897c43249bffc4152a12ed4ea86927d0e10"
+    },
+    {
+      "path": "examples/script_generator_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/script_generator_graph/.env.example",
+      "source_sha256": "e83b47dafc28dd77b2555d1deabfd31062da6e8f9abb82dc44fbfa504e81f60a",
+      "copied_sha256": "e83b47dafc28dd77b2555d1deabfd31062da6e8f9abb82dc44fbfa504e81f60a"
+    },
+    {
+      "path": "examples/script_generator_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/script_generator_graph/README.md",
+      "source_sha256": "67940d5f6ef9051794e5ca0baa127373b2b67287b925f45cc8635022d48614aa",
+      "copied_sha256": "67940d5f6ef9051794e5ca0baa127373b2b67287b925f45cc8635022d48614aa"
+    },
+    {
+      "path": "examples/script_generator_graph/ollama/script_generator_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/script_generator_graph/ollama/script_generator_ollama.py",
+      "source_sha256": "819900d0c84986fb9313fabd1f1634d6aa4e859f87850c01a77d1f95ed56aefc",
+      "copied_sha256": "819900d0c84986fb9313fabd1f1634d6aa4e859f87850c01a77d1f95ed56aefc"
+    },
+    {
+      "path": "examples/script_generator_graph/ollama/script_multi_generator_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/script_generator_graph/ollama/script_multi_generator_ollama.py",
+      "source_sha256": "118679b0bb14bd3300d8fdf1bf933878a66720324636708750b00ec76c96ebfd",
+      "copied_sha256": "118679b0bb14bd3300d8fdf1bf933878a66720324636708750b00ec76c96ebfd"
+    },
+    {
+      "path": "examples/script_generator_graph/openai/script_generator_multi_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/script_generator_graph/openai/script_generator_multi_openai.py",
+      "source_sha256": "2cee3bf8edec4ee1d844deda7a0ce55ef74263ed378d40d7da2712d1d30301fb",
+      "copied_sha256": "2cee3bf8edec4ee1d844deda7a0ce55ef74263ed378d40d7da2712d1d30301fb"
+    },
+    {
+      "path": "examples/script_generator_graph/openai/script_generator_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/script_generator_graph/openai/script_generator_openai.py",
+      "source_sha256": "26ca670c6d8941867f3081e61d75164092075575d2568446899c919b31e10ba1",
+      "copied_sha256": "26ca670c6d8941867f3081e61d75164092075575d2568446899c919b31e10ba1"
+    },
+    {
+      "path": "examples/script_generator_graph/openai/script_generator_schema_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/script_generator_graph/openai/script_generator_schema_openai.py",
+      "source_sha256": "81ef47a62db479f415f21b398b113470d41cc67243d2c371a3f35909cb172975",
+      "copied_sha256": "81ef47a62db479f415f21b398b113470d41cc67243d2c371a3f35909cb172975"
+    },
+    {
+      "path": "examples/search_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/.env.example",
+      "source_sha256": "acae0b2c1784a7855a7d4fff58d2911e664758561edcb5b13d63d22905e714a8",
+      "copied_sha256": "acae0b2c1784a7855a7d4fff58d2911e664758561edcb5b13d63d22905e714a8"
+    },
+    {
+      "path": "examples/search_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/README.md",
+      "source_sha256": "89079fc39044acf7280eb6a4ed3638cbb8a0da2c185fa2003ad35d184bccca03",
+      "copied_sha256": "89079fc39044acf7280eb6a4ed3638cbb8a0da2c185fa2003ad35d184bccca03"
+    },
+    {
+      "path": "examples/search_graph/ollama/search_graph_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/ollama/search_graph_ollama.py",
+      "source_sha256": "2cee7fedb8fa6eef8eccf4fb1d4114d4dbf27f64d7edceafc72f9cb39dd0b78e",
+      "copied_sha256": "2cee7fedb8fa6eef8eccf4fb1d4114d4dbf27f64d7edceafc72f9cb39dd0b78e"
+    },
+    {
+      "path": "examples/search_graph/ollama/search_graph_schema_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/ollama/search_graph_schema_ollama.py",
+      "source_sha256": "f90378c5b2dbb8a0862f92cdda10e756d918015ea04ee73da381818285dc403d",
+      "copied_sha256": "f90378c5b2dbb8a0862f92cdda10e756d918015ea04ee73da381818285dc403d"
+    },
+    {
+      "path": "examples/search_graph/openai/search_graph_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/openai/search_graph_openai.py",
+      "source_sha256": "853a8fdd36ea3e4d289696bd535a3ae479376f7154983334d81a5d09fa4abe42",
+      "copied_sha256": "853a8fdd36ea3e4d289696bd535a3ae479376f7154983334d81a5d09fa4abe42"
+    },
+    {
+      "path": "examples/search_graph/openai/search_graph_schema_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/openai/search_graph_schema_openai.py",
+      "source_sha256": "1f1fbdeb953defd5e486bc76a94b998acc72618c85f9877acd8d385bfe9f8af4",
+      "copied_sha256": "1f1fbdeb953defd5e486bc76a94b998acc72618c85f9877acd8d385bfe9f8af4"
+    },
+    {
+      "path": "examples/search_graph/openai/search_link_graph_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/openai/search_link_graph_openai.py",
+      "source_sha256": "1b0a4e6f65d0b86dc4e80402d5b82deba4388bca4800d1caee84068660eb01b9",
+      "copied_sha256": "1b0a4e6f65d0b86dc4e80402d5b82deba4388bca4800d1caee84068660eb01b9"
+    },
+    {
+      "path": "examples/search_graph/scrapegraphai/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/.env.example",
+      "source_sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0",
+      "copied_sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0"
+    },
+    {
+      "path": "examples/search_graph/scrapegraphai/readme.md",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/readme.md",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "examples/search_graph/scrapegraphai/searchscraper_scrapegraphai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/searchscraper_scrapegraphai.py",
+      "source_sha256": "9fc8497180dd639115cd54d7746ddcc17cab4d71fa180ee73cc83318e1214960",
+      "copied_sha256": "9fc8497180dd639115cd54d7746ddcc17cab4d71fa180ee73cc83318e1214960"
+    },
+    {
+      "path": "examples/search_graph/scrapegraphai/searchscraper_scrapegraphai_v3.py",
+      "source": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/searchscraper_scrapegraphai_v3.py",
+      "source_sha256": "802486e460823d7c615008499e63cf274b5e8111bdff92d209b52a4689b9ec8c",
+      "copied_sha256": "802486e460823d7c615008499e63cf274b5e8111bdff92d209b52a4689b9ec8c"
+    },
+    {
+      "path": "examples/smart_scraper_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/.env.example",
+      "source_sha256": "7a9f6944bba31dbad1b4a79b455b4dae481a9a05ce5a3e07814006b51e20f7f9",
+      "copied_sha256": "7a9f6944bba31dbad1b4a79b455b4dae481a9a05ce5a3e07814006b51e20f7f9"
+    },
+    {
+      "path": "examples/smart_scraper_graph/nvidia/smart_scraper_nvidia.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/nvidia/smart_scraper_nvidia.py",
+      "source_sha256": "6d22b49d31948d4dd67d524e3d44169124117bc53cc3a7c970b56173f20d321c",
+      "copied_sha256": "6d22b49d31948d4dd67d524e3d44169124117bc53cc3a7c970b56173f20d321c"
+    },
+    {
+      "path": "examples/smart_scraper_graph/ollama/smart_scraper_lite_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_lite_ollama.py",
+      "source_sha256": "8d4915533b1a49c709ce18d76fd13053d71d1cd20afdef5fb4ea2704f59a8a07",
+      "copied_sha256": "8d4915533b1a49c709ce18d76fd13053d71d1cd20afdef5fb4ea2704f59a8a07"
+    },
+    {
+      "path": "examples/smart_scraper_graph/ollama/smart_scraper_multi_concat_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_multi_concat_ollama.py",
+      "source_sha256": "98c16f5618c5712fd487c45e290d7a6634f5ed070073bd3e6dd48747da7063b2",
+      "copied_sha256": "98c16f5618c5712fd487c45e290d7a6634f5ed070073bd3e6dd48747da7063b2"
+    },
+    {
+      "path": "examples/smart_scraper_graph/ollama/smart_scraper_multi_lite_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_multi_lite_ollama.py",
+      "source_sha256": "7b43567d7e03fde25ef1cc2dbf135919af5b878352d6ef52112e5838d93aec4a",
+      "copied_sha256": "7b43567d7e03fde25ef1cc2dbf135919af5b878352d6ef52112e5838d93aec4a"
+    },
+    {
+      "path": "examples/smart_scraper_graph/ollama/smart_scraper_multi_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_multi_ollama.py",
+      "source_sha256": "22cbaa686e5752e9b3fde31fba3236452f6f1a8721088813ee5f0895c45ea537",
+      "copied_sha256": "22cbaa686e5752e9b3fde31fba3236452f6f1a8721088813ee5f0895c45ea537"
+    },
+    {
+      "path": "examples/smart_scraper_graph/ollama/smart_scraper_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_ollama.py",
+      "source_sha256": "80f8b3b01ce33dc82e4a80b3984cf34fc1344eddbe5bf8149fc2795cb9980f0c",
+      "copied_sha256": "80f8b3b01ce33dc82e4a80b3984cf34fc1344eddbe5bf8149fc2795cb9980f0c"
+    },
+    {
+      "path": "examples/smart_scraper_graph/ollama/smart_scraper_schema_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_schema_ollama.py",
+      "source_sha256": "d0cd3fb0bddabb4c5a32ae33de973041a019f6c0ead736d44ef7ee587d9ac5c5",
+      "copied_sha256": "d0cd3fb0bddabb4c5a32ae33de973041a019f6c0ead736d44ef7ee587d9ac5c5"
+    },
+    {
+      "path": "examples/smart_scraper_graph/openai/smart_scraper_lite_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_lite_openai.py",
+      "source_sha256": "ceb752e3d1d3a322263127abd5060eb7bd5a708b8ec64d9b857b374ca4fb86ac",
+      "copied_sha256": "ceb752e3d1d3a322263127abd5060eb7bd5a708b8ec64d9b857b374ca4fb86ac"
+    },
+    {
+      "path": "examples/smart_scraper_graph/openai/smart_scraper_multi_concat_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_multi_concat_openai.py",
+      "source_sha256": "d27ab4083f10fff8737e20d23e8831dd86717421768919eed93249aa6bd08b2b",
+      "copied_sha256": "d27ab4083f10fff8737e20d23e8831dd86717421768919eed93249aa6bd08b2b"
+    },
+    {
+      "path": "examples/smart_scraper_graph/openai/smart_scraper_multi_lite_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_multi_lite_openai.py",
+      "source_sha256": "51efc2abf04d1116eceb35aa8033f6f7c224f924057cd7fc0dff1d437e2a47c9",
+      "copied_sha256": "51efc2abf04d1116eceb35aa8033f6f7c224f924057cd7fc0dff1d437e2a47c9"
+    },
+    {
+      "path": "examples/smart_scraper_graph/openai/smart_scraper_multi_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_multi_openai.py",
+      "source_sha256": "4665b20ead6dc0ec8aa73f9cf3311951f3f2d709df59dbbd1637f02e90e3cdd6",
+      "copied_sha256": "4665b20ead6dc0ec8aa73f9cf3311951f3f2d709df59dbbd1637f02e90e3cdd6"
+    },
+    {
+      "path": "examples/smart_scraper_graph/openai/smart_scraper_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_openai.py",
+      "source_sha256": "6bc5097fb82b13590e8ef186e4d1fda718e29d4150e2c9cfc224d544b57172e9",
+      "copied_sha256": "6bc5097fb82b13590e8ef186e4d1fda718e29d4150e2c9cfc224d544b57172e9"
+    },
+    {
+      "path": "examples/smart_scraper_graph/openai/smart_scraper_schema_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_schema_openai.py",
+      "source_sha256": "7386dd48b47d99393b544b3b68a0490798a004549a86e97ef57d7d185c6e6871",
+      "copied_sha256": "7386dd48b47d99393b544b3b68a0490798a004549a86e97ef57d7d185c6e6871"
+    },
+    {
+      "path": "examples/smart_scraper_graph/scrapegraphai/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/.env.example",
+      "source_sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0",
+      "copied_sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0"
+    },
+    {
+      "path": "examples/smart_scraper_graph/scrapegraphai/readme.md",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/readme.md",
+      "source_sha256": "65c8cf4ca006ceb6627391ccc7dab2655e562df1e970e2a13f095e56020b1919",
+      "copied_sha256": "65c8cf4ca006ceb6627391ccc7dab2655e562df1e970e2a13f095e56020b1919"
+    },
+    {
+      "path": "examples/smart_scraper_graph/scrapegraphai/smartscraper_scrapegraphai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/smartscraper_scrapegraphai.py",
+      "source_sha256": "33f644d5cbf269001621b18ab3e505668b58845ade03c9a5d8035051623a4285",
+      "copied_sha256": "33f644d5cbf269001621b18ab3e505668b58845ade03c9a5d8035051623a4285"
+    },
+    {
+      "path": "examples/smart_scraper_graph/scrapegraphai/smartscraper_scrapegraphai_v3.py",
+      "source": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/smartscraper_scrapegraphai_v3.py",
+      "source_sha256": "45c1acabd902368abde370109836404fa6133b677057f545341029b4b18cb8c8",
+      "copied_sha256": "45c1acabd902368abde370109836404fa6133b677057f545341029b4b18cb8c8"
+    },
+    {
+      "path": "examples/speech_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/speech_graph/.env.example",
+      "source_sha256": "1f787dc91c5382477925c5ebbfdbbcfed5651f7120fa954201a090ed8cff9c86",
+      "copied_sha256": "1f787dc91c5382477925c5ebbfdbbcfed5651f7120fa954201a090ed8cff9c86"
+    },
+    {
+      "path": "examples/speech_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/speech_graph/README.md",
+      "source_sha256": "c239a789b0fd668307142911d6e5ce5d517bc809390b73e7c3796cbee16fb1ee",
+      "copied_sha256": "c239a789b0fd668307142911d6e5ce5d517bc809390b73e7c3796cbee16fb1ee"
+    },
+    {
+      "path": "examples/speech_graph/speech_graph_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/speech_graph/speech_graph_openai.py",
+      "source_sha256": "8ba8026da3ee078c5453f3de48ee334a1437428f64f11c6306b64a81dd369b42",
+      "copied_sha256": "8ba8026da3ee078c5453f3de48ee334a1437428f64f11c6306b64a81dd369b42"
+    },
+    {
+      "path": "examples/xml_scraper_graph/.env.example",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/.env.example",
+      "source_sha256": "b840c35e79d15803fac7d5cbfc0624c2271b1ea083c1c0edcdf94fc62457d152",
+      "copied_sha256": "b840c35e79d15803fac7d5cbfc0624c2271b1ea083c1c0edcdf94fc62457d152"
+    },
+    {
+      "path": "examples/xml_scraper_graph/README.md",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/README.md",
+      "source_sha256": "2d3bcf9b2269f6e3e6568ff306b073d270dbdf6784d9ecd1831e9046a2c2508e",
+      "copied_sha256": "2d3bcf9b2269f6e3e6568ff306b073d270dbdf6784d9ecd1831e9046a2c2508e"
+    },
+    {
+      "path": "examples/xml_scraper_graph/ollama/inputs/books.xml",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/ollama/inputs/books.xml",
+      "source_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+      "copied_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e"
+    },
+    {
+      "path": "examples/xml_scraper_graph/ollama/xml_scraper_graph_multi_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/ollama/xml_scraper_graph_multi_ollama.py",
+      "source_sha256": "11cdddb08744512c402b1065dd81ff3f37fea40673d49089d4addc3b8dd23aae",
+      "copied_sha256": "11cdddb08744512c402b1065dd81ff3f37fea40673d49089d4addc3b8dd23aae"
+    },
+    {
+      "path": "examples/xml_scraper_graph/ollama/xml_scraper_ollama.py",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/ollama/xml_scraper_ollama.py",
+      "source_sha256": "bd88f63c0d08fc08b753b4da88acc1d4392346eb6cc5af77b9022a8e93e96f14",
+      "copied_sha256": "bd88f63c0d08fc08b753b4da88acc1d4392346eb6cc5af77b9022a8e93e96f14"
+    },
+    {
+      "path": "examples/xml_scraper_graph/openai/inputs/books.xml",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/openai/inputs/books.xml",
+      "source_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+      "copied_sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e"
+    },
+    {
+      "path": "examples/xml_scraper_graph/openai/xml_scraper_graph_multi_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/openai/xml_scraper_graph_multi_openai.py",
+      "source_sha256": "affea5a8b60aebcc83ff59ded3ba9d9aeb2dcfee5d1d507fe683a8de1c9e0d66",
+      "copied_sha256": "affea5a8b60aebcc83ff59ded3ba9d9aeb2dcfee5d1d507fe683a8de1c9e0d66"
+    },
+    {
+      "path": "examples/xml_scraper_graph/openai/xml_scraper_openai.py",
+      "source": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/openai/xml_scraper_openai.py",
+      "source_sha256": "e98e9a8e16c6bfbd876d0327090283964c796fe760e49970954fd1ce62091acf",
+      "copied_sha256": "e98e9a8e16c6bfbd876d0327090283964c796fe760e49970954fd1ce62091acf"
+    },
+    {
+      "path": "pyproject.toml",
+      "source": "reference/Scrapegraph-ai-main/pyproject.toml",
+      "source_sha256": "c88e138a741bcac006d58dd41303c4a68b48f925b929067af4b43c04bfd5b886",
+      "copied_sha256": "c88e138a741bcac006d58dd41303c4a68b48f925b929067af4b43c04bfd5b886"
+    },
+    {
+      "path": "README.md",
+      "source": "reference/Scrapegraph-ai-main/README.md",
+      "source_sha256": "f969db3320ffa997da79f49e1d209a293a311a566a59fa4b10292f51bb4397e1",
+      "copied_sha256": "f969db3320ffa997da79f49e1d209a293a311a566a59fa4b10292f51bb4397e1"
+    },
+    {
+      "path": "LICENSE",
+      "source": "reference/Scrapegraph-ai-main/LICENSE",
+      "source_sha256": "ce45663f0556aa000b5342d6f2825c0a9abda8dae2b9cee095feaaff5c94f9c9",
+      "copied_sha256": "ce45663f0556aa000b5342d6f2825c0a9abda8dae2b9cee095feaaff5c94f9c9"
+    },
+    {
+      "path": "pytest.ini",
+      "source": "reference/Scrapegraph-ai-main/pytest.ini",
+      "source_sha256": "6c3a08339288c9ef05c6a190eb3e888043c9c799d96cc6e2e089f42a79ec73e4",
+      "copied_sha256": "6c3a08339288c9ef05c6a190eb3e888043c9c799d96cc6e2e089f42a79ec73e4"
+    }
+  ],
+  "patches": [
+    {
+      "reason": "SKR-004: permanently disable external telemetry/home configuration writes, redact source/result/error logs, and defer optional utility/node imports.",
+      "files": [
+        {
+          "path": "scrapegraphai/telemetry/telemetry.py",
+          "sha256": "d97dc1df7ba67c2c9457e92db71d020a1cca5b2f6731952d4594470db6ed02fc"
+        },
+        {
+          "path": "scrapegraphai/nodes/fetch_node.py",
+          "sha256": "2dd2a14a36c5348800d3e5d08ba1f6a4cb2ba87315e231d3d6cdf9e8f4d4c5c4"
+        },
+        {
+          "path": "scrapegraphai/nodes/generate_answer_node.py",
+          "sha256": "4084bcd7c1a910b5cca7cefac3ab46f9f33994faccd497cfcc42fb85f401aa30"
+        },
+        {
+          "path": "scrapegraphai/graphs/base_graph.py",
+          "sha256": "542a5a577e57487ebea6c1d31bf4c1ac5cfcfd3e1f15c54e09c9d73486637c2e"
+        },
+        {
+          "path": "scrapegraphai/utils/__init__.py",
+          "sha256": "81b8d87eda95682ac9fad6a8a4b55904d4a8813553503d5e51029031329160d5"
+        },
+        {
+          "path": "scrapegraphai/nodes/__init__.py",
+          "sha256": "928dbc93581b71ac6a3c197c970e124d9f1e2a3d2932eb975012204c8159a1c6"
+        }
+      ]
+    },
+    {
+      "reason": "Remove unused network/thread/identifier imports after permanently disabling telemetry.",
+      "files": [
+        {
+          "path": "scrapegraphai/telemetry/telemetry.py",
+          "sha256": "5d0d6f0034e77ed2ae093ef75344d6fe1a1ad644b9084a62e5b43fc6033d68b7"
+        }
+      ]
+    },
+    {
+      "reason": "Format lazy export maps and remove unused exception bindings in redacted log branches.",
+      "files": [
+        {
+          "path": "scrapegraphai/utils/__init__.py",
+          "sha256": "f09a933d5536d41c7e64842dfd5793a3516ad01533c975ff3cbb78cce9b3dd38"
+        },
+        {
+          "path": "scrapegraphai/nodes/__init__.py",
+          "sha256": "c52942c9c8ecbb68f0ebfc11c71591983af8c71b0240aa1b093d9dd8b6dfdd96"
+        },
+        {
+          "path": "scrapegraphai/nodes/generate_answer_node.py",
+          "sha256": "d028bfadd9f3c22d9b60a0e362d05cf1a488ae22d6180fbad3f29533a823e918"
+        }
+      ]
+    },
+    {
+      "reason": "Load ChromiumLoader only in the browser-fetch branch so local-content extraction does not eagerly load browser/proxy dependencies.",
+      "files": [
+        {
+          "path": "scrapegraphai/nodes/fetch_node.py",
+          "sha256": "8fd152d0baade3212ddca914fd056f329ab2275a693fcdd664c3d1d731720a54"
+        }
+      ]
+    },
+    {
+      "reason": "SKR-004 regression fixtures: migrate removed community ChatOllama import to standalone provider, supply required model/dict schema, and match existing content merge input instead of obsolete context key. Original source test assertions otherwise preserved.",
+      "files": [
+        {
+          "path": "tests/test_generate_answer_node.py",
+          "sha256": "362b80fa1ff456ad201f784ac6469d2bd202583655358772b8ace2071b5577a3"
+        }
+      ]
+    },
+    {
+      "reason": "SKR044 test-only contract correction: validate minified optional-end-tag HTML through parsed complete body text and correct the original 21-character expectation to exact upstream20-character truncation. Pristine baseline failed these2 assertions; product never invokes level2. Original reference and engine code unchanged.",
+      "files": [
+        {
+          "path": "tests/test_cleanup_html.py",
+          "sha256": "36ad02271eb79d2891d86c2939cef1bcc5a18fed4e818b3d2457f2d3f4456679"
+        }
+      ]
+    }
+  ]
+}

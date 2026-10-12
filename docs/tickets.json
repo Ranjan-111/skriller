@@ -1,8 +1,8 @@
 {
   "version": "0.1",
   "created": "2026-10-12",
-  "status": "planning_only",
-  "implementation_status": "No product tickets have been implemented; test cases below are planned, not executed application tests.",
+  "status": "implementation_in_progress",
+  "implementation_status": "Per-ticket status and verification records are authoritative; planned test cases are not themselves passing tests.",
   "references": [
     "docs/PRD.md",
     "docs/TECH_STACK.md",
@@ -20,7 +20,7 @@
       "title": "Register supplied snapshots and import provenance",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "done",
       "estimate": "S",
       "depends_on": [],
       "requirements": [
@@ -43,14 +43,24 @@
           "scenario": "Missing licence or unregistered copied file",
           "expected": "distribution check fails"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-001.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.809007+00:00"
+      }
     },
     {
       "id": "SKR-002",
       "title": "Copy and package Scrapling source and baseline tests",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-001"
@@ -85,14 +95,24 @@
           "scenario": "Copied deterministic parser suite",
           "expected": "results match the recorded source baseline"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-002.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.816700+00:00"
+      }
     },
     {
       "id": "SKR-003",
       "title": "Copy and package Agent-Reach source and baseline tests",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-001"
@@ -124,14 +144,24 @@
           "scenario": "Channel contract and URL/redaction suites",
           "expected": "preserve baseline behaviour"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-003.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.821474+00:00"
+      }
     },
     {
       "id": "SKR-004",
       "title": "Copy and package ScrapeGraph-AI with telemetry isolation",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-001"
@@ -163,14 +193,24 @@
           "scenario": "Telemetry flag and generation tests",
           "expected": "adapted copies pass with redacted logs"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-004.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.826404+00:00"
+      }
     },
     {
       "id": "SKR-005",
       "title": "Resolve local source dependencies and lock runtime environments",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-002",
@@ -199,14 +239,24 @@
           "scenario": "Missing optional model/browser dependency",
           "expected": "capability disabled with explicit diagnostic"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-005.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.830961+00:00"
+      }
     },
     {
       "id": "SKR-006",
       "title": "Bootstrap web, API and local services",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-005"
@@ -231,14 +281,26 @@
           "scenario": "Local stack started with placeholders",
           "expected": "UI and API health render without paid provider calls"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-006-web.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Current complete local-stack smoke and object-volume wiring"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.852314+00:00"
+      }
     },
     {
       "id": "SKR-007",
       "title": "Create labelled fixtures and no-network test harness",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-001"
@@ -266,14 +328,24 @@
           "scenario": "Accidental outbound call in offline test",
           "expected": "test fails rather than accessing internet"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-007.md"
+        ],
+        "passed_checks": [
+          "Required scoped checks passed; see actual command/results in report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T10:06:39.470427+00:00"
+      }
     },
     {
       "id": "SKR-008",
       "title": "Set up ticket-level CI and artifact reporting",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-006",
@@ -300,14 +372,26 @@
           "scenario": "Live test skipped for absent credentials",
           "expected": "report says skipped, never passed"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-008.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Required queue/container CI checks"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.862662+00:00"
+      }
     },
     {
       "id": "SKR-009",
       "title": "Validate LinkedIn backend route and acquire missing implementation",
       "phase": "P0",
       "epic": "Source feasibility",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-003",
@@ -337,14 +421,26 @@
           "scenario": "Controlled discovery/read probe on selected route",
           "expected": "report actual fields, failures, time and access conditions"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-009.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Live LinkedIn route validation and isolated backend environment"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.867388+00:00"
+      }
     },
     {
       "id": "SKR-010",
       "title": "Validate Reddit route and acquire missing implementation",
       "phase": "P0",
       "epic": "Source feasibility",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-003",
@@ -374,14 +470,26 @@
           "scenario": "Controlled thread/search probe",
           "expected": "actual pagination, fields and access failures recorded"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-010.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Live Reddit validation and missing redistribution license"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.872051+00:00"
+      }
     },
     {
       "id": "SKR-011",
       "title": "Validate search coverage, operators and provider terms",
       "phase": "P0",
       "epic": "Source feasibility",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-007"
@@ -406,14 +514,26 @@
           "scenario": "Fixed query corpus",
           "expected": "coverage/yield and actual costs recorded without completeness claim"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-011.md"
+        ],
+        "passed_checks": [
+          "Scoped partial checks passed as reported"
+        ],
+        "remaining": [
+          "Live search corpus, billed costs, providerselection pendingcredentials"
+        ],
+        "recorded_at": "2026-10-12T10:14:02.509239+00:00"
+      }
     },
     {
       "id": "SKR-012",
       "title": "Validate cloud/local models against copied extraction code",
       "phase": "P0",
       "epic": "Source feasibility",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -445,14 +565,26 @@
           "scenario": "Same labelled inputs on selected models",
           "expected": "record accuracy, latency, calls and cost"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-012.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Broader model quality trials and hosted decision"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.876767+00:00"
+      }
     },
     {
       "id": "SKR-013",
       "title": "Verify Firebase identity on API requests",
       "phase": "P0",
       "epic": "Identity and storage",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-006",
@@ -478,14 +610,26 @@
           "scenario": "Expired token during stream reconnect",
           "expected": "user reauthenticates without leaked token"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-013.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Real Firebase sign-in verification"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.881239+00:00"
+      }
     },
     {
       "id": "SKR-014",
       "title": "Create workspaces, memberships and row-level isolation",
       "phase": "P0",
       "epic": "Identity and storage",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-013"
@@ -510,14 +654,24 @@
           "scenario": "Pooled connection reused for another workspace",
           "expected": "no prior tenant context leaks"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-014.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.835290+00:00"
+      }
     },
     {
       "id": "SKR-015",
       "title": "Persist conversations and immutable plan revisions",
       "phase": "P0",
       "epic": "Identity and storage",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-014"
@@ -543,14 +697,24 @@
           "scenario": "Cross-workspace conversation lookup",
           "expected": "unavailable"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-015.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.839634+00:00"
+      }
     },
     {
       "id": "SKR-016",
       "title": "Persist entities, evidence, claims and qualifications",
       "phase": "P0",
       "epic": "Identity and storage",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-014"
@@ -578,14 +742,24 @@
           "scenario": "Two contradictory role claims",
           "expected": "both stored with conflict status"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-016.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.843874+00:00"
+      }
     },
     {
       "id": "SKR-017",
       "title": "Persist jobs, attempts, events and usage records",
       "phase": "P0",
       "epic": "Identity and storage",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-014",
@@ -612,14 +786,24 @@
           "scenario": "Broker payload inspected",
           "expected": "no page body/session secret present"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-017.md"
+        ],
+        "passed_checks": [
+          "Scoped source/boundary/integration checks passed as recorded in linked report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T09:37:53.848096+00:00"
+      }
     },
     {
       "id": "SKR-018",
       "title": "Implement private evidence object storage",
       "phase": "P0",
       "epic": "Identity and storage",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-014",
@@ -646,14 +830,26 @@
           "scenario": "Oversized or expired blob",
           "expected": "rejected/unavailable with typed status"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-018.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Live private S3 storage verification"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.885566+00:00"
+      }
     },
     {
       "id": "SKR-019",
       "title": "Define typed plans, connector contexts and error schemas",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-015",
@@ -681,14 +877,25 @@
           "scenario": "Generated client schema differs from API",
           "expected": "check fails"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-019.md",
+          "docs/completions/SKR-021.md"
+        ],
+        "passed_checks": [
+          "Required scoped checks passed; actual dispatcher rejects invalid immutable plans before publication"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T10:14:02.496096+00:00"
+      }
     },
     {
       "id": "SKR-020",
       "title": "Implement canonical job state machine",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -714,14 +921,24 @@
           "scenario": "Limit reached with saved results",
           "expected": "partial state and reason preserved"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-020.md"
+        ],
+        "passed_checks": [
+          "Required scoped checks passed; see actual command/results in report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T10:06:39.478574+00:00"
+      }
     },
     {
       "id": "SKR-021",
       "title": "Dispatch jobs through transactional outbox",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -747,14 +964,26 @@
           "scenario": "Same idempotency key submitted twice",
           "expected": "one logical run"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-021.md"
+        ],
+        "passed_checks": [
+          "Scoped partial checks passed as reported"
+        ],
+        "remaining": [
+          "ActualRabbitMQ durable publication/confirm gate unavailable"
+        ],
+        "recorded_at": "2026-10-12T10:14:02.513975+00:00"
+      }
     },
     {
       "id": "SKR-022",
       "title": "Execute checkpointed idempotent worker stages",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "in_progress",
       "estimate": "M",
       "depends_on": [
         "SKR-021"
@@ -781,7 +1010,15 @@
           "scenario": "Lease owner disappears",
           "expected": "recovery resumes unfinished stage"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [],
+        "passed_checks": [],
+        "remaining": [
+          "Implementation and required verification in progress"
+        ],
+        "recorded_at": "2026-10-12T10:18:57.070379+00:00"
+      }
     },
     {
       "id": "SKR-023",
@@ -824,7 +1061,7 @@
       "title": "Reserve and reconcile job spending budgets",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -851,7 +1088,19 @@
           "scenario": "Provider timeout with possible charge",
           "expected": "ledger retains explicit estimated charge"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-024.md"
+        ],
+        "passed_checks": [
+          "Scoped partial checks passed as reported"
+        ],
+        "remaining": [
+          "Worker external-call reservation/reconciliation integration pending022"
+        ],
+        "recorded_at": "2026-10-12T10:14:02.518669+00:00"
+      }
     },
     {
       "id": "SKR-025",
@@ -894,7 +1143,7 @@
       "title": "Stream persisted progress with reconnect cursors",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-013",
@@ -921,14 +1170,25 @@
           "scenario": "Cross-tenant stream ID or token in query",
           "expected": "access rejected/no credential logging"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-026.md",
+          "docs/completions/SKR-019.md"
+        ],
+        "passed_checks": [
+          "4 real PostgreSQL/API tests including concurrent commit ordering; generated frontend progress transport checks passed"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T10:08:51.992960+00:00"
+      }
     },
     {
       "id": "SKR-027",
       "title": "Adapt public URL validation and network egress controls",
       "phase": "P0",
       "epic": "Source safety",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-003",
@@ -958,14 +1218,26 @@
           "scenario": "Browser page loads internal image/XHR target",
           "expected": "network layer denies it"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-027.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Actual isolated container network gate"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.890195+00:00"
+      }
     },
     {
       "id": "SKR-028",
       "title": "Adapt subprocess helpers into isolated backend runner",
       "phase": "P0",
       "epic": "Source safety",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-003",
@@ -995,7 +1267,19 @@
           "scenario": "Backend hangs/spawns child/overflows output",
           "expected": "bounded termination with typed failure"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-028.md"
+        ],
+        "passed_checks": [
+          "Partial checks recorded in report"
+        ],
+        "remaining": [
+          "Actual container runner gate"
+        ],
+        "recorded_at": "2026-10-12T09:37:53.894474+00:00"
+      }
     },
     {
       "id": "SKR-029",
@@ -1074,7 +1358,7 @@
       "title": "Adapt channel registry to typed product capabilities",
       "phase": "P0",
       "epic": "Discovery",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-003",
@@ -1102,7 +1386,17 @@
           "scenario": "Diagnostics-only channel asked to read",
           "expected": "explicit unsupported operation"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-031.md"
+        ],
+        "passed_checks": [
+          "Required scoped checks passed; see actual command/results in report"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T10:06:39.483363+00:00"
+      }
     },
     {
       "id": "SKR-032",
@@ -1475,7 +1769,7 @@
       "title": "Adapt copied adaptive storage to tenant/template scope",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-002",
@@ -1505,7 +1799,17 @@
           "scenario": "Same domain/selector in two workspaces",
           "expected": "fingerprints stay separate"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-042.md"
+        ],
+        "passed_checks": [
+          "39 checks including4real PostgreSQL tests; mypy/provenance passed"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T10:14:02.504203+00:00"
+      }
     },
     {
       "id": "SKR-043",
@@ -1547,7 +1851,7 @@
       "title": "Adapt copied HTML cleanup and chunking without evidence loss",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "planned",
+      "status": "in_progress",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -1577,7 +1881,15 @@
           "scenario": "Huge page/no body/malformed JSON",
           "expected": "controlled output and visible coverage limits"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [],
+        "passed_checks": [],
+        "remaining": [
+          "Implementation and required verification in progress"
+        ],
+        "recorded_at": "2026-10-12T10:18:57.078139+00:00"
+      }
     },
     {
       "id": "SKR-045",

@@ -1,0 +1,542 @@
+{
+  "project": "agent-reach",
+  "verified_upstream_commit": null,
+  "source_root": "reference/Agent-Reach-main",
+  "files": [
+    {
+      "path": "agent_reach/__init__.py",
+      "source": "reference/Agent-Reach-main/agent_reach/__init__.py",
+      "source_sha256": "46e5bdeb6202ac629098d931b49525adb85b859ba21ebde95ff0db27617e2ab4",
+      "copied_sha256": "46e5bdeb6202ac629098d931b49525adb85b859ba21ebde95ff0db27617e2ab4"
+    },
+    {
+      "path": "agent_reach/backends/__init__.py",
+      "source": "reference/Agent-Reach-main/agent_reach/backends/__init__.py",
+      "source_sha256": "3c4f9224d20b020b0e54bb539c707370cef59937d68c6a441797b5ae672d5667",
+      "copied_sha256": "3c4f9224d20b020b0e54bb539c707370cef59937d68c6a441797b5ae672d5667"
+    },
+    {
+      "path": "agent_reach/backends/opencli.py",
+      "source": "reference/Agent-Reach-main/agent_reach/backends/opencli.py",
+      "source_sha256": "7ef04df9bb739b23d0c80534a7a143e7ec982c1a0699af2f10708d8014876342",
+      "copied_sha256": "7ef04df9bb739b23d0c80534a7a143e7ec982c1a0699af2f10708d8014876342"
+    },
+    {
+      "path": "agent_reach/channels/__init__.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/__init__.py",
+      "source_sha256": "2f4630cc6a0b5b9d7a597aa02fb2d7f809cd171335c623b2f9bfdb28ec7b94f3",
+      "copied_sha256": "2f4630cc6a0b5b9d7a597aa02fb2d7f809cd171335c623b2f9bfdb28ec7b94f3"
+    },
+    {
+      "path": "agent_reach/channels/_opencli_site.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/_opencli_site.py",
+      "source_sha256": "f12896f94aa672bc8d4d08d7e51bbbc34cacbf0f12b4519f31447332cb5b945c",
+      "copied_sha256": "f12896f94aa672bc8d4d08d7e51bbbc34cacbf0f12b4519f31447332cb5b945c"
+    },
+    {
+      "path": "agent_reach/channels/base.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/base.py",
+      "source_sha256": "5eaa803fd593acb7bee8bb29ef33ef373f101ea1e346bc0a9a3b304efd2073c0",
+      "copied_sha256": "5eaa803fd593acb7bee8bb29ef33ef373f101ea1e346bc0a9a3b304efd2073c0"
+    },
+    {
+      "path": "agent_reach/channels/bilibili.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/bilibili.py",
+      "source_sha256": "0117e8055bf1b7acab3f1800104155b60fffa9bceacdc07c573cb0f1d691f64a",
+      "copied_sha256": "0117e8055bf1b7acab3f1800104155b60fffa9bceacdc07c573cb0f1d691f64a"
+    },
+    {
+      "path": "agent_reach/channels/boss.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/boss.py",
+      "source_sha256": "daa5496f163479314814022f13a2bd8949e3b851ea18e297d01e81de644f5e2d",
+      "copied_sha256": "daa5496f163479314814022f13a2bd8949e3b851ea18e297d01e81de644f5e2d"
+    },
+    {
+      "path": "agent_reach/channels/exa_search.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/exa_search.py",
+      "source_sha256": "63c85f659442a7d48704a9c8d9a67ad723cd24326344d565978a805ff5d647c6",
+      "copied_sha256": "63c85f659442a7d48704a9c8d9a67ad723cd24326344d565978a805ff5d647c6"
+    },
+    {
+      "path": "agent_reach/channels/facebook.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/facebook.py",
+      "source_sha256": "bf4760cfe0edcc8454404399eb133cd774b248fa208a9289c4daab6c2e3cbe63",
+      "copied_sha256": "bf4760cfe0edcc8454404399eb133cd774b248fa208a9289c4daab6c2e3cbe63"
+    },
+    {
+      "path": "agent_reach/channels/github.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/github.py",
+      "source_sha256": "442cc56755a4fa60ad6c8fad59ce4b703f1233a8bec3d2d19fb12ddd2a2f9d6f",
+      "copied_sha256": "442cc56755a4fa60ad6c8fad59ce4b703f1233a8bec3d2d19fb12ddd2a2f9d6f"
+    },
+    {
+      "path": "agent_reach/channels/instagram.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/instagram.py",
+      "source_sha256": "ea713be88caac5389c22a814da3f5b5e010ec53f531aaff2d7b459139f2ce731",
+      "copied_sha256": "ea713be88caac5389c22a814da3f5b5e010ec53f531aaff2d7b459139f2ce731"
+    },
+    {
+      "path": "agent_reach/channels/linkedin.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/linkedin.py",
+      "source_sha256": "7e752c083cc62c6750ea3ccfd3533182661ba1aad4f71fac1a3257d26b8adc47",
+      "copied_sha256": "7e752c083cc62c6750ea3ccfd3533182661ba1aad4f71fac1a3257d26b8adc47"
+    },
+    {
+      "path": "agent_reach/channels/mcporter.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/mcporter.py",
+      "source_sha256": "56a19db49d1a8abcc099adb37282af75d3cdbf2cfd5aa830aaffd1f7ae72b17c",
+      "copied_sha256": "56a19db49d1a8abcc099adb37282af75d3cdbf2cfd5aa830aaffd1f7ae72b17c"
+    },
+    {
+      "path": "agent_reach/channels/reddit.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/reddit.py",
+      "source_sha256": "5018079ee6752d9242dd96227afffe72c3267f0aa4a1b48c62745f000c401cf0",
+      "copied_sha256": "5018079ee6752d9242dd96227afffe72c3267f0aa4a1b48c62745f000c401cf0"
+    },
+    {
+      "path": "agent_reach/channels/rss.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/rss.py",
+      "source_sha256": "bb8d24e4705dd86abcf0ead333c19306df735fc54bb2d2c03390d5aa3614bbda",
+      "copied_sha256": "bb8d24e4705dd86abcf0ead333c19306df735fc54bb2d2c03390d5aa3614bbda"
+    },
+    {
+      "path": "agent_reach/channels/twitter.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/twitter.py",
+      "source_sha256": "97180dfbff13c3327309649b8a74668b534e642adeacb0cf170705e796ffe0c1",
+      "copied_sha256": "97180dfbff13c3327309649b8a74668b534e642adeacb0cf170705e796ffe0c1"
+    },
+    {
+      "path": "agent_reach/channels/v2ex.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/v2ex.py",
+      "source_sha256": "df334a13ba7004ce517b7046e7625211efbe0eb35a7f5db4551cc29254c4e662",
+      "copied_sha256": "df334a13ba7004ce517b7046e7625211efbe0eb35a7f5db4551cc29254c4e662"
+    },
+    {
+      "path": "agent_reach/channels/web.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/web.py",
+      "source_sha256": "d59271dcf9e2ab94f7ae927f0c1a13e9c4308b116de13e1a617a0c4582a7b8e3",
+      "copied_sha256": "d59271dcf9e2ab94f7ae927f0c1a13e9c4308b116de13e1a617a0c4582a7b8e3"
+    },
+    {
+      "path": "agent_reach/channels/xiaohongshu.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/xiaohongshu.py",
+      "source_sha256": "e323aed7163f048c32716e36f8a096b6bcded6424cf793ba544df6edca33ac6a",
+      "copied_sha256": "e323aed7163f048c32716e36f8a096b6bcded6424cf793ba544df6edca33ac6a"
+    },
+    {
+      "path": "agent_reach/channels/xiaoyuzhou.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/xiaoyuzhou.py",
+      "source_sha256": "bf7503e3c745d2d1de3421c7e55d555948890be2292420417c49b9c4033eae04",
+      "copied_sha256": "bf7503e3c745d2d1de3421c7e55d555948890be2292420417c49b9c4033eae04"
+    },
+    {
+      "path": "agent_reach/channels/xueqiu.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/xueqiu.py",
+      "source_sha256": "d9c03c3934ad2381f61a621d4a6dc57b439c0b16e506b275a8b9a944e6794ee9",
+      "copied_sha256": "d9c03c3934ad2381f61a621d4a6dc57b439c0b16e506b275a8b9a944e6794ee9"
+    },
+    {
+      "path": "agent_reach/channels/youtube.py",
+      "source": "reference/Agent-Reach-main/agent_reach/channels/youtube.py",
+      "source_sha256": "b7b9869dd732d65810b2699ccdf9c6c0e3aed2194bded9f7ccd3552b51607565",
+      "copied_sha256": "b7b9869dd732d65810b2699ccdf9c6c0e3aed2194bded9f7ccd3552b51607565"
+    },
+    {
+      "path": "agent_reach/cli.py",
+      "source": "reference/Agent-Reach-main/agent_reach/cli.py",
+      "source_sha256": "b7b104c7b4d207331aa4d0862cfd9c992dee7606e952ac55638c3396b69a374f",
+      "copied_sha256": "b7b104c7b4d207331aa4d0862cfd9c992dee7606e952ac55638c3396b69a374f"
+    },
+    {
+      "path": "agent_reach/config.py",
+      "source": "reference/Agent-Reach-main/agent_reach/config.py",
+      "source_sha256": "55c66ab71ed856f171aae6475edf4916005a0a39a4cbde1e630aa2be7b33cdf1",
+      "copied_sha256": "55c66ab71ed856f171aae6475edf4916005a0a39a4cbde1e630aa2be7b33cdf1"
+    },
+    {
+      "path": "agent_reach/cookie_extract.py",
+      "source": "reference/Agent-Reach-main/agent_reach/cookie_extract.py",
+      "source_sha256": "57ac723501fb980a6d9147a64b2b79dee13a5397b84f342e5619e8e7cf5de6ba",
+      "copied_sha256": "57ac723501fb980a6d9147a64b2b79dee13a5397b84f342e5619e8e7cf5de6ba"
+    },
+    {
+      "path": "agent_reach/core.py",
+      "source": "reference/Agent-Reach-main/agent_reach/core.py",
+      "source_sha256": "5ad4744d62276cb63a7ab0a678c2b2b1a4bb56a56b57bba18da5015f43f27d79",
+      "copied_sha256": "5ad4744d62276cb63a7ab0a678c2b2b1a4bb56a56b57bba18da5015f43f27d79"
+    },
+    {
+      "path": "agent_reach/doctor.py",
+      "source": "reference/Agent-Reach-main/agent_reach/doctor.py",
+      "source_sha256": "84bb212880e138eb404576162dffd4f2ced442d60a75694ed272e2fa750db851",
+      "copied_sha256": "84bb212880e138eb404576162dffd4f2ced442d60a75694ed272e2fa750db851"
+    },
+    {
+      "path": "agent_reach/guides/setup-exa.md",
+      "source": "reference/Agent-Reach-main/agent_reach/guides/setup-exa.md",
+      "source_sha256": "3671600cdbee522cb9ea4f6c2f9d4535bb0dbab347ffe14dbc9fcbe883a5c9dc",
+      "copied_sha256": "3671600cdbee522cb9ea4f6c2f9d4535bb0dbab347ffe14dbc9fcbe883a5c9dc"
+    },
+    {
+      "path": "agent_reach/guides/setup-groq.md",
+      "source": "reference/Agent-Reach-main/agent_reach/guides/setup-groq.md",
+      "source_sha256": "9bb9b04a20d895dcf8293b4f1588d5f4aed99d7fa3c1fb7ad9d30035405290cc",
+      "copied_sha256": "9bb9b04a20d895dcf8293b4f1588d5f4aed99d7fa3c1fb7ad9d30035405290cc"
+    },
+    {
+      "path": "agent_reach/guides/setup-reddit.md",
+      "source": "reference/Agent-Reach-main/agent_reach/guides/setup-reddit.md",
+      "source_sha256": "90fe5919b2b39fb5c88a73484143d68279abe14b0fb77612dd0015efecfa3f44",
+      "copied_sha256": "90fe5919b2b39fb5c88a73484143d68279abe14b0fb77612dd0015efecfa3f44"
+    },
+    {
+      "path": "agent_reach/guides/setup-twitter.md",
+      "source": "reference/Agent-Reach-main/agent_reach/guides/setup-twitter.md",
+      "source_sha256": "32f842e2703bd5f37522a2dd37dc876885452a46becd4796f209ef9e4956844c",
+      "copied_sha256": "32f842e2703bd5f37522a2dd37dc876885452a46becd4796f209ef9e4956844c"
+    },
+    {
+      "path": "agent_reach/guides/setup-xiaohongshu.md",
+      "source": "reference/Agent-Reach-main/agent_reach/guides/setup-xiaohongshu.md",
+      "source_sha256": "5db860c7ef7e955a441ebd7dcee9306bfce5476efaf712d292829cb2863c0758",
+      "copied_sha256": "5db860c7ef7e955a441ebd7dcee9306bfce5476efaf712d292829cb2863c0758"
+    },
+    {
+      "path": "agent_reach/integrations/__init__.py",
+      "source": "reference/Agent-Reach-main/agent_reach/integrations/__init__.py",
+      "source_sha256": "8b084a9f378124b2b1a51563bf3c22444eb7ff33692017da28b2136ae56987ed",
+      "copied_sha256": "8b084a9f378124b2b1a51563bf3c22444eb7ff33692017da28b2136ae56987ed"
+    },
+    {
+      "path": "agent_reach/integrations/mcp_server.py",
+      "source": "reference/Agent-Reach-main/agent_reach/integrations/mcp_server.py",
+      "source_sha256": "b113eeb6ebe64b3488be02058fd02642765c01d1c4495ceb1286de4d93b4a3fe",
+      "copied_sha256": "b113eeb6ebe64b3488be02058fd02642765c01d1c4495ceb1286de4d93b4a3fe"
+    },
+    {
+      "path": "agent_reach/probe.py",
+      "source": "reference/Agent-Reach-main/agent_reach/probe.py",
+      "source_sha256": "8f9c19ccda841b7a84647aa333536e85ca392e8f2c509cd12e50e49c85484a09",
+      "copied_sha256": "8f9c19ccda841b7a84647aa333536e85ca392e8f2c509cd12e50e49c85484a09"
+    },
+    {
+      "path": "agent_reach/scripts/transcribe_xiaoyuzhou.sh",
+      "source": "reference/Agent-Reach-main/agent_reach/scripts/transcribe_xiaoyuzhou.sh",
+      "source_sha256": "569317a6e5f24f84192067d951da93a50542fa14285d07557a3bbeb366bdc3fc",
+      "copied_sha256": "569317a6e5f24f84192067d951da93a50542fa14285d07557a3bbeb366bdc3fc"
+    },
+    {
+      "path": "agent_reach/skill/SKILL.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/SKILL.md",
+      "source_sha256": "0df9cd22ade17b77cc3698a14f1224c4aad9df5d533a1878dbe5df11b62f8377",
+      "copied_sha256": "0df9cd22ade17b77cc3698a14f1224c4aad9df5d533a1878dbe5df11b62f8377"
+    },
+    {
+      "path": "agent_reach/skill/SKILL_en.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/SKILL_en.md",
+      "source_sha256": "b0c2f6ed398921f6b61b9998a46af506c5732bed76bc8451e97d691ba91ab118",
+      "copied_sha256": "b0c2f6ed398921f6b61b9998a46af506c5732bed76bc8451e97d691ba91ab118"
+    },
+    {
+      "path": "agent_reach/skill/references/career.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/references/career.md",
+      "source_sha256": "ade444ac499e55f02c84bd663253a28cebc1eefc7f56c7248dc6792841fbe53e",
+      "copied_sha256": "ade444ac499e55f02c84bd663253a28cebc1eefc7f56c7248dc6792841fbe53e"
+    },
+    {
+      "path": "agent_reach/skill/references/dev.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/references/dev.md",
+      "source_sha256": "f6f91107557eacf1d28a023d597eb5a61353a8a6ede286c3c0a4888d274df9fe",
+      "copied_sha256": "f6f91107557eacf1d28a023d597eb5a61353a8a6ede286c3c0a4888d274df9fe"
+    },
+    {
+      "path": "agent_reach/skill/references/finance.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/references/finance.md",
+      "source_sha256": "c0cf89af1119d81890f6797ff9e8154a00ee08c17141e7d18c1b09658a916551",
+      "copied_sha256": "c0cf89af1119d81890f6797ff9e8154a00ee08c17141e7d18c1b09658a916551"
+    },
+    {
+      "path": "agent_reach/skill/references/search.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/references/search.md",
+      "source_sha256": "23bfc54a3b85847ac7c1e12d6dbb0913d6fa3bb89a706d79e2b36396a8a8ef5d",
+      "copied_sha256": "23bfc54a3b85847ac7c1e12d6dbb0913d6fa3bb89a706d79e2b36396a8a8ef5d"
+    },
+    {
+      "path": "agent_reach/skill/references/social.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/references/social.md",
+      "source_sha256": "e2e6451eb931effd4f63ea407fbb109bea1e98de34bd703c52753ad0cc7025b3",
+      "copied_sha256": "e2e6451eb931effd4f63ea407fbb109bea1e98de34bd703c52753ad0cc7025b3"
+    },
+    {
+      "path": "agent_reach/skill/references/video.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/references/video.md",
+      "source_sha256": "167ce732382c664eea63b884685dc085caa27cd69820138f7eeb91b0162efac8",
+      "copied_sha256": "167ce732382c664eea63b884685dc085caa27cd69820138f7eeb91b0162efac8"
+    },
+    {
+      "path": "agent_reach/skill/references/web.md",
+      "source": "reference/Agent-Reach-main/agent_reach/skill/references/web.md",
+      "source_sha256": "b238fc897975a693d7bb262600ca2ea69cd13a4892e870d346dbe375c880b303",
+      "copied_sha256": "b238fc897975a693d7bb262600ca2ea69cd13a4892e870d346dbe375c880b303"
+    },
+    {
+      "path": "agent_reach/transcribe.py",
+      "source": "reference/Agent-Reach-main/agent_reach/transcribe.py",
+      "source_sha256": "ffae0728d3426f67ca6748819fa49949d8eaeb96757f6687b5e4c691be98ee5e",
+      "copied_sha256": "ffae0728d3426f67ca6748819fa49949d8eaeb96757f6687b5e4c691be98ee5e"
+    },
+    {
+      "path": "agent_reach/utils/paths.py",
+      "source": "reference/Agent-Reach-main/agent_reach/utils/paths.py",
+      "source_sha256": "36ce072629bef1306004d7034676cad055ee53dc5dd78710437c9f3769b108ec",
+      "copied_sha256": "36ce072629bef1306004d7034676cad055ee53dc5dd78710437c9f3769b108ec"
+    },
+    {
+      "path": "agent_reach/utils/process.py",
+      "source": "reference/Agent-Reach-main/agent_reach/utils/process.py",
+      "source_sha256": "211c1e25c458373f02cb4a81e9e4146490c58073a97610e8b7800567aea00645",
+      "copied_sha256": "211c1e25c458373f02cb4a81e9e4146490c58073a97610e8b7800567aea00645"
+    },
+    {
+      "path": "agent_reach/utils/text.py",
+      "source": "reference/Agent-Reach-main/agent_reach/utils/text.py",
+      "source_sha256": "6faf82ba308cb300377a14de66207c88284a3f3372facd5bfc2a412fdb93f3ae",
+      "copied_sha256": "6faf82ba308cb300377a14de66207c88284a3f3372facd5bfc2a412fdb93f3ae"
+    },
+    {
+      "path": "agent_reach/utils/url.py",
+      "source": "reference/Agent-Reach-main/agent_reach/utils/url.py",
+      "source_sha256": "a5ad76ecc4ca641d497b01cc7e90f573c137d2e7acac4c45ade519b6a461e0e8",
+      "copied_sha256": "a5ad76ecc4ca641d497b01cc7e90f573c137d2e7acac4c45ade519b6a461e0e8"
+    },
+    {
+      "path": "tests/conftest.py",
+      "source": "reference/Agent-Reach-main/tests/conftest.py",
+      "source_sha256": "05a371f9d43cc87c5975a3526e78aaffa8046495a5647068587ce7f8a96c317e",
+      "copied_sha256": "05a371f9d43cc87c5975a3526e78aaffa8046495a5647068587ce7f8a96c317e"
+    },
+    {
+      "path": "tests/test_auth_guidance_policy.py",
+      "source": "reference/Agent-Reach-main/tests/test_auth_guidance_policy.py",
+      "source_sha256": "729590ee49eb4e5c2199a71bb71aff34a67d6a3d858710604d3e40fa37d90c85",
+      "copied_sha256": "729590ee49eb4e5c2199a71bb71aff34a67d6a3d858710604d3e40fa37d90c85"
+    },
+    {
+      "path": "tests/test_boss_channel.py",
+      "source": "reference/Agent-Reach-main/tests/test_boss_channel.py",
+      "source_sha256": "cf3f00ac1d94dc4d4614a96183060092b343e05fc3770c9aa2738ebfb02c4953",
+      "copied_sha256": "cf3f00ac1d94dc4d4614a96183060092b343e05fc3770c9aa2738ebfb02c4953"
+    },
+    {
+      "path": "tests/test_channel_contracts.py",
+      "source": "reference/Agent-Reach-main/tests/test_channel_contracts.py",
+      "source_sha256": "8c4e1fbd489e445c579e164e375606067ef1e045937cf1f87a92ddb528c65328",
+      "copied_sha256": "8c4e1fbd489e445c579e164e375606067ef1e045937cf1f87a92ddb528c65328"
+    },
+    {
+      "path": "tests/test_channels.py",
+      "source": "reference/Agent-Reach-main/tests/test_channels.py",
+      "source_sha256": "62c8f64ecdc7d2643d2a790b4d2de793eb3fa44d37c1679d72cf1cf44ded5bee",
+      "copied_sha256": "62c8f64ecdc7d2643d2a790b4d2de793eb3fa44d37c1679d72cf1cf44ded5bee"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "source": "reference/Agent-Reach-main/tests/test_cli.py",
+      "source_sha256": "a4af899e5a1402a263ac87854fa7f6a97ae5eb9de5a951161c25dffab7f598db",
+      "copied_sha256": "a4af899e5a1402a263ac87854fa7f6a97ae5eb9de5a951161c25dffab7f598db"
+    },
+    {
+      "path": "tests/test_config.py",
+      "source": "reference/Agent-Reach-main/tests/test_config.py",
+      "source_sha256": "77aba12f2a80af2f9eac5d8bae6ede814898b2d36421c50e1fb99a3e92af892c",
+      "copied_sha256": "77aba12f2a80af2f9eac5d8bae6ede814898b2d36421c50e1fb99a3e92af892c"
+    },
+    {
+      "path": "tests/test_cookie_extract_perms.py",
+      "source": "reference/Agent-Reach-main/tests/test_cookie_extract_perms.py",
+      "source_sha256": "f5094aa308f92210231a23ec6b17d882049bf7be80ab2804370eee0a70a5aed7",
+      "copied_sha256": "f5094aa308f92210231a23ec6b17d882049bf7be80ab2804370eee0a70a5aed7"
+    },
+    {
+      "path": "tests/test_cookie_security.py",
+      "source": "reference/Agent-Reach-main/tests/test_cookie_security.py",
+      "source_sha256": "eedde95fbcec1c27b7af9a2f2bd1edca41e7de22d7f976ef902dd15c92e5efd6",
+      "copied_sha256": "eedde95fbcec1c27b7af9a2f2bd1edca41e7de22d7f976ef902dd15c92e5efd6"
+    },
+    {
+      "path": "tests/test_core.py",
+      "source": "reference/Agent-Reach-main/tests/test_core.py",
+      "source_sha256": "b2564cf2b12dea75dfdbece04292414986fc07f606c6d8930c54c026328ec352",
+      "copied_sha256": "b2564cf2b12dea75dfdbece04292414986fc07f606c6d8930c54c026328ec352"
+    },
+    {
+      "path": "tests/test_doctor.py",
+      "source": "reference/Agent-Reach-main/tests/test_doctor.py",
+      "source_sha256": "c4f2252bab4ff473b1ae145002afb9b80e73667e463e2d91e4f2a01a69a71aae",
+      "copied_sha256": "c4f2252bab4ff473b1ae145002afb9b80e73667e463e2d91e4f2a01a69a71aae"
+    },
+    {
+      "path": "tests/test_doctor_credential_boundaries.py",
+      "source": "reference/Agent-Reach-main/tests/test_doctor_credential_boundaries.py",
+      "source_sha256": "c8e75e4eaa78604da1e214780aae91d91b6dba12f6ee60f59c0698e1267845db",
+      "copied_sha256": "c8e75e4eaa78604da1e214780aae91d91b6dba12f6ee60f59c0698e1267845db"
+    },
+    {
+      "path": "tests/test_home_isolation.py",
+      "source": "reference/Agent-Reach-main/tests/test_home_isolation.py",
+      "source_sha256": "81608b0455b622914cb67d2332cecced15be66877681c2d33a71f443a368772c",
+      "copied_sha256": "81608b0455b622914cb67d2332cecced15be66877681c2d33a71f443a368772c"
+    },
+    {
+      "path": "tests/test_integration_script.py",
+      "source": "reference/Agent-Reach-main/tests/test_integration_script.py",
+      "source_sha256": "09f427a04267e595d17c03d3d553027f408afd4df89ef10a4f370d6c8732c48b",
+      "copied_sha256": "09f427a04267e595d17c03d3d553027f408afd4df89ef10a4f370d6c8732c48b"
+    },
+    {
+      "path": "tests/test_mcp_server.py",
+      "source": "reference/Agent-Reach-main/tests/test_mcp_server.py",
+      "source_sha256": "9d89fa10be9a96df165c156f8c2ff5f6b4e87fbd62f02df0fc08e3c0d1237465",
+      "copied_sha256": "9d89fa10be9a96df165c156f8c2ff5f6b4e87fbd62f02df0fc08e3c0d1237465"
+    },
+    {
+      "path": "tests/test_mcporter_config.py",
+      "source": "reference/Agent-Reach-main/tests/test_mcporter_config.py",
+      "source_sha256": "2e6de51c357f052d3cb381f6342d5d343da56f0d5320de6244d697febc2a0ece",
+      "copied_sha256": "2e6de51c357f052d3cb381f6342d5d343da56f0d5320de6244d697febc2a0ece"
+    },
+    {
+      "path": "tests/test_opencli_backend.py",
+      "source": "reference/Agent-Reach-main/tests/test_opencli_backend.py",
+      "source_sha256": "1c0771e5f092acea443127fac541bc3166cc1777334b499dfd2af569e4f2f5d7",
+      "copied_sha256": "1c0771e5f092acea443127fac541bc3166cc1777334b499dfd2af569e4f2f5d7"
+    },
+    {
+      "path": "tests/test_opencode_skill.py",
+      "source": "reference/Agent-Reach-main/tests/test_opencode_skill.py",
+      "source_sha256": "7b567829b8b6d17805fcb7849d950f11ae5ee36dfd257849af896555c037aca5",
+      "copied_sha256": "7b567829b8b6d17805fcb7849d950f11ae5ee36dfd257849af896555c037aca5"
+    },
+    {
+      "path": "tests/test_p0_cli.py",
+      "source": "reference/Agent-Reach-main/tests/test_p0_cli.py",
+      "source_sha256": "29fc78e1ee96ae21c294dd34708d218b361a32ae2bbdb60904f29345bdad22b7",
+      "copied_sha256": "29fc78e1ee96ae21c294dd34708d218b361a32ae2bbdb60904f29345bdad22b7"
+    },
+    {
+      "path": "tests/test_paths.py",
+      "source": "reference/Agent-Reach-main/tests/test_paths.py",
+      "source_sha256": "21488c38056ffb5179de386b4bf75cff75a92678cc3e98e12675e506d5b5a6c9",
+      "copied_sha256": "21488c38056ffb5179de386b4bf75cff75a92678cc3e98e12675e506d5b5a6c9"
+    },
+    {
+      "path": "tests/test_private_file_writes.py",
+      "source": "reference/Agent-Reach-main/tests/test_private_file_writes.py",
+      "source_sha256": "319a3eb2f42b1e7181bbac14f6b1cddb5859dd9eb8a590a98fcf0d26ab32442a",
+      "copied_sha256": "319a3eb2f42b1e7181bbac14f6b1cddb5859dd9eb8a590a98fcf0d26ab32442a"
+    },
+    {
+      "path": "tests/test_probe.py",
+      "source": "reference/Agent-Reach-main/tests/test_probe.py",
+      "source_sha256": "f5ac8e2416b030c8c90122c2dcefc28373574cdd4196a684b4c071c251b4ebdb",
+      "copied_sha256": "f5ac8e2416b030c8c90122c2dcefc28373574cdd4196a684b4c071c251b4ebdb"
+    },
+    {
+      "path": "tests/test_process.py",
+      "source": "reference/Agent-Reach-main/tests/test_process.py",
+      "source_sha256": "089aebe4f6f5fdcac4e8acadeb600b71b52d431519778e4311810acc1a922698",
+      "copied_sha256": "089aebe4f6f5fdcac4e8acadeb600b71b52d431519778e4311810acc1a922698"
+    },
+    {
+      "path": "tests/test_reddit_channel.py",
+      "source": "reference/Agent-Reach-main/tests/test_reddit_channel.py",
+      "source_sha256": "1717f4eef3c7657d3f01cf541a48a0e21d2c8d1d9edab9c2fde7c2ad9b009bfc",
+      "copied_sha256": "1717f4eef3c7657d3f01cf541a48a0e21d2c8d1d9edab9c2fde7c2ad9b009bfc"
+    },
+    {
+      "path": "tests/test_scrub_credentials.py",
+      "source": "reference/Agent-Reach-main/tests/test_scrub_credentials.py",
+      "source_sha256": "11be9f7c4c20e20209c2717455160c82059ae1d3a6d9f8bd92c0d146e3e4646c",
+      "copied_sha256": "11be9f7c4c20e20209c2717455160c82059ae1d3a6d9f8bd92c0d146e3e4646c"
+    },
+    {
+      "path": "tests/test_skill_command.py",
+      "source": "reference/Agent-Reach-main/tests/test_skill_command.py",
+      "source_sha256": "ebaa4d6262e7bb5c398a181e0e004dc3510c3eb09362dc87f1ca68afc2821332",
+      "copied_sha256": "ebaa4d6262e7bb5c398a181e0e004dc3510c3eb09362dc87f1ca68afc2821332"
+    },
+    {
+      "path": "tests/test_transcribe.py",
+      "source": "reference/Agent-Reach-main/tests/test_transcribe.py",
+      "source_sha256": "80ef6f2e756713ec5aa7fdc75618fbe1c903a7b67edf443b1d53bf26bbf03834",
+      "copied_sha256": "80ef6f2e756713ec5aa7fdc75618fbe1c903a7b67edf443b1d53bf26bbf03834"
+    },
+    {
+      "path": "tests/test_twitter_channel.py",
+      "source": "reference/Agent-Reach-main/tests/test_twitter_channel.py",
+      "source_sha256": "b5272d335f3b114395753a0349d1161ef66ba3d627c79538810e8593b36b764e",
+      "copied_sha256": "b5272d335f3b114395753a0349d1161ef66ba3d627c79538810e8593b36b764e"
+    },
+    {
+      "path": "tests/test_url_security.py",
+      "source": "reference/Agent-Reach-main/tests/test_url_security.py",
+      "source_sha256": "58bb118669cd26f2332010c351879ebf1b6faea93d0d7fb9ebb5c3d354086510",
+      "copied_sha256": "58bb118669cd26f2332010c351879ebf1b6faea93d0d7fb9ebb5c3d354086510"
+    },
+    {
+      "path": "tests/test_v2ex_channel.py",
+      "source": "reference/Agent-Reach-main/tests/test_v2ex_channel.py",
+      "source_sha256": "df9b15a4a88fdd2bd5bde11a2f49de44190b2e00bf5c00e50c8aec937bb889d3",
+      "copied_sha256": "df9b15a4a88fdd2bd5bde11a2f49de44190b2e00bf5c00e50c8aec937bb889d3"
+    },
+    {
+      "path": "tests/test_web_channel.py",
+      "source": "reference/Agent-Reach-main/tests/test_web_channel.py",
+      "source_sha256": "6625f9dcfb533fd912c487ad3ed00b0d624394b13f2487ccc0cae40c1b2ad70e",
+      "copied_sha256": "6625f9dcfb533fd912c487ad3ed00b0d624394b13f2487ccc0cae40c1b2ad70e"
+    },
+    {
+      "path": "tests/test_xhs_format.py",
+      "source": "reference/Agent-Reach-main/tests/test_xhs_format.py",
+      "source_sha256": "30b97ac442534369813ccc546d508b96208d7d934f3f8e64703ee47044ec8e93",
+      "copied_sha256": "30b97ac442534369813ccc546d508b96208d7d934f3f8e64703ee47044ec8e93"
+    },
+    {
+      "path": "tests/test_xiaoyuzhou_install.py",
+      "source": "reference/Agent-Reach-main/tests/test_xiaoyuzhou_install.py",
+      "source_sha256": "cf6493ea59d8b7b2188856c76063f33d479644459021335f5e01b9c897d4c394",
+      "copied_sha256": "cf6493ea59d8b7b2188856c76063f33d479644459021335f5e01b9c897d4c394"
+    },
+    {
+      "path": "tests/test_xueqiu_channel.py",
+      "source": "reference/Agent-Reach-main/tests/test_xueqiu_channel.py",
+      "source_sha256": "e95b01896b165c47ae5484d60aabaf8282d234635ab3b6983c6af0b4980552f2",
+      "copied_sha256": "e95b01896b165c47ae5484d60aabaf8282d234635ab3b6983c6af0b4980552f2"
+    },
+    {
+      "path": "tests/test_youtube_channel.py",
+      "source": "reference/Agent-Reach-main/tests/test_youtube_channel.py",
+      "source_sha256": "56c8a44cde4f09b7b6c531a061cc45c0cc6dd06350383ffcee031ad9f98adc6c",
+      "copied_sha256": "56c8a44cde4f09b7b6c531a061cc45c0cc6dd06350383ffcee031ad9f98adc6c"
+    },
+    {
+      "path": "pyproject.toml",
+      "source": "reference/Agent-Reach-main/pyproject.toml",
+      "source_sha256": "b74f8bcb8442e5386028f1aebb091861d6b230058fbed0d7000860ccc847534d",
+      "copied_sha256": "b74f8bcb8442e5386028f1aebb091861d6b230058fbed0d7000860ccc847534d"
+    },
+    {
+      "path": "README.md",
+      "source": "reference/Agent-Reach-main/README.md",
+      "source_sha256": "7b723bcd4e5992c37ad1c25c3a2badd89c723a105b787fde9d1aa19a215f7ff7",
+      "copied_sha256": "7b723bcd4e5992c37ad1c25c3a2badd89c723a105b787fde9d1aa19a215f7ff7"
+    },
+    {
+      "path": "LICENSE",
+      "source": "reference/Agent-Reach-main/LICENSE",
+      "source_sha256": "e94c131ac1c2f78cfd8f7e69da354c0ff58e4e54071697703d56856c036de402",
+      "copied_sha256": "e94c131ac1c2f78cfd8f7e69da354c0ff58e4e54071697703d56856c036de402"
+    }
+  ],
+  "patches": []
+}

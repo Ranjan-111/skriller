@@ -1,0 +1,770 @@
+{
+  "project": "scrapling",
+  "verified_upstream_commit": null,
+  "source_root": "reference/Scrapling-main",
+  "files": [
+    {
+      "path": "scrapling/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/__init__.py",
+      "source_sha256": "c77a1bb065a2a0f78296f3b555f2522af68aee7f9d8e6b6ecc5c393bb396ec88",
+      "copied_sha256": "c77a1bb065a2a0f78296f3b555f2522af68aee7f9d8e6b6ecc5c393bb396ec88"
+    },
+    {
+      "path": "scrapling/cli.py",
+      "source": "reference/Scrapling-main/scrapling/cli.py",
+      "source_sha256": "837f703cbf6be2b1b739d2b9a238d1127de2713fc13d02e8d566d1ae2d8c83da",
+      "copied_sha256": "837f703cbf6be2b1b739d2b9a238d1127de2713fc13d02e8d566d1ae2d8c83da"
+    },
+    {
+      "path": "scrapling/core/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/core/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "scrapling/core/_shell_signatures.py",
+      "source": "reference/Scrapling-main/scrapling/core/_shell_signatures.py",
+      "source_sha256": "aa97ee4b9ca4e2fdace233a8ad3b70704688e419e0f4213f66e8353d30d36e21",
+      "copied_sha256": "aa97ee4b9ca4e2fdace233a8ad3b70704688e419e0f4213f66e8353d30d36e21"
+    },
+    {
+      "path": "scrapling/core/_types.py",
+      "source": "reference/Scrapling-main/scrapling/core/_types.py",
+      "source_sha256": "c1b832625e8c4b10775cf130beb2ce8db82f9a3951abdeee23d6fe066fb9c5b9",
+      "copied_sha256": "c1b832625e8c4b10775cf130beb2ce8db82f9a3951abdeee23d6fe066fb9c5b9"
+    },
+    {
+      "path": "scrapling/core/ai.py",
+      "source": "reference/Scrapling-main/scrapling/core/ai.py",
+      "source_sha256": "201765f03189620e579c5c069c00e067a1ee484e3b13b2c4107beaf1125cf78a",
+      "copied_sha256": "201765f03189620e579c5c069c00e067a1ee484e3b13b2c4107beaf1125cf78a"
+    },
+    {
+      "path": "scrapling/core/custom_types.py",
+      "source": "reference/Scrapling-main/scrapling/core/custom_types.py",
+      "source_sha256": "1e128a2756953524ce835225f974a75149a29865fff2b26e0bc3394d3502c1ae",
+      "copied_sha256": "1e128a2756953524ce835225f974a75149a29865fff2b26e0bc3394d3502c1ae"
+    },
+    {
+      "path": "scrapling/core/mixins.py",
+      "source": "reference/Scrapling-main/scrapling/core/mixins.py",
+      "source_sha256": "bd27186629b5886edb45f69399513c1022275d2f89148040fae5d4019bd01160",
+      "copied_sha256": "bd27186629b5886edb45f69399513c1022275d2f89148040fae5d4019bd01160"
+    },
+    {
+      "path": "scrapling/core/shell.py",
+      "source": "reference/Scrapling-main/scrapling/core/shell.py",
+      "source_sha256": "4659ab62e8f4d73460ba9802d446df3185283ff862d66390a5554dfe0d868f40",
+      "copied_sha256": "4659ab62e8f4d73460ba9802d446df3185283ff862d66390a5554dfe0d868f40"
+    },
+    {
+      "path": "scrapling/core/storage.py",
+      "source": "reference/Scrapling-main/scrapling/core/storage.py",
+      "source_sha256": "e5792ebeebdd68743f4cd31a90526c8a4b6db892dc5f6fa09924850b42d179f3",
+      "copied_sha256": "e5792ebeebdd68743f4cd31a90526c8a4b6db892dc5f6fa09924850b42d179f3"
+    },
+    {
+      "path": "scrapling/core/translator.py",
+      "source": "reference/Scrapling-main/scrapling/core/translator.py",
+      "source_sha256": "d79a023ca8e821858be1525380a0b37d0542299b0da847edfed0fe921b5c1960",
+      "copied_sha256": "d79a023ca8e821858be1525380a0b37d0542299b0da847edfed0fe921b5c1960"
+    },
+    {
+      "path": "scrapling/core/utils/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/core/utils/__init__.py",
+      "source_sha256": "cb23051a9bfa9713a3710bf5ddb8b8a3a7ae8f0439e7f33713ee60dd1185f76b",
+      "copied_sha256": "cb23051a9bfa9713a3710bf5ddb8b8a3a7ae8f0439e7f33713ee60dd1185f76b"
+    },
+    {
+      "path": "scrapling/core/utils/_shell.py",
+      "source": "reference/Scrapling-main/scrapling/core/utils/_shell.py",
+      "source_sha256": "cdeb3bd4c9854eced5f5fd0916cb5a59c8d084a35937ac6fb29bb6f58550b517",
+      "copied_sha256": "cdeb3bd4c9854eced5f5fd0916cb5a59c8d084a35937ac6fb29bb6f58550b517"
+    },
+    {
+      "path": "scrapling/core/utils/_utils.py",
+      "source": "reference/Scrapling-main/scrapling/core/utils/_utils.py",
+      "source_sha256": "821e7c9e390a5d0ad7bbd67202aefc42221a3bf48f200f2f5674a0a3aa3b2d1c",
+      "copied_sha256": "821e7c9e390a5d0ad7bbd67202aefc42221a3bf48f200f2f5674a0a3aa3b2d1c"
+    },
+    {
+      "path": "scrapling/engines/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/engines/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "scrapling/engines/_browsers/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "scrapling/engines/_browsers/_base.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/_base.py",
+      "source_sha256": "2fae956e1f3af01ab738919f82dcfb238552846047fda2dd9cba6ed199f25aaa",
+      "copied_sha256": "2fae956e1f3af01ab738919f82dcfb238552846047fda2dd9cba6ed199f25aaa"
+    },
+    {
+      "path": "scrapling/engines/_browsers/_config_tools.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/_config_tools.py",
+      "source_sha256": "fbfbe21a57dee0f93d12934d405cba0f13c2f3dbf1f2d3803f73d71666a146f7",
+      "copied_sha256": "fbfbe21a57dee0f93d12934d405cba0f13c2f3dbf1f2d3803f73d71666a146f7"
+    },
+    {
+      "path": "scrapling/engines/_browsers/_controllers.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/_controllers.py",
+      "source_sha256": "5df3de600657d77f32bc2d58721c534880e775d9a314abc634620b96de7503e1",
+      "copied_sha256": "5df3de600657d77f32bc2d58721c534880e775d9a314abc634620b96de7503e1"
+    },
+    {
+      "path": "scrapling/engines/_browsers/_page.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/_page.py",
+      "source_sha256": "35a4492e381d62230c0a9bc9a5db9e0bc24a279d11e8f8dfc11e3caa8eebc1b4",
+      "copied_sha256": "35a4492e381d62230c0a9bc9a5db9e0bc24a279d11e8f8dfc11e3caa8eebc1b4"
+    },
+    {
+      "path": "scrapling/engines/_browsers/_stealth.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/_stealth.py",
+      "source_sha256": "f75f52325e96f38c59a48de90c2b4cdd7dee3d9a3deb447f43c0d64825ceb263",
+      "copied_sha256": "f75f52325e96f38c59a48de90c2b4cdd7dee3d9a3deb447f43c0d64825ceb263"
+    },
+    {
+      "path": "scrapling/engines/_browsers/_types.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/_types.py",
+      "source_sha256": "2a671b1f99c6250b8daa353e1c9f0a317ea42928dfceb0d96318263f9d6f1b4e",
+      "copied_sha256": "2a671b1f99c6250b8daa353e1c9f0a317ea42928dfceb0d96318263f9d6f1b4e"
+    },
+    {
+      "path": "scrapling/engines/_browsers/_validators.py",
+      "source": "reference/Scrapling-main/scrapling/engines/_browsers/_validators.py",
+      "source_sha256": "abfcfa89ba0edbb00b026dfba42f3dbae4d0d683b5bc6bcfefc7b450eb01dd40",
+      "copied_sha256": "abfcfa89ba0edbb00b026dfba42f3dbae4d0d683b5bc6bcfefc7b450eb01dd40"
+    },
+    {
+      "path": "scrapling/engines/constants.py",
+      "source": "reference/Scrapling-main/scrapling/engines/constants.py",
+      "source_sha256": "ee8ad3d5059556c3bb35d48843bab13e99a6a475db5683ae435316536c7d212b",
+      "copied_sha256": "ee8ad3d5059556c3bb35d48843bab13e99a6a475db5683ae435316536c7d212b"
+    },
+    {
+      "path": "scrapling/engines/static.py",
+      "source": "reference/Scrapling-main/scrapling/engines/static.py",
+      "source_sha256": "1af4694ca56715095b5b7b02949690b6ba4ec57b878040b413a63291762446c1",
+      "copied_sha256": "1af4694ca56715095b5b7b02949690b6ba4ec57b878040b413a63291762446c1"
+    },
+    {
+      "path": "scrapling/engines/toolbelt/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/engines/toolbelt/__init__.py",
+      "source_sha256": "b1c3da3ac28e885964b3774b79fc1cb1736cd5774a8caf9864cee6732af19fc6",
+      "copied_sha256": "b1c3da3ac28e885964b3774b79fc1cb1736cd5774a8caf9864cee6732af19fc6"
+    },
+    {
+      "path": "scrapling/engines/toolbelt/ad_domains.py",
+      "source": "reference/Scrapling-main/scrapling/engines/toolbelt/ad_domains.py",
+      "source_sha256": "ccde0b6f4d29b01cd870ef3822c38fc66e11ff738157f8d457cb97d94f247a9c",
+      "copied_sha256": "ccde0b6f4d29b01cd870ef3822c38fc66e11ff738157f8d457cb97d94f247a9c"
+    },
+    {
+      "path": "scrapling/engines/toolbelt/convertor.py",
+      "source": "reference/Scrapling-main/scrapling/engines/toolbelt/convertor.py",
+      "source_sha256": "776028110aa2c0f9b802a982b591885081fb0dd4fd03d1a3f96e5bb08c0dcb3e",
+      "copied_sha256": "776028110aa2c0f9b802a982b591885081fb0dd4fd03d1a3f96e5bb08c0dcb3e"
+    },
+    {
+      "path": "scrapling/engines/toolbelt/custom.py",
+      "source": "reference/Scrapling-main/scrapling/engines/toolbelt/custom.py",
+      "source_sha256": "dff32ca463700e8f79d974ee4a164366c912a5efe883174dc184520b7f70d8f1",
+      "copied_sha256": "dff32ca463700e8f79d974ee4a164366c912a5efe883174dc184520b7f70d8f1"
+    },
+    {
+      "path": "scrapling/engines/toolbelt/fingerprints.py",
+      "source": "reference/Scrapling-main/scrapling/engines/toolbelt/fingerprints.py",
+      "source_sha256": "0ae08fa3951fed1ca00a6a437b073c1f36b3547900656309f0c7eeeb2aaeec2d",
+      "copied_sha256": "0ae08fa3951fed1ca00a6a437b073c1f36b3547900656309f0c7eeeb2aaeec2d"
+    },
+    {
+      "path": "scrapling/engines/toolbelt/navigation.py",
+      "source": "reference/Scrapling-main/scrapling/engines/toolbelt/navigation.py",
+      "source_sha256": "31e3aa74a8e9be3e2b362f76c5dda04a7fe9634cf327a5a5c1e90783b69d46d5",
+      "copied_sha256": "31e3aa74a8e9be3e2b362f76c5dda04a7fe9634cf327a5a5c1e90783b69d46d5"
+    },
+    {
+      "path": "scrapling/engines/toolbelt/proxy_rotation.py",
+      "source": "reference/Scrapling-main/scrapling/engines/toolbelt/proxy_rotation.py",
+      "source_sha256": "76744bb0527a50fa387c87b0cbf98f621c847e442db092a1cdc1ecd2834cb4ad",
+      "copied_sha256": "76744bb0527a50fa387c87b0cbf98f621c847e442db092a1cdc1ecd2834cb4ad"
+    },
+    {
+      "path": "scrapling/fetchers/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/fetchers/__init__.py",
+      "source_sha256": "fca104f48a54792bb4ea082c9f41c7810e0dbc647a35ee380a464667fd55981b",
+      "copied_sha256": "fca104f48a54792bb4ea082c9f41c7810e0dbc647a35ee380a464667fd55981b"
+    },
+    {
+      "path": "scrapling/fetchers/chrome.py",
+      "source": "reference/Scrapling-main/scrapling/fetchers/chrome.py",
+      "source_sha256": "a102ebc08646e6f0a9f4e5e595abcd093e12a0e083a6512a17feb7604124063d",
+      "copied_sha256": "a102ebc08646e6f0a9f4e5e595abcd093e12a0e083a6512a17feb7604124063d"
+    },
+    {
+      "path": "scrapling/fetchers/requests.py",
+      "source": "reference/Scrapling-main/scrapling/fetchers/requests.py",
+      "source_sha256": "44adec41c8f6c97cefde2462eefd850c4416fa845a8f53c8426215f65e194de5",
+      "copied_sha256": "44adec41c8f6c97cefde2462eefd850c4416fa845a8f53c8426215f65e194de5"
+    },
+    {
+      "path": "scrapling/fetchers/stealth_chrome.py",
+      "source": "reference/Scrapling-main/scrapling/fetchers/stealth_chrome.py",
+      "source_sha256": "00bd7f1d0dd6a6e245958b66a257830ea70cfb064c0147a8a5b71638abd7a9bf",
+      "copied_sha256": "00bd7f1d0dd6a6e245958b66a257830ea70cfb064c0147a8a5b71638abd7a9bf"
+    },
+    {
+      "path": "scrapling/integrations/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/integrations/__init__.py",
+      "source_sha256": "2a55c991f0b6626698ecac609de3afe0f6b87f2a191e7fe1e5108357e140b940",
+      "copied_sha256": "2a55c991f0b6626698ecac609de3afe0f6b87f2a191e7fe1e5108357e140b940"
+    },
+    {
+      "path": "scrapling/integrations/scrapy.py",
+      "source": "reference/Scrapling-main/scrapling/integrations/scrapy.py",
+      "source_sha256": "63016b8362c8e255564c7bd7f0c5c3ee44054392405f1c180e5cd9f79234f11e",
+      "copied_sha256": "63016b8362c8e255564c7bd7f0c5c3ee44054392405f1c180e5cd9f79234f11e"
+    },
+    {
+      "path": "scrapling/parser.py",
+      "source": "reference/Scrapling-main/scrapling/parser.py",
+      "source_sha256": "5328500a70a922c07a2ce1a97217ffe2d01d6b6fc336462123ca1fb93758360b",
+      "copied_sha256": "5328500a70a922c07a2ce1a97217ffe2d01d6b6fc336462123ca1fb93758360b"
+    },
+    {
+      "path": "scrapling/py.typed",
+      "source": "reference/Scrapling-main/scrapling/py.typed",
+      "source_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "copied_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+    },
+    {
+      "path": "scrapling/spiders/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/__init__.py",
+      "source_sha256": "54e770b767df6e06b2789e53b3a053087bdc768ae3c9bb45c0fab9b9304f5632",
+      "copied_sha256": "54e770b767df6e06b2789e53b3a053087bdc768ae3c9bb45c0fab9b9304f5632"
+    },
+    {
+      "path": "scrapling/spiders/cache.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/cache.py",
+      "source_sha256": "d5182916f85d7f5ccdd6b3707b364f910857a8ce184e6affd60cb8e23cb91e53",
+      "copied_sha256": "d5182916f85d7f5ccdd6b3707b364f910857a8ce184e6affd60cb8e23cb91e53"
+    },
+    {
+      "path": "scrapling/spiders/checkpoint.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/checkpoint.py",
+      "source_sha256": "e6ea1f3007062ff23c6b372c3c5be899d6b4978ea2ff4e5cb2e05e4f5d265ad8",
+      "copied_sha256": "e6ea1f3007062ff23c6b372c3c5be899d6b4978ea2ff4e5cb2e05e4f5d265ad8"
+    },
+    {
+      "path": "scrapling/spiders/engine.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/engine.py",
+      "source_sha256": "2e2184e376c09a4707a23cd5e4026050ddf9dedd42276ae134fc2382620a1c5d",
+      "copied_sha256": "2e2184e376c09a4707a23cd5e4026050ddf9dedd42276ae134fc2382620a1c5d"
+    },
+    {
+      "path": "scrapling/spiders/links.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/links.py",
+      "source_sha256": "a9abaaa7d4fde27e6f0eeb81e77bf764f65216be928bfda8613933a23b0b506a",
+      "copied_sha256": "a9abaaa7d4fde27e6f0eeb81e77bf764f65216be928bfda8613933a23b0b506a"
+    },
+    {
+      "path": "scrapling/spiders/request.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/request.py",
+      "source_sha256": "0f13b1a10d5b81f30188542997d570c2e1b7c6514cc862fae1a74145aefb8d8f",
+      "copied_sha256": "0f13b1a10d5b81f30188542997d570c2e1b7c6514cc862fae1a74145aefb8d8f"
+    },
+    {
+      "path": "scrapling/spiders/result.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/result.py",
+      "source_sha256": "66b7e639983b0616d650d0a54c94de79aa195ecc98e6a44dbca146026cfe5291",
+      "copied_sha256": "66b7e639983b0616d650d0a54c94de79aa195ecc98e6a44dbca146026cfe5291"
+    },
+    {
+      "path": "scrapling/spiders/robotstxt.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/robotstxt.py",
+      "source_sha256": "25133e9084ac024956b28d44dded73d3bc0b4176098f97a8bf9d28c25886cc2e",
+      "copied_sha256": "25133e9084ac024956b28d44dded73d3bc0b4176098f97a8bf9d28c25886cc2e"
+    },
+    {
+      "path": "scrapling/spiders/scheduler.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/scheduler.py",
+      "source_sha256": "e600de391542609373231fab058d23736a8355c544b5c31745f8e07fc3d97eed",
+      "copied_sha256": "e600de391542609373231fab058d23736a8355c544b5c31745f8e07fc3d97eed"
+    },
+    {
+      "path": "scrapling/spiders/session.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/session.py",
+      "source_sha256": "99dcbd6daea3baef0e12a72e2b7b847ba9350f06fd8e35d70e80f7b93e66fc2e",
+      "copied_sha256": "99dcbd6daea3baef0e12a72e2b7b847ba9350f06fd8e35d70e80f7b93e66fc2e"
+    },
+    {
+      "path": "scrapling/spiders/spider.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/spider.py",
+      "source_sha256": "ed8b7dd572bd4fac1ac136f8ec106b61a0e07ab2c36129578e3279d284011e90",
+      "copied_sha256": "ed8b7dd572bd4fac1ac136f8ec106b61a0e07ab2c36129578e3279d284011e90"
+    },
+    {
+      "path": "scrapling/spiders/templates/__init__.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/templates/__init__.py",
+      "source_sha256": "00dc28ad502da472c8466f8e492e84db3d8707db41fba82869d0aeed6713a507",
+      "copied_sha256": "00dc28ad502da472c8466f8e492e84db3d8707db41fba82869d0aeed6713a507"
+    },
+    {
+      "path": "scrapling/spiders/templates/_utils.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/templates/_utils.py",
+      "source_sha256": "b57d334fc28dee8f1b561773d94c24f5d8a689c58d734db46572cb481582e076",
+      "copied_sha256": "b57d334fc28dee8f1b561773d94c24f5d8a689c58d734db46572cb481582e076"
+    },
+    {
+      "path": "scrapling/spiders/templates/crawler.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/templates/crawler.py",
+      "source_sha256": "a87317d4de50422f308ba4107b103b3da4fa49d71b24f752a2f7dab537c15888",
+      "copied_sha256": "a87317d4de50422f308ba4107b103b3da4fa49d71b24f752a2f7dab537c15888"
+    },
+    {
+      "path": "scrapling/spiders/templates/feed.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/templates/feed.py",
+      "source_sha256": "67cb42a2567a17f4f424052387f12c597eb7aa135666c8f5fd1e53740d205bb9",
+      "copied_sha256": "67cb42a2567a17f4f424052387f12c597eb7aa135666c8f5fd1e53740d205bb9"
+    },
+    {
+      "path": "scrapling/spiders/templates/shopify.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/templates/shopify.py",
+      "source_sha256": "6693fbfec42269acfbbd5af9464a860df9c727ec36a9dbc8f41b29c911d58d5e",
+      "copied_sha256": "6693fbfec42269acfbbd5af9464a860df9c727ec36a9dbc8f41b29c911d58d5e"
+    },
+    {
+      "path": "scrapling/spiders/templates/site_to_markdown.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/templates/site_to_markdown.py",
+      "source_sha256": "4d704435dec0beaf607137d5c2c752869db078aeaa39718dfd59cf6f910ffdfe",
+      "copied_sha256": "4d704435dec0beaf607137d5c2c752869db078aeaa39718dfd59cf6f910ffdfe"
+    },
+    {
+      "path": "scrapling/spiders/templates/sitemap.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/templates/sitemap.py",
+      "source_sha256": "1341b0618398647917b5660bbf13108c5bd681c1f1dcfd0dffcf7178d62d9347",
+      "copied_sha256": "1341b0618398647917b5660bbf13108c5bd681c1f1dcfd0dffcf7178d62d9347"
+    },
+    {
+      "path": "scrapling/spiders/throttle.py",
+      "source": "reference/Scrapling-main/scrapling/spiders/throttle.py",
+      "source_sha256": "dad85c45a635e9b98b587f32fe76b5fe3bc8633980ab5558eecfa1878c727db3",
+      "copied_sha256": "dad85c45a635e9b98b587f32fe76b5fe3bc8633980ab5558eecfa1878c727db3"
+    },
+    {
+      "path": "tests/__init__.py",
+      "source": "reference/Scrapling-main/tests/__init__.py",
+      "source_sha256": "607141e5fb7380b41587a81b3df6d8718e32392f43381a797416ba23eaad9bc5",
+      "copied_sha256": "607141e5fb7380b41587a81b3df6d8718e32392f43381a797416ba23eaad9bc5"
+    },
+    {
+      "path": "tests/ai/__init__.py",
+      "source": "reference/Scrapling-main/tests/ai/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/ai/test_ai_mcp.py",
+      "source": "reference/Scrapling-main/tests/ai/test_ai_mcp.py",
+      "source_sha256": "859965b5925004684f1f0101e634eeaa593576d1f587671f380fbd6f24fa9970",
+      "copied_sha256": "859965b5925004684f1f0101e634eeaa593576d1f587671f380fbd6f24fa9970"
+    },
+    {
+      "path": "tests/cli/__init__.py",
+      "source": "reference/Scrapling-main/tests/cli/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/cli/test_cli.py",
+      "source": "reference/Scrapling-main/tests/cli/test_cli.py",
+      "source_sha256": "f50159393f2e8bf0ccb3337e3d2cb1446619176967062c57d6063d1dc0a8baba",
+      "copied_sha256": "f50159393f2e8bf0ccb3337e3d2cb1446619176967062c57d6063d1dc0a8baba"
+    },
+    {
+      "path": "tests/cli/test_shell_functionality.py",
+      "source": "reference/Scrapling-main/tests/cli/test_shell_functionality.py",
+      "source_sha256": "9d8ac7b3ef4d651dd50715ffcd227aa21c788441a1945c50f06f754ca3ab33f9",
+      "copied_sha256": "9d8ac7b3ef4d651dd50715ffcd227aa21c788441a1945c50f06f754ca3ab33f9"
+    },
+    {
+      "path": "tests/core/__init__.py",
+      "source": "reference/Scrapling-main/tests/core/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/core/test_shell_core.py",
+      "source": "reference/Scrapling-main/tests/core/test_shell_core.py",
+      "source_sha256": "3017608863a64a35c4c256f9701e16517d0f13fb3f2807bbc83e8b099e69f82d",
+      "copied_sha256": "3017608863a64a35c4c256f9701e16517d0f13fb3f2807bbc83e8b099e69f82d"
+    },
+    {
+      "path": "tests/core/test_storage_core.py",
+      "source": "reference/Scrapling-main/tests/core/test_storage_core.py",
+      "source_sha256": "5ba9751758fb1bc539c7c05bbd895fbe5c793695efde967888190ccbdbaa0ca5",
+      "copied_sha256": "5ba9751758fb1bc539c7c05bbd895fbe5c793695efde967888190ccbdbaa0ca5"
+    },
+    {
+      "path": "tests/fetchers/__init__.py",
+      "source": "reference/Scrapling-main/tests/fetchers/__init__.py",
+      "source_sha256": "e87e0d800461c9370619dddd34229027c91415dac010c4927102fb19afef5377",
+      "copied_sha256": "e87e0d800461c9370619dddd34229027c91415dac010c4927102fb19afef5377"
+    },
+    {
+      "path": "tests/fetchers/async/__init__.py",
+      "source": "reference/Scrapling-main/tests/fetchers/async/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/fetchers/async/test_dynamic.py",
+      "source": "reference/Scrapling-main/tests/fetchers/async/test_dynamic.py",
+      "source_sha256": "c2625ba0f12c95aa3a7a756973033e3481741999229bb74833352b3e0497cd11",
+      "copied_sha256": "c2625ba0f12c95aa3a7a756973033e3481741999229bb74833352b3e0497cd11"
+    },
+    {
+      "path": "tests/fetchers/async/test_dynamic_session.py",
+      "source": "reference/Scrapling-main/tests/fetchers/async/test_dynamic_session.py",
+      "source_sha256": "54f555184f575b081a9792787fb1502a97c9cd18afe063503d5b3e2a9e61e7b0",
+      "copied_sha256": "54f555184f575b081a9792787fb1502a97c9cd18afe063503d5b3e2a9e61e7b0"
+    },
+    {
+      "path": "tests/fetchers/async/test_requests.py",
+      "source": "reference/Scrapling-main/tests/fetchers/async/test_requests.py",
+      "source_sha256": "7307390aac27bc94eec1b48d46d427a702d0d70bf18ba9aea7fff6defa5f1ecd",
+      "copied_sha256": "7307390aac27bc94eec1b48d46d427a702d0d70bf18ba9aea7fff6defa5f1ecd"
+    },
+    {
+      "path": "tests/fetchers/async/test_requests_session.py",
+      "source": "reference/Scrapling-main/tests/fetchers/async/test_requests_session.py",
+      "source_sha256": "d0138b0e86cfb7ce431b6c45d12127bdf6c0dc4b42ebc380ccb2bd79b123ad79",
+      "copied_sha256": "d0138b0e86cfb7ce431b6c45d12127bdf6c0dc4b42ebc380ccb2bd79b123ad79"
+    },
+    {
+      "path": "tests/fetchers/async/test_stealth.py",
+      "source": "reference/Scrapling-main/tests/fetchers/async/test_stealth.py",
+      "source_sha256": "c842a5e93844d5c84714e4af06bfe88e5298f3dca13ac3af583dc1152492efe2",
+      "copied_sha256": "c842a5e93844d5c84714e4af06bfe88e5298f3dca13ac3af583dc1152492efe2"
+    },
+    {
+      "path": "tests/fetchers/async/test_stealth_session.py",
+      "source": "reference/Scrapling-main/tests/fetchers/async/test_stealth_session.py",
+      "source_sha256": "98558f7cd36e1f363864f42fd996f83f6398bd18bf543f339e23377d2518319f",
+      "copied_sha256": "98558f7cd36e1f363864f42fd996f83f6398bd18bf543f339e23377d2518319f"
+    },
+    {
+      "path": "tests/fetchers/sync/__init__.py",
+      "source": "reference/Scrapling-main/tests/fetchers/sync/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/fetchers/sync/test_dynamic.py",
+      "source": "reference/Scrapling-main/tests/fetchers/sync/test_dynamic.py",
+      "source_sha256": "240b50b80c365c0357d1ef288a7d068600a34f435ce4ebc4f3e72a4fe8b14525",
+      "copied_sha256": "240b50b80c365c0357d1ef288a7d068600a34f435ce4ebc4f3e72a4fe8b14525"
+    },
+    {
+      "path": "tests/fetchers/sync/test_requests.py",
+      "source": "reference/Scrapling-main/tests/fetchers/sync/test_requests.py",
+      "source_sha256": "47ff5e4a17bc0cc4ab1c4b47feedd73980c8d17cfeaa631c619694fb42f1a400",
+      "copied_sha256": "47ff5e4a17bc0cc4ab1c4b47feedd73980c8d17cfeaa631c619694fb42f1a400"
+    },
+    {
+      "path": "tests/fetchers/sync/test_requests_session.py",
+      "source": "reference/Scrapling-main/tests/fetchers/sync/test_requests_session.py",
+      "source_sha256": "9a71dff61cd8273e164654b72111d22c7ba1618152fa4648d2b578aac6c7bac9",
+      "copied_sha256": "9a71dff61cd8273e164654b72111d22c7ba1618152fa4648d2b578aac6c7bac9"
+    },
+    {
+      "path": "tests/fetchers/sync/test_stealth_session.py",
+      "source": "reference/Scrapling-main/tests/fetchers/sync/test_stealth_session.py",
+      "source_sha256": "f76daca4bff89f5a873f5bca0e4171dd2a796d9ead0b7e2863003de573f9130e",
+      "copied_sha256": "f76daca4bff89f5a873f5bca0e4171dd2a796d9ead0b7e2863003de573f9130e"
+    },
+    {
+      "path": "tests/fetchers/test_base.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_base.py",
+      "source_sha256": "e6e6e2b393c5342413880427dc10c67a5bd717ed1890f6d177033f41c39e809e",
+      "copied_sha256": "e6e6e2b393c5342413880427dc10c67a5bd717ed1890f6d177033f41c39e809e"
+    },
+    {
+      "path": "tests/fetchers/test_cloudflare_solver.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_cloudflare_solver.py",
+      "source_sha256": "cc7a939dcc2b00d153ba435629f965ed70910e8a5adf3079706fbf6f85a026cb",
+      "copied_sha256": "cc7a939dcc2b00d153ba435629f965ed70910e8a5adf3079706fbf6f85a026cb"
+    },
+    {
+      "path": "tests/fetchers/test_constants.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_constants.py",
+      "source_sha256": "2d8fc9b9fddb0b76ca122b71e1f7d123e1c8e253448c833a9e6e85d83970e765",
+      "copied_sha256": "2d8fc9b9fddb0b76ca122b71e1f7d123e1c8e253448c833a9e6e85d83970e765"
+    },
+    {
+      "path": "tests/fetchers/test_impersonate_list.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_impersonate_list.py",
+      "source_sha256": "743a95763d51fa9985023c17fc13a52c078ae3a4695698a68355378145d396e7",
+      "copied_sha256": "743a95763d51fa9985023c17fc13a52c078ae3a4695698a68355378145d396e7"
+    },
+    {
+      "path": "tests/fetchers/test_merge_request_args.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_merge_request_args.py",
+      "source_sha256": "cf652f4a889227b436606e7ec9c71dafe56666c2c62cd4512888c6a5cd78e841",
+      "copied_sha256": "cf652f4a889227b436606e7ec9c71dafe56666c2c62cd4512888c6a5cd78e841"
+    },
+    {
+      "path": "tests/fetchers/test_page_reuse.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_page_reuse.py",
+      "source_sha256": "4d950383ed89b8070f7756423d8534fd1d2db7bca05426aee1ac7be02194a6b4",
+      "copied_sha256": "4d950383ed89b8070f7756423d8534fd1d2db7bca05426aee1ac7be02194a6b4"
+    },
+    {
+      "path": "tests/fetchers/test_pages.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_pages.py",
+      "source_sha256": "da5cc74c1083aa390e14c3ee588fa304c82b46a3e7ffd54c5543ed820e83ecf0",
+      "copied_sha256": "da5cc74c1083aa390e14c3ee588fa304c82b46a3e7ffd54c5543ed820e83ecf0"
+    },
+    {
+      "path": "tests/fetchers/test_proxy_rotation.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_proxy_rotation.py",
+      "source_sha256": "5b753d325fa4bbc040bdb3da170853ca1000da2826617fe56f6c65d123339097",
+      "copied_sha256": "5b753d325fa4bbc040bdb3da170853ca1000da2826617fe56f6c65d123339097"
+    },
+    {
+      "path": "tests/fetchers/test_response_handling.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_response_handling.py",
+      "source_sha256": "44fa51c33892e6f3cdc727650c2e34ab1076b158c775ccd2c929e41664fc2467",
+      "copied_sha256": "44fa51c33892e6f3cdc727650c2e34ab1076b158c775ccd2c929e41664fc2467"
+    },
+    {
+      "path": "tests/fetchers/test_response_markdown.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_response_markdown.py",
+      "source_sha256": "a88e4473aee7222b309a8b397e4e2cde740f12814c0e6e8dbfc51fd1d1c747b9",
+      "copied_sha256": "a88e4473aee7222b309a8b397e4e2cde740f12814c0e6e8dbfc51fd1d1c747b9"
+    },
+    {
+      "path": "tests/fetchers/test_utils.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_utils.py",
+      "source_sha256": "8eb7208618ef66aa8a6f829feac25f8d4e7c41ef479a381bf00e8f0f63de5d59",
+      "copied_sha256": "8eb7208618ef66aa8a6f829feac25f8d4e7c41ef479a381bf00e8f0f63de5d59"
+    },
+    {
+      "path": "tests/fetchers/test_validator.py",
+      "source": "reference/Scrapling-main/tests/fetchers/test_validator.py",
+      "source_sha256": "64d239dab28b7bee399edf63626f3e163fa5806008ec7d5a65cfab57a005be09",
+      "copied_sha256": "64d239dab28b7bee399edf63626f3e163fa5806008ec7d5a65cfab57a005be09"
+    },
+    {
+      "path": "tests/integrations/__init__.py",
+      "source": "reference/Scrapling-main/tests/integrations/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/integrations/test_scrapy.py",
+      "source": "reference/Scrapling-main/tests/integrations/test_scrapy.py",
+      "source_sha256": "5369116dbe167557a99c2c98c30faa9beba09c56ef195b1f60c6f5bbbc102c93",
+      "copied_sha256": "5369116dbe167557a99c2c98c30faa9beba09c56ef195b1f60c6f5bbbc102c93"
+    },
+    {
+      "path": "tests/parser/__init__.py",
+      "source": "reference/Scrapling-main/tests/parser/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/parser/test_adaptive.py",
+      "source": "reference/Scrapling-main/tests/parser/test_adaptive.py",
+      "source_sha256": "97ff43dfb5c903e308bf9313435570bdf2ed132037ec6b8ae857f10fd35b809d",
+      "copied_sha256": "97ff43dfb5c903e308bf9313435570bdf2ed132037ec6b8ae857f10fd35b809d"
+    },
+    {
+      "path": "tests/parser/test_ancestor_navigation.py",
+      "source": "reference/Scrapling-main/tests/parser/test_ancestor_navigation.py",
+      "source_sha256": "39572d3bbe924bf0194220bee109d7d5271e39aa5deb24c96318573d48bcb7ac",
+      "copied_sha256": "39572d3bbe924bf0194220bee109d7d5271e39aa5deb24c96318573d48bcb7ac"
+    },
+    {
+      "path": "tests/parser/test_attributes_handler.py",
+      "source": "reference/Scrapling-main/tests/parser/test_attributes_handler.py",
+      "source_sha256": "dd04dbdb2861f94b5fb93ea8e07b52586c8aa23c30fe18be11cdf9435b69f919",
+      "copied_sha256": "dd04dbdb2861f94b5fb93ea8e07b52586c8aa23c30fe18be11cdf9435b69f919"
+    },
+    {
+      "path": "tests/parser/test_find_similar_advanced.py",
+      "source": "reference/Scrapling-main/tests/parser/test_find_similar_advanced.py",
+      "source_sha256": "c21359dac6d9ee39af0b2cf811f1f050023d8d969a9318944ef29d26df619023",
+      "copied_sha256": "c21359dac6d9ee39af0b2cf811f1f050023d8d969a9318944ef29d26df619023"
+    },
+    {
+      "path": "tests/parser/test_general.py",
+      "source": "reference/Scrapling-main/tests/parser/test_general.py",
+      "source_sha256": "983404da392a1d485271b21d5a7f67362ad40a79e461bff750f3608d1d760368",
+      "copied_sha256": "983404da392a1d485271b21d5a7f67362ad40a79e461bff750f3608d1d760368"
+    },
+    {
+      "path": "tests/parser/test_parser_advanced.py",
+      "source": "reference/Scrapling-main/tests/parser/test_parser_advanced.py",
+      "source_sha256": "37fa7f8d62935cfe17c31642e0843026352a5b5cd9056866b4a0f15979245973",
+      "copied_sha256": "37fa7f8d62935cfe17c31642e0843026352a5b5cd9056866b4a0f15979245973"
+    },
+    {
+      "path": "tests/parser/test_selectors_filter.py",
+      "source": "reference/Scrapling-main/tests/parser/test_selectors_filter.py",
+      "source_sha256": "236f23af43f647e9f7c48dfeb2c8b689ac76927a5cb617a9b40dc373e1557019",
+      "copied_sha256": "236f23af43f647e9f7c48dfeb2c8b689ac76927a5cb617a9b40dc373e1557019"
+    },
+    {
+      "path": "tests/requirements.txt",
+      "source": "reference/Scrapling-main/tests/requirements.txt",
+      "source_sha256": "82edb3ef04f25bcc178ecc29e5d9af72d78103d121ce2bb44f70734a955fc552",
+      "copied_sha256": "82edb3ef04f25bcc178ecc29e5d9af72d78103d121ce2bb44f70734a955fc552"
+    },
+    {
+      "path": "tests/spiders/__init__.py",
+      "source": "reference/Scrapling-main/tests/spiders/__init__.py",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/spiders/test_cache.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_cache.py",
+      "source_sha256": "a463d7e639100de88fc6710df8527caec183a3da44eee3699904f1f3358e5d12",
+      "copied_sha256": "a463d7e639100de88fc6710df8527caec183a3da44eee3699904f1f3358e5d12"
+    },
+    {
+      "path": "tests/spiders/test_checkpoint.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_checkpoint.py",
+      "source_sha256": "6be673bcd25aeedb53cef51e98d6bbd4659060359a19933413db2ea5e9eec9ef",
+      "copied_sha256": "6be673bcd25aeedb53cef51e98d6bbd4659060359a19933413db2ea5e9eec9ef"
+    },
+    {
+      "path": "tests/spiders/test_engine.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_engine.py",
+      "source_sha256": "00207e82c42a7579f451e4755b1c337e88fb03f0141f6c4249a7f65569059480",
+      "copied_sha256": "00207e82c42a7579f451e4755b1c337e88fb03f0141f6c4249a7f65569059480"
+    },
+    {
+      "path": "tests/spiders/test_feed.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_feed.py",
+      "source_sha256": "ab61b473df3b79af9ba5f0549c0546f751612de2397758500b4d0efed8de9a20",
+      "copied_sha256": "ab61b473df3b79af9ba5f0549c0546f751612de2397758500b4d0efed8de9a20"
+    },
+    {
+      "path": "tests/spiders/test_force_stop_checkpoint.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_force_stop_checkpoint.py",
+      "source_sha256": "1d87a976027b8830c5156374b2f332fd369b51de6150ca56cd6c2cf3efa6c4a0",
+      "copied_sha256": "1d87a976027b8830c5156374b2f332fd369b51de6150ca56cd6c2cf3efa6c4a0"
+    },
+    {
+      "path": "tests/spiders/test_links.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_links.py",
+      "source_sha256": "6cd965a7b847a88e0e87d6a0813870ec7a0b83da46c623863a841c7d4375c139",
+      "copied_sha256": "6cd965a7b847a88e0e87d6a0813870ec7a0b83da46c623863a841c7d4375c139"
+    },
+    {
+      "path": "tests/spiders/test_request.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_request.py",
+      "source_sha256": "70c2a8d29b31fc99a3eb46c97ccd344954b54f721b118699c46134a00fd7eaa0",
+      "copied_sha256": "70c2a8d29b31fc99a3eb46c97ccd344954b54f721b118699c46134a00fd7eaa0"
+    },
+    {
+      "path": "tests/spiders/test_result.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_result.py",
+      "source_sha256": "dc5a1da4a49482bdd0fb51f9de2de2f6eca3c3ecca0ed72706ac5348e55480c2",
+      "copied_sha256": "dc5a1da4a49482bdd0fb51f9de2de2f6eca3c3ecca0ed72706ac5348e55480c2"
+    },
+    {
+      "path": "tests/spiders/test_robotstxt.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_robotstxt.py",
+      "source_sha256": "20b96e8178b11bdf670303593509f0505fa26b8978fa41b8ae1964919fbfdf4c",
+      "copied_sha256": "20b96e8178b11bdf670303593509f0505fa26b8978fa41b8ae1964919fbfdf4c"
+    },
+    {
+      "path": "tests/spiders/test_scheduler.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_scheduler.py",
+      "source_sha256": "762cbb96555197d1e4ba2e4b1f42013d834cb446bc7f5afa30523c6e35c1983a",
+      "copied_sha256": "762cbb96555197d1e4ba2e4b1f42013d834cb446bc7f5afa30523c6e35c1983a"
+    },
+    {
+      "path": "tests/spiders/test_session.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_session.py",
+      "source_sha256": "94f6d4c5881820cc725f6c5c5b8ff9daa420184332baf5827403ae7776bd5ce0",
+      "copied_sha256": "94f6d4c5881820cc725f6c5c5b8ff9daa420184332baf5827403ae7776bd5ce0"
+    },
+    {
+      "path": "tests/spiders/test_shopify.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_shopify.py",
+      "source_sha256": "1a89fa55fafbf7d1f9ea17177fd03a724b88a78ec36d355afdbae22fe08d4108",
+      "copied_sha256": "1a89fa55fafbf7d1f9ea17177fd03a724b88a78ec36d355afdbae22fe08d4108"
+    },
+    {
+      "path": "tests/spiders/test_site_to_markdown.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_site_to_markdown.py",
+      "source_sha256": "60bf1f3b91dbf03bcfa05b0d81a891b3712f633a0c7c5ce577e95db4ccf779bc",
+      "copied_sha256": "60bf1f3b91dbf03bcfa05b0d81a891b3712f633a0c7c5ce577e95db4ccf779bc"
+    },
+    {
+      "path": "tests/spiders/test_sitemap.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_sitemap.py",
+      "source_sha256": "1568d8bf1aa102797496685ffe371b2f7d84699167e00ff4ad5abed0fef912c6",
+      "copied_sha256": "1568d8bf1aa102797496685ffe371b2f7d84699167e00ff4ad5abed0fef912c6"
+    },
+    {
+      "path": "tests/spiders/test_spider.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_spider.py",
+      "source_sha256": "edfec7d8ca7cb65b24ccd107994a28a089e52347ec6ea3641dfd625d31357670",
+      "copied_sha256": "edfec7d8ca7cb65b24ccd107994a28a089e52347ec6ea3641dfd625d31357670"
+    },
+    {
+      "path": "tests/spiders/test_templates.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_templates.py",
+      "source_sha256": "118943bc116e44058120d3e55bca2f954be20bb72a0ee8ae5c26f706aba2789a",
+      "copied_sha256": "118943bc116e44058120d3e55bca2f954be20bb72a0ee8ae5c26f706aba2789a"
+    },
+    {
+      "path": "tests/spiders/test_throttle.py",
+      "source": "reference/Scrapling-main/tests/spiders/test_throttle.py",
+      "source_sha256": "15b1b055c541514a174e601d24bd3cded18c0d83c13243e5d9d721ee47d75d7d",
+      "copied_sha256": "15b1b055c541514a174e601d24bd3cded18c0d83c13243e5d9d721ee47d75d7d"
+    },
+    {
+      "path": "pyproject.toml",
+      "source": "reference/Scrapling-main/pyproject.toml",
+      "source_sha256": "0d124f6e5af885e5b189fed7a3b7f0c7c87ee7e10fb145c6250906f286e45a27",
+      "copied_sha256": "0d124f6e5af885e5b189fed7a3b7f0c7c87ee7e10fb145c6250906f286e45a27"
+    },
+    {
+      "path": "README.md",
+      "source": "reference/Scrapling-main/README.md",
+      "source_sha256": "058eb78717356852955f931b450687948668b47dbfc7990a269ca19fb6e1150e",
+      "copied_sha256": "058eb78717356852955f931b450687948668b47dbfc7990a269ca19fb6e1150e"
+    },
+    {
+      "path": "LICENSE",
+      "source": "reference/Scrapling-main/LICENSE",
+      "source_sha256": "5c782ef0346e4fbfe0dc76fd435f181a0f1e4a1a7a6b13c169c6e74314ff5964",
+      "copied_sha256": "5c782ef0346e4fbfe0dc76fd435f181a0f1e4a1a7a6b13c169c6e74314ff5964"
+    },
+    {
+      "path": "pytest.ini",
+      "source": "reference/Scrapling-main/pytest.ini",
+      "source_sha256": "ade1abeb243a9e4404084c48d6a477a43707723c75838295f4aec7721fd02099",
+      "copied_sha256": "ade1abeb243a9e4404084c48d6a477a43707723c75838295f4aec7721fd02099"
+    },
+    {
+      "path": "MANIFEST.in",
+      "source": "reference/Scrapling-main/MANIFEST.in",
+      "source_sha256": "b79909b47f95f0133140c0648c93f7c2b16fc93eeb644504d1431aa4805794b3",
+      "copied_sha256": "b79909b47f95f0133140c0648c93f7c2b16fc93eeb644504d1431aa4805794b3"
+    }
+  ],
+  "patches": []
+}

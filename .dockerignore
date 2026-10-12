@@ -1,0 +1,13 @@
+.git
+.venv
+.cache
+.runtime
+reference
+**/__pycache__
+**/node_modules
+**/.next
+.env
+.env.*
+!\.env.example
+.impeccable/review
+**/elements_storage.db

@@ -1,0 +1,39 @@
+name: Web checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.6.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm contracts:check
+      - run: pnpm test --reporter=default --reporter=junit --outputFile.junit=.runtime/web-tests.xml
+      - run: pnpm build
+      - run: pnpm typecheck
+      - name: Build web container
+        run: docker build --tag skriller-web:ci .
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: web-test-results
+          path: apps/web/.runtime/*.xml
+          if-no-files-found: warn

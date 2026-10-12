@@ -1,0 +1,40 @@
+{
+  "name": "@skriller/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build --webpack",
+    "start": "next start --hostname 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write src tests *.ts *.json",
+    "contracts:generate": "node tools/contracts-generator/generate.mjs",
+    "contracts:check": "node tools/contracts-generator/generate.mjs --check"
+  },
+  "dependencies": {
+    "firebase": "12.4.0",
+    "lucide-react": "1.55.0",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "jsdom": "30.1.2",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": "12.6.0"
+  },
+  "type": "module"
+}
