@@ -34,6 +34,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Conversation */
+        post: operations["create_conversation_v1_conversations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/conversations/{conversation_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Message */
+        post: operations["message_v1_conversations__conversation_id__messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Job Snapshot */
+        get: operations["job_snapshot_v1_jobs__job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/jobs/{job_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel Job */
+        post: operations["cancel_job_v1_jobs__job_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/jobs/{job_id}/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Results */
+        get: operations["results_v1_jobs__job_id__results_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me": {
         parameters: {
             query?: never;
@@ -122,6 +207,27 @@ export interface components {
             source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
             /** Version */
             version: string;
+        };
+        /** ConversationInput */
+        ConversationInput: {
+            /**
+             * Title
+             * @default Research
+             */
+            title: string;
+        };
+        /** ConversationOutput */
+        ConversationOutput: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
         };
         /** Criterion */
         Criterion: {
@@ -256,6 +362,12 @@ export interface components {
              */
             token_cap: number;
         };
+        /** MessageInput */
+        MessageInput: {
+            /** Content */
+            content: string;
+            options?: components["schemas"]["ResearchOptions"];
+        };
         /** ProgressEvent */
         ProgressEvent: {
             /** Details */
@@ -264,6 +376,140 @@ export interface components {
             };
             /** Kind */
             kind: string;
+        };
+        /** QueryProvenance */
+        QueryProvenance: {
+            /**
+             * Evidence Kind
+             * @constant
+             */
+            evidence_kind: "search_snippet";
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /** Original Url */
+            original_url: string;
+            /**
+             * Provider
+             * @constant
+             */
+            provider: "exa_keyless";
+            /** Query */
+            query: string;
+            /** Rank */
+            rank: number;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
+        };
+        /** ResearchCandidate */
+        ResearchCandidate: {
+            /**
+             * Evidence Kind
+             * @constant
+             */
+            evidence_kind: "search_snippet";
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /** Provenance */
+            provenance: components["schemas"]["QueryProvenance"][];
+            /**
+             * Provider
+             * @constant
+             */
+            provider: "exa_keyless";
+            /**
+             * Qualification
+             * @constant
+             */
+            qualification: "unverified";
+            /** Snippet */
+            snippet: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
+        };
+        /** ResearchOptions */
+        ResearchOptions: {
+            /**
+             * Mode
+             * @default leads
+             * @enum {string}
+             */
+            mode: "leads" | "research";
+            /**
+             * Result Limit
+             * @default 25
+             */
+            result_limit: number;
+            /** Sources */
+            sources?: ("linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook")[];
+        };
+        /** ResearchResults */
+        ResearchResults: {
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Limitations */
+            limitations: string[];
+            /** Results */
+            results: components["schemas"]["ResearchCandidate"][];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "planned" | "queued" | "running" | "waiting_for_connection" | "paused" | "completed" | "partial" | "failed" | "cancelled";
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+        };
+        /** ResearchSnapshot */
+        ResearchSnapshot: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Result Count */
+            result_count: number;
+            /** Stage */
+            stage: string | null;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "planned" | "queued" | "running" | "waiting_for_connection" | "paused" | "completed" | "partial" | "failed" | "cancelled";
+            /** Terminal Reason */
+            terminal_reason?: string | null;
+            /** Version */
+            version: number;
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
         };
         /** SearchPlan */
         SearchPlan: {
@@ -308,6 +554,31 @@ export interface components {
             sources?: ("linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook")[];
             /** Unsupported Criteria */
             unsupported_criteria?: string[];
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
+        };
+        /** SubmissionOutput */
+        SubmissionOutput: {
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Limitations */
+            limitations: string[];
+            /**
+             * Message Id
+             * Format: uuid
+             */
+            message_id: string;
+            /**
+             * Plan Id
+             * Format: uuid
+             */
+            plan_id: string;
             /**
              * Workspace Id
              * Format: uuid
@@ -372,6 +643,175 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    create_conversation_v1_conversations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConversationInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOutput"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    message_v1_conversations__conversation_id__messages_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "idempotency-key"?: string | null;
+            };
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmissionOutput"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    job_snapshot_v1_jobs__job_id__get: {
+        parameters: {
+            query?: {
+                workspace_id?: string | null;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResearchSnapshot"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_job_v1_jobs__job_id__cancel_post: {
+        parameters: {
+            query?: {
+                workspace_id?: string | null;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobSnapshot"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    results_v1_jobs__job_id__results_get: {
+        parameters: {
+            query?: {
+                workspace_id?: string | null;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResearchResults"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

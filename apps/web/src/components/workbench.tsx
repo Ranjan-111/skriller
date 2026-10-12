@@ -22,6 +22,7 @@ import {
 } from "../lib/api";
 
 import { IdentityControls, useIdentity } from "./identity";
+import { ResearchResultsPanel } from "./research-results";
 const sources = [
   { id: "linkedin", name: "LinkedIn", detail: "Professional discovery" },
   { id: "reddit", name: "Reddit", detail: "Discussions & demand" },
@@ -40,6 +41,9 @@ const examples = {
 
 export function Workbench() {
   const identity = useIdentity();
+  const accountId = identity.user?.uid;
+  const currentAccount = useRef(accountId);
+  currentAccount.current = accountId;
   const tokenProvider = useRef(identity.getToken);
   tokenProvider.current = identity.getToken;
   const api = useMemo(
@@ -61,6 +65,7 @@ export function Workbench() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [job, setJob] = useState<ResearchJob | null>(null);
+  const [jobAccount, setJobAccount] = useState<string | undefined>();
   const [showSources, setShowSources] = useState(false);
   const mounted = useRef(true);
   const composer = useRef<HTMLTextAreaElement>(null);
@@ -87,6 +92,10 @@ export function Workbench() {
     };
   }, [checkHealth]);
 
+  useEffect(() => {
+    setJob(null);
+  }, [identity.status, accountId]);
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setError("");
@@ -107,6 +116,7 @@ export function Workbench() {
     }
     setBusy(true);
     setJob(null);
+    const submittedAccount = currentAccount.current;
     try {
       const result = await api.submit({
         prompt: prompt.trim(),
@@ -114,7 +124,10 @@ export function Workbench() {
         sources: selected,
         result_limit: limit,
       });
-      if (mounted.current) setJob(result);
+      if (mounted.current && currentAccount.current === submittedAccount) {
+        setJobAccount(submittedAccount);
+        setJob(result);
+      }
     } catch (e) {
       if (mounted.current)
         setError(
@@ -336,18 +349,11 @@ export function Workbench() {
               </button>
             </div>
           )}
-          {job && (
-            <div className="notice success" role="status">
-              <Check size={18} aria-hidden="true" />
-              <div>
-                <strong>Run accepted</strong>
-                <p>
-                  Run {job.id} · {job.status}. Results are not available in this
-                  scaffold.
-                </p>
-              </div>
-            </div>
-          )}
+          {job &&
+            identity.status === "signed_in" &&
+            jobAccount === accountId && (
+              <ResearchResultsPanel key={job.id} api={api} job={job} />
+            )}
           <section className="examples" aria-labelledby="examples-title">
             <h2 id="examples-title">Start with a question</h2>
             {examples[mode].map((example) => (
@@ -365,33 +371,34 @@ export function Workbench() {
               </button>
             ))}
           </section>
-          <section className="results-empty" aria-labelledby="results-title">
-            <div className="empty-symbol">
-              <FileSearch size={25} strokeWidth={1.4} aria-hidden="true" />
-            </div>
-            <h2 id="results-title">
-              A clear trail, from question to evidence.
-            </h2>
-            <p>
-              Result rendering is not implemented in this scaffold yet. Source
-              inspection, fit comparison, and conversational refinement will
-              become available in later implementation tickets.
-            </p>
-            <div className="evidence-principles">
-              <span>
-                <Check size={13} aria-hidden="true" />
-                Source evidence
-              </span>
-              <span>
-                <Check size={13} aria-hidden="true" />
-                Explicit unknowns
-              </span>
-              <span>
-                <Check size={13} aria-hidden="true" />
-                Refine in conversation
-              </span>
-            </div>
-          </section>
+          {!job && (
+            <section className="results-empty" aria-labelledby="results-title">
+              <div className="empty-symbol">
+                <FileSearch size={25} strokeWidth={1.4} aria-hidden="true" />
+              </div>
+              <h2 id="results-title">
+                A clear trail, from question to evidence.
+              </h2>
+              <p>
+                Start a research run to discover sources. Review their original
+                content before deciding whether a prospect meets your criteria.
+              </p>
+              <div className="evidence-principles">
+                <span>
+                  <Check size={13} aria-hidden="true" />
+                  Source evidence
+                </span>
+                <span>
+                  <Check size={13} aria-hidden="true" />
+                  Explicit unknowns
+                </span>
+                <span>
+                  <Check size={13} aria-hidden="true" />
+                  Review original sources
+                </span>
+              </div>
+            </section>
+          )}
           <footer>
             <Sparkles size={13} aria-hidden="true" />
             <span>

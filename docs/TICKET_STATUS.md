@@ -4,7 +4,7 @@ Only tickets with completed scope and verified required checks are marked **done
 
 A passing unit suite does not close a required database, browser, container, or live-source gate.
 
-Current counts: 19 done, 11 implemented_pending_verification, 66 planned.
+Current counts: 20 done, 13 implemented_pending_verification, 63 planned.
 
 | Ticket | Status | Verified evidence | Remaining acceptance checks |
 | --- | --- | --- | --- |
@@ -20,7 +20,7 @@ Current counts: 19 done, 11 implemented_pending_verification, 66 planned.
 | SKR-010 | implemented_pending_verification | [report](completions/SKR-010.md) | Live Reddit validation and missing redistribution license |
 | SKR-011 | implemented_pending_verification | [report](completions/SKR-011.md), [report](completions/EXA-KEYLESS.json) | Commercial storage/use and broader quality remain unverified; formal dorks/pagination not supported guarantees |
 | SKR-012 | implemented_pending_verification | [report](completions/SKR-012.md) | Broader model quality trials and hosted decision |
-| SKR-013 | implemented_pending_verification | [report](completions/SKR-013.md) | Actual user-session/token roundtrip unverified; live browser inspection permission declined |
+| SKR-013 | implemented_pending_verification | [report](completions/SKR-013.md) | Actual server-verified Firebase ID-token roundtrip through research workflow remains unverified |
 | SKR-014 | done | [report](completions/SKR-014.md) | None |
 | SKR-015 | done | [report](completions/SKR-015.md) | None |
 | SKR-016 | done | [report](completions/SKR-016.md) | None |
@@ -30,7 +30,7 @@ Current counts: 19 done, 11 implemented_pending_verification, 66 planned.
 | SKR-020 | done | [report](completions/SKR-020.md) | None |
 | SKR-021 | done | [report](completions/SKR-021.md) | None |
 | SKR-022 | done | [report](completions/SKR-022.md) | None |
-| SKR-023 | planned | — | Not started |
+| SKR-023 | done | [report](completions/SKR-023.md) | None |
 | SKR-024 | done | [report](completions/SKR-024.md), [report](completions/SKR-022.md) | None |
 | SKR-025 | planned | — | Not started |
 | SKR-026 | done | [report](completions/SKR-026.md), [report](completions/SKR-019.md) | None |
@@ -50,9 +50,9 @@ Current counts: 19 done, 11 implemented_pending_verification, 66 planned.
 | SKR-040 | planned | — | Not started |
 | SKR-041 | planned | — | Not started |
 | SKR-042 | done | [report](completions/SKR-042.md) | None |
-| SKR-043 | planned | — | Not started |
+| SKR-043 | implemented_pending_verification | [report](completions/SKR-043.md) | Production fetching integration and live source recovery |
 | SKR-044 | implemented_pending_verification | [report](completions/SKR-044.md) | Collected-artifact fetch-stage integration pending036; deployment tokenizer asset provisioning |
-| SKR-045 | planned | — | Not started |
+| SKR-045 | implemented_pending_verification | [report](completions/SKR-045.md) | Production extraction/planning wiring, container controls, and live adapter trial |
 | SKR-046 | planned | — | Not started |
 | SKR-047 | planned | — | Not started |
 | SKR-048 | planned | — | Not started |

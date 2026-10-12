@@ -155,20 +155,23 @@ class Failure(Contract):
     retry_after_seconds: int | None = Field(default=None, ge=0, le=86400)
 
 
+JobState = Literal[
+    "planned",
+    "queued",
+    "running",
+    "waiting_for_connection",
+    "paused",
+    "completed",
+    "partial",
+    "failed",
+    "cancelled",
+]
+
+
 class JobSnapshot(Contract):
     id: UUID
     workspace_id: UUID
-    state: Literal[
-        "planned",
-        "queued",
-        "running",
-        "waiting_for_connection",
-        "paused",
-        "completed",
-        "partial",
-        "failed",
-        "cancelled",
-    ]
+    state: JobState
     stage: str | None
     version: int = Field(ge=0)
     terminal_reason: str | None = None

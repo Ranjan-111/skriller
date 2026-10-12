@@ -90,6 +90,41 @@
         "title": "Capability",
         "type": "object"
       },
+      "ConversationInput": {
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "default": "Research",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "title": "ConversationInput",
+        "type": "object"
+      },
+      "ConversationOutput": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "workspace_id"
+        ],
+        "title": "ConversationOutput",
+        "type": "object"
+      },
       "Criterion": {
         "additionalProperties": false,
         "properties": {
@@ -417,6 +452,25 @@
         "title": "Limits",
         "type": "object"
       },
+      "MessageInput": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "maxLength": 1500,
+            "minLength": 3,
+            "title": "Content",
+            "type": "string"
+          },
+          "options": {
+            "$ref": "#/components/schemas/ResearchOptions"
+          }
+        },
+        "required": [
+          "content"
+        ],
+        "title": "MessageInput",
+        "type": "object"
+      },
       "ProgressEvent": {
         "additionalProperties": false,
         "properties": {
@@ -435,6 +489,319 @@
           "details"
         ],
         "title": "ProgressEvent",
+        "type": "object"
+      },
+      "QueryProvenance": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_kind": {
+            "const": "search_snippet",
+            "title": "Evidence Kind",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "original_url": {
+            "maxLength": 4096,
+            "title": "Original Url",
+            "type": "string"
+          },
+          "provider": {
+            "const": "exa_keyless",
+            "title": "Provider",
+            "type": "string"
+          },
+          "query": {
+            "maxLength": 2000,
+            "title": "Query",
+            "type": "string"
+          },
+          "rank": {
+            "minimum": 1.0,
+            "title": "Rank",
+            "type": "integer"
+          },
+          "source": {
+            "enum": [
+              "linkedin",
+              "reddit",
+              "web",
+              "github",
+              "rss",
+              "youtube",
+              "x",
+              "instagram",
+              "facebook"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "original_url",
+          "query",
+          "rank",
+          "provider",
+          "observed_at",
+          "evidence_kind"
+        ],
+        "title": "QueryProvenance",
+        "type": "object"
+      },
+      "ResearchCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_kind": {
+            "const": "search_snippet",
+            "title": "Evidence Kind",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "provenance": {
+            "items": {
+              "$ref": "#/components/schemas/QueryProvenance"
+            },
+            "maxItems": 200,
+            "title": "Provenance",
+            "type": "array"
+          },
+          "provider": {
+            "const": "exa_keyless",
+            "title": "Provider",
+            "type": "string"
+          },
+          "qualification": {
+            "const": "unverified",
+            "title": "Qualification",
+            "type": "string"
+          },
+          "snippet": {
+            "maxLength": 4096,
+            "title": "Snippet",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "linkedin",
+              "reddit",
+              "web",
+              "github",
+              "rss",
+              "youtube",
+              "x",
+              "instagram",
+              "facebook"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 300,
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "maxLength": 4096,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "url",
+          "snippet",
+          "source",
+          "provider",
+          "evidence_kind",
+          "qualification",
+          "observed_at",
+          "provenance"
+        ],
+        "title": "ResearchCandidate",
+        "type": "object"
+      },
+      "ResearchOptions": {
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "default": "leads",
+            "enum": [
+              "leads",
+              "research"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "result_limit": {
+            "default": 25,
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Result Limit",
+            "type": "integer"
+          },
+          "sources": {
+            "items": {
+              "enum": [
+                "linkedin",
+                "reddit",
+                "web",
+                "github",
+                "rss",
+                "youtube",
+                "x",
+                "instagram",
+                "facebook"
+              ],
+              "type": "string"
+            },
+            "maxItems": 9,
+            "minItems": 1,
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "title": "ResearchOptions",
+        "type": "object"
+      },
+      "ResearchResults": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ResearchCandidate"
+            },
+            "maxItems": 100,
+            "title": "Results",
+            "type": "array"
+          },
+          "state": {
+            "enum": [
+              "planned",
+              "queued",
+              "running",
+              "waiting_for_connection",
+              "paused",
+              "completed",
+              "partial",
+              "failed",
+              "cancelled"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "workspace_id",
+          "state",
+          "results",
+          "limitations"
+        ],
+        "title": "ResearchResults",
+        "type": "object"
+      },
+      "ResearchSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "result_count": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Result Count",
+            "type": "integer"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          },
+          "state": {
+            "enum": [
+              "planned",
+              "queued",
+              "running",
+              "waiting_for_connection",
+              "paused",
+              "completed",
+              "partial",
+              "failed",
+              "cancelled"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "terminal_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terminal Reason"
+          },
+          "version": {
+            "minimum": 0.0,
+            "title": "Version",
+            "type": "integer"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "workspace_id",
+          "state",
+          "stage",
+          "version",
+          "result_count"
+        ],
+        "title": "ResearchSnapshot",
         "type": "object"
       },
       "SearchPlan": {
@@ -570,6 +937,47 @@
         "title": "SearchPlan",
         "type": "object"
       },
+      "SubmissionOutput": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "message_id": {
+            "format": "uuid",
+            "title": "Message Id",
+            "type": "string"
+          },
+          "plan_id": {
+            "format": "uuid",
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id",
+          "plan_id",
+          "job_id",
+          "workspace_id",
+          "limitations"
+        ],
+        "title": "SubmissionOutput",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -648,6 +1056,282 @@
           }
         },
         "summary": "Ready"
+      }
+    },
+    "/v1/conversations": {
+      "post": {
+        "operationId": "create_conversation_v1_conversations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConversationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Conversation"
+      }
+    },
+    "/v1/conversations/{conversation_id}/messages": {
+      "post": {
+        "operationId": "message_v1_conversations__conversation_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmissionOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Message"
+      }
+    },
+    "/v1/jobs/{job_id}": {
+      "get": {
+        "operationId": "job_snapshot_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchSnapshot"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Job Snapshot"
+      }
+    },
+    "/v1/jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "cancel_job_v1_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobSnapshot"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Job"
+      }
+    },
+    "/v1/jobs/{job_id}/results": {
+      "get": {
+        "operationId": "results_v1_jobs__job_id__results_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchResults"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Results"
       }
     },
     "/v1/me": {

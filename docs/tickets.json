@@ -615,12 +615,13 @@
           "docs/completions/SKR-013.md"
         ],
         "passed_checks": [
-          "User reports Google setup ready; SDK/RSA verification tests passed"
+          "User confirmed successful live Google sign-in on 2026-10-12",
+          "44 frontend tests; controlled signed-token backend verification; frontend build/typecheck passed previously"
         ],
         "remaining": [
-          "Actual user-session/token roundtrip unverified; live browser inspection permission declined"
+          "Actual server-verified Firebase ID-token roundtrip through research workflow remains unverified"
         ],
-        "recorded_at": "2026-10-12T15:42:47.524548+00:00"
+        "recorded_at": "2026-10-12T17:19:47.379821+00:00"
       }
     },
     {
@@ -1024,7 +1025,7 @@
       "title": "Enforce shared source and worker capacity limits",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-022"
@@ -1053,7 +1054,18 @@
           "scenario": "Retry-After seconds/date plus worker crash",
           "expected": "cadence and lease recovery remain bounded"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-023.md"
+        ],
+        "passed_checks": [
+          "12 shared-capacity PostgreSQL integration tests passed",
+          "Workflow worker capacity admission and Retry-After feedback verified"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T17:41:42+00:00"
+      }
     },
     {
       "id": "SKR-024",
@@ -1826,7 +1838,7 @@
       "title": "Integrate copied adaptive selector matching with validation",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-036",
@@ -1854,7 +1866,20 @@
           "scenario": "Similar sibling contains another person role",
           "expected": "ambiguous/wrong recovery flagged"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-043.md"
+        ],
+        "passed_checks": [
+          "Semantic adaptive selector validation and relocation fixture tests passed",
+          "Ruff, Mypy, and copied Scrapling provenance verification passed"
+        ],
+        "remaining": [
+          "Production fetching integration and live source recovery remain unverified"
+        ],
+        "recorded_at": "2026-10-12T17:41:42+00:00"
+      }
     },
     {
       "id": "SKR-044",
@@ -1910,7 +1935,7 @@
       "title": "Adapt copied model creation and usage callbacks",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-012",
@@ -1941,7 +1966,20 @@
           "scenario": "Page contains API-key request/instruction",
           "expected": "no secret disclosed to model"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-045.md"
+        ],
+        "passed_checks": [
+          "22 bounded local-model adapter tests passed",
+          "Ruff and Mypy checks passed"
+        ],
+        "remaining": [
+          "Production extraction/planning wiring, container controls, and live adapter trial remain"
+        ],
+        "recorded_at": "2026-10-12T17:41:42+00:00"
+      }
     },
     {
       "id": "SKR-046",

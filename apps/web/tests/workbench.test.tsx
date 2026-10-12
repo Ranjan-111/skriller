@@ -12,12 +12,19 @@ import { ApiError } from "../src/lib/api";
 const mock = vi.hoisted(() => ({
   health: vi.fn(),
   submit: vi.fn(),
+  job: vi.fn(),
+  results: vi.fn(),
   authStatus: "signed_in",
+  authUid: "account-one",
 }));
 vi.mock("../src/components/identity", () => ({
   IdentityControls: () => null,
   useIdentity: () => ({
     status: mock.authStatus,
+    user:
+      mock.authStatus === "signed_in"
+        ? { uid: mock.authUid, email: null }
+        : null,
     getToken: async () => "test-app-token",
   }),
 }));
@@ -28,7 +35,9 @@ vi.mock("../src/lib/api", async (importOriginal) => ({
 beforeEach(() => {
   vi.clearAllMocks();
   mock.authStatus = "signed_in";
+  mock.authUid = "account-one";
   mock.health.mockResolvedValue({ live: true, ready: true });
+  mock.job.mockReturnValue(new Promise(() => {}));
 });
 describe("research workbench", () => {
   it("offers prompt-first empty state without fake results", async () => {
@@ -48,7 +57,7 @@ describe("research workbench", () => {
     );
     expect(mock.submit).not.toHaveBeenCalled();
     expect(
-      screen.getByText(/Result rendering is not implemented/),
+      screen.getByText(/Start a research run to discover sources/),
     ).toBeVisible();
   });
   it("uses examples, optional sources and result controls in actual request", async () => {
@@ -234,4 +243,44 @@ it("preserves the prompt through required app sign-in without sending a job", as
   expect(screen.getByRole("textbox", { name: "Research prompt" })).toHaveValue(
     "Find fintech founders",
   );
+});
+
+it("removes accepted run output when the app account signs out", async () => {
+  mock.submit.mockResolvedValue({ id: "run-private", status: "accepted" });
+  const view = render(<Workbench />);
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "Start research" }),
+    ).toBeEnabled(),
+  );
+  fireEvent.change(screen.getByRole("textbox"), {
+    target: { value: "Private research" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Start research" }));
+  expect(await screen.findByText("Run accepted")).toBeVisible();
+  mock.authStatus = "signed_out";
+  view.rerender(<Workbench />);
+  expect(screen.queryByText("Run accepted")).not.toBeInTheDocument();
+  expect(screen.getByRole("textbox")).toHaveValue("Private research");
+});
+
+it("hides a prior account's run immediately when the signed-in account changes", async () => {
+  mock.submit.mockResolvedValue({
+    id: "run-first-account",
+    status: "accepted",
+  });
+  const view = render(<Workbench />);
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "Start research" }),
+    ).toBeEnabled(),
+  );
+  fireEvent.change(screen.getByRole("textbox"), {
+    target: { value: "Find companies" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Start research" }));
+  expect(await screen.findByText("Run accepted")).toBeVisible();
+  mock.authUid = "account-two";
+  view.rerender(<Workbench />);
+  expect(screen.queryByText("Run accepted")).not.toBeInTheDocument();
 });

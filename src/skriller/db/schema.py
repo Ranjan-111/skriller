@@ -399,3 +399,32 @@ external_calls = scoped(
         sa.CheckConstraint("state IN ('in_flight','confirmed','uncertain')"),
     ),
 )
+
+# Owner-managed shared capacity: only checked SECURITY DEFINER operations expose
+# these tables. Their RLS has no direct application policy by design.
+capacity_leases = sa.Table(
+    "capacity_leases",
+    metadata,
+    sa.Column(
+        "id", UUID(as_uuid=False), primary_key=True, server_default=sa.text("gen_random_uuid()")
+    ),
+    sa.Column("workspace_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("job_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("kind", sa.Text, nullable=False),
+    sa.Column("source", sa.Text, nullable=False),
+    sa.Column("host", sa.Text, nullable=False),
+    sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(["workspace_id", "job_id"], ["jobs.workspace_id", "jobs.id"]),
+    sa.CheckConstraint("kind IN ('http','browser','model')"),
+)
+sa.Index("capacity_active", capacity_leases.c.expires_at)
+capacity_cadence = sa.Table(
+    "capacity_cadence",
+    metadata,
+    sa.Column("scope", sa.Text, primary_key=True),
+    sa.Column("name", sa.Text, primary_key=True),
+    sa.Column("delay", sa.Float, nullable=False, server_default="0"),
+    sa.Column(
+        "next_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("'-infinity'")
+    ),
+)

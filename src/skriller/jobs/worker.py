@@ -4,17 +4,22 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import timedelta
 from decimal import Decimal
+from math import ceil, isfinite
+from time import monotonic
+from typing import Literal
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
 from celery import Celery
 from pydantic import BaseModel, ConfigDict, Field
 
-from skriller.contracts import SearchPlan
+from skriller.contracts import Failure, SearchPlan
 from skriller.db import ConversationRepository, JobRepository, ResearchRepository
 from skriller.db.repositories import insert_row, scope
 from skriller.db.schema import attempts, external_calls, reservations, stage_checkpoints
 from skriller.jobs.budget import BudgetExhausted, locked_job, reconcile, reserve
+from skriller.jobs.capacity import CapacityUnavailable, acquire, release
+from skriller.jobs.control import remaining_seconds
 from skriller.jobs.state import STAGES
 
 
@@ -33,6 +38,12 @@ class StageHandler:
     maximum_cost: Decimal
     dimensions: dict
     lease_seconds: int = 120
+    run_with_deadline: Callable | None = None
+    capacity_kind: Literal["http", "browser", "model"] | None = None
+    capacity_source: str = ""
+    capacity_host: str = ""
+    minimum_interval: float = 0
+    feedback_failure: Callable | None = None
 
 
 class CheckpointWorker:
@@ -42,6 +53,14 @@ class CheckpointWorker:
         for handler in handlers.values():
             if not 1 <= handler.lease_seconds <= 120:
                 raise ValueError("Stage lease must be bounded")
+            if handler.capacity_kind and (
+                not handler.run_with_deadline
+                or not handler.capacity_source
+                or not handler.capacity_host
+            ):
+                raise ValueError("External stage capacity requires identity and deadline-aware I/O")
+            if not isfinite(handler.minimum_interval) or not 0 <= handler.minimum_interval <= 86400:
+                raise ValueError("Invalid source cadence")
         self.database, self.handlers = database, dict(handlers)
 
     def schedule(self, payload):
@@ -129,6 +148,22 @@ class CheckpointWorker:
                     )
                     .values(state="uncertain", finished_at=now)
                 )
+            capacity = None
+            if handler.capacity_kind:
+                try:
+                    capacity = acquire(
+                        session,
+                        job["id"],
+                        kind=handler.capacity_kind,
+                        source=handler.capacity_source,
+                        host=handler.capacity_host,
+                        ttl_seconds=min(
+                            handler.lease_seconds, max(1, ceil(remaining_seconds(session, job)))
+                        ),
+                        minimum_interval=handler.minimum_interval,
+                    )
+                except CapacityUnavailable:
+                    return {"status": "capacity_exhausted"}
             token = str(uuid4())
             generation = attempt["generation"] + 1
             try:
@@ -140,6 +175,8 @@ class CheckpointWorker:
                     handler.dimensions,
                 )
             except BudgetExhausted:
+                if capacity:
+                    release(session, capacity)
                 JobRepository.transition(session, job["id"], "paused")
                 return {"status": "budget_exhausted"}
             JobRepository.transition(session, job["id"], "running", stage=attempt["stage"])
@@ -165,10 +202,32 @@ class CheckpointWorker:
                 reservation_id=reservation["id"],
                 state="in_flight",
             )
+            time_left = remaining_seconds(session, job)
+        io_started = monotonic()
+        io_ok = False
+        retry_headers = None
         try:
             # No database transaction remains open during source/model IO.
-            data, actual_cost, actual_dimensions = handler.run(plan)
-        except Exception:  # noqa: BLE001 - never persist raw page/provider exceptions
+            if handler.run_with_deadline:
+                timeout = min(time_left, handler.lease_seconds)
+                if capacity:
+                    timeout = min(timeout, capacity.deadline_monotonic - monotonic())
+                if timeout <= 0:
+                    raise TimeoutError("Execution window expired before source dispatch")
+                data, actual_cost, actual_dimensions = handler.run_with_deadline(plan, timeout)
+            else:
+                data, actual_cost, actual_dimensions = handler.run(plan)
+            io_ok = True
+            if handler.feedback_failure:
+                feedback = handler.feedback_failure(data)
+                if isinstance(feedback, Failure):
+                    io_ok = False
+                    if feedback.retry_after_seconds is not None:
+                        retry_headers = {"Retry-After": str(feedback.retry_after_seconds)}
+        except Exception as error:  # noqa: BLE001 - never persist raw page/provider exceptions
+            failure = getattr(error, "failure", None)
+            if isinstance(failure, Failure) and failure.retry_after_seconds is not None:
+                retry_headers = {"Retry-After": str(failure.retry_after_seconds)}
             with self.database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
                 locked_job(session, str(identity.job_id))
                 reconcile(session, str(identity.job_id), reservation["id"], status="estimated")
@@ -186,6 +245,7 @@ class CheckpointWorker:
                         attempts.c.workspace_id == scope(session),
                         attempts.c.id == str(identity.attempt_id),
                         attempts.c.lease_owner == token,
+                        attempts.c.state == "running",
                     )
                     .values(state="failed", finished_at=sa.func.clock_timestamp())
                 )
@@ -197,6 +257,17 @@ class CheckpointWorker:
                     {"attempt_id": str(identity.attempt_id), "reservation_id": reservation["id"]},
                 )
             return {"status": "source_unavailable"}
+        finally:
+            if capacity:
+                with self.database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+                    release(
+                        session,
+                        capacity,
+                        latency=monotonic() - io_started,
+                        ok=io_ok,
+                        headers=retry_headers,
+                        minimum_interval=handler.minimum_interval,
+                    )
         with self.database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
             job = locked_job(session, str(identity.job_id))
             row = session.execute(statement.with_for_update()).mappings().one()
@@ -223,6 +294,15 @@ class CheckpointWorker:
                 or job["state"] not in {"queued", "running"}
             ):
                 return {"status": "lease_lost"}
+            if remaining_seconds(session, job) <= 0:
+                JobRepository.transition(session, job["id"], "paused")
+                session.execute(
+                    sa.update(attempts)
+                    .where(attempts.c.workspace_id == scope(session), attempts.c.id == row["id"])
+                    .values(state="failed", finished_at=now)
+                )
+                JobRepository.event(session, job["id"], "deadline:reached", "deadline_reached")
+                return {"status": "deadline_exceeded"}
             entity_ids = handler.persist(session, data)
             if (
                 not isinstance(entity_ids, list)

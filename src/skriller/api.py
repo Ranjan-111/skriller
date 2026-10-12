@@ -16,6 +16,7 @@ from skriller.connectors.search import ExaKeylessSearch
 from skriller.contracts import Capability, ExecutionContext, Failure, ProgressEvent, SearchPlan
 from skriller.db import Database
 from skriller.progress import router as progress_router
+from skriller.research.router import router as research_router
 from skriller.settings import Settings
 from skriller.storage import EvidenceStorage, LocalBlobBackend
 
@@ -59,6 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.database = Database(configuration.application_database_url)
     app.include_router(progress_router)
+    app.include_router(research_router)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=configuration.cors_origins,

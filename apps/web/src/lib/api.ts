@@ -28,7 +28,49 @@ export type ResearchRequest = {
   sources: Source[];
   result_limit: number;
 };
-export type ResearchJob = { id: string; status: string };
+export type ResearchJob = { id: string; status: string; workspace_id?: string };
+export type ResearchRun = {
+  id: string;
+  workspace_id: string;
+  state: string;
+  stage: string | null;
+  version: number;
+  terminal_reason: string | null;
+  error_code?: string | null;
+  result_count: number;
+};
+export type ResearchCandidate = {
+  id: string;
+  title: string;
+  url: string;
+  snippet: string;
+  source: string;
+  provider: "exa_keyless";
+  evidence_kind: "search_snippet";
+  qualification: "unverified";
+  observed_at: string;
+};
+export type ResearchResults = {
+  job_id: string;
+  workspace_id: string;
+  state: string;
+  results: ResearchCandidate[];
+  limitations: string[];
+};
+export function safeSourceUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (
+      !["https:", "http:"].includes(url.protocol) ||
+      url.username ||
+      url.password
+    )
+      return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -191,7 +233,14 @@ export function createApi(
         throw new ApiError(
           "The service returned an unexpected response. No run has been confirmed.",
         );
-      return { id: message.job_id, status: "accepted" };
+      return {
+        id: message.job_id,
+        status: "accepted",
+        ...("workspace_id" in message &&
+        typeof message.workspace_id === "string"
+          ? { workspace_id: message.workspace_id }
+          : {}),
+      };
     },
     snapshot(identity: JobIdentity): Promise<JobSnapshot> {
       return jsonRequest(
@@ -236,11 +285,88 @@ export function createApi(
       const response = await client.progress(identity, options);
       yield* decodeProgress(response);
     },
-    job(id: string) {
-      return jsonRequest(`/v1/jobs/${encodeURIComponent(id)}`);
+    async job(
+      id: string,
+      workspaceId?: string,
+      signal?: AbortSignal,
+    ): Promise<ResearchRun> {
+      const query = workspaceId
+        ? `?workspace_id=${encodeURIComponent(workspaceId)}`
+        : "";
+      const data = await jsonRequest(
+        `/v1/jobs/${encodeURIComponent(id)}${query}`,
+        { signal },
+      );
+      if (
+        !data ||
+        typeof data !== "object" ||
+        !("id" in data) ||
+        data.id !== id ||
+        !("workspace_id" in data) ||
+        typeof data.workspace_id !== "string" ||
+        (workspaceId && data.workspace_id !== workspaceId) ||
+        !("state" in data) ||
+        typeof data.state !== "string" ||
+        !("stage" in data) ||
+        (data.stage !== null && typeof data.stage !== "string") ||
+        !("version" in data) ||
+        !Number.isSafeInteger(data.version) ||
+        !("terminal_reason" in data) ||
+        (data.terminal_reason !== null &&
+          typeof data.terminal_reason !== "string") ||
+        !("result_count" in data) ||
+        !Number.isSafeInteger(data.result_count)
+      )
+        throw new ApiError(
+          "The service returned an unexpected run response. Try checking the run again.",
+        );
+      return data as ResearchRun;
     },
-    results(id: string) {
-      return jsonRequest(`/v1/jobs/${encodeURIComponent(id)}/results`);
+    async results(
+      id: string,
+      workspaceId?: string,
+      signal?: AbortSignal,
+    ): Promise<ResearchResults> {
+      const query = workspaceId
+        ? `?workspace_id=${encodeURIComponent(workspaceId)}`
+        : "";
+      const data = await jsonRequest(
+        `/v1/jobs/${encodeURIComponent(id)}/results${query}`,
+        { signal },
+      );
+      if (
+        !data ||
+        typeof data !== "object" ||
+        !("job_id" in data) ||
+        data.job_id !== id ||
+        !("workspace_id" in data) ||
+        typeof data.workspace_id !== "string" ||
+        (workspaceId && data.workspace_id !== workspaceId) ||
+        !("state" in data) ||
+        typeof data.state !== "string" ||
+        !("results" in data) ||
+        !Array.isArray(data.results) ||
+        data.results.length > 300 ||
+        !("limitations" in data) ||
+        !Array.isArray(data.limitations) ||
+        !data.limitations.every((item: unknown) => typeof item === "string") ||
+        !data.results.every((item: unknown) => {
+          if (!item || typeof item !== "object") return false;
+          const candidate = item as Record<string, unknown>;
+          return (
+            ["id", "title", "url", "snippet", "source", "observed_at"].every(
+              (key) => typeof candidate[key] === "string",
+            ) &&
+            candidate.provider === "exa_keyless" &&
+            candidate.evidence_kind === "search_snippet" &&
+            candidate.qualification === "unverified"
+          );
+        })
+      )
+        throw new ApiError(
+          "The service returned unexpected results. Try checking the run again.",
+        );
+      return data as ResearchResults;
     },
   };
   return client;

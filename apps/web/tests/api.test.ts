@@ -169,3 +169,51 @@ it("redacts token refresh failures rather than leaking SDK credentials", async (
   ).rejects.toThrow("Sign in again");
   expect(fetcher).toHaveBeenCalledTimes(1);
 });
+
+it("loads workspace-scoped run results and rejects another workspace's response", async () => {
+  const payload = {
+    job_id: "j/1",
+    workspace_id: "w/1",
+    state: "completed",
+    results: [],
+    limitations: ["Snippets only"],
+  };
+  const fetcher = vi.fn().mockImplementation(async () => response(payload));
+  const api = createApi("http://api", fetcher, async () => "token");
+  expect(await api.results("j/1", "w/1")).toEqual(payload);
+  expect(fetcher.mock.calls[0][0]).toBe(
+    "http://api/v1/jobs/j%2F1/results?workspace_id=w%2F1",
+  );
+  await expect(api.results("j/1", "another-workspace")).rejects.toThrow(
+    "unexpected results",
+  );
+});
+it("rejects malformed candidates rather than presenting them as research evidence", async () => {
+  const fetcher = vi.fn().mockResolvedValue(
+    response({
+      job_id: "j1",
+      workspace_id: "w1",
+      state: "completed",
+      results: [{ title: "Invented lead" }],
+      limitations: [],
+    }),
+  );
+  await expect(
+    createApi("http://api", fetcher).results("j1", "w1"),
+  ).rejects.toThrow("unexpected results");
+});
+
+it("retains the workspace identity provided on accepted research", async () => {
+  const fetcher = vi
+    .fn()
+    .mockResolvedValueOnce(response({ id: "c1" }))
+    .mockResolvedValueOnce(response({ job_id: "j1", workspace_id: "w1" }));
+  expect(
+    await createApi("http://api", fetcher).submit({
+      prompt: "Find companies",
+      mode: "leads",
+      sources: ["web"],
+      result_limit: 10,
+    }),
+  ).toEqual({ id: "j1", workspace_id: "w1", status: "accepted" });
+});
