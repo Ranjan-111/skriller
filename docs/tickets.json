@@ -1,0 +1,3611 @@
+{
+  "version": "0.1",
+  "created": "2026-10-12",
+  "status": "planning_only",
+  "implementation_status": "No product tickets have been implemented; test cases below are planned, not executed application tests.",
+  "references": [
+    "docs/PRD.md",
+    "docs/TECH_STACK.md",
+    "docs/REUSE_MAP.md",
+    "docs/REFERENCE_INVENTORY.json"
+  ],
+  "estimate_legend": {
+    "S": "target up to 4 focused engineering hours",
+    "M": "target up to 8 focused engineering hours"
+  },
+  "estimate_note": "Planning sizes, not deadlines. Split a ticket if actual scope exceeds one focused engineering day. External access wait time is separate.",
+  "tickets": [
+    {
+      "id": "SKR-001",
+      "title": "Register supplied snapshots and import provenance",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-03"
+      ],
+      "reuse_ids": [],
+      "scope": "Turn the reference inventory into the canonical source manifest; define third_party destinations, copy rules, licence notices, modification log and manifest verifier. Preserve reference trees.",
+      "acceptance_criteria": [
+        "No fabricated upstream commit IDs",
+        "Every source file imported later is attributable to its supplied content hash."
+      ],
+      "test_cases": [
+        {
+          "kind": "static",
+          "scenario": "Source file modified after import",
+          "expected": "verifier detects changed hash and requires a recorded patch"
+        },
+        {
+          "kind": "static",
+          "scenario": "Missing licence or unregistered copied file",
+          "expected": "distribution check fails"
+        }
+      ]
+    },
+    {
+      "id": "SKR-002",
+      "title": "Copy and package Scrapling source and baseline tests",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-001"
+      ],
+      "requirements": [
+        "FR-04",
+        "FR-05",
+        "FR-06"
+      ],
+      "reuse_ids": [
+        "S-HTTP",
+        "S-PARSE",
+        "S-STORE",
+        "S-BROWSER",
+        "S-STEALTH",
+        "S-RATE",
+        "S-CACHE"
+      ],
+      "scope": "Copy complete Scrapling package, metadata/licence and relevant test closure to third_party/scrapling. Install the local tree; record which optional features load.",
+      "acceptance_criteria": [
+        "Product imports resolve to copied tree, not reference or a remote wheel",
+        "Baseline regression outcomes are recorded without hiding existing failures."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Import parser and HTTP/browser entry points in clean environment",
+          "expected": "paths resolve to third_party"
+        },
+        {
+          "kind": "regression",
+          "scenario": "Copied deterministic parser suite",
+          "expected": "results match the recorded source baseline"
+        }
+      ]
+    },
+    {
+      "id": "SKR-003",
+      "title": "Copy and package Agent-Reach source and baseline tests",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-001"
+      ],
+      "requirements": [
+        "FR-03"
+      ],
+      "reuse_ids": [
+        "A-CORE",
+        "A-SEC",
+        "A-LI",
+        "A-REDDIT",
+        "A-PUBLIC",
+        "A-SOCIAL"
+      ],
+      "scope": "Copy Agent-Reach package, metadata/licence and test closure. Inventory external commands without running installer scripts or using host-global credentials.",
+      "acceptance_criteria": [
+        "Local copied package is the runtime source",
+        "External tools are marked missing/configured separately from usable."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "No external CLIs installed",
+          "expected": "diagnostics reports unavailable, not ready"
+        },
+        {
+          "kind": "regression",
+          "scenario": "Channel contract and URL/redaction suites",
+          "expected": "preserve baseline behaviour"
+        }
+      ]
+    },
+    {
+      "id": "SKR-004",
+      "title": "Copy and package ScrapeGraph-AI with telemetry isolation",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-001"
+      ],
+      "requirements": [
+        "FR-07",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "G-GRAPH",
+        "G-EXTRACT",
+        "G-CLEAN",
+        "G-EXPORT",
+        "G-PRIVACY"
+      ],
+      "scope": "Copy package, metadata/licence and test closure. Patch telemetry default/home-write behaviour and local-source logging before runtime use. Do not copy upstream code-generation flows into enabled product operations.",
+      "acceptance_criteria": [
+        "No external telemetry or unrelated home-file writes during import/run",
+        "Raw source content and credentials are absent from logs."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Import and run mocked extraction with network/file spies",
+          "expected": "no telemetry or home config write"
+        },
+        {
+          "kind": "regression",
+          "scenario": "Telemetry flag and generation tests",
+          "expected": "adapted copies pass with redacted logs"
+        }
+      ]
+    },
+    {
+      "id": "SKR-005",
+      "title": "Resolve local source dependencies and lock runtime environments",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-002",
+        "SKR-003",
+        "SKR-004"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-04",
+        "FR-07"
+      ],
+      "reuse_ids": [],
+      "scope": "Resolve Python 3.12 dependencies including browser/model integrations. Pin local source copies and external tool versions; isolate incompatible environments only if demonstrated necessary.",
+      "acceptance_criteria": [
+        "Clean installs are reproducible",
+        "Version conflicts are recorded instead of solved through silent source replacement."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Fresh install from checked-in lockfiles",
+          "expected": "all selected copied entry points import"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Missing optional model/browser dependency",
+          "expected": "capability disabled with explicit diagnostic"
+        }
+      ]
+    },
+    {
+      "id": "SKR-006",
+      "title": "Bootstrap web, API and local services",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-005"
+      ],
+      "requirements": [
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Create Next.js/TypeScript and FastAPI scaffolds with PostgreSQL/RabbitMQ and local object volume. Add environment schema, readiness/liveness and credential-free examples.",
+      "acceptance_criteria": [
+        "One documented local startup path",
+        "API readiness reflects required service health without exposing configuration secrets."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Database unavailable at startup",
+          "expected": "readiness false and process remains diagnosable"
+        },
+        {
+          "kind": "smoke",
+          "scenario": "Local stack started with placeholders",
+          "expected": "UI and API health render without paid provider calls"
+        }
+      ]
+    },
+    {
+      "id": "SKR-007",
+      "title": "Create labelled fixtures and no-network test harness",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-001"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-06",
+        "FR-10",
+        "FR-11"
+      ],
+      "reuse_ids": [],
+      "scope": "Define synthetic company/person/discussion pages, JSON-LD, JS pages, changed DOM, same-name entities and failure responses. Add fake search/model/server interfaces and frozen clock.",
+      "acceptance_criteria": [
+        "Fixtures have expected evidence and criterion outcomes",
+        "Ordinary CI makes no live source/model calls."
+      ],
+      "test_cases": [
+        {
+          "kind": "static",
+          "scenario": "Fixture missing expected labels",
+          "expected": "corpus validation fails"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Accidental outbound call in offline test",
+          "expected": "test fails rather than accessing internet"
+        }
+      ]
+    },
+    {
+      "id": "SKR-008",
+      "title": "Set up ticket-level CI and artifact reporting",
+      "phase": "P0",
+      "epic": "Foundation",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-006",
+        "SKR-007"
+      ],
+      "requirements": [
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Add selective pytest/type/lint/frontend/build checks, copied-source regression groups and integration service setup. Archive genuine failures/skips and generated contract drift.",
+      "acceptance_criteria": [
+        "Applicable checks run on each ticket change",
+        "Live probes are opt-in, separate from offline CI."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Deliberately broken schema or frontend build",
+          "expected": "CI fails"
+        },
+        {
+          "kind": "static",
+          "scenario": "Live test skipped for absent credentials",
+          "expected": "report says skipped, never passed"
+        }
+      ]
+    },
+    {
+      "id": "SKR-009",
+      "title": "Validate LinkedIn backend route and acquire missing implementation",
+      "phase": "P0",
+      "epic": "Source feasibility",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-003",
+        "SKR-007"
+      ],
+      "requirements": [
+        "FR-02",
+        "FR-03",
+        "FR-08"
+      ],
+      "reuse_ids": [
+        "A-LI"
+      ],
+      "scope": "Inspect selected LinkedIn backend beyond Agent-Reach diagnostics. Acquire/pin actual backend source when available, record licence/operations/access limits and isolate an opt-in feasibility harness. Do not claim channel check implements search/read.",
+      "acceptance_criteria": [
+        "One operation-level feasibility report with source provenance and gaps",
+        "Unavailable access remains a release dependency, not successful coverage."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Only mcporter config exists",
+          "expected": "capability remains unvalidated"
+        },
+        {
+          "kind": "live",
+          "scenario": "Controlled discovery/read probe on selected route",
+          "expected": "report actual fields, failures, time and access conditions"
+        }
+      ]
+    },
+    {
+      "id": "SKR-010",
+      "title": "Validate Reddit route and acquire missing implementation",
+      "phase": "P0",
+      "epic": "Source feasibility",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-003",
+        "SKR-007"
+      ],
+      "requirements": [
+        "FR-02",
+        "FR-03",
+        "FR-08"
+      ],
+      "reuse_ids": [
+        "A-REDDIT"
+      ],
+      "scope": "Inspect/pin actual selected OpenCLI/rdt/API backend and source/licence where available. Record server-versus-desktop requirements, search/read availability, commercial access and session expiry.",
+      "acceptance_criteria": [
+        "Operation-level feasibility report distinguishes configured and usable",
+        "No assumed free anonymous .json production route."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Bridge available but no tested Reddit session",
+          "expected": "source not marked ready"
+        },
+        {
+          "kind": "live",
+          "scenario": "Controlled thread/search probe",
+          "expected": "actual pagination, fields and access failures recorded"
+        }
+      ]
+    },
+    {
+      "id": "SKR-011",
+      "title": "Validate search coverage, operators and provider terms",
+      "phase": "P0",
+      "epic": "Source feasibility",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-007"
+      ],
+      "requirements": [
+        "FR-02"
+      ],
+      "reuse_ids": [],
+      "scope": "Trial candidate provider with fixed LinkedIn/Reddit/company queries; record operator semantics, pagination, duplicate rate, pricing and permitted storage/use. Choose provider configuration.",
+      "acceptance_criteria": [
+        "Search-provider decision cites measured responses",
+        "Google-style operator generation is distinct from a Google backend."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Provider ignores domain operator",
+          "expected": "adapter cannot advertise domain-constrained search"
+        },
+        {
+          "kind": "live",
+          "scenario": "Fixed query corpus",
+          "expected": "coverage/yield and actual costs recorded without completeness claim"
+        }
+      ]
+    },
+    {
+      "id": "SKR-012",
+      "title": "Validate cloud/local models against copied extraction code",
+      "phase": "P0",
+      "epic": "Source feasibility",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-004",
+        "SKR-005",
+        "SKR-007"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-07",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "G-GRAPH",
+        "G-EXTRACT"
+      ],
+      "scope": "Benchmark candidate cloud model and optional Ollama using labelled extraction/planning examples. Verify schema support, bounded chunk use, evidence fidelity, token usage and data handling.",
+      "acceptance_criteria": [
+        "Explicit model/provider selected for hosted pilot",
+        "Local results have independent timing and quality report."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Valid JSON contains invented contact",
+          "expected": "model evaluation counts factual failure"
+        },
+        {
+          "kind": "live",
+          "scenario": "Same labelled inputs on selected models",
+          "expected": "record accuracy, latency, calls and cost"
+        }
+      ]
+    },
+    {
+      "id": "SKR-013",
+      "title": "Verify Firebase identity on API requests",
+      "phase": "P0",
+      "epic": "Identity and storage",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-006",
+        "SKR-007"
+      ],
+      "requirements": [
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Implement app sign-in and server token verification; map external identity to an application user. Keep target-source authorisation separate.",
+      "acceptance_criteria": [
+        "Invalid/expired/wrong-audience tokens cannot read app data",
+        "No token appears in URL/log/error."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Forged Firebase token",
+          "expected": "request denied"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Expired token during stream reconnect",
+          "expected": "user reauthenticates without leaked token"
+        }
+      ]
+    },
+    {
+      "id": "SKR-014",
+      "title": "Create workspaces, memberships and row-level isolation",
+      "phase": "P0",
+      "epic": "Identity and storage",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-013"
+      ],
+      "requirements": [
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Add workspace/membership migrations and owner/member permissions. Use non-owner DB role with transaction-scoped tenancy and explicit privileged maintenance paths.",
+      "acceptance_criteria": [
+        "Tenant boundary survives connection-pool reuse",
+        "Supplied workspace ID is not authorisation."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "User A requests workspace B row",
+          "expected": "denied at application and database boundary"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Pooled connection reused for another workspace",
+          "expected": "no prior tenant context leaks"
+        }
+      ]
+    },
+    {
+      "id": "SKR-015",
+      "title": "Persist conversations and immutable plan revisions",
+      "phase": "P0",
+      "epic": "Identity and storage",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-014"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-13"
+      ],
+      "reuse_ids": [],
+      "scope": "Add conversation/message/plan schemas and repositories; store request interpretation and revision links. Preserve prior plan/result meaning after refinement.",
+      "acceptance_criteria": [
+        "Every run references one immutable plan revision",
+        "Messages/plans are tenant-owned."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Edit criteria after a completed run",
+          "expected": "previous plan stays unchanged"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Cross-workspace conversation lookup",
+          "expected": "unavailable"
+        }
+      ]
+    },
+    {
+      "id": "SKR-016",
+      "title": "Persist entities, evidence, claims and qualifications",
+      "phase": "P0",
+      "epic": "Identity and storage",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-014"
+      ],
+      "requirements": [
+        "FR-09",
+        "FR-10",
+        "FR-11",
+        "FR-12"
+      ],
+      "reuse_ids": [],
+      "scope": "Add minimal typed result/evidence/claim/link/qualification/suppression migrations and repositories. Enforce evidence references and separate inferred/observed statuses.",
+      "acceptance_criteria": [
+        "Claim cannot reference nonexistent/cross-tenant evidence",
+        "Results preserve null/conflicting values."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Claim cites another workspace evidence",
+          "expected": "transaction rejected"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Two contradictory role claims",
+          "expected": "both stored with conflict status"
+        }
+      ]
+    },
+    {
+      "id": "SKR-017",
+      "title": "Persist jobs, attempts, events and usage records",
+      "phase": "P0",
+      "epic": "Identity and storage",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-014",
+        "SKR-015"
+      ],
+      "requirements": [
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Add canonical job/task-attempt/event/outbox/usage/reservation schemas, uniqueness keys and cursors. Queue payloads contain IDs, not credentials.",
+      "acceptance_criteria": [
+        "Job state is recoverable independently of Celery result cache",
+        "Duplicate logical attempt IDs cannot create duplicate ledger rows."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Duplicate insertion from two workers",
+          "expected": "one logical record persists"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Broker payload inspected",
+          "expected": "no page body/session secret present"
+        }
+      ]
+    },
+    {
+      "id": "SKR-018",
+      "title": "Implement private evidence object storage",
+      "phase": "P0",
+      "epic": "Identity and storage",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-014",
+        "SKR-016"
+      ],
+      "requirements": [
+        "FR-09",
+        "FR-13"
+      ],
+      "reuse_ids": [],
+      "scope": "Provide local and private S3-compatible storage interfaces with scoped keys, size limits, expiration metadata and authorised retrieval.",
+      "acceptance_criteria": [
+        "Object access requires workspace ownership",
+        "Evidence references survive storage backend swap."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Guess another workspace object key",
+          "expected": "access denied"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Oversized or expired blob",
+          "expected": "rejected/unavailable with typed status"
+        }
+      ]
+    },
+    {
+      "id": "SKR-019",
+      "title": "Define typed plans, connector contexts and error schemas",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-015",
+        "SKR-017"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-03",
+        "FR-14"
+      ],
+      "reuse_ids": [],
+      "scope": "Implement bounded Pydantic contracts from stack document and generate frontend OpenAPI types. Enforce criterion types, maximum schema depth, limits and supported operations.",
+      "acceptance_criteria": [
+        "Invalid plan cannot dispatch",
+        "Frontend/backend contract drift is detected."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "Plan requests negative count or unlimited budget",
+          "expected": "validation rejects"
+        },
+        {
+          "kind": "contract",
+          "scenario": "Generated client schema differs from API",
+          "expected": "check fails"
+        }
+      ]
+    },
+    {
+      "id": "SKR-020",
+      "title": "Implement canonical job state machine",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-017",
+        "SKR-019"
+      ],
+      "requirements": [
+        "FR-14"
+      ],
+      "reuse_ids": [],
+      "scope": "Add legal state transitions, stage field and terminal reason semantics. Distinguish exhausted-source completion from interrupted partial outcome.",
+      "acceptance_criteria": [
+        "Terminal jobs cannot silently restart",
+        "Partial work is retained on interruption."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "Attempt completed-to-running transition",
+          "expected": "rejected without explicit new run"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Limit reached with saved results",
+          "expected": "partial state and reason preserved"
+        }
+      ]
+    },
+    {
+      "id": "SKR-021",
+      "title": "Dispatch jobs through transactional outbox",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-017",
+        "SKR-020"
+      ],
+      "requirements": [
+        "FR-14"
+      ],
+      "reuse_ids": [],
+      "scope": "Create job and outbox in one transaction; deliver task IDs to RabbitMQ and recover unacknowledged publication. Use idempotent API request keys.",
+      "acceptance_criteria": [
+        "No committed job is lost between DB and broker",
+        "Duplicate run submission returns same logical job."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Crash after DB commit before publication",
+          "expected": "recovery eventually publishes"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Same idempotency key submitted twice",
+          "expected": "one logical run"
+        }
+      ]
+    },
+    {
+      "id": "SKR-022",
+      "title": "Execute checkpointed idempotent worker stages",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-021"
+      ],
+      "requirements": [
+        "FR-14"
+      ],
+      "reuse_ids": [
+        "S-CACHE"
+      ],
+      "scope": "Copy reusable checkpoint operations where suitable; add product DB leases and stage completion writes. Recover expired leases and keep short bounded stage tasks.",
+      "acceptance_criteria": [
+        "Duplicate deliveries cannot duplicate final records",
+        "Interrupted external calls remain separately billable/uncertain."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Worker killed after result write before ack",
+          "expected": "replay produces no duplicate result"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Lease owner disappears",
+          "expected": "recovery resumes unfinished stage"
+        }
+      ]
+    },
+    {
+      "id": "SKR-023",
+      "title": "Enforce shared source and worker capacity limits",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-022"
+      ],
+      "requirements": [
+        "FR-04",
+        "FR-05",
+        "FR-14"
+      ],
+      "reuse_ids": [
+        "S-RATE"
+      ],
+      "scope": "Copy throttling/Retry-After helpers and connect them to shared source/workspace/host leases. Apply HTTP/browser caps and expiring capacity reservations across workers.",
+      "acceptance_criteria": [
+        "All workers share the same effective caps",
+        "Rate-limit backoff persists beyond one process."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Two workers dispatch same source simultaneously",
+          "expected": "source concurrency limit holds"
+        },
+        {
+          "kind": "regression",
+          "scenario": "Retry-After seconds/date plus worker crash",
+          "expected": "cadence and lease recovery remain bounded"
+        }
+      ]
+    },
+    {
+      "id": "SKR-024",
+      "title": "Reserve and reconcile job spending budgets",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-017",
+        "SKR-022"
+      ],
+      "requirements": [
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Implement transaction-safe conservative call reservations, usage reconciliation, estimated/confirmed costs and token/traffic/currency counters.",
+      "acceptance_criteria": [
+        "Parallel calls cannot overspend permitted reservations",
+        "Zero-yield jobs still show actual spend."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Two workers reserve last available budget",
+          "expected": "only affordable call proceeds"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Provider timeout with possible charge",
+          "expected": "ledger retains explicit estimated charge"
+        }
+      ]
+    },
+    {
+      "id": "SKR-025",
+      "title": "Implement cancellation, deadline and resume semantics",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-020",
+        "SKR-022",
+        "SKR-023",
+        "SKR-024"
+      ],
+      "requirements": [
+        "FR-08",
+        "FR-14"
+      ],
+      "reuse_ids": [],
+      "scope": "Check persisted cancellation/deadline before each call, close bounded processes, release leases and resume only valid checkpoints/connections/budget.",
+      "acceptance_criteria": [
+        "Cancellation stops new dispatch within PRD target",
+        "Resume does not erase original usage or duplicate output."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Cancel during browser/model call",
+          "expected": "no new call starts and resources are released"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Resume after quota/session pause",
+          "expected": "only unfinished permitted stages run"
+        }
+      ]
+    },
+    {
+      "id": "SKR-026",
+      "title": "Stream persisted progress with reconnect cursors",
+      "phase": "P0",
+      "epic": "Execution core",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-013",
+        "SKR-017",
+        "SKR-020"
+      ],
+      "requirements": [
+        "FR-14"
+      ],
+      "reuse_ids": [],
+      "scope": "Expose authorised event stream and snapshot with ordered cursors, heartbeats and replay. Use headers/secure session, not URL tokens.",
+      "acceptance_criteria": [
+        "Reconnect neither loses nor duplicates user-visible events",
+        "Counts/stages come from actual persisted work."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Disconnect after sequence N then reconnect",
+          "expected": "remaining events replay once"
+        },
+        {
+          "kind": "security",
+          "scenario": "Cross-tenant stream ID or token in query",
+          "expected": "access rejected/no credential logging"
+        }
+      ]
+    },
+    {
+      "id": "SKR-027",
+      "title": "Adapt public URL validation and network egress controls",
+      "phase": "P0",
+      "epic": "Source safety",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-003",
+        "SKR-006",
+        "SKR-007"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-05"
+      ],
+      "reuse_ids": [
+        "A-SEC"
+      ],
+      "scope": "Copy URL/host validation helpers; add DNS, redirect, rebinding and port checks plus browser/tool network enforcement. Apply to discovered URLs and subresources, not just prompt URLs.",
+      "acceptance_criteria": [
+        "All production fetch paths deny internal destinations",
+        "Test-only fixture server access is explicit and absent from production config."
+      ],
+      "test_cases": [
+        {
+          "kind": "security",
+          "scenario": "Public hostname redirects/resolves to metadata or private IP",
+          "expected": "request blocked"
+        },
+        {
+          "kind": "security",
+          "scenario": "Browser page loads internal image/XHR target",
+          "expected": "network layer denies it"
+        }
+      ]
+    },
+    {
+      "id": "SKR-028",
+      "title": "Adapt subprocess helpers into isolated backend runner",
+      "phase": "P0",
+      "epic": "Source safety",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-003",
+        "SKR-005",
+        "SKR-027"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-08"
+      ],
+      "reuse_ids": [
+        "A-SEC"
+      ],
+      "scope": "Copy UTF-8/probe helpers and add fixed read-only commands, explicit minimal environment, process-group timeout, output caps and per-task writable directory. No arbitrary shell interpolation.",
+      "acceptance_criteria": [
+        "Backend cannot inspect unrelated credentials/home files",
+        "Process timeout kills children and releases capacity."
+      ],
+      "test_cases": [
+        {
+          "kind": "security",
+          "scenario": "Malicious command argument or page instruction",
+          "expected": "treated as data and cannot launch shell"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Backend hangs/spawns child/overflows output",
+          "expected": "bounded termination with typed failure"
+        }
+      ]
+    },
+    {
+      "id": "SKR-029",
+      "title": "Store source credentials with tenant-scoped access",
+      "phase": "P0",
+      "epic": "Source safety",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-014",
+        "SKR-018",
+        "SKR-028"
+      ],
+      "requirements": [
+        "FR-08",
+        "FR-15"
+      ],
+      "reuse_ids": [
+        "A-SEC"
+      ],
+      "scope": "Copy safe path/redaction helpers; add secret references, encryption, allowlisted worker loading and explicit per-workspace runtime config. Remove reliance on shared home credential discovery.",
+      "acceptance_criteria": [
+        "No raw source secrets enter queue/model/events",
+        "One workspace cannot use another source connection."
+      ],
+      "test_cases": [
+        {
+          "kind": "security",
+          "scenario": "Tenant A backend attempts tenant B secret",
+          "expected": "denied"
+        },
+        {
+          "kind": "regression",
+          "scenario": "Error output includes credential URL/cookie",
+          "expected": "output redacted"
+        }
+      ]
+    },
+    {
+      "id": "SKR-030",
+      "title": "Implement source connect, expire, reconnect and revoke",
+      "phase": "P0",
+      "epic": "Source safety",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-025",
+        "SKR-029"
+      ],
+      "requirements": [
+        "FR-08"
+      ],
+      "reuse_ids": [
+        "A-CORE"
+      ],
+      "scope": "Persist source connection lifecycle and scopes. Recheck after expiry and before resumed tasks; disconnect stops queued reuse and revokes/removes secrets where supported.",
+      "acceptance_criteria": [
+        "Source auth is separate from Firebase identity",
+        "Expired source pauses only its own tasks."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Reconnect after paused source task",
+          "expected": "same checkpoint resumes with new secret ref"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Disconnect while queued",
+          "expected": "no backend call uses revoked connection"
+        }
+      ]
+    },
+    {
+      "id": "SKR-031",
+      "title": "Adapt channel registry to typed product capabilities",
+      "phase": "P0",
+      "epic": "Discovery",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-003",
+        "SKR-019"
+      ],
+      "requirements": [
+        "FR-03"
+      ],
+      "reuse_ids": [
+        "A-CORE"
+      ],
+      "scope": "Copy Channel/registry ordering; patch global mutable channel singleton assumptions to per-context instances. Add typed discover/read support and engineering/operational statuses.",
+      "acceptance_criteria": [
+        "Configuration does not imply tested readiness",
+        "Route is selected by source and operation before generic fallback."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Two tenants choose different backend preferences",
+          "expected": "no active_backend state leaks"
+        },
+        {
+          "kind": "contract",
+          "scenario": "Diagnostics-only channel asked to read",
+          "expected": "explicit unsupported operation"
+        }
+      ]
+    },
+    {
+      "id": "SKR-032",
+      "title": "Adapt doctor/probe results and expose connector status",
+      "phase": "P0",
+      "epic": "Discovery",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-15"
+      ],
+      "reuse_ids": [
+        "A-CORE",
+        "A-SEC"
+      ],
+      "scope": "Copy doctor/probe aggregation and adapt to redacted product diagnostics with operation-level health, kill switches and concise setup states.",
+      "acceptance_criteria": [
+        "A broken source does not break all diagnostics",
+        "Operator disable prevents new tasks without deleting results."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "One channel throws during health check",
+          "expected": "others report independently"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Disabled read capability",
+          "expected": "queued dispatcher will not start it"
+        }
+      ]
+    },
+    {
+      "id": "SKR-033",
+      "title": "Implement chosen search-provider adapter",
+      "phase": "P0",
+      "epic": "Discovery",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-011",
+        "SKR-019",
+        "SKR-024",
+        "SKR-027"
+      ],
+      "requirements": [
+        "FR-02"
+      ],
+      "reuse_ids": [],
+      "scope": "Wrap chosen provider response/cursors in typed candidates; cap pagination and store provider query/snippet/rank/time. Provider wrapper is new product integration absent from reference trees.",
+      "acceptance_criteria": [
+        "Calls consume actual shared budget",
+        "Search snippets never masquerade as fetched-page facts."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Provider returns duplicates/empty/429/malformed results",
+          "expected": "typed bounded outcome"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Budget permits one page only",
+          "expected": "second page is not requested"
+        }
+      ]
+    },
+    {
+      "id": "SKR-034",
+      "title": "Generate bounded search/dork query variants",
+      "phase": "P0",
+      "epic": "Discovery",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-019",
+        "SKR-033",
+        "SKR-096"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-02"
+      ],
+      "reuse_ids": [],
+      "scope": "Translate validated criteria into domain/phrase/exclusion variants supported by provider. Cap expansion and preserve original interpretation; unsupported operator routes stay visible.",
+      "acceptance_criteria": [
+        "Provider capabilities determine actual query execution",
+        "Exclusions and must-have criteria are not silently dropped."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "LinkedIn fintech founder prompt",
+          "expected": "bounded domain-targeted query set with exclusions preserved"
+        },
+        {
+          "kind": "contract",
+          "scenario": "Provider lacks quoted-phrase support",
+          "expected": "no exact-match claim"
+        }
+      ]
+    },
+    {
+      "id": "SKR-035",
+      "title": "Normalise and deduplicate discovered candidates",
+      "phase": "P0",
+      "epic": "Discovery",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-016",
+        "SKR-027",
+        "SKR-033"
+      ],
+      "requirements": [
+        "FR-02",
+        "FR-10"
+      ],
+      "reuse_ids": [
+        "A-SEC",
+        "S-PARSE"
+      ],
+      "scope": "Copy safe URL/domain helpers and existing URL joining; retain source-native IDs and original URLs, remove known tracking only, and persist query provenance.",
+      "acceptance_criteria": [
+        "Meaningful query identifiers survive normalisation",
+        "URL deduplication does not prematurely merge people."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "Same profile URL with tracking variants",
+          "expected": "one candidate with all provenance"
+        },
+        {
+          "kind": "unit",
+          "scenario": "Similar names with different native IDs or meaningful query parameters",
+          "expected": "remain distinct"
+        }
+      ]
+    },
+    {
+      "id": "SKR-036",
+      "title": "Adapt copied Scrapling HTTP fetching into product stage",
+      "phase": "P0",
+      "epic": "Fetching",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-002",
+        "SKR-023",
+        "SKR-024",
+        "SKR-027",
+        "SKR-035"
+      ],
+      "requirements": [
+        "FR-04"
+      ],
+      "reuse_ids": [
+        "S-HTTP",
+        "S-PARSE"
+      ],
+      "scope": "Use copied fetch/session code with product timeout/deadline/decoded-size limits, connection reuse and source metadata. Disable duplicate hidden retries outside shared attempt budget.",
+      "acceptance_criteria": [
+        "Fetch engine is copied source, not independent rewrite",
+        "Network time and parser time are separate."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Static company fixture fetched",
+          "expected": "expected content and evidence source metadata persist"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Slow or compressed oversized response",
+          "expected": "bounded failure without memory growth"
+        }
+      ]
+    },
+    {
+      "id": "SKR-037",
+      "title": "Classify challenges, empty pages and unavailable access",
+      "phase": "P0",
+      "epic": "Fetching",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-036"
+      ],
+      "requirements": [
+        "FR-05"
+      ],
+      "reuse_ids": [
+        "A-PUBLIC",
+        "S-HTTP"
+      ],
+      "scope": "Copy existing anti-bot page detection where applicable; adapt to source-aware response/content classification before extraction. Distinguish 200 challenge, JS shell, denial and real empty result.",
+      "acceptance_criteria": [
+        "Blocked HTML is never accepted as profile evidence",
+        "Classification determines applicable next method."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "HTTP 200 login/challenge shell",
+          "expected": "classified blocked, no lead fields accepted"
+        },
+        {
+          "kind": "unit",
+          "scenario": "Genuine empty result versus JS-only page",
+          "expected": "different outcomes"
+        }
+      ]
+    },
+    {
+      "id": "SKR-038",
+      "title": "Adapt copied dynamic browser engine and bounded pool",
+      "phase": "P0",
+      "epic": "Fetching",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-002",
+        "SKR-023",
+        "SKR-025",
+        "SKR-027",
+        "SKR-037"
+      ],
+      "requirements": [
+        "FR-05"
+      ],
+      "reuse_ids": [
+        "S-BROWSER"
+      ],
+      "scope": "Integrate copied browser/session code with isolated contexts, readiness selectors, host-wide two-page pool, request resource limits and process cleanup.",
+      "acceptance_criteria": [
+        "JS fixture can produce intended content",
+        "Browser failure cannot stall API or leak another context."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "JS-only page escalates from HTTP",
+          "expected": "intended text/locator collected"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Crash/navigation timeout",
+          "expected": "pool capacity released and other job continues"
+        }
+      ]
+    },
+    {
+      "id": "SKR-039",
+      "title": "Adapt copied stealth/challenge engine with bounded retries",
+      "phase": "P0",
+      "epic": "Fetching",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-038"
+      ],
+      "requirements": [
+        "FR-05"
+      ],
+      "reuse_ids": [
+        "S-STEALTH"
+      ],
+      "scope": "Enable supported copied stealth/challenge capabilities and patch internal solver/retry deadlines into shared attempt accounting. Preserve challenge diagnostics and partial results.",
+      "acceptance_criteria": [
+        "All methods share per-URL/job budgets",
+        "Controlled fixture tests do not imply universal live bypass."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Copied solver fixture with successful transition",
+          "expected": "only resulting real page enters extraction"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Persistent challenge/internal solver hang",
+          "expected": "terminates within deadline with typed outcome"
+        }
+      ]
+    },
+    {
+      "id": "SKR-040",
+      "title": "Adapt copied proxy rotation and session continuity",
+      "phase": "P0",
+      "epic": "Fetching",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-023",
+        "SKR-024",
+        "SKR-029",
+        "SKR-039"
+      ],
+      "requirements": [
+        "FR-05"
+      ],
+      "reuse_ids": [
+        "S-RATE"
+      ],
+      "scope": "Copy proxy rotation logic; support configured provider credentials, sticky contexts, billable traffic counters and direct path when no proxy is required. No proxy purchasing in this ticket.",
+      "acceptance_criteria": [
+        "Rotation cannot exceed source/job limits",
+        "Same authenticated task does not silently change session route."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Proxy unavailable or rotation exhausted",
+          "expected": "bounded failure/accounting"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Sticky multi-page read",
+          "expected": "correct continuity and tenant-specific proxy secret"
+        }
+      ]
+    },
+    {
+      "id": "SKR-041",
+      "title": "Adapt copied cache logic to access-scoped freshness",
+      "phase": "P0",
+      "epic": "Fetching",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-018",
+        "SKR-030",
+        "SKR-036"
+      ],
+      "requirements": [
+        "FR-04",
+        "FR-12"
+      ],
+      "reuse_ids": [
+        "S-CACHE"
+      ],
+      "scope": "Copy applicable cache operations; add tenant/access/schema/version keys, TTL/content hashes and conditional reads. Differentiate collection date from publication date.",
+      "acceptance_criteria": [
+        "Private cache never serves another workspace",
+        "Fresh retrieval of old post does not imply recent publication."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Same URL across distinct sessions",
+          "expected": "no private cache collision"
+        },
+        {
+          "kind": "unit",
+          "scenario": "Expired role claim/old post fetched today",
+          "expected": "freshness criteria remain accurate"
+        }
+      ]
+    },
+    {
+      "id": "SKR-042",
+      "title": "Adapt copied adaptive storage to tenant/template scope",
+      "phase": "P0",
+      "epic": "Extraction",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-002",
+        "SKR-014",
+        "SKR-016"
+      ],
+      "requirements": [
+        "FR-06"
+      ],
+      "reuse_ids": [
+        "S-STORE",
+        "S-PARSE"
+      ],
+      "scope": "Copy StorageSystemMixin/storage operations and adapt to PostgreSQL workspace/source/access/template/version keys. Honour parser constructor/cache contract and concurrency.",
+      "acceptance_criteria": [
+        "Fingerprints are reusable without cross-tenant state",
+        "Old templates remain available for rollback."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Copied parser receives new storage implementation",
+          "expected": "save/retrieve relocation works"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Same domain/selector in two workspaces",
+          "expected": "fingerprints stay separate"
+        }
+      ]
+    },
+    {
+      "id": "SKR-043",
+      "title": "Integrate copied adaptive selector matching with validation",
+      "phase": "P0",
+      "epic": "Extraction",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-036",
+        "SKR-042"
+      ],
+      "requirements": [
+        "FR-06"
+      ],
+      "reuse_ids": [
+        "S-PARSE"
+      ],
+      "scope": "Use existing similarity/relocation algorithms; add semantic anchors and field relationships. Quarantine ambiguous mappings and version successful recovery.",
+      "acceptance_criteria": [
+        "Moved element is correctly recovered",
+        "Wrong neighbouring field is rejected rather than silently accepted."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Layout/classes changed on fixture",
+          "expected": "expected field and evidence recovered"
+        },
+        {
+          "kind": "unit",
+          "scenario": "Similar sibling contains another person role",
+          "expected": "ambiguous/wrong recovery flagged"
+        }
+      ]
+    },
+    {
+      "id": "SKR-044",
+      "title": "Adapt copied HTML cleanup and chunking without evidence loss",
+      "phase": "P0",
+      "epic": "Extraction",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-004",
+        "SKR-036"
+      ],
+      "requirements": [
+        "FR-07",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "G-CLEAN",
+        "S-PARSE"
+      ],
+      "scope": "Copy cleanup/markdown/chunk helpers; preserve JSON-LD and locators first, disable 20-character truncation mode, bound segments and honour actual return shapes.",
+      "acceptance_criteria": [
+        "Names/roles/long evidence survive cleanup",
+        "Context volume is bounded without pretending removed content was analysed."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Long name/role plus JSON-LD in head",
+          "expected": "complete fields survive transformation"
+        },
+        {
+          "kind": "unit",
+          "scenario": "Huge page/no body/malformed JSON",
+          "expected": "controlled output and visible coverage limits"
+        }
+      ]
+    },
+    {
+      "id": "SKR-045",
+      "title": "Adapt copied model creation and usage callbacks",
+      "phase": "P0",
+      "epic": "Extraction",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-012",
+        "SKR-024",
+        "SKR-044"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-07"
+      ],
+      "reuse_ids": [
+        "G-GRAPH",
+        "G-EXTRACT"
+      ],
+      "scope": "Copy relevant model/provider construction, parsers/callbacks and dependencies; configure selected provider/model with explicit timeout/token/call limits and redacted logging.",
+      "acceptance_criteria": [
+        "No unapproved provider fallback",
+        "Internal retries/chunk calls consume the product ledger."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Provider returns quota/timeout/schema error",
+          "expected": "typed bounded outcome and usage"
+        },
+        {
+          "kind": "security",
+          "scenario": "Page contains API-key request/instruction",
+          "expected": "no secret disclosed to model"
+        }
+      ]
+    },
+    {
+      "id": "SKR-046",
+      "title": "Adapt SmartScraper graph to already-collected content",
+      "phase": "P0",
+      "epic": "Extraction",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-004",
+        "SKR-044",
+        "SKR-045"
+      ],
+      "requirements": [
+        "FR-07"
+      ],
+      "reuse_ids": [
+        "G-GRAPH",
+        "G-EXTRACT"
+      ],
+      "scope": "Copy graph/nodes/prompts, use local-content input and inject product evidence IDs. Disable autonomous refetch/reattempt/code generation and uncontrolled chunk parallelism.",
+      "acceptance_criteria": [
+        "Extraction never repeats a page fetch silently",
+        "Copied nodes drive extraction within one job budget."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Saved HTML passed to graph with fetch network denied",
+          "expected": "schema result produced using model stub"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Multiple chunks/failed answer",
+          "expected": "all calls accounted and stop at cap"
+        }
+      ]
+    },
+    {
+      "id": "SKR-047",
+      "title": "Validate extraction fields against schema and evidence",
+      "phase": "P0",
+      "epic": "Extraction",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-016",
+        "SKR-019",
+        "SKR-043",
+        "SKR-046"
+      ],
+      "requirements": [
+        "FR-07",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Adapt output parsing from source; apply strict types, actual evidence existence/value checks and observed/inferred statuses. Unknowns remain null with reasons.",
+      "acceptance_criteria": [
+        "Valid JSON alone cannot establish factual correctness",
+        "No invented contact reaches accepted results."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "Model invents well-formed email absent from evidence",
+          "expected": "field rejected"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Evidence ID missing/cross-tenant/deleted",
+          "expected": "claim cannot be accepted"
+        }
+      ]
+    },
+    {
+      "id": "SKR-048",
+      "title": "Adapt bounded LLM selector repair and template promotion",
+      "phase": "P0",
+      "epic": "Extraction",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-025",
+        "SKR-043",
+        "SKR-045",
+        "SKR-047"
+      ],
+      "requirements": [
+        "FR-06"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT",
+        "S-PARSE"
+      ],
+      "scope": "Use copied extraction logic to propose selector/mapping repair. Validate against preserved source and regression fixtures before promotion; support rollback and unknown outcomes.",
+      "acceptance_criteria": [
+        "Repair returns mapping, not executable generated code",
+        "Failed repair retains old template and typed reason."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Changed DOM requires bounded repair",
+          "expected": "verified template version promoted"
+        },
+        {
+          "kind": "security",
+          "scenario": "Model proposes script or wrong selector",
+          "expected": "rejected without execution"
+        }
+      ]
+    },
+    {
+      "id": "SKR-049",
+      "title": "Resolve entity identity with reversible links",
+      "phase": "P0",
+      "epic": "Qualification",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-016",
+        "SKR-035",
+        "SKR-047"
+      ],
+      "requirements": [
+        "FR-10"
+      ],
+      "reuse_ids": [],
+      "scope": "Implement product identity rules using native IDs/domains/corroborating facts, auditable link reasons and reversible merges. No existing SaaS identity resolver found in supplied code.",
+      "acceptance_criteria": [
+        "Ambiguous links remain suggestions",
+        "Reversing a merge restores correct claim association."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "Same-name people at different firms",
+          "expected": "do not merge"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Wrong merge reversed after review",
+          "expected": "claims/lists retain traceable identity history"
+        }
+      ]
+    },
+    {
+      "id": "SKR-050",
+      "title": "Evaluate essential criteria and preference ranking",
+      "phase": "P0",
+      "epic": "Qualification",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-019",
+        "SKR-047",
+        "SKR-049"
+      ],
+      "requirements": [
+        "FR-11"
+      ],
+      "reuse_ids": [],
+      "scope": "Implement matched/contradicted/unknown outcomes for each criterion, evidence-backed fit explanations and separate near-match group; preference score is not calibrated certainty.",
+      "acceptance_criteria": [
+        "Unknown essential fact cannot be a confirmed match",
+        "Results rank preferences only after qualification status."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "Founder matches location but company size unknown",
+          "expected": "near match, not confirmed"
+        },
+        {
+          "kind": "unit",
+          "scenario": "Recent hiring criterion supported by old post only",
+          "expected": "fails freshness requirement"
+        }
+      ]
+    },
+    {
+      "id": "SKR-051",
+      "title": "Validate contacts and per-claim freshness",
+      "phase": "P0",
+      "epic": "Qualification",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-041",
+        "SKR-047",
+        "SKR-049"
+      ],
+      "requirements": [
+        "FR-12"
+      ],
+      "reuse_ids": [],
+      "scope": "Add separate email syntax/domain/ownership checks, explicit published professional channels and supersession of dated roles. No guessing/SMTP verification added to P0.",
+      "acceptance_criteria": [
+        "MX presence is not mailbox verification",
+        "Current role and historical role remain distinguishable."
+      ],
+      "test_cases": [
+        {
+          "kind": "unit",
+          "scenario": "Valid email and MX but no ownership evidence",
+          "expected": "not labelled verified"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Refresh finds changed role",
+          "expected": "old claim retained but not shown as current"
+        }
+      ]
+    },
+    {
+      "id": "SKR-096",
+      "title": "Implement prompt-to-plan interpretation and clarification service",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-015",
+        "SKR-019",
+        "SKR-024",
+        "SKR-045"
+      ],
+      "requirements": [
+        "FR-01"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Adapt copied structured-generation/parser logic into the production planner. Extract essential/preferred criteria, geography, source preferences, requested fields and exclusions; clarify material ambiguity and enforce server-side limits.",
+      "acceptance_criteria": [
+        "Planner creates validated immutable revisions rather than arbitrary execution instructions",
+        "Unsupported criteria and ambiguous meanings are explicit; no invented user preferences."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Founder prompt with location, exclusion and hiring preference",
+          "expected": "correct typed criteria, allowed sources and caps"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Ambiguous location or unsupported requested field",
+          "expected": "relevant clarification or visible unavailable criterion without dropped intent"
+        }
+      ]
+    },
+    {
+      "id": "SKR-052",
+      "title": "Build prompt composer and editable interpretation UI",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-006",
+        "SKR-013",
+        "SKR-015",
+        "SKR-019",
+        "SKR-026",
+        "SKR-096"
+      ],
+      "requirements": [
+        "FR-01"
+      ],
+      "reuse_ids": [],
+      "scope": "Create conversational entry, optional compact controls, clarification messages and plan display. No mandatory lead-filter form; submit triggers validated bounded workflow.",
+      "acceptance_criteria": [
+        "Unambiguous prompt runs without another form",
+        "Material ambiguity asks one relevant clarification."
+      ],
+      "test_cases": [
+        {
+          "kind": "e2e",
+          "scenario": "User submits founder query",
+          "expected": "sees interpreted criteria and genuine progress"
+        },
+        {
+          "kind": "e2e",
+          "scenario": "Ambiguous geography prompt",
+          "expected": "clarification response updates plan without losing message"
+        }
+      ]
+    },
+    {
+      "id": "SKR-053",
+      "title": "Build results and evidence detail views",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-016",
+        "SKR-026",
+        "SKR-049",
+        "SKR-050",
+        "SKR-051"
+      ],
+      "requirements": [
+        "FR-09",
+        "FR-11"
+      ],
+      "reuse_ids": [],
+      "scope": "Show confirmed/near matches, references versus read profiles, evidence panel, timestamps/conflicts and discussion view. Preserve source limitations and real counts.",
+      "acceptance_criteria": [
+        "Every factual field opens supporting evidence",
+        "Discussion author handle is not automatically a named lead."
+      ],
+      "test_cases": [
+        {
+          "kind": "e2e",
+          "scenario": "Partial LinkedIn reference with no page read",
+          "expected": "labelled limited evidence"
+        },
+        {
+          "kind": "e2e",
+          "scenario": "Conflicting role and anonymous discussion",
+          "expected": "clear statuses, no fabricated identity"
+        }
+      ]
+    },
+    {
+      "id": "SKR-054",
+      "title": "Adapt copied export helpers for CSV, JSON and JSONL",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-004",
+        "SKR-018",
+        "SKR-047",
+        "SKR-050",
+        "SKR-051"
+      ],
+      "requirements": [
+        "FR-13"
+      ],
+      "reuse_ids": [
+        "G-EXPORT"
+      ],
+      "scope": "Copy CSV/JSON helpers, patch schema union/ordering, nulls, empty files, formula safety and private destinations; extend same module for JSONL and evidence/schema metadata.",
+      "acceptance_criteria": [
+        "Exports represent accepted or explicitly selected near-match group",
+        "Authorisation and expiry checked at download."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Mixed fields, Unicode, nulls and formula-looking values",
+          "expected": "valid safe round-trip CSV/JSON"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Cross-tenant export ID or expired signed link",
+          "expected": "download denied"
+        }
+      ]
+    },
+    {
+      "id": "SKR-055",
+      "title": "Implement saved-list snapshots and refresh",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-015",
+        "SKR-049",
+        "SKR-053",
+        "SKR-054"
+      ],
+      "requirements": [
+        "FR-12",
+        "FR-13"
+      ],
+      "reuse_ids": [],
+      "scope": "Persist list membership/snapshot revision and trigger bounded refresh retaining prior evidence. Avoid silently rewriting historical exports.",
+      "acceptance_criteria": [
+        "Snapshot and current refresh are distinguishable",
+        "Suppression applies on refresh."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Role changes after saved list refresh",
+          "expected": "old snapshot remains inspectable"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Suppressed entity found under another URL",
+          "expected": "not reintroduced"
+        }
+      ]
+    },
+    {
+      "id": "SKR-056",
+      "title": "Implement evidence-grounded research follow-ups",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-015",
+        "SKR-045",
+        "SKR-047",
+        "SKR-053"
+      ],
+      "requirements": [
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Adapt copied answer-generation node/prompts for cited reports over relevant stored evidence. Expand research through registered operations only within new/remaining run limits.",
+      "acceptance_criteria": [
+        "Citations resolve to actual accessible evidence",
+        "Inference is labelled separately from observed facts."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Ask why result fits",
+          "expected": "report cites qualification evidence"
+        },
+        {
+          "kind": "security",
+          "scenario": "Retrieved page requests unrelated tools/secrets",
+          "expected": "plan unchanged and no action dispatched"
+        }
+      ]
+    },
+    {
+      "id": "SKR-057",
+      "title": "Implement conversational refinement and plan reevaluation",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-034",
+        "SKR-050",
+        "SKR-052",
+        "SKR-055",
+        "SKR-056"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-13"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Use copied model extraction where suitable to interpret follow-ups and create new immutable revisions. Reuse valid evidence but reevaluate changed criteria.",
+      "acceptance_criteria": [
+        "Old list does not silently acquire new meaning",
+        "Relaxed essential criteria are explicit."
+      ],
+      "test_cases": [
+        {
+          "kind": "e2e",
+          "scenario": "Exclude agencies after a run",
+          "expected": "new revision filters results and preserves previous run"
+        },
+        {
+          "kind": "integration",
+          "scenario": "More results requested beyond spend cap",
+          "expected": "no automatic spend increase"
+        }
+      ]
+    },
+    {
+      "id": "SKR-058",
+      "title": "Build partial results, reconnect and usage UX",
+      "phase": "P0",
+      "epic": "Product experience",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-024",
+        "SKR-025",
+        "SKR-030",
+        "SKR-032",
+        "SKR-052",
+        "SKR-053"
+      ],
+      "requirements": [
+        "FR-08",
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Render real counts, missing fields, source reconnect state, spend estimates and cancel/resume. Keep internal stack traces in operator diagnostics.",
+      "acceptance_criteria": [
+        "No fabricated progress or padding",
+        "User can export useful partial results."
+      ],
+      "test_cases": [
+        {
+          "kind": "e2e",
+          "scenario": "Quota/session expires mid-run",
+          "expected": "source-specific recovery state and saved results visible"
+        },
+        {
+          "kind": "e2e",
+          "scenario": "Asked 25, only 9 qualify",
+          "expected": "actual count and separate near matches shown"
+        }
+      ]
+    },
+    {
+      "id": "SKR-059",
+      "title": "Adapt LinkedIn discovery and candidate routing",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-009",
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-034",
+        "SKR-035"
+      ],
+      "requirements": [
+        "FR-02",
+        "FR-03"
+      ],
+      "reuse_ids": [
+        "A-LI",
+        "A-CORE"
+      ],
+      "scope": "Copy/adapt LinkedIn routing/configuration plus acquired selected backend logic; expose actual supported discovery operations and source provenance. Indexed references and direct platform search stay distinguishable.",
+      "acceptance_criteria": [
+        "LinkedIn remains a primary discovery route",
+        "Limited search references do not imply full profile access."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Search returns references but no readable profile",
+          "expected": "candidates labelled accordingly"
+        },
+        {
+          "kind": "live",
+          "scenario": "Selected LinkedIn discovery operation",
+          "expected": "observed coverage and failure report required before readiness"
+        }
+      ]
+    },
+    {
+      "id": "SKR-060",
+      "title": "Adapt LinkedIn profile, company and post reads",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-059",
+        "SKR-037",
+        "SKR-039",
+        "SKR-040",
+        "SKR-047",
+        "SKR-051"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-08",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "A-LI",
+        "S-STEALTH",
+        "G-EXTRACT"
+      ],
+      "scope": "Adapt available acquired backend read code under pinned provenance. Map fields/evidence/session outcomes per supported operation, with bounded fetching and unavailable-field behaviour.",
+      "acceptance_criteria": [
+        "Read-ready status requires actual tested backend operation",
+        "Missing/private contacts remain unavailable."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Expired session or challenge returned as profile",
+          "expected": "no accepted claims, reconnect/blocked reason"
+        },
+        {
+          "kind": "live",
+          "scenario": "Supported profile/company/post fixtures and real probe",
+          "expected": "field/evidence correctness measured"
+        }
+      ]
+    },
+    {
+      "id": "SKR-061",
+      "title": "Adapt Reddit discussion discovery",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-010",
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-034",
+        "SKR-035"
+      ],
+      "requirements": [
+        "FR-02",
+        "FR-03"
+      ],
+      "reuse_ids": [
+        "A-REDDIT",
+        "A-CORE"
+      ],
+      "scope": "Copy Reddit routing/session diagnostic code and selected acquired search backend. Keep subreddit/search/time filters, typed cursors, source constraints and discussion candidate type.",
+      "acceptance_criteria": [
+        "Actual search operation tested independently of bridge readiness",
+        "No anonymous user identity inferred."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Available bridge but inaccessible search",
+          "expected": "discovery capability stays unavailable"
+        },
+        {
+          "kind": "live",
+          "scenario": "Fixed community/topic query",
+          "expected": "actual relevance, pagination and limits documented"
+        }
+      ]
+    },
+    {
+      "id": "SKR-062",
+      "title": "Adapt Reddit post/comment reading and signal extraction",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-061",
+        "SKR-037",
+        "SKR-047",
+        "SKR-050"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-09",
+        "FR-11"
+      ],
+      "reuse_ids": [
+        "A-REDDIT",
+        "G-EXTRACT"
+      ],
+      "scope": "Adapt selected backend reads and copied AI extraction for stated problems/date/context. Preserve deleted/unavailable content and handle-to-company links only with explicit evidence.",
+      "acceptance_criteria": [
+        "Demand discussion is not guaranteed buying intent",
+        "Nested comment boundaries and dates preserved."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Deleted comment or insufficient visibility",
+          "expected": "unavailable, not invented text"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Anonymous complaint about software",
+          "expected": "discussion result with cited problem, no invented email/company"
+        }
+      ]
+    },
+    {
+      "id": "SKR-063",
+      "title": "Adapt GitHub public research connector",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-035",
+        "SKR-047"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "A-PUBLIC"
+      ],
+      "scope": "Copy GitHub channel credential/config logic; wrap pinned gh/API read operations for public org/repo and explicitly published professional information. No issue/PR write operations.",
+      "acceptance_criteria": [
+        "Public research and private access distinguished",
+        "Read-only allowlist enforced."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Public repository/company reference",
+          "expected": "typed dated evidence"
+        },
+        {
+          "kind": "security",
+          "scenario": "Agent requests gh issue/PR creation or inaccessible private repo",
+          "expected": "operation denied/unavailable"
+        }
+      ]
+    },
+    {
+      "id": "SKR-064",
+      "title": "Adapt RSS/Atom feed connector",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-031",
+        "SKR-035",
+        "SKR-036",
+        "SKR-047"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "A-PUBLIC"
+      ],
+      "scope": "Copy RSS channel and adapt existing feedparser/available Scrapling feed parsing into bounded ingestion with attribution, entry IDs, dates and validated linked URLs.",
+      "acceptance_criteria": [
+        "Duplicate entries are not new leads",
+        "Feed dates are not replaced with fetch date."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Repeated Atom entry and missing publication date",
+          "expected": "deduplication and unknown date"
+        },
+        {
+          "kind": "security",
+          "scenario": "Feed link points to internal address",
+          "expected": "denied before follow-up fetch"
+        }
+      ]
+    },
+    {
+      "id": "SKR-065",
+      "title": "Adapt public YouTube metadata and available transcripts",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-035",
+        "SKR-047"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-09"
+      ],
+      "reuse_ids": [
+        "A-PUBLIC"
+      ],
+      "scope": "Copy YouTube channel/tool runtime checks; adapt pinned public data/transcript backend output. Preserve timestamped evidence and missing-caption semantics; no private analytics here.",
+      "acceptance_criteria": [
+        "Public counters labelled public metadata",
+        "Absent transcript does not become a generated transcript."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Video metadata present but captions missing",
+          "expected": "metadata retained, transcript unavailable"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Transcript segment supports creator claim",
+          "expected": "correct timestamp/source citation"
+        }
+      ]
+    },
+    {
+      "id": "SKR-066",
+      "title": "Create company/directory extraction presets using copied engine",
+      "phase": "P0",
+      "epic": "Launch platforms",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-036",
+        "SKR-043",
+        "SKR-044",
+        "SKR-047",
+        "SKR-051"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-07"
+      ],
+      "reuse_ids": [
+        "S-PARSE",
+        "G-CLEAN"
+      ],
+      "scope": "Add a small set of fixture-backed selectors/schemas for company facts, team/careers/service/contact pages using copied parser and cleanup code. No new scraper engine.",
+      "acceptance_criteria": [
+        "Presets use shared budgets/evidence pipeline",
+        "Directory claims are corroborated or retain source-specific status."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Static company plus team/careers pages",
+          "expected": "intended claims and hiring date extracted"
+        },
+        {
+          "kind": "regression",
+          "scenario": "Changed directory markup",
+          "expected": "adaptive mapping correct or explicitly flagged"
+        }
+      ]
+    },
+    {
+      "id": "SKR-067",
+      "title": "Verify first complete prompt-to-export slice",
+      "phase": "P0",
+      "epic": "Integration gates",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-021",
+        "SKR-022",
+        "SKR-023",
+        "SKR-024",
+        "SKR-025",
+        "SKR-026",
+        "SKR-034",
+        "SKR-036",
+        "SKR-037",
+        "SKR-044",
+        "SKR-047",
+        "SKR-049",
+        "SKR-050",
+        "SKR-051",
+        "SKR-052",
+        "SKR-053",
+        "SKR-054",
+        "SKR-058",
+        "SKR-066"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-04",
+        "FR-07",
+        "FR-09",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-14"
+      ],
+      "reuse_ids": [],
+      "scope": "Wire the real persisted pipeline through fake provider transport and actual copied parser/extractor code. Exercise typed prompt, discovery, read, qualification, streamed results and export without file-list prerequisite.",
+      "acceptance_criteria": [
+        "One user prompt performs genuine backend stages",
+        "Assertions check expected entity/criteria/evidence, not only HTTP 200."
+      ],
+      "test_cases": [
+        {
+          "kind": "e2e",
+          "scenario": "Prompt asks 3 fintech founders on labelled corpus",
+          "expected": "exact matching identities, sources and CSV contents"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Candidate unavailable and another mismatched",
+          "expected": "actual counts/partial evidence preserved"
+        }
+      ]
+    },
+    {
+      "id": "SKR-068",
+      "title": "Verify combined LinkedIn/Reddit research journey",
+      "phase": "P0",
+      "epic": "Integration gates",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-056",
+        "SKR-057",
+        "SKR-059",
+        "SKR-060",
+        "SKR-061",
+        "SKR-062",
+        "SKR-067"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-08",
+        "FR-09",
+        "FR-11",
+        "FR-13"
+      ],
+      "reuse_ids": [],
+      "scope": "Run a founder discovery followed by relevant demand-discussion research and conversational refinement. Exercise route availability separately from offline replay.",
+      "acceptance_criteria": [
+        "Sources are identified accurately throughout workflow",
+        "Source outage cannot make another route appear to be LinkedIn/Reddit."
+      ],
+      "test_cases": [
+        {
+          "kind": "e2e",
+          "scenario": "Founder list plus Reddit context then exclude agencies",
+          "expected": "correct revisions and cited reports"
+        },
+        {
+          "kind": "live",
+          "scenario": "Advertised operations tested under pilot configuration",
+          "expected": "readiness report must record genuine success/gaps"
+        }
+      ]
+    },
+    {
+      "id": "SKR-069",
+      "title": "Enforce workspace entitlements and abuse limits",
+      "phase": "P0",
+      "epic": "Operations",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-014",
+        "SKR-024",
+        "SKR-025",
+        "SKR-032"
+      ],
+      "requirements": [
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Add workspace run/result/source entitlements, capped trial usage and owner-managed settings for manual pilot invoicing. Provider calls cannot bypass entitlement checks.",
+      "acceptance_criteria": [
+        "No unlimited free or paid execution path",
+        "Raising user-requested count does not silently raise permitted spend."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Trial quota exhausted with queued jobs",
+          "expected": "dispatch blocked, usage explained"
+        },
+        {
+          "kind": "security",
+          "scenario": "Client submits custom oversized limits",
+          "expected": "server effective limits remain enforced"
+        }
+      ]
+    },
+    {
+      "id": "SKR-070",
+      "title": "Instrument stages, source health and costs",
+      "phase": "P0",
+      "epic": "Operations",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-017",
+        "SKR-024",
+        "SKR-032"
+      ],
+      "requirements": [
+        "FR-04",
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [
+        "A-SEC"
+      ],
+      "scope": "Copy redaction helpers and emit structured stage/source metrics and traces with request IDs. Separate parser/network/browser/queue/LLM times and blocked-response denominators.",
+      "acceptance_criteria": [
+        "Operational diagnostics contain no secrets/full private pages",
+        "Cost and latency denominators are explicit."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Failed expensive run emits metrics",
+          "expected": "spend and failures visible despite zero accepted results"
+        },
+        {
+          "kind": "security",
+          "scenario": "Credentials/private content injected into errors",
+          "expected": "redacted trace/log outputs"
+        }
+      ]
+    },
+    {
+      "id": "SKR-071",
+      "title": "Enforce evidence and export retention",
+      "phase": "P0",
+      "epic": "Operations",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-018",
+        "SKR-041",
+        "SKR-054"
+      ],
+      "requirements": [
+        "FR-09",
+        "FR-12",
+        "FR-13"
+      ],
+      "reuse_ids": [],
+      "scope": "Add cleanup scheduler, per-source stricter TTLs, export expiry and stale-citation filtering. Retention jobs use leases/idempotency.",
+      "acceptance_criteria": [
+        "Expired evidence cannot be cited as current",
+        "Cleanup does not remove another tenant retained data."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Advance clock beyond configured TTL",
+          "expected": "evidence/export inaccessible and storage removed"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Cleanup task delivered twice",
+          "expected": "safe no-op after first completion"
+        }
+      ]
+    },
+    {
+      "id": "SKR-072",
+      "title": "Propagate deletion and suppress rediscovery",
+      "phase": "P0",
+      "epic": "Operations",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-030",
+        "SKR-049",
+        "SKR-055",
+        "SKR-071"
+      ],
+      "requirements": [
+        "FR-09",
+        "FR-10",
+        "FR-13",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Delete active entity/evidence/object data, revoke relevant queued reuse and invalidate caches/lists/exports. Keep minimum permitted suppression markers and backup deletion replay.",
+      "acceptance_criteria": [
+        "Deleted data cannot reappear from cache/job replay",
+        "Suppression handles alternate known identity URLs."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Delete while fetch result is in flight",
+          "expected": "late result cannot repopulate entity"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Rediscover alternate linked URL/restore backup",
+          "expected": "suppression/deletion applied before serving"
+        }
+      ]
+    },
+    {
+      "id": "SKR-073",
+      "title": "Implement encrypted backups and restore rehearsal",
+      "phase": "P0",
+      "epic": "Operations",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-017",
+        "SKR-018",
+        "SKR-072"
+      ],
+      "requirements": [
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Back up DB/object metadata and blobs as required; record expiry/key access and restore instructions. Restore migrations, deletion replay and tenant context before traffic.",
+      "acceptance_criteria": [
+        "Measured pilot RPO/RTO recorded",
+        "Restore is demonstrated, not merely backup creation."
+      ],
+      "test_cases": [
+        {
+          "kind": "recovery",
+          "scenario": "Restore latest backup into clean isolated stack",
+          "expected": "verified job/evidence consistency"
+        },
+        {
+          "kind": "recovery",
+          "scenario": "Backup predates deletion",
+          "expected": "deletion replay prevents data being served"
+        }
+      ]
+    },
+    {
+      "id": "SKR-074",
+      "title": "Package and deploy bounded hosted pilot",
+      "phase": "P0",
+      "epic": "Operations",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-008",
+        "SKR-027",
+        "SKR-028",
+        "SKR-029",
+        "SKR-069",
+        "SKR-070",
+        "SKR-071",
+        "SKR-073"
+      ],
+      "requirements": [
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Build local-source runtime images, private networking, non-root browser/tool workers, TLS, secret delivery, health/restart and persistent volumes. Deployment is a separate authorised operational action.",
+      "acceptance_criteria": [
+        "Reference folders are not mutable runtime dependencies",
+        "Service restarts preserve canonical state and browser capacity limits."
+      ],
+      "test_cases": [
+        {
+          "kind": "smoke",
+          "scenario": "Fresh environment launched from images",
+          "expected": "prompt API/UI and storage health work"
+        },
+        {
+          "kind": "recovery",
+          "scenario": "API/broker/worker restarted separately",
+          "expected": "no lost committed job or credential leak"
+        }
+      ]
+    },
+    {
+      "id": "SKR-075",
+      "title": "Benchmark parser, full-job latency and resource use",
+      "phase": "P0",
+      "epic": "Release gates",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-038",
+        "SKR-039",
+        "SKR-040",
+        "SKR-067",
+        "SKR-070",
+        "SKR-074"
+      ],
+      "requirements": [
+        "FR-04",
+        "FR-05",
+        "FR-14"
+      ],
+      "reuse_ids": [
+        "S-HTTP",
+        "S-PARSE",
+        "S-BROWSER",
+        "S-STEALTH"
+      ],
+      "scope": "Benchmark PRD profile and separate source-access failures, model/network time, memory and cache state. Tune bounded concurrency without rewriting copied engines.",
+      "acceptance_criteria": [
+        "Measured results compared with provisional PRD targets",
+        "No parser multiplier represented as product speed."
+      ],
+      "test_cases": [
+        {
+          "kind": "performance",
+          "scenario": "Fixed corpus on declared hardware",
+          "expected": "p50/p95 stage/job times and peak memory recorded"
+        },
+        {
+          "kind": "performance",
+          "scenario": "Two workspaces with browser-heavy jobs",
+          "expected": "API responsive and host/source caps hold"
+        }
+      ]
+    },
+    {
+      "id": "SKR-076",
+      "title": "Evaluate field, qualification and identity quality",
+      "phase": "P0",
+      "epic": "Release gates",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-048",
+        "SKR-049",
+        "SKR-050",
+        "SKR-051",
+        "SKR-060",
+        "SKR-062",
+        "SKR-063",
+        "SKR-064",
+        "SKR-065",
+        "SKR-066",
+        "SKR-068"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-06",
+        "FR-07",
+        "FR-09",
+        "FR-10",
+        "FR-11",
+        "FR-12"
+      ],
+      "reuse_ids": [],
+      "scope": "Run labelled prompt/record/changed-DOM corpus with PRD denominators and per-source breakdown. Review false positives, unknowns, silent repairs and invented contacts.",
+      "acceptance_criteria": [
+        "Quality gates measured on sufficient labelled samples",
+        "Fixture success does not claim live platform availability."
+      ],
+      "test_cases": [
+        {
+          "kind": "evaluation",
+          "scenario": "Labelled benchmark with ambiguous people/unknown size",
+          "expected": "field/merge/qualification accuracy reported"
+        },
+        {
+          "kind": "evaluation",
+          "scenario": "Adversarial wrong element and fabricated email",
+          "expected": "rejected or gate fails"
+        }
+      ]
+    },
+    {
+      "id": "SKR-077",
+      "title": "Verify tenant boundaries and prompt-injection resistance",
+      "phase": "P0",
+      "epic": "Release gates",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-027",
+        "SKR-028",
+        "SKR-029",
+        "SKR-030",
+        "SKR-047",
+        "SKR-056",
+        "SKR-058",
+        "SKR-072",
+        "SKR-074"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-08",
+        "FR-09",
+        "FR-13",
+        "FR-15"
+      ],
+      "reuse_ids": [
+        "A-SEC"
+      ],
+      "scope": "Exercise complete hosted routes, copied tools/graphs and network policies for cross-tenant data, secrets, SSRF, malicious sources and unsafe export contents.",
+      "acceptance_criteria": [
+        "Security suite covers every external execution path",
+        "No critical boundary failure remains before customer pilot."
+      ],
+      "test_cases": [
+        {
+          "kind": "security",
+          "scenario": "Page/model output tries secret read or unrelated command",
+          "expected": "no tool action/secret disclosure"
+        },
+        {
+          "kind": "security",
+          "scenario": "Cross-tenant list/evidence/session/export/events and browser SSRF",
+          "expected": "all denied"
+        }
+      ]
+    },
+    {
+      "id": "SKR-078",
+      "title": "Verify recovery, rate limits and budget races",
+      "phase": "P0",
+      "epic": "Release gates",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-022",
+        "SKR-023",
+        "SKR-024",
+        "SKR-025",
+        "SKR-039",
+        "SKR-068",
+        "SKR-074"
+      ],
+      "requirements": [
+        "FR-05",
+        "FR-08",
+        "FR-14",
+        "FR-15"
+      ],
+      "reuse_ids": [
+        "S-CACHE",
+        "S-RATE"
+      ],
+      "scope": "Inject duplicate messages, crash between charge/result writes, expired sessions, outage/circuit breaker and concurrent reservation races across the complete pipeline.",
+      "acceptance_criteria": [
+        "No lost logical result or double logical charge",
+        "Real external charge uncertainty remains visible."
+      ],
+      "test_cases": [
+        {
+          "kind": "recovery",
+          "scenario": "Kill worker after provider reply before acknowledgment",
+          "expected": "deterministic recovery with correct ledger"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Shared 429/deadline/cancellation/budget race",
+          "expected": "source/job limits never overridden"
+        }
+      ]
+    },
+    {
+      "id": "SKR-079",
+      "title": "Prepare runbook and execute small customer pilot",
+      "phase": "P0",
+      "epic": "Release gates",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-009",
+        "SKR-010",
+        "SKR-011",
+        "SKR-012",
+        "SKR-068",
+        "SKR-075",
+        "SKR-076",
+        "SKR-077",
+        "SKR-078"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-03",
+        "FR-09",
+        "FR-11",
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Document source readiness/support, rollback/reconnect/kill switches, pricing assumptions and incident handling; run repeated tasks with at least three prospective workspaces and record value/cost.",
+      "acceptance_criteria": [
+        "Only validated operations advertised",
+        "Product completion requires repeated user workflow value, not a successful scrape."
+      ],
+      "test_cases": [
+        {
+          "kind": "acceptance",
+          "scenario": "Operator follows outage/reconnect/restore runbook",
+          "expected": "users keep usable results and clear status"
+        },
+        {
+          "kind": "pilot",
+          "scenario": "Repeated real customer tasks",
+          "expected": "accuracy, review time, spend, limitations and willingness to pay recorded"
+        }
+      ]
+    },
+    {
+      "id": "SKR-080",
+      "title": "Schedule idempotent saved-research refreshes",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-055",
+        "SKR-071",
+        "SKR-078"
+      ],
+      "requirements": [
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "S-CACHE"
+      ],
+      "scope": "Add due-record scheduler with workspace/source/budget limits, leases and opt-in cadence. Reuse copied checkpoint operations where suitable.",
+      "acceptance_criteria": [
+        "Restart does not duplicate scheduled runs",
+        "Deleted/disconnected lists stop future work."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Scheduler restarts at due time",
+          "expected": "one logical refresh"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Source disconnected or budget exhausted",
+          "expected": "no automatic call"
+        }
+      ]
+    },
+    {
+      "id": "SKR-081",
+      "title": "Report meaningful changes and optional notifications",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-056",
+        "SKR-072",
+        "SKR-080"
+      ],
+      "requirements": [
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Compare versioned claims, adapt copied report generation for supported meaningful changes and add opt-in delivery channel configuration.",
+      "acceptance_criteria": [
+        "No notice for unchanged/non-actionable refresh",
+        "Any message delivery needs explicit configured opt-in."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Same evidence refreshed",
+          "expected": "no change notice"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Current role changes with new evidence",
+          "expected": "accurate cited change report"
+        }
+      ]
+    },
+    {
+      "id": "SKR-082",
+      "title": "Connect owner-authorised YouTube Analytics OAuth",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-030",
+        "SKR-065"
+      ],
+      "requirements": [
+        "FR-08",
+        "FR-16"
+      ],
+      "reuse_ids": [],
+      "scope": "Add a distinct owner analytics connection/scopes/revocation flow. This code is not supplied by public YouTube transcript channels.",
+      "acceptance_criteria": [
+        "Owner analytics never inferred from public metadata",
+        "Tokens belong only to connected workspace/owner."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Wrong owner or missing report scope",
+          "expected": "denied"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Revoked token",
+          "expected": "analytics pauses without breaking public video research"
+        }
+      ]
+    },
+    {
+      "id": "SKR-083",
+      "title": "Retrieve and summarise owner analytics reports",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-056",
+        "SKR-082"
+      ],
+      "requirements": [
+        "FR-09",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Implement bounded report/date/metric adapter and use copied generation code for cited summaries. Respect report availability/quota and record currency/timezone where relevant.",
+      "acceptance_criteria": [
+        "Reports describe authorised owner only",
+        "Unsupported metric remains unavailable."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Valid owner report with date range",
+          "expected": "exact metrics and source provenance"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Quota/unsupported metric",
+          "expected": "partial typed result without guessed analytics"
+        }
+      ]
+    },
+    {
+      "id": "SKR-084",
+      "title": "Adapt X discussion/professional connector",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "A-SOCIAL"
+      ],
+      "scope": "Copy X routing/probe code and pin/acquire selected read backend. Enable discovery/read only after independent route readiness.",
+      "acceptance_criteria": [
+        "No posting/DM operations enabled",
+        "Fields/rights/session requirements documented."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Missing backend/session",
+          "expected": "unavailable, not successful discovery"
+        },
+        {
+          "kind": "live",
+          "scenario": "Selected X read/search",
+          "expected": "actual operation report and bounded usage"
+        }
+      ]
+    },
+    {
+      "id": "SKR-085",
+      "title": "Adapt Instagram business/creator connector",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "A-SOCIAL"
+      ],
+      "scope": "Copy Instagram/OpenCLI channel logic and acquire applicable backend. Define public/business-account operations separately and preserve evidence/freshness.",
+      "acceptance_criteria": [
+        "Public/private and owner access boundaries explicit",
+        "Host browser account not silently shared."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Browser bridge lacks source session",
+          "expected": "needs connection"
+        },
+        {
+          "kind": "live",
+          "scenario": "Selected creator/business operation",
+          "expected": "actual supported fields and failures recorded"
+        }
+      ]
+    },
+    {
+      "id": "SKR-086",
+      "title": "Adapt Facebook company/content connector",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "A-SOCIAL"
+      ],
+      "scope": "Copy Facebook/OpenCLI routing and selected backend code. Enable only named read/search operations with source readiness tests.",
+      "acceptance_criteria": [
+        "Group/private content access not implied by page access",
+        "Evidence/delete policies enforced."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Public page readable but group unavailable",
+          "expected": "distinct capabilities"
+        },
+        {
+          "kind": "live",
+          "scenario": "Named company-page operation",
+          "expected": "usable output and restrictions recorded"
+        }
+      ]
+    },
+    {
+      "id": "SKR-087",
+      "title": "Add job/pricing/industry research presets",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-048",
+        "SKR-056",
+        "SKR-066",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-07",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "S-PARSE",
+        "G-CLEAN",
+        "G-EXTRACT"
+      ],
+      "scope": "Extend copied parser/extraction presets for chosen job/pricing/directory sources; preserve currency, billing period, publication date and availability.",
+      "acceptance_criteria": [
+        "Different source meanings are not collapsed",
+        "No new general scraper engine."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Monthly/annual/localised price fixtures",
+          "expected": "correct values with period/currency"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Expired job listing",
+          "expected": "not reported as current hiring"
+        }
+      ]
+    },
+    {
+      "id": "SKR-088",
+      "title": "Export qualified records into selected CRM",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-054",
+        "SKR-072",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-13",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "G-EXPORT"
+      ],
+      "scope": "Extend copied export mapping with one selected CRM destination, explicit field mapping, tenant scopes and idempotent writes. Destination chosen before implementation.",
+      "acceptance_criteria": [
+        "Near matches/contact states not upgraded during sync",
+        "Suppression/deletion checks precede export."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "Same export retried",
+          "expected": "no duplicate CRM record"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Entity suppressed before queued sync",
+          "expected": "not sent"
+        }
+      ]
+    },
+    {
+      "id": "SKR-089",
+      "title": "Deliver signed idempotent webhooks",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-027",
+        "SKR-054",
+        "SKR-072",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-13",
+        "FR-16"
+      ],
+      "reuse_ids": [],
+      "scope": "Add validated endpoint connections, signing, retries, delivery ledger and opt-in triggers. Outbound webhook policy blocks internal destinations.",
+      "acceptance_criteria": [
+        "No unauthorised external delivery",
+        "Consumers can identify duplicate deliveries."
+      ],
+      "test_cases": [
+        {
+          "kind": "security",
+          "scenario": "Endpoint redirects to internal address",
+          "expected": "delivery blocked"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Receiver timeout/retry",
+          "expected": "same event identity, bounded retries and ledger"
+        }
+      ]
+    },
+    {
+      "id": "SKR-090",
+      "title": "Automate billing and entitlements",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-024",
+        "SKR-069",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-15",
+        "FR-16"
+      ],
+      "reuse_ids": [],
+      "scope": "Select payment provider, implement validated billing events and subscription/usage entitlement transitions. Do not infer product access from client checkout success.",
+      "acceptance_criteria": [
+        "Verified server events govern entitlements",
+        "Duplicate/out-of-order billing events safe."
+      ],
+      "test_cases": [
+        {
+          "kind": "integration",
+          "scenario": "Forged payment webhook",
+          "expected": "no entitlement change"
+        },
+        {
+          "kind": "integration",
+          "scenario": "Cancellation or repeated event",
+          "expected": "consistent capped access and auditable state"
+        }
+      ]
+    },
+    {
+      "id": "SKR-091",
+      "title": "Add selected language and locale support",
+      "phase": "P1",
+      "epic": "Expansion",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-052",
+        "SKR-054",
+        "SKR-056",
+        "SKR-076"
+      ],
+      "requirements": [
+        "FR-01",
+        "FR-13",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Choose language/localisation requirements from pilot evidence; adapt copied model prompts and product formats, keeping source dates/names accurately represented.",
+      "acceptance_criteria": [
+        "Original names/evidence remain intact",
+        "Locale does not silently reinterpret dates/numbers."
+      ],
+      "test_cases": [
+        {
+          "kind": "evaluation",
+          "scenario": "Selected-language prompt and multilingual company evidence",
+          "expected": "criteria/extraction quality measured"
+        },
+        {
+          "kind": "regression",
+          "scenario": "Ambiguous date/currency and Unicode CSV",
+          "expected": "safe explicit interpretation"
+        }
+      ]
+    },
+    {
+      "id": "SKR-092",
+      "title": "Adapt first regional-platform connector",
+      "phase": "P2",
+      "epic": "Later roadmap",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "A-SOCIAL"
+      ],
+      "scope": "Select one regional source, copy its available channel/formatting/backend code and add operation-specific source readiness. Repeat this ticket template for each later platform.",
+      "acceptance_criteria": [
+        "Named source has tested capabilities",
+        "Adding one source does not advertise all regional platforms."
+      ],
+      "test_cases": [
+        {
+          "kind": "regression",
+          "scenario": "Copied source formatter and malformed payload",
+          "expected": "typed normalised output"
+        },
+        {
+          "kind": "live",
+          "scenario": "Named discovery/read route",
+          "expected": "independent coverage/access/cost report"
+        }
+      ]
+    },
+    {
+      "id": "SKR-093",
+      "title": "Expose read-only MCP research interface",
+      "phase": "P2",
+      "epic": "Later roadmap",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-019",
+        "SKR-056",
+        "SKR-069",
+        "SKR-077",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "A-CORE"
+      ],
+      "scope": "Copy/adapt Agent-Reach MCP integration scaffolding; expose only bounded product research/list/read operations with workspace auth and normal job budgets.",
+      "acceptance_criteria": [
+        "MCP does not bypass tenant/entitlement checks",
+        "Arbitrary commands and source writes absent."
+      ],
+      "test_cases": [
+        {
+          "kind": "contract",
+          "scenario": "MCP client runs normal research",
+          "expected": "same schema and cost limits as UI"
+        },
+        {
+          "kind": "security",
+          "scenario": "Client requests another workspace/arbitrary tool",
+          "expected": "denied"
+        }
+      ]
+    },
+    {
+      "id": "SKR-094",
+      "title": "Evaluate optional semantic retrieval before adding infrastructure",
+      "phase": "P2",
+      "epic": "Later roadmap",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-056",
+        "SKR-070",
+        "SKR-076",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-09",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "G-EXTRACT"
+      ],
+      "scope": "Benchmark existing database/evidence retrieval against any proposed semantic retrieval on labelled follow-up tasks. Add vector infrastructure only after documented quality/cost benefit.",
+      "acceptance_criteria": [
+        "No speculative extra database",
+        "Decision includes tenancy, deletion and retrieval quality."
+      ],
+      "test_cases": [
+        {
+          "kind": "evaluation",
+          "scenario": "Labelled evidence questions",
+          "expected": "baseline and alternative relevance/cost measured"
+        },
+        {
+          "kind": "security",
+          "scenario": "Semantic index deletion/tenant isolation fixture",
+          "expected": "no suppressed/cross-tenant retrieval"
+        }
+      ]
+    },
+    {
+      "id": "SKR-095",
+      "title": "Evaluate local companion only if selected routes require it",
+      "phase": "P2",
+      "epic": "Later roadmap",
+      "status": "planned",
+      "estimate": "M",
+      "depends_on": [
+        "SKR-009",
+        "SKR-010",
+        "SKR-028",
+        "SKR-030",
+        "SKR-079"
+      ],
+      "requirements": [
+        "FR-03",
+        "FR-08",
+        "FR-16"
+      ],
+      "reuse_ids": [
+        "A-SOCIAL",
+        "A-LI",
+        "A-REDDIT"
+      ],
+      "scope": "If feasibility proves a desktop bridge is necessary, write architecture decision and a bounded proof using copied backend bridge code. Desktop product is not automatically committed by the web PRD.",
+      "acceptance_criteria": [
+        "Requirement and installation burden demonstrated",
+        "No unattended credential harvesting or shared home context."
+      ],
+      "test_cases": [
+        {
+          "kind": "acceptance",
+          "scenario": "Chosen source cannot run on hosted route",
+          "expected": "decision records capability and local alternative"
+        },
+        {
+          "kind": "security",
+          "scenario": "Companion pairing/revocation test",
+          "expected": "only paired workspace can invoke allowed reads"
+        }
+      ]
+    }
+  ]
+}

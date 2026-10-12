@@ -1,0 +1,3906 @@
+{
+  "created": "2026-10-12",
+  "purpose": "Identity of supplied reference snapshots, not runtime provenance or compatibility validation",
+  "projects": [
+    {
+      "directory": "reference/Scrapling-main",
+      "metadata_version": "0.4.15",
+      "verified_upstream_commit": null,
+      "snapshot_sha256": "137fb928c8e45155241363de2c29279e5536e432f4228cba9ea75da4a4c3dc2b",
+      "hash_method": "SHA256 of newline-separated sorted workspace-relative paths, NUL, and per-file SHA256; excludes .DS_Store, symlinks, .git",
+      "file_count": 260,
+      "files": [
+        {
+          "path": "reference/Scrapling-main/.bandit.yml",
+          "sha256": "efb3c10339f7d6bd361379702b083ec8db87a89e37613aad977657f7e2680399",
+          "bytes": 526
+        },
+        {
+          "path": "reference/Scrapling-main/.dockerignore",
+          "sha256": "a06ba36f090c8c017ae1d07611b8b9a9fc6d4cad3f1cbe3d52a7a74d8da7ebc1",
+          "bytes": 936
+        },
+        {
+          "path": "reference/Scrapling-main/.github/FUNDING.yml",
+          "sha256": "dec47248e6b5dc26d9cd326a1ebda5bb1f061db4d41670118ac17259525f75fa",
+          "bytes": 56
+        },
+        {
+          "path": "reference/Scrapling-main/.github/ISSUE_TEMPLATE/01-bug_report.yml",
+          "sha256": "4541e64febbfc32c43ee7ebc8e850107c0069563120ede5b8b96b512aebaff3e",
+          "bytes": 2111
+        },
+        {
+          "path": "reference/Scrapling-main/.github/ISSUE_TEMPLATE/02-feature_request.yml",
+          "sha256": "5fbb6a9386e05c8a3c356111ea363bab6d0c665f95581421410431f5ac91d625",
+          "bytes": 662
+        },
+        {
+          "path": "reference/Scrapling-main/.github/ISSUE_TEMPLATE/03-other.yml",
+          "sha256": "20ebfc5cb1be211804fef68daefa6fc698f64072fc264d823146fef3e9dab41c",
+          "bytes": 556
+        },
+        {
+          "path": "reference/Scrapling-main/.github/ISSUE_TEMPLATE/04-docs_issue.yml",
+          "sha256": "0c4e8b7c865da4275a341819be8716bf1040f02eafe0761a22c14b87d51ed15e",
+          "bytes": 1132
+        },
+        {
+          "path": "reference/Scrapling-main/.github/ISSUE_TEMPLATE/config.yml",
+          "sha256": "bb2f1c12fa25da80c3f4c869f624b90a7be5332ca99e2376d8b82b51fd9131d6",
+          "bytes": 302
+        },
+        {
+          "path": "reference/Scrapling-main/.github/PULL_REQUEST_TEMPLATE.md",
+          "sha256": "a29c4574815292e37d3ac6e368086b9475c071137b18dd7773188291405bb959",
+          "bytes": 2184
+        },
+        {
+          "path": "reference/Scrapling-main/.github/workflows/code-quality.yml",
+          "sha256": "d7ce95fa337cd0425250b52f7dad4b2a61e16d5f075f76aff4da412e157e4e5a",
+          "bytes": 5948
+        },
+        {
+          "path": "reference/Scrapling-main/.github/workflows/docker-build.yml",
+          "sha256": "0f8c3f0881f49095d777a9efe5b9f8cfee7d5d7404194e351f0c83478de02dd8",
+          "bytes": 3719
+        },
+        {
+          "path": "reference/Scrapling-main/.github/workflows/release-and-publish.yml",
+          "sha256": "2bd4732a6a46626b4a086b7962396fb28935b68410862d614a7b9ef4671623a2",
+          "bytes": 2331
+        },
+        {
+          "path": "reference/Scrapling-main/.github/workflows/tests.yml",
+          "sha256": "a731cace84e46ce2f0183d85b044afaa9e46a7260d02927ccc2768a7f8e43afc",
+          "bytes": 4004
+        },
+        {
+          "path": "reference/Scrapling-main/.gitignore",
+          "sha256": "886a243cf289df4d7294c1d699850a172b9c7f60958712af89bab89f46e93eba",
+          "bytes": 984
+        },
+        {
+          "path": "reference/Scrapling-main/.pre-commit-config.yaml",
+          "sha256": "f36eaa2f636b43cf0091ac4ca0e33256b31e961abdf9787316d7f44c856700b6",
+          "bytes": 472
+        },
+        {
+          "path": "reference/Scrapling-main/.readthedocs.yaml",
+          "sha256": "9144d674c68ed1ae6d0d61c7feb1410b78e46702f8ca5e30b9b3ea00e774e934",
+          "bytes": 507
+        },
+        {
+          "path": "reference/Scrapling-main/AI_POLICY.md",
+          "sha256": "897a8c5e7115db8d7f84165183df66c6b06596fee15e53ff6fdc428b073947cf",
+          "bytes": 2784
+        },
+        {
+          "path": "reference/Scrapling-main/CHANGELOG.md",
+          "sha256": "e6bd4ddb0495ba4dee73b08797617062090bfce081d77f81a8a569c87bd60cf0",
+          "bytes": 97405
+        },
+        {
+          "path": "reference/Scrapling-main/CODE_OF_CONDUCT.md",
+          "sha256": "2b3f982820a7334267fa23517727edb370a43470279931e78106e55754a89f80",
+          "bytes": 5220
+        },
+        {
+          "path": "reference/Scrapling-main/CONTRIBUTING.md",
+          "sha256": "1624c8fe62d2b2265125d8b3ccf3d80f03b39ecc9a9e20bf128a1da287f52c50",
+          "bytes": 8282
+        },
+        {
+          "path": "reference/Scrapling-main/Dockerfile",
+          "sha256": "733625cc28dffee7040c381d46aea662e10883b13676314a3e0767af3d2f47df",
+          "bytes": 1158
+        },
+        {
+          "path": "reference/Scrapling-main/LICENSE",
+          "sha256": "5c782ef0346e4fbfe0dc76fd435f181a0f1e4a1a7a6b13c169c6e74314ff5964",
+          "bytes": 1499
+        },
+        {
+          "path": "reference/Scrapling-main/MANIFEST.in",
+          "sha256": "b79909b47f95f0133140c0648c93f7c2b16fc93eeb644504d1431aa4805794b3",
+          "bytes": 296
+        },
+        {
+          "path": "reference/Scrapling-main/README.md",
+          "sha256": "058eb78717356852955f931b450687948668b47dbfc7990a269ca19fb6e1150e",
+          "bytes": 36011
+        },
+        {
+          "path": "reference/Scrapling-main/ROADMAP.md",
+          "sha256": "d2ffb48682433bef6e598dbb6ceeb9a183586ff317636fbd1e133ba065fb4b18",
+          "bytes": 1097
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/README.md",
+          "sha256": "79ed9c42538a6006fac503ce098422cf9e084e9dd131c51990300143bab6b679",
+          "bytes": 1689
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/LICENSE.txt",
+          "sha256": "5c782ef0346e4fbfe0dc76fd435f181a0f1e4a1a7a6b13c169c6e74314ff5964",
+          "bytes": 1499
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/SKILL.md",
+          "sha256": "143f56e586742de452d60c676f33f240d447cdd238947d882916f79d5809aaab",
+          "bytes": 24886
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/examples/01_fetcher_session.py",
+          "sha256": "05fdb45c20a304f0fc8c979eabe7eb78b467951219be7b0a6a45d44c05b3ff68",
+          "bytes": 853
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/examples/02_dynamic_session.py",
+          "sha256": "9006f94a2648ef7a3c0c7365d636f8a962dc490d192550b9148b40e3c816a5c2",
+          "bytes": 951
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/examples/03_stealthy_session.py",
+          "sha256": "a461dd666b82ce478e4bfdb966724d1c1b8807a3a10ce6b918d449c4d553bd4d",
+          "bytes": 952
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/examples/04_spider.py",
+          "sha256": "2a899a24ebc827bec0b395f60d276813a99d27575255d28ede30e2cce38beac7",
+          "bytes": 1941
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/examples/README.md",
+          "sha256": "5ee5f38843aa04a7fee1dd9e5d978350931b6633d3b6484a6e96aa4beb5c3f7c",
+          "bytes": 1742
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/building-rag-systems.md",
+          "sha256": "832a63cd58377ad6fb187ea61d720d2100c703186b46fd81066716a8aa9540c7",
+          "bytes": 4862
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/fetching/choosing.md",
+          "sha256": "256405134a9a6403b2fd32ecbfa5dfdab884f40225e88b644001e89979ab44b3",
+          "bytes": 6933
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/fetching/dynamic.md",
+          "sha256": "7ffcbadbd38ffde42ce9d55dd8fdbccab7b6d1cfb8159398b9d3427f7dd0ac2e",
+          "bytes": 24369
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/fetching/static.md",
+          "sha256": "93e1629ab6aa8cbf06f6e8b3b1da8845fde89fc3aab3b68f25393b20f70a6a2a",
+          "bytes": 17266
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/fetching/stealthy.md",
+          "sha256": "a26ce9accd072a121878e756f5bb31c9095e1e82cb6d761bd684403e9ee328e8",
+          "bytes": 22575
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/integrations/scrapy.md",
+          "sha256": "dafeb66ee73ffa4b88d28382f647d37124a91698a03c90fd4121cb229cc79f46",
+          "bytes": 2975
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/mcp-server.md",
+          "sha256": "e1469bf7fd099aeb2a48a568b358166868a6650f483dcc686d400d1845d27c39",
+          "bytes": 28494
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/migrating_from_beautifulsoup.md",
+          "sha256": "4d06027059185c16d4f8e2e130cd14f1e1b8612efa327d5bf3d0fee2f23199ac",
+          "bytes": 11264
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/parsing/adaptive.md",
+          "sha256": "5f25a54c590700f8c821010733ae079b4edea2a2e8a48074f35c0ed4561c202c",
+          "bytes": 10648
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/parsing/main_classes.md",
+          "sha256": "2e977b335bf270f1cc7760de6393e09ee9346a8e880c1e9a891a2a58541c3600",
+          "bytes": 27300
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/parsing/selection.md",
+          "sha256": "4975a4b43e1180826d8145efb129826c3206e1b3a91511ef60622841143184aa",
+          "bytes": 22615
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/advanced.md",
+          "sha256": "1c44c1d2e4c952e6e4784e80e62634684594f885877c1cb38e7c23f40a020242",
+          "bytes": 18210
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/architecture.md",
+          "sha256": "de66f57537c134e68f03860e3385e168d33cd2abde19f910aaa1a2d9fea022e7",
+          "bytes": 7550
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/generic-templates.md",
+          "sha256": "78d978ee13cc1e021c8302a06a1ed4281a10faf957e44bc0ed00bc3ecacb542c",
+          "bytes": 10911
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/getting-started.md",
+          "sha256": "85456e4d43b4980916421c312276519665eb61521dd822b70fe6b0bed46da820",
+          "bytes": 6906
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/platform-templates.md",
+          "sha256": "9692f6b9d246f9c0da3d6f712368099f0ac9217058a262ccfbd7c806a389a55b",
+          "bytes": 3599
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/proxy-blocking.md",
+          "sha256": "bd21204aeafc1b11ef935ed984bd445deaa92657151b29829787fced84261b5a",
+          "bytes": 8947
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/requests-responses.md",
+          "sha256": "938882dad9c6e90aea213f71a43024c676743399c7cf503eb6e436fe8b0369d0",
+          "bytes": 9070
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill/references/spiders/sessions.md",
+          "sha256": "e5d9736725dc01e72ce55b38bf6f9ce2672d7876d17c23151ee01145bbb489b4",
+          "bytes": 8701
+        },
+        {
+          "path": "reference/Scrapling-main/agent-skill/Scrapling-Skill.zip",
+          "sha256": "c6936ecad2ddf512ee942567bd0abb3a439fa2acc0b39fe95c5dcd80bd26ab88",
+          "bytes": 95355
+        },
+        {
+          "path": "reference/Scrapling-main/benchmarks.py",
+          "sha256": "790ad223bc6fcf6fa240926e74c6b6a99185ffa44b526ed9e9a5b1e64d6c920b",
+          "bytes": 4454
+        },
+        {
+          "path": "reference/Scrapling-main/cleanup.py",
+          "sha256": "27897248f3b5849c3c8ee2702edbeb0fb26800a94b743428a57958d93a1979b0",
+          "bytes": 1033
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_AR.md",
+          "sha256": "51e30dd8ff57cc04edbf716f061542ea4c639b2688d593cd05999f2d6bebd6fa",
+          "bytes": 41326
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_CN.md",
+          "sha256": "9b40bc975fb071914aecbf9b4702dee6a07d0e8599394d28d1092bf8a25a74e8",
+          "bytes": 33498
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_DE.md",
+          "sha256": "5e1a0976c9056e449fd6ee7c05a71789d80201d6a443527d69316287fdfb0daf",
+          "bytes": 36436
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_ES.md",
+          "sha256": "ba45e009a9185b05dd3c35750ec2ef60472c90dfe6aee9d420508cd937528f65",
+          "bytes": 36699
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_FR.md",
+          "sha256": "1e99fa5bf4526fe33f95eac7f8c2fdf71312c6dc9caf199727ae069807f2c8df",
+          "bytes": 37442
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_JP.md",
+          "sha256": "6bf9bef4932bf2d11abd79cb7b294ffa4c68b473a148e3472f57194ce0d966cc",
+          "bytes": 40089
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_KR.md",
+          "sha256": "25e7fa6e0dde1d0f5b9da9b7e17c6f1a01d8e2fc30fe62a66a16fa1ec89f21ae",
+          "bytes": 37226
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_PT_BR.md",
+          "sha256": "285efe35b14f9640a72689b68c5348ee5c355c42c675593f768afd5e9c5f4bc5",
+          "bytes": 36556
+        },
+        {
+          "path": "reference/Scrapling-main/docs/README_RU.md",
+          "sha256": "ed34549caef93d2ba5a15698dc1b9d7d859fc3dd63e84898da03574ca7d45393",
+          "bytes": 47490
+        },
+        {
+          "path": "reference/Scrapling-main/docs/ai/agent-skill.md",
+          "sha256": "cd19be767dc9213d507e7101b54763ef2364aec94964047c93dda26e8d2a7fef",
+          "bytes": 2537
+        },
+        {
+          "path": "reference/Scrapling-main/docs/ai/building-rag-systems.md",
+          "sha256": "d698fe063fb173e6b305d22107130d45d1f55d58603a670001a38420113349d5",
+          "bytes": 4958
+        },
+        {
+          "path": "reference/Scrapling-main/docs/ai/mcp-server.md",
+          "sha256": "d04c61095c503e71c271e855226be243332f6fd05d0604c24abbfcd45b0980bf",
+          "bytes": 27581
+        },
+        {
+          "path": "reference/Scrapling-main/docs/api-reference/custom-types.md",
+          "sha256": "c9b2efbb7ee3a0a04e9592922ee6b6a05a2f098eda193912c7dd4ec1780c69ce",
+          "bytes": 611
+        },
+        {
+          "path": "reference/Scrapling-main/docs/api-reference/fetchers.md",
+          "sha256": "0b91c641dc5fce8dbff279f93bf837d8777bac8cecd4deb0f72ba60e31be5202",
+          "bytes": 1198
+        },
+        {
+          "path": "reference/Scrapling-main/docs/api-reference/mcp-server.md",
+          "sha256": "42a585655e300da884d790bde4152e92ba7e54395626ea64834e549b05bd1d40",
+          "bytes": 1423
+        },
+        {
+          "path": "reference/Scrapling-main/docs/api-reference/proxy-rotation.md",
+          "sha256": "9c56cc50c0d4443d074831e9137019c5e3c4e0a2218d3bf74d51a745acb7b269",
+          "bytes": 338
+        },
+        {
+          "path": "reference/Scrapling-main/docs/api-reference/response.md",
+          "sha256": "97fe506428f968f51aaab5cc6f1549fc134c0d2e11782bbec73897329b3cdf45",
+          "bytes": 407
+        },
+        {
+          "path": "reference/Scrapling-main/docs/api-reference/selector.md",
+          "sha256": "e19b375347ea862f338b5cca7cc1e4c50139a807897b1390580b9d19ebff8ad3",
+          "bytes": 544
+        },
+        {
+          "path": "reference/Scrapling-main/docs/api-reference/spiders.md",
+          "sha256": "7b01ac29c30fbbf6aed418fd2b7ffb8bfd0afd6f3952394045f9752ec982b096",
+          "bytes": 802
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/cover_dark.png",
+          "sha256": "8eec59d31fa1c41f1a35ee8e08a412e975eeabf1347b1bb6ca609cd454edf044",
+          "bytes": 113787
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/cover_dark.svg",
+          "sha256": "9ac4b474f415d92a7d3cfa4c2e99bf688470d332994d4adebe293e90b9224e6b",
+          "bytes": 175598
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/cover_light.png",
+          "sha256": "49a7d1e6eb3b15027d82d7abcc4576e3cb45f6e3f016c442676323206177d22a",
+          "bytes": 51944
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/cover_light.svg",
+          "sha256": "b0b1ff62b0a9a57f1a75d197b7a0f8dd905b3985b6504abcb4534050722e11e1",
+          "bytes": 70232
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/favicon.ico",
+          "sha256": "9d2643963074a37762e2f2896b3146c7601a262838cecbcac30b69baa497d4f8",
+          "bytes": 267230
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/logo.png",
+          "sha256": "629946e01f0625cae5335e36889a9c8496ae883ad6c14ab415f93d58ddf3284a",
+          "bytes": 58096
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/main_cover.png",
+          "sha256": "a80343a3e9f04e64c08c568ff2e452cccd2b24157d24b7263fc5d677d14ccc40",
+          "bytes": 454701
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/scrapling_shell_curl.png",
+          "sha256": "39c5c7aa963d31dc4f8584f34058600487c1941160dcfdcb8d11f1c699935c13",
+          "bytes": 351213
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/spider_architecture.png",
+          "sha256": "49bca39a1cb9a532074bc6530ec2b6b1ea625e7a9f042659d2bfffcb7dcee84a",
+          "bytes": 129786
+        },
+        {
+          "path": "reference/Scrapling-main/docs/assets/star-history.png",
+          "sha256": "7990b4d217bf739193f751362e66b0c6497b19fc5867ddd8c278bd2cc7ee59f3",
+          "bytes": 138823
+        },
+        {
+          "path": "reference/Scrapling-main/docs/benchmarks.md",
+          "sha256": "37e9326fc5dbad532aa49f534fef451da9962a4ec59900cf5c53e27bd121ee8d",
+          "bytes": 1235
+        },
+        {
+          "path": "reference/Scrapling-main/docs/cli/extract-commands.md",
+          "sha256": "37f03267ef2cdf1a68a9d8c898c1f77510d5aa3abba937d59edaa9e7208af133",
+          "bytes": 21604
+        },
+        {
+          "path": "reference/Scrapling-main/docs/cli/interactive-shell.md",
+          "sha256": "c092550be220600e750a802e784a0b859bf41ddc284cd168c29b92950043695c",
+          "bytes": 8606
+        },
+        {
+          "path": "reference/Scrapling-main/docs/cli/overview.md",
+          "sha256": "1a78d51e6ca5a489996318b26713cdae23ae7e6c8950dcb14a41e4cdf4fe9817",
+          "bytes": 1013
+        },
+        {
+          "path": "reference/Scrapling-main/docs/development/adaptive_storage_system.md",
+          "sha256": "bdb77c36a37096a9b724964892055f3b56085f582ec38621a244a4b0c214bfcb",
+          "bytes": 3562
+        },
+        {
+          "path": "reference/Scrapling-main/docs/development/scrapling_custom_types.md",
+          "sha256": "d444064ac1a7194f594422c679613cc37230ef79bade5e745546eda2ba176b2a",
+          "bytes": 1481
+        },
+        {
+          "path": "reference/Scrapling-main/docs/donate.md",
+          "sha256": "cdafa64182354bd91a60642d7bbd541f00f6ffa3ae1dceda188dfdcaf6402b69",
+          "bytes": 2672
+        },
+        {
+          "path": "reference/Scrapling-main/docs/fetching/choosing.md",
+          "sha256": "36467ad233a4d4a66ce24dea597631af7faa25c514cb5416171350ff8dec0a03",
+          "bytes": 7436
+        },
+        {
+          "path": "reference/Scrapling-main/docs/fetching/dynamic.md",
+          "sha256": "9cd3ad555aed3e6891be3e70480192bee5cca0479be4998747998ef59a3bd126",
+          "bytes": 25704
+        },
+        {
+          "path": "reference/Scrapling-main/docs/fetching/static.md",
+          "sha256": "41ed5fab6e16a541938d67b4fdf2a6e1a464a6ce1eb510498f7a38718482cdd8",
+          "bytes": 18074
+        },
+        {
+          "path": "reference/Scrapling-main/docs/fetching/stealthy.md",
+          "sha256": "fa490ffdc0322db12b7408f36e742dbe573d27744655bd0de7d0d0aac7ba689a",
+          "bytes": 28430
+        },
+        {
+          "path": "reference/Scrapling-main/docs/index.md",
+          "sha256": "4401e3983386c94720db5b6e1c254cb35f073fbf47c77dedea3d8e38cebbfbf0",
+          "bytes": 16606
+        },
+        {
+          "path": "reference/Scrapling-main/docs/integrations/scrapy.md",
+          "sha256": "53747199dc0f8983615dbd5564871fd50f850eafff38af8379f97c2454883c8e",
+          "bytes": 3013
+        },
+        {
+          "path": "reference/Scrapling-main/docs/overrides/main.html",
+          "sha256": "b312164a0f55f8d3de8116c2361b5543882584aeaa8230a772926c5cc63c6ed3",
+          "bytes": 1479
+        },
+        {
+          "path": "reference/Scrapling-main/docs/overview.md",
+          "sha256": "4e215d6cd5e1baeb055a7c790aa7f85fae9a7c9c110c6a2c5b09de745b4cf9cc",
+          "bytes": 17851
+        },
+        {
+          "path": "reference/Scrapling-main/docs/parsing/adaptive.md",
+          "sha256": "e3b863b8dab9116e52ea0bf3c75e1fad2d7e19ef056b1acae44d65b8a4106fa2",
+          "bytes": 13857
+        },
+        {
+          "path": "reference/Scrapling-main/docs/parsing/main_classes.md",
+          "sha256": "a8abbb4cd27e23157ac0b3e7d3a6dc747127ef9c98715749907d9645ffa0fb13",
+          "bytes": 32801
+        },
+        {
+          "path": "reference/Scrapling-main/docs/parsing/selection.md",
+          "sha256": "3679194db89502028fb04bca5b4af676ba1e0f03d99b1b0cc834c6589494bb09",
+          "bytes": 25434
+        },
+        {
+          "path": "reference/Scrapling-main/docs/requirements.txt",
+          "sha256": "a8edb9f081da43650b531fe5db8d0fed5608c498cc04d1261c42d84a67ac97d5",
+          "bytes": 172
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/advanced.md",
+          "sha256": "f24fd407ee8f646697419948b09435a4e2e9277cfe3a3c553cd97dca9786b89d",
+          "bytes": 18588
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/architecture.md",
+          "sha256": "5b28fde67b6fc476d1c4b46429961d5cb5dbf180a24717431984662da5f232b7",
+          "bytes": 8279
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/generic-templates.md",
+          "sha256": "52e3e6d2e5dd3ef44f8a5349729811969f76526ad3d583a7b0d70781e192dc39",
+          "bytes": 11592
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/getting-started.md",
+          "sha256": "0c2e9ea66294d01a54b1b8f6a054adc805c38f41c59a0dfa4f81007a233b9ec8",
+          "bytes": 8310
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/platform-templates.md",
+          "sha256": "9692f6b9d246f9c0da3d6f712368099f0ac9217058a262ccfbd7c806a389a55b",
+          "bytes": 3599
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/proxy-blocking.md",
+          "sha256": "5b1ad6240c64735f593d2168a6b3a520f7ec2c452e080396de45b22e7cd3a116",
+          "bytes": 9521
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/requests-responses.md",
+          "sha256": "6e440c668a0c5d032daa0ec6d6f6f3d2bd57be3078d61c3d2dfd47130e9c8fe4",
+          "bytes": 9227
+        },
+        {
+          "path": "reference/Scrapling-main/docs/spiders/sessions.md",
+          "sha256": "de835688a25be49cdfc894b3271224ace3bb077a7414475cc63cb6a4266f8763",
+          "bytes": 9836
+        },
+        {
+          "path": "reference/Scrapling-main/docs/stylesheets/extra.css",
+          "sha256": "b7bffce0585a8a0ea6a27be4d6e668b6b7fded4fc62cb3a6e526934e056bf7fc",
+          "bytes": 685
+        },
+        {
+          "path": "reference/Scrapling-main/docs/tutorials/migrating_from_beautifulsoup.md",
+          "sha256": "1fa7bde6ea22f5a600d9238033c1ed4f35f8aaec9790251942e8a20d1b7edb17",
+          "bytes": 12867
+        },
+        {
+          "path": "reference/Scrapling-main/docs/tutorials/replacing_ai.md",
+          "sha256": "4019f3db08eaae2a779e90e7236d5c29ea46f15eb802d888bc61fdb7fa24737a",
+          "bytes": 10614
+        },
+        {
+          "path": "reference/Scrapling-main/images/DataImpulse.png",
+          "sha256": "fc51f0bbf7e2983acad0036f8b62de65f55946ef09d909c02338c63631db4f5f",
+          "bytes": 55403
+        },
+        {
+          "path": "reference/Scrapling-main/images/DataImpulse_Platinum.png",
+          "sha256": "e6702f695bb81aee673fdfa487dbf090dd96766399f4dc7cadc56d7c118efeb4",
+          "bytes": 36922
+        },
+        {
+          "path": "reference/Scrapling-main/images/HyperSolutions.png",
+          "sha256": "f03a7dbf0208c785619c194f8fe7612679de4381022538432040ced0ee2132dd",
+          "bytes": 26495
+        },
+        {
+          "path": "reference/Scrapling-main/images/NodeMaven.jpg",
+          "sha256": "9c3ff0d2c2a98b24ea191a5a854402830d9c7f9148bf88ee034368a6ffa4ba74",
+          "bytes": 6711
+        },
+        {
+          "path": "reference/Scrapling-main/images/ProxyEmpire.png",
+          "sha256": "19ee14abba2c67645480b97ebab218f71e4b4feb3b8e816d019e8e1428be4922",
+          "bytes": 8765
+        },
+        {
+          "path": "reference/Scrapling-main/images/SerpApi.png",
+          "sha256": "8ecc2c507d66ea863fbd53c7f8d2b84a0ea69dff26417f48797b6184a988e7d6",
+          "bytes": 16486
+        },
+        {
+          "path": "reference/Scrapling-main/images/SwiftProxy.png",
+          "sha256": "a1d65371cd2a18dfd498e83ad27bd28ea63bc054ef910754dfb45dbf20f9c4db",
+          "bytes": 7710
+        },
+        {
+          "path": "reference/Scrapling-main/images/TWSC.png",
+          "sha256": "668a618911ce54ed072acc246f013f7435ef6bafc99d7c550734af90edac5299",
+          "bytes": 11549
+        },
+        {
+          "path": "reference/Scrapling-main/images/TikHub.jpg",
+          "sha256": "71fe4e91da0ff8d4efcf179835c892defab03ea25b29c168d563a4293fbc313d",
+          "bytes": 6598
+        },
+        {
+          "path": "reference/Scrapling-main/images/byteful.png",
+          "sha256": "a081a456f8592f11e45717060904ae15b86c91a515af79268051798006e89f4f",
+          "bytes": 17284
+        },
+        {
+          "path": "reference/Scrapling-main/images/cloro.jpg",
+          "sha256": "2539264e0cf256bbff79fa085fb5de068c3f8ea788fc511543afb3354eb7031d",
+          "bytes": 3739
+        },
+        {
+          "path": "reference/Scrapling-main/images/decodo.png",
+          "sha256": "a1f43abbb7b721da4b00a1a3cad54b18d6f650cdd59ebc99e333b5541ff69ddd",
+          "bytes": 44890
+        },
+        {
+          "path": "reference/Scrapling-main/images/evomi.png",
+          "sha256": "2c8ec42b88319c3cf4a8e6cc7615458009d4f9a113a6e6af53dd53d8c037ef8e",
+          "bytes": 27565
+        },
+        {
+          "path": "reference/Scrapling-main/images/lundproxy.png",
+          "sha256": "7dc758987a214440407937a0dddd7fa47af065655259cd7f3d78e8f564c40c69",
+          "bytes": 31665
+        },
+        {
+          "path": "reference/Scrapling-main/images/proxiware.png",
+          "sha256": "356aa7ced78e7b80e7a5c6df3cd22db82fdcfb40cae9d2c1287ec450eebcfde2",
+          "bytes": 13319
+        },
+        {
+          "path": "reference/Scrapling-main/images/proxylane.png",
+          "sha256": "b866cdac807b8b30d5a18a50aaa394303e597122a2fb8839862ca7ef4e3a01e2",
+          "bytes": 10236
+        },
+        {
+          "path": "reference/Scrapling-main/images/webshare.png",
+          "sha256": "f803c2c7a75f8e48e16fd193e7cbc134031254f7c55a41bb600ece2af364f9fb",
+          "bytes": 38822
+        },
+        {
+          "path": "reference/Scrapling-main/pyproject.toml",
+          "sha256": "0d124f6e5af885e5b189fed7a3b7f0c7c87ee7e10fb145c6250906f286e45a27",
+          "bytes": 3846
+        },
+        {
+          "path": "reference/Scrapling-main/pytest.ini",
+          "sha256": "ade1abeb243a9e4404084c48d6a477a43707723c75838295f4aec7721fd02099",
+          "bytes": 224
+        },
+        {
+          "path": "reference/Scrapling-main/ruff.toml",
+          "sha256": "043a4fe6c18c128865cc2f9a827d523a078c341ceaa397235a9d94b8ae2bfd76",
+          "bytes": 390
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/__init__.py",
+          "sha256": "c77a1bb065a2a0f78296f3b555f2522af68aee7f9d8e6b6ecc5c393bb396ec88",
+          "bytes": 1523
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/cli.py",
+          "sha256": "837f703cbf6be2b1b739d2b9a238d1127de2713fc13d02e8d566d1ae2d8c83da",
+          "bytes": 21719
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/_shell_signatures.py",
+          "sha256": "aa97ee4b9ca4e2fdace233a8ad3b70704688e419e0f4213f66e8353d30d36e21",
+          "bytes": 3618
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/_types.py",
+          "sha256": "c1b832625e8c4b10775cf130beb2ce8db82f9a3951abdeee23d6fe066fb9c5b9",
+          "bytes": 1418
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/ai.py",
+          "sha256": "201765f03189620e579c5c069c00e067a1ee484e3b13b2c4107beaf1125cf78a",
+          "bytes": 67726
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/custom_types.py",
+          "sha256": "1e128a2756953524ce835225f974a75149a29865fff2b26e0bc3394d3502c1ae",
+          "bytes": 13517
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/mixins.py",
+          "sha256": "bd27186629b5886edb45f69399513c1022275d2f89148040fae5d4019bd01160",
+          "bytes": 3753
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/shell.py",
+          "sha256": "4659ab62e8f4d73460ba9802d446df3185283ff862d66390a5554dfe0d868f40",
+          "bytes": 27499
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/storage.py",
+          "sha256": "e5792ebeebdd68743f4cd31a90526c8a4b6db892dc5f6fa09924850b42d179f3",
+          "bytes": 6621
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/translator.py",
+          "sha256": "d79a023ca8e821858be1525380a0b37d0542299b0da847edfed0fe921b5c1960",
+          "bytes": 5358
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/utils/__init__.py",
+          "sha256": "cb23051a9bfa9713a3710bf5ddb8b8a3a7ae8f0439e7f33713ee60dd1185f76b",
+          "bytes": 189
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/utils/_shell.py",
+          "sha256": "cdeb3bd4c9854eced5f5fd0916cb5a59c8d084a35937ac6fb29bb6f58550b517",
+          "bytes": 1707
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/core/utils/_utils.py",
+          "sha256": "821e7c9e390a5d0ad7bbd67202aefc42221a3bf48f200f2f5674a0a3aa3b2d1c",
+          "bytes": 3684
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/_base.py",
+          "sha256": "2fae956e1f3af01ab738919f82dcfb238552846047fda2dd9cba6ed199f25aaa",
+          "bytes": 25079
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/_config_tools.py",
+          "sha256": "fbfbe21a57dee0f93d12934d405cba0f13c2f3dbf1f2d3803f73d71666a146f7",
+          "bytes": 237
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/_controllers.py",
+          "sha256": "5df3de600657d77f32bc2d58721c534880e775d9a314abc634620b96de7503e1",
+          "bytes": 25262
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/_page.py",
+          "sha256": "35a4492e381d62230c0a9bc9a5db9e0bc24a279d11e8f8dfc11e3caa8eebc1b4",
+          "bytes": 3729
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/_stealth.py",
+          "sha256": "f75f52325e96f38c59a48de90c2b4cdd7dee3d9a3deb447f43c0d64825ceb263",
+          "bytes": 36806
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/_types.py",
+          "sha256": "2a671b1f99c6250b8daa353e1c9f0a317ea42928dfceb0d96318263f9d6f1b4e",
+          "bytes": 3485
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/_browsers/_validators.py",
+          "sha256": "abfcfa89ba0edbb00b026dfba42f3dbae4d0d683b5bc6bcfefc7b450eb01dd40",
+          "bytes": 9197
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/constants.py",
+          "sha256": "ee8ad3d5059556c3bb35d48843bab13e99a6a475db5683ae435316536c7d212b",
+          "bytes": 3267
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/static.py",
+          "sha256": "1af4694ca56715095b5b7b02949690b6ba4ec57b878040b413a63291762446c1",
+          "bytes": 40611
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/toolbelt/__init__.py",
+          "sha256": "b1c3da3ac28e885964b3774b79fc1cb1736cd5774a8caf9864cee6732af19fc6",
+          "bytes": 139
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/toolbelt/ad_domains.py",
+          "sha256": "ccde0b6f4d29b01cd870ef3822c38fc66e11ff738157f8d457cb97d94f247a9c",
+          "bytes": 97511
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/toolbelt/convertor.py",
+          "sha256": "776028110aa2c0f9b802a982b591885081fb0dd4fd03d1a3f96e5bb08c0dcb3e",
+          "bytes": 17021
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/toolbelt/custom.py",
+          "sha256": "dff32ca463700e8f79d974ee4a164366c912a5efe883174dc184520b7f70d8f1",
+          "bytes": 11989
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/toolbelt/fingerprints.py",
+          "sha256": "0ae08fa3951fed1ca00a6a437b073c1f36b3547900656309f0c7eeeb2aaeec2d",
+          "bytes": 3638
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/toolbelt/navigation.py",
+          "sha256": "31e3aa74a8e9be3e2b362f76c5dda04a7fe9634cf327a5a5c1e90783b69d46d5",
+          "bytes": 5111
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/engines/toolbelt/proxy_rotation.py",
+          "sha256": "76744bb0527a50fa387c87b0cbf98f621c847e442db092a1cdc1ecd2834cb4ad",
+          "bytes": 3729
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/fetchers/__init__.py",
+          "sha256": "fca104f48a54792bb4ea082c9f41c7810e0dbc647a35ee380a464667fd55981b",
+          "bytes": 1787
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/fetchers/chrome.py",
+          "sha256": "a102ebc08646e6f0a9f4e5e595abcd093e12a0e083a6512a17feb7604124063d",
+          "bytes": 8061
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/fetchers/requests.py",
+          "sha256": "44adec41c8f6c97cefde2462eefd850c4416fa845a8f53c8426215f65e194de5",
+          "bytes": 2836
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/fetchers/stealth_chrome.py",
+          "sha256": "00bd7f1d0dd6a6e245958b66a257830ea70cfb064c0147a8a5b71638abd7a9bf",
+          "bytes": 10646
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/integrations/__init__.py",
+          "sha256": "2a55c991f0b6626698ecac609de3afe0f6b87f2a191e7fe1e5108357e140b940",
+          "bytes": 262
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/integrations/scrapy.py",
+          "sha256": "63016b8362c8e255564c7bd7f0c5c3ee44054392405f1c180e5cd9f79234f11e",
+          "bytes": 5712
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/parser.py",
+          "sha256": "5328500a70a922c07a2ce1a97217ffe2d01d6b6fc336462123ca1fb93758360b",
+          "bytes": 59047
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/py.typed",
+          "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+          "bytes": 2
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/__init__.py",
+          "sha256": "54e770b767df6e06b2789e53b3a053087bdc768ae3c9bb45c0fab9b9304f5632",
+          "bytes": 808
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/cache.py",
+          "sha256": "d5182916f85d7f5ccdd6b3707b364f910857a8ce184e6affd60cb8e23cb91e53",
+          "bytes": 3921
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/checkpoint.py",
+          "sha256": "e6ea1f3007062ff23c6b372c3c5be899d6b4978ea2ff4e5cb2e05e4f5d265ad8",
+          "bytes": 3169
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/engine.py",
+          "sha256": "2e2184e376c09a4707a23cd5e4026050ddf9dedd42276ae134fc2382620a1c5d",
+          "bytes": 20018
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/links.py",
+          "sha256": "a9abaaa7d4fde27e6f0eeb81e77bf764f65216be928bfda8613933a23b0b506a",
+          "bytes": 8837
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/request.py",
+          "sha256": "0f13b1a10d5b81f30188542997d570c2e1b7c6514cc862fae1a74145aefb8d8f",
+          "bytes": 6415
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/result.py",
+          "sha256": "66b7e639983b0616d650d0a54c94de79aa195ecc98e6a44dbca146026cfe5291",
+          "bytes": 8707
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/robotstxt.py",
+          "sha256": "25133e9084ac024956b28d44dded73d3bc0b4176098f97a8bf9d28c25886cc2e",
+          "bytes": 2877
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/scheduler.py",
+          "sha256": "e600de391542609373231fab058d23736a8355c544b5c31745f8e07fc3d97eed",
+          "bytes": 3467
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/session.py",
+          "sha256": "99dcbd6daea3baef0e12a72e2b7b847ba9350f06fd8e35d70e80f7b93e66fc2e",
+          "bytes": 5455
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/spider.py",
+          "sha256": "ed8b7dd572bd4fac1ac136f8ec106b61a0e07ab2c36129578e3279d284011e90",
+          "bytes": 12672
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/templates/__init__.py",
+          "sha256": "00dc28ad502da472c8466f8e492e84db3d8707db41fba82869d0aeed6713a507",
+          "bytes": 375
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/templates/_utils.py",
+          "sha256": "b57d334fc28dee8f1b561773d94c24f5d8a689c58d734db46572cb481582e076",
+          "bytes": 864
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/templates/crawler.py",
+          "sha256": "a87317d4de50422f308ba4107b103b3da4fa49d71b24f752a2f7dab537c15888",
+          "bytes": 2429
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/templates/feed.py",
+          "sha256": "67cb42a2567a17f4f424052387f12c597eb7aa135666c8f5fd1e53740d205bb9",
+          "bytes": 5724
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/templates/shopify.py",
+          "sha256": "6693fbfec42269acfbbd5af9464a860df9c727ec36a9dbc8f41b29c911d58d5e",
+          "bytes": 4944
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/templates/site_to_markdown.py",
+          "sha256": "4d704435dec0beaf607137d5c2c752869db078aeaa39718dfd59cf6f910ffdfe",
+          "bytes": 3961
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/templates/sitemap.py",
+          "sha256": "1341b0618398647917b5660bbf13108c5bd681c1f1dcfd0dffcf7178d62d9347",
+          "bytes": 6687
+        },
+        {
+          "path": "reference/Scrapling-main/scrapling/spiders/throttle.py",
+          "sha256": "dad85c45a635e9b98b587f32fe76b5fe3bc8633980ab5558eecfa1878c727db3",
+          "bytes": 4333
+        },
+        {
+          "path": "reference/Scrapling-main/server.json",
+          "sha256": "e1101980e9e56c39f53b838a7a955ae2c9610faa95d2564017351e7cd8a9211e",
+          "bytes": 1279
+        },
+        {
+          "path": "reference/Scrapling-main/setup.cfg",
+          "sha256": "401ae0a4a7a915672dc9b14dfdad0194d0a085e83521af93ddccd73b32199c33",
+          "bytes": 320
+        },
+        {
+          "path": "reference/Scrapling-main/tests/__init__.py",
+          "sha256": "607141e5fb7380b41587a81b3df6d8718e32392f43381a797416ba23eaad9bc5",
+          "bytes": 32
+        },
+        {
+          "path": "reference/Scrapling-main/tests/ai/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/ai/test_ai_mcp.py",
+          "sha256": "859965b5925004684f1f0101e634eeaa593576d1f587671f380fbd6f24fa9970",
+          "bytes": 43849
+        },
+        {
+          "path": "reference/Scrapling-main/tests/cli/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/cli/test_cli.py",
+          "sha256": "f50159393f2e8bf0ccb3337e3d2cb1446619176967062c57d6063d1dc0a8baba",
+          "bytes": 15121
+        },
+        {
+          "path": "reference/Scrapling-main/tests/cli/test_shell_functionality.py",
+          "sha256": "9d8ac7b3ef4d651dd50715ffcd227aa21c788441a1945c50f06f754ca3ab33f9",
+          "bytes": 6361
+        },
+        {
+          "path": "reference/Scrapling-main/tests/core/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/core/test_shell_core.py",
+          "sha256": "3017608863a64a35c4c256f9701e16517d0f13fb3f2807bbc83e8b099e69f82d",
+          "bytes": 8749
+        },
+        {
+          "path": "reference/Scrapling-main/tests/core/test_storage_core.py",
+          "sha256": "5ba9751758fb1bc539c7c05bbd895fbe5c793695efde967888190ccbdbaa0ca5",
+          "bytes": 10270
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/__init__.py",
+          "sha256": "e87e0d800461c9370619dddd34229027c91415dac010c4927102fb19afef5377",
+          "bytes": 43
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/async/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/async/test_dynamic.py",
+          "sha256": "c2625ba0f12c95aa3a7a756973033e3481741999229bb74833352b3e0497cd11",
+          "bytes": 3354
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/async/test_dynamic_session.py",
+          "sha256": "54f555184f575b081a9792787fb1502a97c9cd18afe063503d5b3e2a9e61e7b0",
+          "bytes": 5821
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/async/test_requests.py",
+          "sha256": "7307390aac27bc94eec1b48d46d427a702d0d70bf18ba9aea7fff6defa5f1ecd",
+          "bytes": 6305
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/async/test_requests_session.py",
+          "sha256": "d0138b0e86cfb7ce431b6c45d12127bdf6c0dc4b42ebc380ccb2bd79b123ad79",
+          "bytes": 4210
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/async/test_stealth.py",
+          "sha256": "c842a5e93844d5c84714e4af06bfe88e5298f3dca13ac3af583dc1152492efe2",
+          "bytes": 2938
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/async/test_stealth_session.py",
+          "sha256": "98558f7cd36e1f363864f42fd996f83f6398bd18bf543f339e23377d2518319f",
+          "bytes": 5811
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/sync/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/sync/test_dynamic.py",
+          "sha256": "240b50b80c365c0357d1ef288a7d068600a34f435ce4ebc4f3e72a4fe8b14525",
+          "bytes": 3450
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/sync/test_requests.py",
+          "sha256": "47ff5e4a17bc0cc4ab1c4b47feedd73980c8d17cfeaa631c619694fb42f1a400",
+          "bytes": 5842
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/sync/test_requests_session.py",
+          "sha256": "9a71dff61cd8273e164654b72111d22c7ba1618152fa4648d2b578aac6c7bac9",
+          "bytes": 4605
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/sync/test_stealth_session.py",
+          "sha256": "f76daca4bff89f5a873f5bca0e4171dd2a796d9ead0b7e2863003de573f9130e",
+          "bytes": 3717
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_base.py",
+          "sha256": "e6e6e2b393c5342413880427dc10c67a5bd717ed1890f6d177033f41c39e809e",
+          "bytes": 2601
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_cloudflare_solver.py",
+          "sha256": "cc7a939dcc2b00d153ba435629f965ed70910e8a5adf3079706fbf6f85a026cb",
+          "bytes": 7728
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_constants.py",
+          "sha256": "2d8fc9b9fddb0b76ca122b71e1f7d123e1c8e253448c833a9e6e85d83970e765",
+          "bytes": 854
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_impersonate_list.py",
+          "sha256": "743a95763d51fa9985023c17fc13a52c078ae3a4695698a68355378145d396e7",
+          "bytes": 6416
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_merge_request_args.py",
+          "sha256": "cf652f4a889227b436606e7ec9c71dafe56666c2c62cd4512888c6a5cd78e841",
+          "bytes": 1760
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_page_reuse.py",
+          "sha256": "4d950383ed89b8070f7756423d8534fd1d2db7bca05426aee1ac7be02194a6b4",
+          "bytes": 4913
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_pages.py",
+          "sha256": "da5cc74c1083aa390e14c3ee588fa304c82b46a3e7ffd54c5543ed820e83ecf0",
+          "bytes": 4216
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_proxy_rotation.py",
+          "sha256": "5b753d325fa4bbc040bdb3da170853ca1000da2826617fe56f6c65d123339097",
+          "bytes": 11083
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_response_handling.py",
+          "sha256": "44fa51c33892e6f3cdc727650c2e34ab1076b158c775ccd2c929e41664fc2467",
+          "bytes": 6928
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_response_markdown.py",
+          "sha256": "a88e4473aee7222b309a8b397e4e2cde740f12814c0e6e8dbfc51fd1d1c747b9",
+          "bytes": 1955
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_utils.py",
+          "sha256": "8eb7208618ef66aa8a6f829feac25f8d4e7c41ef479a381bf00e8f0f63de5d59",
+          "bytes": 22960
+        },
+        {
+          "path": "reference/Scrapling-main/tests/fetchers/test_validator.py",
+          "sha256": "64d239dab28b7bee399edf63626f3e163fa5806008ec7d5a65cfab57a005be09",
+          "bytes": 3626
+        },
+        {
+          "path": "reference/Scrapling-main/tests/integrations/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/integrations/test_scrapy.py",
+          "sha256": "5369116dbe167557a99c2c98c30faa9beba09c56ef195b1f60c6f5bbbc102c93",
+          "bytes": 6341
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/test_adaptive.py",
+          "sha256": "97ff43dfb5c903e308bf9313435570bdf2ed132037ec6b8ae857f10fd35b809d",
+          "bytes": 6146
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/test_ancestor_navigation.py",
+          "sha256": "39572d3bbe924bf0194220bee109d7d5271e39aa5deb24c96318573d48bcb7ac",
+          "bytes": 2783
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/test_attributes_handler.py",
+          "sha256": "dd04dbdb2861f94b5fb93ea8e07b52586c8aa23c30fe18be11cdf9435b69f919",
+          "bytes": 12025
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/test_find_similar_advanced.py",
+          "sha256": "c21359dac6d9ee39af0b2cf811f1f050023d8d969a9318944ef29d26df619023",
+          "bytes": 4995
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/test_general.py",
+          "sha256": "983404da392a1d485271b21d5a7f67362ad40a79e461bff750f3608d1d760368",
+          "bytes": 15688
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/test_parser_advanced.py",
+          "sha256": "37fa7f8d62935cfe17c31642e0843026352a5b5cd9056866b4a0f15979245973",
+          "bytes": 14237
+        },
+        {
+          "path": "reference/Scrapling-main/tests/parser/test_selectors_filter.py",
+          "sha256": "236f23af43f647e9f7c48dfeb2c8b689ac76927a5cb617a9b40dc373e1557019",
+          "bytes": 2413
+        },
+        {
+          "path": "reference/Scrapling-main/tests/requirements.txt",
+          "sha256": "82edb3ef04f25bcc178ecc29e5d9af72d78103d121ce2bb44f70734a955fc552",
+          "bytes": 135
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_cache.py",
+          "sha256": "a463d7e639100de88fc6710df8527caec183a3da44eee3699904f1f3358e5d12",
+          "bytes": 13121
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_checkpoint.py",
+          "sha256": "6be673bcd25aeedb53cef51e98d6bbd4659060359a19933413db2ea5e9eec9ef",
+          "bytes": 11557
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_engine.py",
+          "sha256": "00207e82c42a7579f451e4755b1c337e88fb03f0141f6c4249a7f65569059480",
+          "bytes": 34707
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_feed.py",
+          "sha256": "ab61b473df3b79af9ba5f0549c0546f751612de2397758500b4d0efed8de9a20",
+          "bytes": 8832
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_force_stop_checkpoint.py",
+          "sha256": "1d87a976027b8830c5156374b2f332fd369b51de6150ca56cd6c2cf3efa6c4a0",
+          "bytes": 10739
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_links.py",
+          "sha256": "6cd965a7b847a88e0e87d6a0813870ec7a0b83da46c623863a841c7d4375c139",
+          "bytes": 9940
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_request.py",
+          "sha256": "70c2a8d29b31fc99a3eb46c97ccd344954b54f721b118699c46134a00fd7eaa0",
+          "bytes": 14908
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_result.py",
+          "sha256": "dc5a1da4a49482bdd0fb51f9de2de2f6eca3c3ecca0ed72706ac5348e55480c2",
+          "bytes": 16755
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_robotstxt.py",
+          "sha256": "20b96e8178b11bdf670303593509f0505fa26b8978fa41b8ae1964919fbfdf4c",
+          "bytes": 17709
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_scheduler.py",
+          "sha256": "762cbb96555197d1e4ba2e4b1f42013d834cb446bc7f5afa30523c6e35c1983a",
+          "bytes": 15792
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_session.py",
+          "sha256": "94f6d4c5881820cc725f6c5c5b8ff9daa420184332baf5827403ae7776bd5ce0",
+          "bytes": 12564
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_shopify.py",
+          "sha256": "1a89fa55fafbf7d1f9ea17177fd03a724b88a78ec36d355afdbae22fe08d4108",
+          "bytes": 7521
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_site_to_markdown.py",
+          "sha256": "60bf1f3b91dbf03bcfa05b0d81a891b3712f633a0c7c5ce577e95db4ccf779bc",
+          "bytes": 5437
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_sitemap.py",
+          "sha256": "1568d8bf1aa102797496685ffe371b2f7d84699167e00ff4ad5abed0fef912c6",
+          "bytes": 8753
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_spider.py",
+          "sha256": "edfec7d8ca7cb65b24ccd107994a28a089e52347ec6ea3641dfd625d31357670",
+          "bytes": 18380
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_templates.py",
+          "sha256": "118943bc116e44058120d3e55bca2f954be20bb72a0ee8ae5c26f706aba2789a",
+          "bytes": 8071
+        },
+        {
+          "path": "reference/Scrapling-main/tests/spiders/test_throttle.py",
+          "sha256": "15b1b055c541514a174e601d24bd3cded18c0d83c13243e5d9d721ee47d75d7d",
+          "bytes": 14978
+        },
+        {
+          "path": "reference/Scrapling-main/tox.ini",
+          "sha256": "fbe76daabb79a24690cf0675dfedd7c1664c96de01059efdfd2a120265decfdf",
+          "bytes": 1168
+        },
+        {
+          "path": "reference/Scrapling-main/zensical.toml",
+          "sha256": "dfaf10ebe930a2dc24202d2f97214fa9d48576af8fa29066c91b37add72f410c",
+          "bytes": 7765
+        }
+      ]
+    },
+    {
+      "directory": "reference/Agent-Reach-main",
+      "metadata_version": "1.5.0",
+      "verified_upstream_commit": null,
+      "snapshot_sha256": "ad8203f54bf94b48109115223ecf4bfb670598b7a634c867258a9f8a4bd8325e",
+      "hash_method": "SHA256 of newline-separated sorted workspace-relative paths, NUL, and per-file SHA256; excludes .DS_Store, symlinks, .git",
+      "file_count": 121,
+      "files": [
+        {
+          "path": "reference/Agent-Reach-main/.env.example",
+          "sha256": "5d0cc1b4c9259128343cb821c6688e9c1ea30c28b7e95f1458fa841e6dc38bce",
+          "bytes": 646
+        },
+        {
+          "path": "reference/Agent-Reach-main/.github/workflows/pytest.yml",
+          "sha256": "43cb9a0d50afe00d9ea44c64dd358adf1bb65baa332938944e6b58264b7b2451",
+          "bytes": 2927
+        },
+        {
+          "path": "reference/Agent-Reach-main/.gitignore",
+          "sha256": "df38ca2596744326bc65576375c237933f16d54f75ccbada4a3c08f42cd480fd",
+          "bytes": 199
+        },
+        {
+          "path": "reference/Agent-Reach-main/.openteams/specs/2026-07-10-agent-skills-hub-friend-link-design.html",
+          "sha256": "a1ea3c4cbd71f95c1a56b6063b825483a4edd583c014f43d845d68318e01c971",
+          "bytes": 2136
+        },
+        {
+          "path": "reference/Agent-Reach-main/.openteams/specs/2026-08-04-readme-partner-section-design.html",
+          "sha256": "54d6764d4078836c3fa9cccb766792853ee44b0c390a0230e514d5682347f5d1",
+          "bytes": 4797
+        },
+        {
+          "path": "reference/Agent-Reach-main/CHANGELOG.md",
+          "sha256": "86b808f43f281436cfa17d9b34f081ca24ad2444ec1b72f9ecde9086a413704f",
+          "bytes": 7596
+        },
+        {
+          "path": "reference/Agent-Reach-main/CONTRIBUTING.md",
+          "sha256": "5959326ac01f6c46994489768555bbcaf87eb2dc8411b2103da2b6e90c71644c",
+          "bytes": 2258
+        },
+        {
+          "path": "reference/Agent-Reach-main/LICENSE",
+          "sha256": "e94c131ac1c2f78cfd8f7e69da354c0ff58e4e54071697703d56856c036de402",
+          "bytes": 1067
+        },
+        {
+          "path": "reference/Agent-Reach-main/README.md",
+          "sha256": "7b723bcd4e5992c37ad1c25c3a2badd89c723a105b787fde9d1aa19a215f7ff7",
+          "bytes": 22830
+        },
+        {
+          "path": "reference/Agent-Reach-main/SECURITY.md",
+          "sha256": "15a03fb22722ea56033e96b7a5db336be8d10e6144af90d9940d8a98cd6f8b56",
+          "bytes": 1307
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/__init__.py",
+          "sha256": "46e5bdeb6202ac629098d931b49525adb85b859ba21ebde95ff0db27617e2ab4",
+          "bytes": 212
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/backends/__init__.py",
+          "sha256": "3c4f9224d20b020b0e54bb539c707370cef59937d68c6a441797b5ae672d5667",
+          "bytes": 429
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/backends/opencli.py",
+          "sha256": "7ef04df9bb739b23d0c80534a7a143e7ec982c1a0699af2f10708d8014876342",
+          "bytes": 7942
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/__init__.py",
+          "sha256": "2f4630cc6a0b5b9d7a597aa02fb2d7f809cd171335c623b2f9bfdb28ec7b94f3",
+          "bytes": 1519
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/_opencli_site.py",
+          "sha256": "f12896f94aa672bc8d4d08d7e51bbbc34cacbf0f12b4519f31447332cb5b945c",
+          "bytes": 1495
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/base.py",
+          "sha256": "5eaa803fd593acb7bee8bb29ef33ef373f101ea1e346bc0a9a3b304efd2073c0",
+          "bytes": 3048
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/bilibili.py",
+          "sha256": "0117e8055bf1b7acab3f1800104155b60fffa9bceacdc07c573cb0f1d691f64a",
+          "bytes": 4610
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/boss.py",
+          "sha256": "daa5496f163479314814022f13a2bd8949e3b851ea18e297d01e81de644f5e2d",
+          "bytes": 14515
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/exa_search.py",
+          "sha256": "63c85f659442a7d48704a9c8d9a67ad723cd24326344d565978a805ff5d647c6",
+          "bytes": 1623
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/facebook.py",
+          "sha256": "bf4760cfe0edcc8454404399eb133cd774b248fa208a9289c4daab6c2e3cbe63",
+          "bytes": 443
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/github.py",
+          "sha256": "442cc56755a4fa60ad6c8fad59ce4b703f1233a8bec3d2d19fb12ddd2a2f9d6f",
+          "bytes": 4767
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/instagram.py",
+          "sha256": "ea713be88caac5389c22a814da3f5b5e010ec53f531aaff2d7b459139f2ce731",
+          "bytes": 456
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/linkedin.py",
+          "sha256": "7e752c083cc62c6750ea3ccfd3533182661ba1aad4f71fac1a3257d26b8adc47",
+          "bytes": 2612
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/mcporter.py",
+          "sha256": "56a19db49d1a8abcc099adb37282af75d3cdbf2cfd5aa830aaffd1f7ae72b17c",
+          "bytes": 5356
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/reddit.py",
+          "sha256": "5018079ee6752d9242dd96227afffe72c3267f0aa4a1b48c62745f000c401cf0",
+          "bytes": 6322
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/rss.py",
+          "sha256": "bb8d24e4705dd86abcf0ead333c19306df735fc54bb2d2c03390d5aa3614bbda",
+          "bytes": 958
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/twitter.py",
+          "sha256": "97180dfbff13c3327309649b8a74668b534e642adeacb0cf170705e796ffe0c1",
+          "bytes": 5249
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/v2ex.py",
+          "sha256": "df334a13ba7004ce517b7046e7625211efbe0eb35a7f5db4551cc29254c4e662",
+          "bytes": 11831
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/web.py",
+          "sha256": "d59271dcf9e2ab94f7ae927f0c1a13e9c4308b116de13e1a617a0c4582a7b8e3",
+          "bytes": 2505
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/xiaohongshu.py",
+          "sha256": "e323aed7163f048c32716e36f8a096b6bcded6424cf793ba544df6edca33ac6a",
+          "bytes": 11717
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/xiaoyuzhou.py",
+          "sha256": "bf7503e3c745d2d1de3421c7e55d555948890be2292420417c49b9c4033eae04",
+          "bytes": 2443
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/xueqiu.py",
+          "sha256": "d9c03c3934ad2381f61a621d4a6dc57b439c0b16e506b275a8b9a944e6794ee9",
+          "bytes": 10605
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/channels/youtube.py",
+          "sha256": "b7b9869dd732d65810b2699ccdf9c6c0e3aed2194bded9f7ccd3552b51607565",
+          "bytes": 5429
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/cli.py",
+          "sha256": "b7b104c7b4d207331aa4d0862cfd9c992dee7606e952ac55638c3396b69a374f",
+          "bytes": 89749
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/config.py",
+          "sha256": "55c66ab71ed856f171aae6475edf4916005a0a39a4cbde1e630aa2be7b33cdf1",
+          "bytes": 7390
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/cookie_extract.py",
+          "sha256": "57ac723501fb980a6d9147a64b2b79dee13a5397b84f342e5619e8e7cf5de6ba",
+          "bytes": 16398
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/core.py",
+          "sha256": "5ad4744d62276cb63a7ab0a678c2b2b1a4bb56a56b57bba18da5015f43f27d79",
+          "bytes": 1277
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/doctor.py",
+          "sha256": "84bb212880e138eb404576162dffd4f2ced442d60a75694ed272e2fa750db851",
+          "bytes": 5304
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/guides/setup-exa.md",
+          "sha256": "3671600cdbee522cb9ea4f6c2f9d4535bb0dbab347ffe14dbc9fcbe883a5c9dc",
+          "bytes": 1277
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/guides/setup-groq.md",
+          "sha256": "9bb9b04a20d895dcf8293b4f1588d5f4aed99d7fa3c1fb7ad9d30035405290cc",
+          "bytes": 1221
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/guides/setup-reddit.md",
+          "sha256": "90fe5919b2b39fb5c88a73484143d68279abe14b0fb77612dd0015efecfa3f44",
+          "bytes": 1441
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/guides/setup-twitter.md",
+          "sha256": "32f842e2703bd5f37522a2dd37dc876885452a46becd4796f209ef9e4956844c",
+          "bytes": 2911
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/guides/setup-xiaohongshu.md",
+          "sha256": "5db860c7ef7e955a441ebd7dcee9306bfce5476efaf712d292829cb2863c0758",
+          "bytes": 2586
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/integrations/__init__.py",
+          "sha256": "8b084a9f378124b2b1a51563bf3c22444eb7ff33692017da28b2136ae56987ed",
+          "bytes": 24
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/integrations/mcp_server.py",
+          "sha256": "b113eeb6ebe64b3488be02058fd02642765c01d1c4495ceb1286de4d93b4a3fe",
+          "bytes": 2247
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/probe.py",
+          "sha256": "8f9c19ccda841b7a84647aa333536e85ca392e8f2c509cd12e50e49c85484a09",
+          "bytes": 4019
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/scripts/transcribe_xiaoyuzhou.sh",
+          "sha256": "569317a6e5f24f84192067d951da93a50542fa14285d07557a3bbeb366bdc3fc",
+          "bytes": 13161
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/SKILL.md",
+          "sha256": "0df9cd22ade17b77cc3698a14f1224c4aad9df5d533a1878dbe5df11b62f8377",
+          "bytes": 8636
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/SKILL_en.md",
+          "sha256": "b0c2f6ed398921f6b61b9998a46af506c5732bed76bc8451e97d691ba91ab118",
+          "bytes": 8294
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/references/career.md",
+          "sha256": "ade444ac499e55f02c84bd663253a28cebc1eefc7f56c7248dc6792841fbe53e",
+          "bytes": 9249
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/references/dev.md",
+          "sha256": "f6f91107557eacf1d28a023d597eb5a61353a8a6ede286c3c0a4888d274df9fe",
+          "bytes": 1383
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/references/finance.md",
+          "sha256": "c0cf89af1119d81890f6797ff9e8154a00ee08c17141e7d18c1b09658a916551",
+          "bytes": 1474
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/references/search.md",
+          "sha256": "23bfc54a3b85847ac7c1e12d6dbb0913d6fa3bb89a706d79e2b36396a8a8ef5d",
+          "bytes": 1066
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/references/social.md",
+          "sha256": "e2e6451eb931effd4f63ea407fbb109bea1e98de34bd703c52753ad0cc7025b3",
+          "bytes": 10521
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/references/video.md",
+          "sha256": "167ce732382c664eea63b884685dc085caa27cd69820138f7eeb91b0162efac8",
+          "bytes": 5515
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/skill/references/web.md",
+          "sha256": "b238fc897975a693d7bb262600ca2ea69cd13a4892e870d346dbe375c880b303",
+          "bytes": 1087
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/transcribe.py",
+          "sha256": "ffae0728d3426f67ca6748819fa49949d8eaeb96757f6687b5e4c691be98ee5e",
+          "bytes": 16108
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/utils/paths.py",
+          "sha256": "36ce072629bef1306004d7034676cad055ee53dc5dd78710437c9f3769b108ec",
+          "bytes": 7197
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/utils/process.py",
+          "sha256": "211c1e25c458373f02cb4a81e9e4146490c58073a97610e8b7800567aea00645",
+          "bytes": 706
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/utils/text.py",
+          "sha256": "6faf82ba308cb300377a14de66207c88284a3f3372facd5bfc2a412fdb93f3ae",
+          "bytes": 1138
+        },
+        {
+          "path": "reference/Agent-Reach-main/agent_reach/utils/url.py",
+          "sha256": "a5ad76ecc4ca641d497b01cc7e90f573c137d2e7acac4c45ade519b6a461e0e8",
+          "bytes": 3700
+        },
+        {
+          "path": "reference/Agent-Reach-main/config/mcporter.json",
+          "sha256": "1f3cba30d6354cc2f3233224f6af3a3e44206f2fdaf9ecaaf2189a4a1e4a613d",
+          "bytes": 178
+        },
+        {
+          "path": "reference/Agent-Reach-main/constraints.txt",
+          "sha256": "b25155a29cd4d2c4f21c2ea9cb89676372b65fa709be27c8aa275298634d9c44",
+          "bytes": 329
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/README_en.md",
+          "sha256": "db2f25f4de9df3e9c6fbf71269ee88dd42ba04fd146401d0dca05d232153b852",
+          "bytes": 21927
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/README_ja.md",
+          "sha256": "d2f4ee9e08c80c66e1a72f8de49b67caa9e42b8c0ededda3a86e4d39916db840",
+          "bytes": 21946
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/README_ko.md",
+          "sha256": "bca6d722da85f7759a41c6a75918331a0de882569747d3256adcc9c709b446fe",
+          "bytes": 20790
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/logo-1.png",
+          "sha256": "a15044312da5f207a32ed8a8f244d0b08fed81c65d08acdc8977c49ea7a4f625",
+          "bytes": 62369
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/logo-1.svg",
+          "sha256": "1c0186477f299bf9d635b5a48c5c452f5c6a4e173acc917113b18f7e9c043283",
+          "bytes": 1572
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/logo-2.png",
+          "sha256": "1085bb695ef78f808596ddcc5c6edbc7e01565cf45f2d9a9d608606b09014c27",
+          "bytes": 92351
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/logo-2.svg",
+          "sha256": "f1948ae6a6fa2e54a6d81ccbf7251aa07ae113ab009bd969b49bf48eaff0c3bb",
+          "bytes": 2533
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/logo-3.png",
+          "sha256": "0312a0b3fdb44ceaa89b818a6a92265631e14255d44baafb7c2d2b922366db83",
+          "bytes": 48799
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/logo-3.svg",
+          "sha256": "a97a8d60747b76fc51bdc2a681a9f4f73dc5142f0aae990cf89be528dd61a531",
+          "bytes": 1558
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/sponsors/astraflow.png",
+          "sha256": "0e57f7d641ebf391c36af3e54e2fa9dc8f04c4afcd28fd2da641a4dc8c45712b",
+          "bytes": 37174
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/sponsors/browseract.png",
+          "sha256": "854a4a7b1c3671d22c207f2dab099e9360d3c7fac152c43c5c68f5a2c58c1105",
+          "bytes": 4458
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/sponsors/coreclaw.png",
+          "sha256": "a238b46070b05aeeacfde5080eb5853ba5a5e356292e2934b9f3121f95ead058",
+          "bytes": 23725
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/assets/sponsors/tencent-cloud.svg",
+          "sha256": "1fe4e6326d24a1330071a7185466d66e434c8fd91738fe020b5272db57c7d143",
+          "bytes": 3458
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/cookie-export.md",
+          "sha256": "580f0412e31e483475b148e1499bb1bcda1cd84a14dd1a08890e24deecc4a714",
+          "bytes": 2249
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/dependency-locking.md",
+          "sha256": "ac30022b9a0af30a871b55b5f9dfee06ef4b9c4e74fde20162d04c4cc690d25a",
+          "bytes": 636
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/install.md",
+          "sha256": "269dfa9308f0adf06d9efe22591fd60a48af785b2c4921302ff2d6726ee579f5",
+          "bytes": 22167
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/troubleshooting.md",
+          "sha256": "d00b66970253889749b0214269475b634907f14546f54a936254821774db4cb6",
+          "bytes": 4136
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/update.md",
+          "sha256": "fabbd30dc72d8611dc6b5a65ce869145a2bbd61ef9fdde22132086ccde6ee62b",
+          "bytes": 4974
+        },
+        {
+          "path": "reference/Agent-Reach-main/docs/wechat-group-qr.jpg",
+          "sha256": "5a0ae31b14c82f1a84842a3f32ae218e9cbc52245f88fb62c5fdf1d2b48cbdf3",
+          "bytes": 148332
+        },
+        {
+          "path": "reference/Agent-Reach-main/llms.txt",
+          "sha256": "b8a690165e834099fb3b0846076b69594c564b4b221754b4586d2c0f563bde89",
+          "bytes": 2333
+        },
+        {
+          "path": "reference/Agent-Reach-main/pyproject.toml",
+          "sha256": "b74f8bcb8442e5386028f1aebb091861d6b230058fbed0d7000860ccc847534d",
+          "bytes": 2160
+        },
+        {
+          "path": "reference/Agent-Reach-main/scripts/sync-upstream.sh",
+          "sha256": "81558d6e821edb17c493b2957d10c167852f6d0c072ab3cdbc13814685b56240",
+          "bytes": 2315
+        },
+        {
+          "path": "reference/Agent-Reach-main/test.sh",
+          "sha256": "c36f54c91d0843485d079136561ff6e53a658b9414e89c71c739ea221f3877cc",
+          "bytes": 2727
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/conftest.py",
+          "sha256": "05a371f9d43cc87c5975a3526e78aaffa8046495a5647068587ce7f8a96c317e",
+          "bytes": 3388
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_auth_guidance_policy.py",
+          "sha256": "729590ee49eb4e5c2199a71bb71aff34a67d6a3d858710604d3e40fa37d90c85",
+          "bytes": 8843
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_boss_channel.py",
+          "sha256": "cf3f00ac1d94dc4d4614a96183060092b343e05fc3770c9aa2738ebfb02c4953",
+          "bytes": 10818
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_channel_contracts.py",
+          "sha256": "8c4e1fbd489e445c579e164e375606067ef1e045937cf1f87a92ddb528c65328",
+          "bytes": 7153
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_channels.py",
+          "sha256": "62c8f64ecdc7d2643d2a790b4d2de793eb3fa44d37c1679d72cf1cf44ded5bee",
+          "bytes": 65038
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_cli.py",
+          "sha256": "a4af899e5a1402a263ac87854fa7f6a97ae5eb9de5a951161c25dffab7f598db",
+          "bytes": 17925
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_config.py",
+          "sha256": "77aba12f2a80af2f9eac5d8bae6ede814898b2d36421c50e1fb99a3e92af892c",
+          "bytes": 11361
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_cookie_extract_perms.py",
+          "sha256": "f5094aa308f92210231a23ec6b17d882049bf7be80ab2804370eee0a70a5aed7",
+          "bytes": 6189
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_cookie_security.py",
+          "sha256": "eedde95fbcec1c27b7af9a2f2bd1edca41e7de22d7f976ef902dd15c92e5efd6",
+          "bytes": 6822
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_core.py",
+          "sha256": "b2564cf2b12dea75dfdbece04292414986fc07f606c6d8930c54c026328ec352",
+          "bytes": 715
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_doctor.py",
+          "sha256": "c4f2252bab4ff473b1ae145002afb9b80e73667e463e2d91e4f2a01a69a71aae",
+          "bytes": 10392
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_doctor_credential_boundaries.py",
+          "sha256": "c8e75e4eaa78604da1e214780aae91d91b6dba12f6ee60f59c0698e1267845db",
+          "bytes": 4993
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_home_isolation.py",
+          "sha256": "81608b0455b622914cb67d2332cecced15be66877681c2d33a71f443a368772c",
+          "bytes": 1192
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_integration_script.py",
+          "sha256": "09f427a04267e595d17c03d3d553027f408afd4df89ef10a4f370d6c8732c48b",
+          "bytes": 1339
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_mcp_server.py",
+          "sha256": "9d89fa10be9a96df165c156f8c2ff5f6b4e87fbd62f02df0fc08e3c0d1237465",
+          "bytes": 2810
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_mcporter_config.py",
+          "sha256": "2e6de51c357f052d3cb381f6342d5d343da56f0d5320de6244d697febc2a0ece",
+          "bytes": 4596
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_opencli_backend.py",
+          "sha256": "1c0771e5f092acea443127fac541bc3166cc1777334b499dfd2af569e4f2f5d7",
+          "bytes": 6230
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_opencode_skill.py",
+          "sha256": "7b567829b8b6d17805fcb7849d950f11ae5ee36dfd257849af896555c037aca5",
+          "bytes": 3516
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_p0_cli.py",
+          "sha256": "29fc78e1ee96ae21c294dd34708d218b361a32ae2bbdb60904f29345bdad22b7",
+          "bytes": 40315
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_paths.py",
+          "sha256": "21488c38056ffb5179de386b4bf75cff75a92678cc3e98e12675e506d5b5a6c9",
+          "bytes": 1273
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_private_file_writes.py",
+          "sha256": "319a3eb2f42b1e7181bbac14f6b1cddb5859dd9eb8a590a98fcf0d26ab32442a",
+          "bytes": 20874
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_probe.py",
+          "sha256": "f5ac8e2416b030c8c90122c2dcefc28373574cdd4196a684b4c071c251b4ebdb",
+          "bytes": 4139
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_process.py",
+          "sha256": "089aebe4f6f5fdcac4e8acadeb600b71b52d431519778e4311810acc1a922698",
+          "bytes": 498
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_reddit_channel.py",
+          "sha256": "1717f4eef3c7657d3f01cf541a48a0e21d2c8d1d9edab9c2fde7c2ad9b009bfc",
+          "bytes": 7147
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_scrub_credentials.py",
+          "sha256": "11be9f7c4c20e20209c2717455160c82059ae1d3a6d9f8bd92c0d146e3e4646c",
+          "bytes": 3119
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_skill_command.py",
+          "sha256": "ebaa4d6262e7bb5c398a181e0e004dc3510c3eb09362dc87f1ca68afc2821332",
+          "bytes": 11098
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_transcribe.py",
+          "sha256": "80ef6f2e756713ec5aa7fdc75618fbe1c903a7b67edf443b1d53bf26bbf03834",
+          "bytes": 32193
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_twitter_channel.py",
+          "sha256": "b5272d335f3b114395753a0349d1161ef66ba3d627c79538810e8593b36b764e",
+          "bytes": 5437
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_url_security.py",
+          "sha256": "58bb118669cd26f2332010c351879ebf1b6faea93d0d7fb9ebb5c3d354086510",
+          "bytes": 5023
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_v2ex_channel.py",
+          "sha256": "df9b15a4a88fdd2bd5bde11a2f49de44190b2e00bf5c00e50c8aec937bb889d3",
+          "bytes": 11272
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_web_channel.py",
+          "sha256": "6625f9dcfb533fd912c487ad3ed00b0d624394b13f2487ccc0cae40c1b2ad70e",
+          "bytes": 7524
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_xhs_format.py",
+          "sha256": "30b97ac442534369813ccc546d508b96208d7d934f3f8e64703ee47044ec8e93",
+          "bytes": 4965
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_xiaoyuzhou_install.py",
+          "sha256": "cf6493ea59d8b7b2188856c76063f33d479644459021335f5e01b9c897d4c394",
+          "bytes": 9699
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_xueqiu_channel.py",
+          "sha256": "e95b01896b165c47ae5484d60aabaf8282d234635ab3b6983c6af0b4980552f2",
+          "bytes": 9277
+        },
+        {
+          "path": "reference/Agent-Reach-main/tests/test_youtube_channel.py",
+          "sha256": "56c8a44cde4f09b7b6c531a061cc45c0cc6dd06350383ffcee031ad9f98adc6c",
+          "bytes": 8904
+        }
+      ]
+    },
+    {
+      "directory": "reference/Scrapegraph-ai-main",
+      "metadata_version": "2.3.1",
+      "verified_upstream_commit": null,
+      "snapshot_sha256": "b48a770c776ab72759e11e961ce323b4ffbe6a627f846ac3425db766a6d1f67a",
+      "hash_method": "SHA256 of newline-separated sorted workspace-relative paths, NUL, and per-file SHA256; excludes .DS_Store, symlinks, .git",
+      "file_count": 393,
+      "files": [
+        {
+          "path": "reference/Scrapegraph-ai-main/.gitattributes",
+          "sha256": "1a1dbe176bc233b499d35a57db7513f2941c99ab9759f177830c9149be99005b",
+          "bytes": 66
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/FUNDING.yml",
+          "sha256": "0d0ed9319e6380c5d80daf9a846321e48e8bf84c9002aaa71d7734c51b261503",
+          "bytes": 750
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/ISSUE_TEMPLATE/bug_report.md",
+          "sha256": "0c8d64f29fb4536513653bf8c97da30f3340e2041b91c8952db1515d6b23a7b3",
+          "bytes": 834
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/ISSUE_TEMPLATE/custom.md",
+          "sha256": "e6178395096648e505fd545fac750c6a04314dd8e356052d7440f5c17cbd1c7a",
+          "bytes": 124
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/ISSUE_TEMPLATE/feature_request.md",
+          "sha256": "1f48c52f209a971b8e7eae4120144d28fcf8ee38a7778a7b4d8cf1ab356617d2",
+          "bytes": 595
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/workflows/codeql.yml",
+          "sha256": "3c1d6e80a093486f590280c951191d03096bc1690351b79c2fa1502a850c3f0c",
+          "bytes": 2593
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/workflows/dependency-review.yml",
+          "sha256": "8a0c92aad092e83608bdb45c4ba01d07b6e85efd80b5f4212b9de9003b1596c2",
+          "bytes": 1729
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/workflows/release.yml",
+          "sha256": "70ebf661f2a3582b8a5de0ae8fa4caf6e69193021c4cb717a59a8dd5db175957",
+          "bytes": 2802
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.github/workflows/test-suite.yml",
+          "sha256": "fe68825430d49a54465195e061f9cdbf1afacea3919019c177c21fdfdc6bbad6",
+          "bytes": 1599
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.gitignore",
+          "sha256": "798c25ee1f3fee742fdb9d67a00b52ccba9cdea63754ece4be14828ec874635e",
+          "bytes": 2139
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.pre-commit-config.yaml",
+          "sha256": "64e8704025ade76497f48c52858024181a77fe0134f3f832c6d014396cbcdc93",
+          "bytes": 480
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.releaserc.yml",
+          "sha256": "a9ee63da2e12c6e4a50fc4f29eadfedcf68aa158888b9ecc93203baae04c8d91",
+          "bytes": 1402
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/.semantic-commits-applied",
+          "sha256": "61aac3efae89973d90061a6a3130ab27ea32eedee9b3f877c637dbabe378cf48",
+          "bytes": 461
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/AGENTS.md",
+          "sha256": "dbbe4eda0e8044b10a5aba48bbaa07fed9d5e46ab3330aef83443f9ed2a26756",
+          "bytes": 5217
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/CHANGELOG.md",
+          "sha256": "b2a8b91ea59af83b105e94ff2c9bee2de217317c6488eaa301430bdaf1e12390",
+          "bytes": 305653
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/CODE_OF_CONDUCT.md",
+          "sha256": "24cd4a8cdd214ef709a50db8666e4ebe252710dca75ca936e2f2703e5db1ecf1",
+          "bytes": 5221
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/CONTRIBUTING.md",
+          "sha256": "70757f710733476d6781df5d85ad9c4bf99b6218f84935a147ac1ee8fd9630b3",
+          "bytes": 1197
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/Dockerfile",
+          "sha256": "ffb28862ac299fd23d6614a01143054209be026f6fe2224e0639b3cc6eb6a70f",
+          "bytes": 266
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/LICENSE",
+          "sha256": "ce45663f0556aa000b5342d6f2825c0a9abda8dae2b9cee095feaaff5c94f9c9",
+          "bytes": 1066
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/Makefile",
+          "sha256": "d676119359d4a5d14420e7827f9ab66b73d7440243478deb066ffbf82ae17581",
+          "bytes": 954
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/PullRequests/PR_1027_reviews.md",
+          "sha256": "b276c77f75e74adc050af2bc2710ad8ccfb11038c9755a3e8deded2e18ef6d24",
+          "bytes": 804
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/README.md",
+          "sha256": "f969db3320ffa997da79f49e1d209a293a311a566a59fa4b10292f51bb4397e1",
+          "bytes": 13890
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/SECURITY.md",
+          "sha256": "550e3d7d1f12aa1e666fbeced68ee8e600257a8a62b7fae5b815e2ae3bfbcae0",
+          "bytes": 116
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/SEMANTIC_COMMITS.md",
+          "sha256": "b6d6479128f03f80f853f4fd600049694e1c1a3e0d769ca947e657ac87800df4",
+          "bytes": 3948
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/TESTING_INFRASTRUCTURE.md",
+          "sha256": "d39832b46961a9b45e267da436bf1f9782a33c4966830eea3722bcd9a60229cc",
+          "bytes": 9777
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/citation.cff",
+          "sha256": "5cab4349a6c3b01bbf32aa31d89a372204336c889e73774dbf05470d33ad85d6",
+          "bytes": 398
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/codebeaver.yml",
+          "sha256": "c0506b265df49ff565e751941124476268bb57c35b0dbf84b1eedbdd64337eb2",
+          "bytes": 117
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docker-compose.yml",
+          "sha256": "0b27b8cc47fb59a94e1930d9d6dd0ffc4fcc84273872b416ffa65bc3a14f6547",
+          "bytes": 224
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/api-banner.png",
+          "sha256": "cf44dbb9568785a79b9c36e1334bb0e3d92258868e50ee4569c2973d79f9f4cb",
+          "bytes": 48957
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/api_banner.png",
+          "sha256": "555dd319b4d780a2a8941cf548c03ac0256944a6b95b957978d8be1597a414fb",
+          "bytes": 344574
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/apikey_1.png",
+          "sha256": "600c6644a9f696c3e8ce72c11b1f56e51c8dd5fa1cc94026c603fc44437b9f7c",
+          "bytes": 60520
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/apikey_2.png",
+          "sha256": "b12ebf417789706367da7484fa84ff1309c4e72f9308db8ed3280fd14be38f59",
+          "bytes": 123826
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/apikey_3.png",
+          "sha256": "476a2ed5c06af7def171a295ea12059d48de349e63b0e013ab1606b59494235c",
+          "bytes": 60775
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/apikey_4.png",
+          "sha256": "ddf1cbf0a59c916b948c6a4f4cdc9199042012672e5a7228826e66f6a3bd0db7",
+          "bytes": 86914
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/browserbase_logo.png",
+          "sha256": "e49d1c9eeafaa030dbc1d556170dbaa2e9f67c5a5338b09fc87e425ac5fd5939",
+          "bytes": 3091
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/codespaces-badge.png",
+          "sha256": "3a6644b84147fea2f0edb6970759216866817ccc3b8efa54581b98a6f2f6c562",
+          "bytes": 3526
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/histogram.png",
+          "sha256": "142f106127c14a51a8167c3a26eb67b9baa1dcd66525a4ea9d23b8f9959ab5be",
+          "bytes": 52940
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/nodemaven-banner.png",
+          "sha256": "6a406f8d9bd64798291d8a88e7765652dc3531d7c8e7a9d94fd76e5fe12b49c9",
+          "bytes": 95907
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/omniscrapergraph.png",
+          "sha256": "b2f6a8aad474b48641f47c9e2e7b6054447d8d0c5ee9e70a30a8773a2b39025c",
+          "bytes": 73949
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/omnisearchgraph.png",
+          "sha256": "b45367f6218a927217400a1630d9b23c740d37861b346d995bd4157a935c01e5",
+          "bytes": 58062
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/project_overview_diagram.fig",
+          "sha256": "67b53d6f10cfbcb1dcbb9588aae9947c22cba34bf96cd63a1f066e84e98c01c8",
+          "bytes": 53007
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/project_overview_diagram.png",
+          "sha256": "95cea9d0552d392cab1016e518c74c1e069dcdb5f60127f4fc09de706b260fed",
+          "bytes": 83949
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/scrapegraphai_logo.png",
+          "sha256": "0efc698d5e341526d06916fe81d5667012deacf4dcb6c31d5f3a04eca7324daf",
+          "bytes": 38678
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/scrapegraphai_logo.svg",
+          "sha256": "5ae2f46648e425722c16f58092531e4415830eeb193a1c88ac5754f10124f639",
+          "bytes": 6581
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/scriptcreatorgraph.png",
+          "sha256": "672e1b778357498c05cfada0f65c99adaaec5af5c9f803eb5f5005554a19f9c1",
+          "bytes": 54963
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/searchgraph.png",
+          "sha256": "27ace47bef335b35d5522161948c199a1b3854879097815e717f79cec0e75c96",
+          "bytes": 54611
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/sgai-hero.png",
+          "sha256": "294c915e6b6d0a0e5fa4780b7150e6704abf764fcb3304a7db41d2bd77bdf5c6",
+          "bytes": 68537
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/smartscrapergraph.png",
+          "sha256": "cf1cb8c680598b7d8c2b0c76f6475fc7502cf349bcc2bbbdd72466044b04338b",
+          "bytes": 61095
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/assets/speechgraph.png",
+          "sha256": "ea56b9cff6423a7d157313d30a7a83836905006e17501c3e184775355e75d2bc",
+          "bytes": 49312
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/chinese.md",
+          "sha256": "07887cbb377eb61f081935812c65754fe0dc6914ce37a27068b858e9024176b0",
+          "bytes": 11045
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/french.md",
+          "sha256": "29e91d0dfd5f169e2a6da357024a5dfda32eddcde79c4026788283228195fe2a",
+          "bytes": 12649
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/german.md",
+          "sha256": "edcb0bd8779278c8b35304ddf3b2c48e9a05b08bf631dc1a1ec96f74c59a68a3",
+          "bytes": 12491
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/italian.md",
+          "sha256": "d82adda8a2844abc3f8e5ea1ce6af543b5468f19ea797baf2bdd33b55592acbf",
+          "bytes": 12347
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/japanese.md",
+          "sha256": "195d20573e0015d87cb4e2d92384caa2676b92dc087b3d8649f212da890ddaaa",
+          "bytes": 13195
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/korean.md",
+          "sha256": "bee0bb95d2194af34d14cb5be3f377235dfe607ec7cfca1012da0931a16debc1",
+          "bytes": 12498
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/portuguese.md",
+          "sha256": "861f4480d317b86aeeb42aa26291090e1882bfdf770fc03d4eb788a46427eed2",
+          "bytes": 12117
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/russian.md",
+          "sha256": "3f25c77e4d9cf9a6d5c72e87875742f37885881545b28ad68d58efa3f2c845cf",
+          "bytes": 15791
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/spanish.md",
+          "sha256": "469cc66e2b5bb0748f499e41e9a974f562e0cc1b99bf7e71ba21e50b916be344",
+          "bytes": 12144
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/timeout_configuration.md",
+          "sha256": "b7dc745ef53655cd9d1588b951710a810e730161afd87faed52e962d84c020c1",
+          "bytes": 6543
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/docs/turkish.md",
+          "sha256": "951fca4f5fa5fd27571799bdfc68ba391fd0ab4b00462361b5450f814787a06f",
+          "bytes": 12513
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/ScrapegraphAI_cookbook.ipynb",
+          "sha256": "bcbe9136e54392a9a2b75c74a0ea1e30d5fcc26cb7c1ac55ea3ab14378841817",
+          "bytes": 1558017
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/code_generator_graph/.env.example",
+          "sha256": "762c822099944e99fcde71839466a351f525de798243ca04ba57ed881a0c0917",
+          "bytes": 285
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/code_generator_graph/README.md",
+          "sha256": "4c72a3102278bc657a8f3e66525a48532f8cf8aa73702414eda486c325e9120c",
+          "bytes": 662
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/code_generator_graph/ollama/code_generator_graph_ollama.py",
+          "sha256": "b74f6ff68c9405bea0b42d6338eb21d77691090ce4f5c96d143318e559daca20",
+          "bytes": 1589
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/code_generator_graph/openai/code_generator_graph_openai.py",
+          "sha256": "b21abc245d3411413835c9a0e6becdb561380df93b9292ec8fe4890401d297c3",
+          "bytes": 1577
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/.env.example",
+          "sha256": "9920c3d1b8190ff2bb2ded00d6412a18cba79c59f7a0c916c498090fc24186d0",
+          "bytes": 210
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/README.md",
+          "sha256": "64be3083186fb886767bae208b66ca65265a6a6e129f6a73ca034de1ef9da91f",
+          "bytes": 608
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/ollama/csv_scraper_graph_multi_ollama.py",
+          "sha256": "500d0d93559c7a11ff906066a806d9b3644311adb4e42c210a8b405a0938b35b",
+          "bytes": 1705
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/ollama/csv_scraper_ollama.py",
+          "sha256": "ade4f0e708af6c81e117edd6e63ce3abcfb3b383ebf454a3ccf3161d2e1a7564",
+          "bytes": 1725
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/ollama/inputs/username.csv",
+          "sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+          "bytes": 175
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/openai/csv_scraper_graph_multi_openai.py",
+          "sha256": "54321f0206b05137e8e746a0a0104cc35f051f9b536aeaa5adcc96b23f94167b",
+          "bytes": 1441
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/openai/csv_scraper_openai.py",
+          "sha256": "c95685026b38388bb403e6eba27e0cb88adec52e0696c9ead2383d3050988469",
+          "bytes": 1463
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/csv_scraper_graph/openai/inputs/username.csv",
+          "sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+          "bytes": 175
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/custom_graph/.env.example",
+          "sha256": "4c5e939b3b334c7af21cf2a225b2f1e77077528f92e6283cea9155a7af55de92",
+          "bytes": 249
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/custom_graph/README.md",
+          "sha256": "2d05e72507b2ce75ce9c1719fe00c497965f7a35b466dc691af02e606cf05af0",
+          "bytes": 608
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/custom_graph/ollama/custom_graph_ollama.py",
+          "sha256": "c8437b9552a2875a920dcafcead7e73fb060a9ca843cf5ad62de0b45582d67ae",
+          "bytes": 2469
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/custom_graph/openai/custom_graph_openai.py",
+          "sha256": "a3394ee3150e0dc09e19caaba71f53881dc5b398ef3d12449561d02b69c333df",
+          "bytes": 2629
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/depth_search_graph/.env.example",
+          "sha256": "2ccfc8c5a0865686578c81645226422e8da8457ccb79f931f901e2894a036559",
+          "bytes": 279
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/depth_search_graph/README.md",
+          "sha256": "025f4e36c9495b1e5b6a9b813a66a401f1b7933cdded6de4440fe10a206070d8",
+          "bytes": 598
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/depth_search_graph/ollama/depth_search_graph_ollama.py",
+          "sha256": "f568a6bdd5838e43316694417af4b51c3c4975d3f1540d1e50d1406963394816",
+          "bytes": 749
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/depth_search_graph/openai/depth_search_graph_openai.py",
+          "sha256": "8938068219585ccabbf1d4f7d2644a3313ef0efed8d14f177bca66b392edd282",
+          "bytes": 601
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/.env.example",
+          "sha256": "d8c80dfb0cb671e1cfcf8af4ffe1155c960541f1112002bb0f84b5131198dd26",
+          "bytes": 290
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/README.md",
+          "sha256": "811c2ae10fb5ccf4ab57a7308d5fac8d9278f00c61f0425dad86f95a26ed6ed4",
+          "bytes": 633
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/ollama/document_scraper_ollama.py",
+          "sha256": "a8e9f0e2e28b1f0887badd730785d849ac66f4555e5917e082dcbc92d8bdbb48",
+          "bytes": 1655
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/ollama/inputs/plain_html_example.txt",
+          "sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+          "bytes": 7289
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/openai/document_scraper_openai.py",
+          "sha256": "716c23f349974ad1db9caebfb9417fe3979c47b52421e34dbe1b20f9ee91ed9e",
+          "bytes": 1414
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/openai/inputs/markdown_example.md",
+          "sha256": "f1a7c3b74ace0b7da4cc777bbcd69477cec4b5fa9cbc29b3b97a6052afeaab32",
+          "bytes": 1036
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/document_scraper_graph/openai/inputs/plain_html_example.txt",
+          "sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+          "bytes": 7289
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/.env.example",
+          "sha256": "472c1eeb7647cb131decf4f2f14564b875289b261c32d781b51ac4be4814f601",
+          "bytes": 183
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/Savedscreenshots/test_image.jpeg",
+          "sha256": "e6b48d7806ae310d3f23a118181c8db32d379e931d9613c12e977489ea6e54d7",
+          "bytes": 178104
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/authenticated_playwright.py",
+          "sha256": "6fc7784e4c9a3b34bb18d0661c17ab24e9c36f84f3ec6d4dc0a598608568f7a5",
+          "bytes": 2950
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/browser_base_integration.py",
+          "sha256": "30e5999771d0acfa81487243cdfcae89b2291d3549e78b53cb85bd8ec6958ee7",
+          "bytes": 1336
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/chromium_selenium.py",
+          "sha256": "e2b76276c96cbec693efbc0eb284c91e3db40d8e57e067e3866bb77bb0973c0e",
+          "bytes": 4947
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/cond_smartscraper_usage.py",
+          "sha256": "4bf4cbd47f6a7012c128bbe8ae0ab35b7872b6176a3636b676dbbf4481dc3652",
+          "bytes": 1024
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/conditional_usage.py",
+          "sha256": "37c9f38d5cf275dbe425fbf3407621cfa1b4d9f290b0bd932d43c0c30a42c85e",
+          "bytes": 980
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/custom_prompt.py",
+          "sha256": "1dc4012ccca044bdd57eb0cd4c9d594c147604a880d3ea211bc99f097bc0e5be",
+          "bytes": 1341
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/example.yml",
+          "sha256": "022bb309caf0f230a08fa5346c1a31067acf17b4bbc991df2c2c22254cef9556",
+          "bytes": 346
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/force_mode.py",
+          "sha256": "3fdfddcdeec008d3231467729b190e27164e873151ed9c3b06fa9cc9240580e1",
+          "bytes": 1569
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/html_mode.py",
+          "sha256": "577647dcd693af9919021194c25b84af2f2a29bbf0bfce0490625c6a5b20dc56",
+          "bytes": 1349
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/load_yml.py",
+          "sha256": "f1aa7ed530d4cee25a027e7130a0e69d88af72e963f49927cb62120589b21edb",
+          "bytes": 990
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/no_cut.py",
+          "sha256": "05db5483ef086d5573f0db5231e9871df93e6b67585bbea351163ac544c07dcf",
+          "bytes": 1151
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/proxy_rotation.py",
+          "sha256": "cfa66d5ae81343bd623745d876759bddf517c8c3d35f0676a05b54aae602f58a",
+          "bytes": 1317
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/rag_caching.py",
+          "sha256": "028fd3166b1c4f0abfd882b1ee998deaa08b07eb55eccaf404af78bd5e9b37a9",
+          "bytes": 1227
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/reasoning.py",
+          "sha256": "28e47d141be16655d64d3356026adca0591b63c0a27b61582837675c330f8078",
+          "bytes": 1216
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/scrape_do.py",
+          "sha256": "5a5534bac41e5627b582a0981acbee3b5aafaa982ca21b7fe36bb2af48f82c83",
+          "bytes": 956
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/screenshot_scaping.py",
+          "sha256": "f51300aa64a63ece08383f284bfbb9d0a2a8494a652f79981767b5838938a03c",
+          "bytes": 1057
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/serch_graph_scehma.py",
+          "sha256": "72687c82cd7075b9497566573b6b25456d2463905378df283e2ba5bcbb95e1fd",
+          "bytes": 985
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/slow_mo.py",
+          "sha256": "2acfc37e4623df627554c5f5b4594dab953ee4c4e142f0c02a0d93c45a2118a8",
+          "bytes": 1473
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/extras/undected_playwright.py",
+          "sha256": "4789bd5e34590a635a0679f8fca5f600e3184e3cdf411231d001d42c3b8e2313",
+          "bytes": 1255
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/.env.example",
+          "sha256": "57541bce238be50a69f0826658904ac845ebb1e39fbdbc082b9e66e35e4fea73",
+          "bytes": 204
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/README.md",
+          "sha256": "6fa5c6fef6948edba3ac9ca23c10428030f833233aa2e6761c3f35cc59e9b938",
+          "bytes": 614
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/ollama/inputs/example.json",
+          "sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+          "bytes": 6456
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/ollama/json_scraper_multi_ollama.py",
+          "sha256": "7f45cbdd49487e0e32845420e9d9693507119d1cb8f9be6d5adf40d3fbfc3722",
+          "bytes": 879
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/ollama/json_scraper_ollama.py",
+          "sha256": "f501132e13f34c08a1aa59dc33859a6e05b2dce5fd46552ccc8d60ad0d28aff5",
+          "bytes": 1803
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/inputs/example.json",
+          "sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+          "bytes": 6456
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/json_scraper_multi_openai.py",
+          "sha256": "1dc1d97e33904080770d5b748181c6a2b14afb8c6b3116b3d8c7b223bc98b2b9",
+          "bytes": 817
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/json_scraper_openai.py",
+          "sha256": "1f5943185fc1ad98542c3d659c49faa75557aa6a78febf231352745307a2d7ba",
+          "bytes": 1636
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/md_scraper_openai.py",
+          "sha256": "59330bca169061a43027a35c95366e278a3612b669800bd606c061b1b3067c71",
+          "bytes": 1619
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/json_scraper_graph/openai/omni_scraper_openai.py",
+          "sha256": "08f80b16cc4925898506c843e733d39c57e786bf4f029150ba7e15557b307be9",
+          "bytes": 1317
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/markdownify/.env.example",
+          "sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0",
+          "bytes": 44
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/markdownify/markdownify_scrapegraphai.py",
+          "sha256": "7a31baac8f8cc16698bb875425513644855f5e7605d2c947fce3801ff04d787f",
+          "bytes": 501
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/markdownify/markdownify_scrapegraphai_v3.py",
+          "sha256": "558f4f8119599e087387f381c66fd4f5f688a8087dd44537445f804a70639ffb",
+          "bytes": 723
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/markdownify/readme.md",
+          "sha256": "ac2c05e8bd3147ad80057853971fa27aa76d01ce26d8dcc793051f90aa239718",
+          "bytes": 1907
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/omni_scraper_graph/.env.example",
+          "sha256": "8c4b542535688e508cf7f19cf7626d2304420c0da9217e2566b3cdfd96bd3da4",
+          "bytes": 249
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/omni_scraper_graph/README.md",
+          "sha256": "453e55542af81cd53494370587fc0c5030374c1dd1a3dd58d7fe32f0cdea7fcb",
+          "bytes": 656
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/omni_scraper_graph/omni_search_openai.py",
+          "sha256": "0969f90e7f325c7ee22491b2f033291bc7914633ec85e873ff0840a32c4af2ff",
+          "bytes": 1158
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/readme.md",
+          "sha256": "6c38dba99840f7a699774dd40fad9897c43249bffc4152a12ed4ea86927d0e10",
+          "bytes": 2871
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/script_generator_graph/.env.example",
+          "sha256": "e83b47dafc28dd77b2555d1deabfd31062da6e8f9abb82dc44fbfa504e81f60a",
+          "bytes": 267
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/script_generator_graph/README.md",
+          "sha256": "67940d5f6ef9051794e5ca0baa127373b2b67287b925f45cc8635022d48614aa",
+          "bytes": 628
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/script_generator_graph/ollama/script_generator_ollama.py",
+          "sha256": "819900d0c84986fb9313fabd1f1634d6aa4e859f87850c01a77d1f95ed56aefc",
+          "bytes": 1298
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/script_generator_graph/ollama/script_multi_generator_ollama.py",
+          "sha256": "118679b0bb14bd3300d8fdf1bf933878a66720324636708750b00ec76c96ebfd",
+          "bytes": 1586
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/script_generator_graph/openai/script_generator_multi_openai.py",
+          "sha256": "2cee3bf8edec4ee1d844deda7a0ce55ef74263ed378d40d7da2712d1d30301fb",
+          "bytes": 1499
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/script_generator_graph/openai/script_generator_openai.py",
+          "sha256": "26ca670c6d8941867f3081e61d75164092075575d2568446899c919b31e10ba1",
+          "bytes": 1282
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/script_generator_graph/openai/script_generator_schema_openai.py",
+          "sha256": "81ef47a62db479f415f21b398b113470d41cc67243d2c371a3f35909cb172975",
+          "bytes": 1683
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/.env.example",
+          "sha256": "acae0b2c1784a7855a7d4fff58d2911e664758561edcb5b13d63d22905e714a8",
+          "bytes": 242
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/README.md",
+          "sha256": "89079fc39044acf7280eb6a4ed3638cbb8a0da2c185fa2003ad35d184bccca03",
+          "bytes": 647
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/ollama/search_graph_ollama.py",
+          "sha256": "2cee7fedb8fa6eef8eccf4fb1d4114d4dbf27f64d7edceafc72f9cb39dd0b78e",
+          "bytes": 1223
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/ollama/search_graph_schema_ollama.py",
+          "sha256": "f90378c5b2dbb8a0862f92cdda10e756d918015ea04ee73da381818285dc403d",
+          "bytes": 1643
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/openai/search_graph_openai.py",
+          "sha256": "853a8fdd36ea3e4d289696bd535a3ae479376f7154983334d81a5d09fa4abe42",
+          "bytes": 759
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/openai/search_graph_schema_openai.py",
+          "sha256": "1f1fbdeb953defd5e486bc76a94b998acc72618c85f9877acd8d385bfe9f8af4",
+          "bytes": 1563
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/openai/search_link_graph_openai.py",
+          "sha256": "1b0a4e6f65d0b86dc4e80402d5b82deba4388bca4800d1caee84068660eb01b9",
+          "bytes": 1097
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/.env.example",
+          "sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0",
+          "bytes": 44
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/readme.md",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/searchscraper_scrapegraphai.py",
+          "sha256": "9fc8497180dd639115cd54d7746ddcc17cab4d71fa180ee73cc83318e1214960",
+          "bytes": 531
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/search_graph/scrapegraphai/searchscraper_scrapegraphai_v3.py",
+          "sha256": "802486e460823d7c615008499e63cf274b5e8111bdff92d209b52a4689b9ec8c",
+          "bytes": 719
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/.env.example",
+          "sha256": "7a9f6944bba31dbad1b4a79b455b4dae481a9a05ce5a3e07814006b51e20f7f9",
+          "bytes": 156
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/nvidia/smart_scraper_nvidia.py",
+          "sha256": "6d22b49d31948d4dd67d524e3d44169124117bc53cc3a7c970b56173f20d321c",
+          "bytes": 1219
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_lite_ollama.py",
+          "sha256": "8d4915533b1a49c709ce18d76fd13053d71d1cd20afdef5fb4ea2704f59a8a07",
+          "bytes": 702
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_multi_concat_ollama.py",
+          "sha256": "98c16f5618c5712fd487c45e290d7a6634f5ed070073bd3e6dd48747da7063b2",
+          "bytes": 996
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_multi_lite_ollama.py",
+          "sha256": "7b43567d7e03fde25ef1cc2dbf135919af5b878352d6ef52112e5838d93aec4a",
+          "bytes": 1222
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_multi_ollama.py",
+          "sha256": "22cbaa686e5752e9b3fde31fba3236452f6f1a8721088813ee5f0895c45ea537",
+          "bytes": 938
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_ollama.py",
+          "sha256": "80f8b3b01ce33dc82e4a80b3984cf34fc1344eddbe5bf8149fc2795cb9980f0c",
+          "bytes": 1164
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/ollama/smart_scraper_schema_ollama.py",
+          "sha256": "d0cd3fb0bddabb4c5a32ae33de973041a019f6c0ead736d44ef7ee587d9ac5c5",
+          "bytes": 1402
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_lite_openai.py",
+          "sha256": "ceb752e3d1d3a322263127abd5060eb7bd5a708b8ec64d9b857b374ca4fb86ac",
+          "bytes": 732
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_multi_concat_openai.py",
+          "sha256": "d27ab4083f10fff8737e20d23e8831dd86717421768919eed93249aa6bd08b2b",
+          "bytes": 973
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_multi_lite_openai.py",
+          "sha256": "51efc2abf04d1116eceb35aa8033f6f7c224f924057cd7fc0dff1d437e2a47c9",
+          "bytes": 1224
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_multi_openai.py",
+          "sha256": "4665b20ead6dc0ec8aa73f9cf3311951f3f2d709df59dbbd1637f02e90e3cdd6",
+          "bytes": 962
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_openai.py",
+          "sha256": "6bc5097fb82b13590e8ef186e4d1fda718e29d4150e2c9cfc224d544b57172e9",
+          "bytes": 1158
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/openai/smart_scraper_schema_openai.py",
+          "sha256": "7386dd48b47d99393b544b3b68a0490798a004549a86e97ef57d7d185c6e6871",
+          "bytes": 1359
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/.env.example",
+          "sha256": "45c3ebaf5f65a110ec710e55bb96459ca572845e1e1e819fb21ffb7f352d44e0",
+          "bytes": 44
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/readme.md",
+          "sha256": "65c8cf4ca006ceb6627391ccc7dab2655e562df1e970e2a13f095e56020b1919",
+          "bytes": 3957
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/smartscraper_scrapegraphai.py",
+          "sha256": "33f644d5cbf269001621b18ab3e505668b58845ade03c9a5d8035051623a4285",
+          "bytes": 586
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/smart_scraper_graph/scrapegraphai/smartscraper_scrapegraphai_v3.py",
+          "sha256": "45c1acabd902368abde370109836404fa6133b677057f545341029b4b18cb8c8",
+          "bytes": 822
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/speech_graph/.env.example",
+          "sha256": "1f787dc91c5382477925c5ebbfdbbcfed5651f7120fa954201a090ed8cff9c86",
+          "bytes": 292
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/speech_graph/README.md",
+          "sha256": "c239a789b0fd668307142911d6e5ce5d517bc809390b73e7c3796cbee16fb1ee",
+          "bytes": 617
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/speech_graph/speech_graph_openai.py",
+          "sha256": "8ba8026da3ee078c5453f3de48ee334a1437428f64f11c6306b64a81dd369b42",
+          "bytes": 1504
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/.env.example",
+          "sha256": "b840c35e79d15803fac7d5cbfc0624c2271b1ea083c1c0edcdf94fc62457d152",
+          "bytes": 215
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/README.md",
+          "sha256": "2d3bcf9b2269f6e3e6568ff306b073d270dbdf6784d9ecd1831e9046a2c2508e",
+          "bytes": 605
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/ollama/inputs/books.xml",
+          "sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+          "bytes": 4412
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/ollama/xml_scraper_graph_multi_ollama.py",
+          "sha256": "11cdddb08744512c402b1065dd81ff3f37fea40673d49089d4addc3b8dd23aae",
+          "bytes": 1771
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/ollama/xml_scraper_ollama.py",
+          "sha256": "bd88f63c0d08fc08b753b4da88acc1d4392346eb6cc5af77b9022a8e93e96f14",
+          "bytes": 1710
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/openai/inputs/books.xml",
+          "sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+          "bytes": 4412
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/openai/xml_scraper_graph_multi_openai.py",
+          "sha256": "affea5a8b60aebcc83ff59ded3ba9d9aeb2dcfee5d1d507fe683a8de1c9e0d66",
+          "bytes": 1695
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/examples/xml_scraper_graph/openai/xml_scraper_openai.py",
+          "sha256": "e98e9a8e16c6bfbd876d0327090283964c796fe760e49970954fd1ce62091acf",
+          "bytes": 1524
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/media/banner.png",
+          "sha256": "e11a555115b80e07241afdb0aec04ee9fae66f983d969d27fbd8a64a21f090de",
+          "bytes": 41489
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/pyproject.toml",
+          "sha256": "c88e138a741bcac006d58dd41303c4a68b48f925b929067af4b43c04bfd5b886",
+          "bytes": 2904
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/pytest.ini",
+          "sha256": "6c3a08339288c9ef05c6a190eb3e888043c9c799d96cc6e2e089f42a79ec73e4",
+          "bytes": 1619
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/__init__.py",
+          "sha256": "561255255b277e180b0ede52d2ff705e17fd0d67f555cc116b0d4cda5b51852b",
+          "bytes": 161
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/builders/__init__.py",
+          "sha256": "bbc10e9e0105f85a226e20258c34adf11dbb7fa01fe2f36ef96b56e73055cbce",
+          "bytes": 188
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/builders/graph_builder.py",
+          "sha256": "165d68d30d733d4e63904e24a7d46724fe6df7816cd63f12d41910b89b5cdefc",
+          "bytes": 6820
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/__init__.py",
+          "sha256": "c2019c89db3e584898feeee4ec97372de8c21e067e26be8b728857e809b4444b",
+          "bytes": 817
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/browser_base.py",
+          "sha256": "3cdcb04ca29365ee1925c9a83bd464b8ce2ff6e8a9c182e114031e864b826494",
+          "bytes": 1784
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/chromium.py",
+          "sha256": "dbe4d0841d9c047bcc23ed40b6fc6b446b4aff1e3ff43af906a7b5649cdec8c4",
+          "bytes": 22735
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/plasmate.py",
+          "sha256": "cdc066e5891bb23912120a46403b784d1a491a32e23bd92aa0d2316463ba741a",
+          "bytes": 7659
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/docloaders/scrape_do.py",
+          "sha256": "5cc38154b960c1ad808d2279adc0579546fe2bc0812fe452a2f71253d4349b97",
+          "bytes": 1644
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/__init__.py",
+          "sha256": "e2b700e9d5b10f60016d12fcece8a937d785919864c265d4c774b019f84162ef",
+          "bytes": 2366
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/abstract_graph.py",
+          "sha256": "6da8a74ad3cb216323f7f56d60bb2624c02b8a8b1931b848566cc5394d600a28",
+          "bytes": 12407
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/base_graph.py",
+          "sha256": "e10d40c8bdf204dc56e1a3eee457c6bc581ec9f1b8c26d0bd363be11343e58ec",
+          "bytes": 14365
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/code_generator_graph.py",
+          "sha256": "963104902eb13891bb876064cf0a22b1fac37f86fd11dcaf67eb69dc3257caa8",
+          "bytes": 6715
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/csv_scraper_graph.py",
+          "sha256": "be5d5affab9c45dc92e1a3ef186080687313fb635d20108265a4ad9e39f0c4f3",
+          "bytes": 3793
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/csv_scraper_multi_graph.py",
+          "sha256": "6659b2a501a189844c4f441d0098173c91cfb4d063a69cba4f7eb54f694eacaf",
+          "bytes": 3286
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/depth_search_graph.py",
+          "sha256": "8e30770ac1d41ab711edefccd673ff5abab12de88db235d8b1420921be4efcc7",
+          "bytes": 5173
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/document_scraper_graph.py",
+          "sha256": "ffee6da6a91abe7faa0916f076d0e690a74ca031f230124c12ea9c5d196af3f2",
+          "bytes": 3972
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/document_scraper_multi_graph.py",
+          "sha256": "771451adeb718c5129d7cc7ce85af845d09ceb3a7928d68134eef5d0446b918b",
+          "bytes": 3437
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/json_scraper_graph.py",
+          "sha256": "a29f2a4ebdc3d7cab6ac1dfec968bfdff76cb3ada5a5a414ccd95a1cef1d044d",
+          "bytes": 3157
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/json_scraper_multi_graph.py",
+          "sha256": "5b04e885861705942b10fc23963897d89ea60290be9a48a78b5d62e1d3c0453f",
+          "bytes": 3329
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/markdownify_graph.py",
+          "sha256": "635fb479cc73a82a3942dd87a19f6e1a44c0a821145b0f2ec2eee6b0d1a3a5c8",
+          "bytes": 2290
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/omni_scraper_graph.py",
+          "sha256": "6af4b5e6214e39d0cde140feb7ae9f9a8f84b95f4ef154d12dbc734cb6806ed7",
+          "bytes": 4632
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/omni_search_graph.py",
+          "sha256": "ef23c8b8450aed8affa4846920bc622255b7b7cc5643c22e8d79e3885c8f1364",
+          "bytes": 3688
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/screenshot_scraper_graph.py",
+          "sha256": "3c18a2954f599110232aa66f6cd75ec5d5d187d02007a5f530b891dc6aa4719b",
+          "bytes": 2550
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/script_creator_graph.py",
+          "sha256": "23b21d7ba6232933bd4c00107c82d26d838942aa4fb62937420804f131c9f97e",
+          "bytes": 4116
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/script_creator_multi_graph.py",
+          "sha256": "adb7699c1c0e39bb2132ed13a49bfdd0b3e9e68424125e95cc22a6546c1dac6a",
+          "bytes": 3429
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/search_graph.py",
+          "sha256": "1f28ffcd5e6fd1e3d51c086d8d467719757aa825151f4bc918652c44d6e8485f",
+          "bytes": 4415
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/search_link_graph.py",
+          "sha256": "1b32d912a8263090615f8af52246fc7b848a0e5d0d1c72ef6578f3327bcd764f",
+          "bytes": 3536
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_graph.py",
+          "sha256": "1e9cd02492172c3ea629b8745d685203776351afe3f783458a5f33e1acd706dc",
+          "bytes": 10465
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_lite_graph.py",
+          "sha256": "011dcd387b9b2d5860c17b333e57a96c3510f41745f536241e9eed79a2c7d1ea",
+          "bytes": 3360
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_batch_graph.py",
+          "sha256": "2b48a1ef7eef70dbec9a72bd3662c8a9aec9e0053bd82b9f4aa49b620e89feec",
+          "bytes": 7695
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_concat_graph.py",
+          "sha256": "6f1993bd48179fbf564730987ea117622fd65779fa2a377d979226ebfe08177a",
+          "bytes": 4243
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_graph.py",
+          "sha256": "f76c3e84a84f1bbc9282e3002dd5d5be3cefdc46531a554b529dace5f5b8ae80",
+          "bytes": 3720
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_multi_lite_graph.py",
+          "sha256": "4599a2e43217baaa2dc13b2ee17d9dded1e4393cb674cb8555239c6e587d3a25",
+          "bytes": 3752
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/speech_graph.py",
+          "sha256": "5ec4f19f3f12faec1e3beb850f56e0067d50a97ce1efc4d15cf4c4fb26ab4eda",
+          "bytes": 4404
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/xml_scraper_graph.py",
+          "sha256": "5e5169f3a57a22e6e2c5992ac05540ab7bd661428dd69dc949a94f662350f555",
+          "bytes": 3252
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/graphs/xml_scraper_multi_graph.py",
+          "sha256": "03518b7fa9a3d15322f1284b5e7522d441426dd7c945636dfeeeffdb414c0b5f",
+          "bytes": 3319
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/__init__.py",
+          "sha256": "b69e0a776958ac971588672ace0bfe12f5df4324bbbf403ffd94f43507c41306",
+          "bytes": 355
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/default_filters.py",
+          "sha256": "a6079e243144c56eb5a9a95c81a2d6be9948f5c0ab132691762b349216ee1e28",
+          "bytes": 498
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/models_tokens.py",
+          "sha256": "7c7d110731be719b0a1553179e1120bdf3ae243b2fae63283db3a9eae16f2b57",
+          "bytes": 14752
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/nodes_metadata.py",
+          "sha256": "a269399fdf599159e0580d3fc5978881b8fc4de1d9fe46e3a3e2e94f225ad69f",
+          "bytes": 3727
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/robots.py",
+          "sha256": "6c59659a882e8dd74c8fdeea263c8efb346c64ac1cf8f1a39105f0b9c772b4a9",
+          "bytes": 399
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/helpers/schemas.py",
+          "sha256": "d50f4d65b530b72bd758168d76d03397eec704adf626de8fbfa37f47a31bb9cd",
+          "bytes": 2320
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/__init__.py",
+          "sha256": "87a5febcce55996e17783ebde723551f2250bee82157f7fb8b5bc0e8ca85f934",
+          "bytes": 172
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/burr_bridge.py",
+          "sha256": "7d871c99c6f17751253db7776463ba7ac243affe18770f0a633b7bb1f6a64cd6",
+          "bytes": 7591
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/indexify_node.py",
+          "sha256": "ae4698c8afa4616dcc850b41b324d0f1801a68b28f19c295720a32002995b0a2",
+          "bytes": 1961
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/integrations/scrapegraph_py_compat.py",
+          "sha256": "be9cc23a9987f03cd0624ddf941c478bc61d3640048c45d6bdae94dcf07824d5",
+          "bytes": 3280
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/__init__.py",
+          "sha256": "f08b93173e4363f63197190da754691dd569e199b8ccd764dac9b922da48405a",
+          "bytes": 563
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/atlascloud.py",
+          "sha256": "12dfa5c1eebc559c1718e8366449d1fc30b3473e286c167b06fd37af5a536f1a",
+          "bytes": 547
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/cheaperinference.py",
+          "sha256": "7067b2961fd5706d792b8613f5a3abae6a685f1f1aecb0d1d64c275365d3d806",
+          "bytes": 635
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/clod.py",
+          "sha256": "ff9e23cdaedec9a549b19ebaf7a0314b83617cec19149fa40566dc064f2f1b34",
+          "bytes": 612
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/deepseek.py",
+          "sha256": "157e2eb37e97b25a2c1312482d5173e1c7873e969404eaffc6bf18b6baeb411e",
+          "bytes": 627
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/minimax.py",
+          "sha256": "a640f9db18bb4877bd3b0de5303a4cf0305b5db2cde848c12bdc24ba986f102b",
+          "bytes": 781
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/nvidia.py",
+          "sha256": "209e3285b7fb16524ec2e3a781022df79f710d541810f5fab6fbfc7443443fd5",
+          "bytes": 1137
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/oneapi.py",
+          "sha256": "9a12751a1d5d882709697a53a169a933d23434f1ad80587f6a007248438d988e",
+          "bytes": 509
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/openai_itt.py",
+          "sha256": "a68079c6bc05b32a5792b250dd6a864cfd74e18ba13b8b4197cc97a7d9ad35d2",
+          "bytes": 1302
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/openai_tts.py",
+          "sha256": "9fd0e0d320e34f8c18beaadd8465c8900be09945417039f314d482f0bec39597",
+          "bytes": 1223
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/models/xai.py",
+          "sha256": "fd7e0bff74d2e8b678e9ec2d46720b4f0e2098a11900fa6dec17cb6f788338c2",
+          "bytes": 615
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/__init__.py",
+          "sha256": "822a8f9f4f4592bf52dfcc8382e88e20cded173084b02c86540231efdaa1f124",
+          "bytes": 2665
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/base_node.py",
+          "sha256": "f7b1f4b8490e939dbe17509e07febc198d1a5ed0bf77ababab89132d64398f4f",
+          "bytes": 8188
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/batch_generate_answer_node.py",
+          "sha256": "4a986a7977881debd573f07c824c65f6990e3519da4d167953942c72cac35c2a",
+          "bytes": 8849
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/concat_answers_node.py",
+          "sha256": "dd74a93cfefe2e443ba82c404e6e385c33ad4a1b55c691821bdcfe2aaad13804",
+          "bytes": 2279
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/conditional_node.py",
+          "sha256": "b33b6a35caba70680de2152d4e5a01bf727735e3dd887468ba299cc507aa1e26",
+          "bytes": 3891
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/description_node.py",
+          "sha256": "69ef84d9ed97cd600fcc4f00679e2cf5407727ee139dde0e93b49d79219388c0",
+          "bytes": 2483
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/fetch_node.py",
+          "sha256": "7af6ace631496d760774957c75177aff4d36d8317ea845767ce17cc68c9d0045",
+          "bytes": 15691
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/fetch_node_level_k.py",
+          "sha256": "1b56d6eb896b3a39983ad06cd62734cfbe40a9dd04e12534539707ed4fcc0ee1",
+          "bytes": 11654
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/fetch_screen_node.py",
+          "sha256": "6bb15dde5b24bd75eaf5ca28ba77cfdaffed2968a76fd53954d0b75c70e9ddc9",
+          "bytes": 1650
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_csv_node.py",
+          "sha256": "9c5f061c0b9b2c66a5b7ed2e79026e631bda88027dd613b400d2c62f882572a4",
+          "bytes": 6457
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_from_image_node.py",
+          "sha256": "e7195ba019ffef6d23a1e7be94b8bd9f6a0243b8c69f8bf2a21ce6d4a30b5409",
+          "bytes": 3921
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_node.py",
+          "sha256": "ab35fd2a34ec61fef2ad590ad2f9cb2b4d08a7ccd1c673d9875d962c12939a63",
+          "bytes": 10274
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_node_k_level.py",
+          "sha256": "7d34dec0d931c45c2365796f71fd6f9f7a593cb5206b6dbc18b955ef72f32d8c",
+          "bytes": 6599
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_omni_node.py",
+          "sha256": "8b4215e67dc047c192159d4d04bcd64c06de6f9f486f41b59135d026019f4e78",
+          "bytes": 6226
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_code_node.py",
+          "sha256": "5d151df7be2d9deee75a925c8d12160561da2ed0f8322079a9581118f28226b2",
+          "bytes": 17689
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_scraper_node.py",
+          "sha256": "1b5e9edb9eb9677853f690ac8e29e60c33b19836b86d15a29c38548f61abe539",
+          "bytes": 5530
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/get_probable_tags_node.py",
+          "sha256": "49f71e7c0e40a7387af00cf09b98fecb7b8266d79d0272f0df37d1cda206967b",
+          "bytes": 3171
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/graph_iterator_node.py",
+          "sha256": "b7b5e876db95695cb8c221f603e0651bf8df51890732cc028b09f40e04cf579d",
+          "bytes": 4714
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/html_analyzer_node.py",
+          "sha256": "5542a8d34fdf4ef253f88e276313d228888af4b954899f5e4d266fa3b46f2140",
+          "bytes": 3898
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/image_to_text_node.py",
+          "sha256": "fd40b44e429855ea4a1d8c72b5ca769954ee070a190cc620fa13249081723145",
+          "bytes": 3065
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/markdownify_node.py",
+          "sha256": "3e00eddee84c989ee2a73c3b4dbd1e926e90bfc0f5aefe98457556cbbeb2f551",
+          "bytes": 2209
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/merge_answers_node.py",
+          "sha256": "0735c9adaca646c350a0846d71aaebf160cf519e2fa252bb4d6785e27e00ca07",
+          "bytes": 4519
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/merge_generated_scripts_node.py",
+          "sha256": "139a299203b9af93da941296f98eef2bfef535350a8fd6638d1f98898ea04845",
+          "bytes": 2967
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/parse_node.py",
+          "sha256": "5f15ed6a1ecc5cc9ed43ffdf4db763624645a7e96a2c366fee5936f0feaebc1a",
+          "bytes": 15927
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/parse_node_depth_k_node.py",
+          "sha256": "8bb915b2276fb738f07548b50b4dda451d05d3d0d278df5688532b8c0685f20f",
+          "bytes": 2380
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/prompt_refiner_node.py",
+          "sha256": "71e45c78029293144bef4f349aa7cc526a7f4a43e7d6f10194cbcb6deb2f1ffa",
+          "bytes": 3899
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/rag_node.py",
+          "sha256": "4d9d3a0955a14a3ee968a6608fbb06226b2cfd0e3ecb604113e93c755ed9a6ee",
+          "bytes": 3570
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/reasoning_node.py",
+          "sha256": "ef3bb6f4f41bea66a0b438d7ea6e94d0423d6e6d0230a40f8607f4ab2f63481f",
+          "bytes": 3670
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/robots_node.py",
+          "sha256": "3a5241b40ccf6a9d59817e4b9659b5a0f92fbb3a64ed020a8f1784f2b783eec7",
+          "bytes": 5193
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/search_internet_node.py",
+          "sha256": "2ce8565f35535b8e8548fd6432f020a36384c2990771b973359d46a847cfb174",
+          "bytes": 4254
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/search_link_node.py",
+          "sha256": "8e5619736b8681605a491fd291ca3865c44c24a8fb44c365834908187b1679ad",
+          "bytes": 5832
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/search_node_with_context.py",
+          "sha256": "9d7c699409c7b08a1172543c1243dd28018be3fdbe5dd7723fe9c0799faf08fb",
+          "bytes": 3880
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/nodes/text_to_speech_node.py",
+          "sha256": "a2611a406c3b04b8ea9e0328b0f87a03f8bc8fe1fc63623b363c37677b4d2dc5",
+          "bytes": 2151
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/__init__.py",
+          "sha256": "ff78aecbf297f0cb55aaecdb94d62340afb6c96ab7098346bdcbcaafe787011c",
+          "bytes": 3508
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/description_node_prompts.py",
+          "sha256": "cd93375dfe49aa5ebfb1730d9c0273b8727e73789f5c58597193e6d1b62ffd25",
+          "bytes": 312
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_csv_prompts.py",
+          "sha256": "94b8858f38682f72250152a2b2d853ed20e79f8db752fdb259c30f6852f9434e",
+          "bytes": 1812
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_omni_prompts.py",
+          "sha256": "593b54c934eedc745dffc38412cbbedecd1b5ae31bdb26f91e21eaa53752bdbd",
+          "bytes": 2107
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_pdf_prompts.py",
+          "sha256": "8cb423b07e9cd8737187306e926236b69f4f069261c5bb4eea7f08fea727bfe6",
+          "bytes": 2225
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_answer_node_prompts.py",
+          "sha256": "51a22c86d03308b289de48a76736d1a06c4c79cb33603373b815d6b5ee252111",
+          "bytes": 4877
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/generate_code_node_prompts.py",
+          "sha256": "019032a09d2d0633db564f159862b90836f70cc44d80cf3f93989778af9e5eba",
+          "bytes": 6192
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/get_probable_tags_node_prompts.py",
+          "sha256": "1125cdffead2dfe3be278b6541022abef0fab3190457d2a96338efe69660a10d",
+          "bytes": 441
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/html_analyzer_node_prompts.py",
+          "sha256": "48fab44402ca71f969318684dd3ef62d732e43b600df6feab22c7e740835687f",
+          "bytes": 4123
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/merge_answer_node_prompts.py",
+          "sha256": "3a68c6b4687a87900fac3f9855ef0ac14b92ac31d91c04edd633327953104a86",
+          "bytes": 847
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/merge_generated_scripts_prompts.py",
+          "sha256": "feb722fd20e0a7bac8d9ee74e522739e98128aa3e0c5c9d9fd38c1b1f81b6323",
+          "bytes": 792
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/prompt_refiner_node_prompts.py",
+          "sha256": "3a0bae173b8a57fa6bbd9c32a773b4c3dcd7f1ee0166d68b39ee5f65e11b5575",
+          "bytes": 2325
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/reasoning_node_prompts.py",
+          "sha256": "aaa8ce6ba799a148e639479aed0d57ac6cc4e3a910d2402d18b0b54006b7d033",
+          "bytes": 3031
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/robots_node_prompts.py",
+          "sha256": "61bd29fccf1718436f3eb06800c8ddcfe02dddc6ba3e1e24a40fe15e26ab8ecc",
+          "bytes": 719
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/search_internet_node_prompts.py",
+          "sha256": "82125d9ef619f9d038004706d474a274a1e4fa38e516dcdae9b2cf23a131114a",
+          "bytes": 733
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/search_link_node_prompts.py",
+          "sha256": "238bb803759f3bfe7d043215e255fdb4d08aa391e19d4b97c224303c02496afd",
+          "bytes": 675
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/prompts/search_node_with_context_prompts.py",
+          "sha256": "00e024dc6fec3b37653d29b00c165310a7793a3f9abed4bb8dd88f0543bfe12a",
+          "bytes": 1024
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/telemetry/__init__.py",
+          "sha256": "6c44b4f9ec0e7fbf0fbf46c08672762f225fb25de3e29b5d19675bbdf227bef4",
+          "bytes": 239
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/telemetry/telemetry.py",
+          "sha256": "84537644eba4f0c3e621c960bd12aa29fa2a341f4c431431f25d8891408a9e22",
+          "bytes": 6328
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/__init__.py",
+          "sha256": "30d5e460bdd1c8267bdc1e4d74921602b7d6e762c026b0623c42549116536dcd",
+          "bytes": 3370
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/batch_api.py",
+          "sha256": "cbde5f0526e553e5cc950d43fdad7df9a6d95c22be41ec5a3615868320931847",
+          "bytes": 9073
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/cleanup_code.py",
+          "sha256": "44d241aad43a7b442ee4c365b5117425d40fc80bf7a42a50cdda04b022a9503a",
+          "bytes": 302
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/cleanup_html.py",
+          "sha256": "75c3f08842d8b46723d78820cd93cc518ddb04445bf545c5b459376080d0d82a",
+          "bytes": 5382
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/code_error_analysis.py",
+          "sha256": "58b05fc0bcd39f72bb0551632cb7e4f305280a6cbd6d01849f031684546d99ce",
+          "bytes": 11577
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/code_error_correction.py",
+          "sha256": "16086ad5a0fec7b772b07c153fb49c296183f930c7518c7b0b02e64d793cb332",
+          "bytes": 10761
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/convert_to_md.py",
+          "sha256": "bb1d18d7a2755eeb7035d73fcb2751295f8e18f8fb1eaffafe654ae7943e1917",
+          "bytes": 826
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/copy.py",
+          "sha256": "b92dc46011b6aa08df650121fb6c9434cee0980a28150945a72084a573ec0305",
+          "bytes": 1580
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/custom_callback.py",
+          "sha256": "fed991ee030d567d9d9804ae2a6918b0375e8b59bc65f8d3dce8562d9984a5b6",
+          "bytes": 6563
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/data_export.py",
+          "sha256": "ad99dc1cec43547c5882ba44b953524e7c65ed54f63e83c237490c5d975b936d",
+          "bytes": 1981
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/dict_content_compare.py",
+          "sha256": "25041f64ce469b117e0c0c3c21b2a201b7e30e34f564fd78510672f88392194c",
+          "bytes": 2380
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/llm_callback_manager.py",
+          "sha256": "e290410828b7cd34a7fbd9612650300a045fda20077c2a911e9ce1c93a14578d",
+          "bytes": 2698
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/logging.py",
+          "sha256": "08e5830b90c017b939ce133ea1863f1632eba01ba6c11a02a5a70e401ab5a323",
+          "bytes": 6016
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/model_costs.py",
+          "sha256": "f8f9669620fa7d5e3a3271f03bbadee0a99caf114cdc02f91bb656a0fbb383ee",
+          "bytes": 5864
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/output_parser.py",
+          "sha256": "6821520c1102cfd6990ca2f6621b6a6c62da454e4cf500b4c37177c32069ac79",
+          "bytes": 4457
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/parse_state_keys.py",
+          "sha256": "d00ce0b3fad17eabc963ac3922b21b870cbd4ba66daed165c0d723e32646846c",
+          "bytes": 3512
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/prettify_exec_info.py",
+          "sha256": "87cf61843cc0c2e1b25c28a8272d3c5dcd67e376a5b531b242169bddd3d7b445",
+          "bytes": 1581
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/proxy_rotation.py",
+          "sha256": "40f7d0c0f9c5102970225b640276b23507cdbb4a41df1a5a68392860dc5b6b10",
+          "bytes": 5734
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/research_web.py",
+          "sha256": "f59a881713f61893786c26962a80ad9604650aed87b443c47cab6161153b51a5",
+          "bytes": 14667
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/save_audio_from_bytes.py",
+          "sha256": "02b62e876a153d6e6816ba99fab38293a7b6d374502c436cc7e34d3aaf7987e8",
+          "bytes": 845
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/save_code_to_file.py",
+          "sha256": "bfe93aea291d1a4408b663b531e89de98550cd3fdef9decb01b4d86b32cb7e40",
+          "bytes": 329
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/schema_trasform.py",
+          "sha256": "42e19f5944553db73cf96345c7006241cb69c3a595dc4ff343eceef35aa794c5",
+          "bytes": 2523
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/screenshot_scraping/__init__.py",
+          "sha256": "5691d9d4e0388a95b32f2f7e019afdcac0265bafdb36fbe591600f92d490c76f",
+          "bytes": 318
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/screenshot_scraping/screenshot_preparation.py",
+          "sha256": "c5e8c5fa818b7d6c15c47c32ef9b5cfc01a5737af582cf3c95b3fc3dfb7d6e73",
+          "bytes": 8410
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/screenshot_scraping/text_detection.py",
+          "sha256": "628d9093596863baca2af600b3741bff713d6c0684f43bbdce5a9c353e5e20f4",
+          "bytes": 1581
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/split_text_into_chunks.py",
+          "sha256": "a47fe0cc8d6d9d2d29ad02f09dbdb9a836d9a17287cff2437edee04e54ebe636",
+          "bytes": 1492
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/sys_dynamic_import.py",
+          "sha256": "fcfb2ecaee227a991abc67d0b4a04d7ab049e4fc9ba3ed0a2e3fb4abfa26818e",
+          "bytes": 1631
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizer.py",
+          "sha256": "42cd76555818d423db2dbef16cb965b87873362929909badc9d7d17879746c6e",
+          "bytes": 341
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizers/tokenizer_mistral.py",
+          "sha256": "dbaacb848fdbf442921a87088bc36cfdd20c2ee52c86492bbe8537bfc543fcef",
+          "bytes": 1690
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizers/tokenizer_ollama.py",
+          "sha256": "766553caa7bb4dfaa69d746687620caf7f3128c72843867efe54ca6243953065",
+          "bytes": 870
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/scrapegraphai/utils/tokenizers/tokenizer_openai.py",
+          "sha256": "affd0542feaaecce953e8f28b5e03e377dc4c1753c0d90269977a079d3026c2f",
+          "bytes": 638
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/test",
+          "sha256": "cf771e0ca7a541c5e78609f6f6f0053645ec9228adf013cd65ff3e60298ae3f3",
+          "bytes": 6
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/QUICKSTART.md",
+          "sha256": "a43197d5f2221a90b28bea5ac607b36968117a3dfd917663828475a20bbc1e77",
+          "bytes": 4396
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/README_TESTING.md",
+          "sha256": "a9eff484cd5a7d7193a88603f6f2bc720ba0fdd4d35239320f402d4e0d131b22",
+          "bytes": 10054
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/Readme.md",
+          "sha256": "fe6d94037ed217b01ff1ea0e3b3e244a367e01d18e64c78cc34fd9044a527e57",
+          "bytes": 417
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/conftest.py",
+          "sha256": "bf60318a2e42ef62c5817cf806035897ccf55cb07c93364006731f73a94ca78e",
+          "bytes": 11946
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/fixtures/benchmarking.py",
+          "sha256": "2a0bded2ec53df9fa0d930a521422862509b1a1f843c8c871f36b394c6e664f7",
+          "bytes": 8925
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/fixtures/helpers.py",
+          "sha256": "83c622740edbc903721fed867df45fd31d2d83dfbed559dd37e628c550d296df",
+          "bytes": 11244
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/fixtures/mock_server/__init__.py",
+          "sha256": "1ab7bc5b775285eb3aca753e044339ef49d5d33e18f953cd15f73b5451afb3e4",
+          "bytes": 50
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/fixtures/mock_server/server.py",
+          "sha256": "e3e45174047065ded9f0056c678163493b019d2b1f5e20a47cc0381225b9b2d9",
+          "bytes": 11702
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/.env.example",
+          "sha256": "932f4f38e6145c23e3848cbb220a3bae3cb348014871ce9342e0179b5100fdeb",
+          "bytes": 108
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/abstract_graph_test.py",
+          "sha256": "8814b2ab91e800d4aa7287bd1693b55aad06c4fb23fe734ea4806f678f5d83a4",
+          "bytes": 13904
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/code_generator_graph_openai_test.py",
+          "sha256": "50fade1dc9a76d238f8da09764de5b14c877bd65c1ddc58e2cbe1894d5d8259c",
+          "bytes": 2088
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/depth_search_graph_openai_test.py",
+          "sha256": "b21287b29579e531195de45c1ec4f29a60f4499fad432c0815f343f610708bad",
+          "bytes": 1325
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/inputs/books.xml",
+          "sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+          "bytes": 4412
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/inputs/example.json",
+          "sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+          "bytes": 6456
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/inputs/plain_html_example.txt",
+          "sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+          "bytes": 7289
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/inputs/username.csv",
+          "sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+          "bytes": 175
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/scrape_plain_text_mistral_test.py",
+          "sha256": "cec9584204ddbddf05b9ba7baf6a7301a0b94575b500880a0bf4a51f1244b622",
+          "bytes": 1339
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/scrape_xml_ollama_test.py",
+          "sha256": "732833356f86b249adac6d166e5977f53d9415c75cfb2658cbd4974c511fc77a",
+          "bytes": 1083
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/screenshot_scraper_test.py",
+          "sha256": "c6630e477ae470da882b2d7d67e09bbf8d227bc9cc89ca20f50c53eaa97ddc6a",
+          "bytes": 881
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/script_generator_test.py",
+          "sha256": "55ccf400e5567148c393d5ebb4a0e9ed362ea19d9cda04eb268ef3d2afb5d29d",
+          "bytes": 929
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/search_graph_openai_test.py",
+          "sha256": "a24e0c83e742679d930bfe8291ed5b3d75ce8bf2f00bfc3b6b98a27ec2da3093",
+          "bytes": 1395
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/search_link_ollama.py",
+          "sha256": "e937eb8cb401186e08ede5187f768db6015feb1e153efb93edd300e52944c09f",
+          "bytes": 484
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_clod_test.py",
+          "sha256": "fba01ecffed0e3f396504137ff8597cc62e4284b9066dd4b0283e902fb429f81",
+          "bytes": 1292
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_ernie_test.py",
+          "sha256": "8fbcbf313e038cadb9a0e8d1e5c5324f7edd0eb75507a03769b8e4d073106509",
+          "bytes": 1225
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_fireworks_test.py",
+          "sha256": "2532d744b3c3daa702796647ac1ad2f93a9b4e044465da3d718ba1bfcd4caa09",
+          "bytes": 1334
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_multi_lite_graph_openai_test.py",
+          "sha256": "5ad18a246a683188c882376e6f6cd3ee4b744e503dea4c5555526a3e5d44b928",
+          "bytes": 1335
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_ollama_test.py",
+          "sha256": "50940707adf064d4780bc2f9674a466d5db7a0b0e336eb21688e6dd26b6b0a1a",
+          "bytes": 1190
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/smart_scraper_openai_test.py",
+          "sha256": "dc19d7546eb1577d7e443d79bd268f260ff59448575534a120871113f7f6c780",
+          "bytes": 1937
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/graphs/xml_scraper_openai_test.py",
+          "sha256": "ada42980a3fdd92e17248d5d11c53405ba889ea899b36d8a1ea970e173096f40",
+          "bytes": 2621
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/inputs/books.xml",
+          "sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+          "bytes": 4412
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/inputs/example.json",
+          "sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+          "bytes": 6456
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/inputs/plain_html_example.txt",
+          "sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+          "bytes": 7289
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/inputs/username.csv",
+          "sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+          "bytes": 175
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/integration/__init__.py",
+          "sha256": "ebd30bd2570246dc242fb9970f2596679abf0eeac992993bf2f487e0efb6d2b1",
+          "bytes": 43
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/integration/test_file_formats_integration.py",
+          "sha256": "63feb749abcabbf3fc0c2a991da8b9711ccc0fbaace4c98c79966c2e4103bc73",
+          "bytes": 3984
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/integration/test_multi_graph_integration.py",
+          "sha256": "4f8bf2e3d145cdc1ee17d1c223c2331213985bc7c396db4486013a833b44fd80",
+          "bytes": 2588
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/integration/test_smart_scraper_integration.py",
+          "sha256": "63afa2e2f5dcb4c9cecf708651681b78c9088bb1239f8da48117538eb5d1cc46",
+          "bytes": 6329
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/fetch_node_test.py",
+          "sha256": "9dafa6ce439867ddde1a4aa3e5b81decc5c3cb8d53bc3df424f179ebf1e4af80",
+          "bytes": 2191
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/inputs/books.xml",
+          "sha256": "43a636d44011a9cf1ae936630ee131f82ec559b4fcb6c92b6fae4ffe7e51598e",
+          "bytes": 4412
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/inputs/example.json",
+          "sha256": "d3ba7f496936476ab535eb9547e8cf30c8be9859ef88726ac365f830b47f3d51",
+          "bytes": 6456
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/inputs/plain_html_example.txt",
+          "sha256": "fa388e7a156ebbc32143674742fe9cc81b53d89b3763f68695891826a5da9536",
+          "bytes": 7289
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/inputs/username.csv",
+          "sha256": "aa5cb721cb699a5606c06eaf6e3f9cc44cdacaeb3e82440a9fa68de211674f1c",
+          "bytes": 175
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/robot_node_test.py",
+          "sha256": "54f14751d0537081493b510e119d68b51161c7b4cd6c6d71509434df9963b146",
+          "bytes": 2370
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/search_internet_node_test.py",
+          "sha256": "f7b5dc223874eb189d8bdbdf0a883637cee43146bb54d88ab233d2285238681d",
+          "bytes": 1661
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/nodes/search_link_node_test.py",
+          "sha256": "1e6a703751aa6683efdca96ea86dea8342557cef97bc758dcad3c2644e5a0471",
+          "bytes": 1986
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_atlascloud_model.py",
+          "sha256": "eee813fec1de04d2fca8c49d3025e569bf38d8717bdaf8e49b4a3b19216c544d",
+          "bytes": 1467
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_batch_api.py",
+          "sha256": "18a16c8002f4a2f3ef82a3e51a39cf248d0d6f156f0798732cbdde9deee994b0",
+          "bytes": 12703
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_cheaperinference_model.py",
+          "sha256": "e6ea6d47ccde7f1d1c010ffc2e1277fdcc00e7cc35ab72c9e655c413c2949a06",
+          "bytes": 1517
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_chromium.py",
+          "sha256": "17b3d9156b5f9d5c96376e08b8a6153b92a95c294fcb1ffc9a39d2c6a8970d7b",
+          "bytes": 76219
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_cleanup_html.py",
+          "sha256": "67f2088312064d826db902e60f216335f053dddaaed23b348f5a2355032f1033",
+          "bytes": 4808
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_csv_scraper_multi_graph.py",
+          "sha256": "72061848d42dea5ebf579e9bbf419d605a2f4356825bebf5b3196a3bb8944bd0",
+          "bytes": 5378
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_depth_search_graph.py",
+          "sha256": "c9db8d5312df272a92099482c2bc316f54c1f003580d0d881992a51328aba861",
+          "bytes": 1346
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_error_page_detection.py",
+          "sha256": "b5daad78a8bb2d56c35a4bf99f036388dc1bf770c442139b482be815eab9ff4d",
+          "bytes": 10669
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_fetch_node_timeout.py",
+          "sha256": "25f227dfbfa3aee8877761aefd259e315e870f528fbc6343a90c7f2c5e3304bf",
+          "bytes": 8621
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_generate_answer_node.py",
+          "sha256": "484abde40503cdc0cd34f501b769ed5f54cff7e668ddff1f19bff568c1c9d6d3",
+          "bytes": 9146
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_json_scraper_graph.py",
+          "sha256": "03402bd971570d492c6f1d3854ec3680850489348b45233bcfa45f3310ef0391",
+          "bytes": 9297
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_json_scraper_multi_graph.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_minimax_models.py",
+          "sha256": "466baf41211e260ee67bd1886ba74e3685bc56d808f6e220aa71410f22b76110",
+          "bytes": 8583
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_models_tokens.py",
+          "sha256": "7dff87e9314e332c5afcba7598d9d8207ec88e2490fa5f3e158d79c9fb29b88c",
+          "bytes": 10585
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_omni_search_graph.py",
+          "sha256": "24ccfcb839703365400e5235d2d740978cb620faa4f86b52ac588bf6dac4151a",
+          "bytes": 4579
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_plasmate.py",
+          "sha256": "b480055eece2e4ef3ba0243f6bd089de321c387f5469c09abcc8397e3e16fccc",
+          "bytes": 9147
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_scrape_do.py",
+          "sha256": "33fef1c2d42fcbd330eccecdf8580bea4665157249abfafff311092d8bae892a",
+          "bytes": 10472
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_script_creator_multi_graph.py",
+          "sha256": "55f6d84489e83f4dc6eb2ecc68b6fe0cf454bd940120c6cb8698255e87814d18",
+          "bytes": 9752
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_search_graph.py",
+          "sha256": "d0b875104968fedcd3a2369df8d8bb18e472eb051eaf2283cfb71dad0735e020",
+          "bytes": 4255
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_smart_scraper_multi_concat_graph.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/test_telemetry_flag.py",
+          "sha256": "1ed66316f44b7bdb780d29abb8ab21b2c65b16b31aa68309c74d9dda9dd2ecfe",
+          "bytes": 2819
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/convert_to_md_test.py",
+          "sha256": "d2e0698c07fb329abfb5dfc87bbd4552d24795e33b2e8b985c3285161af0b174",
+          "bytes": 1694
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/copy_utils_test.py",
+          "sha256": "a101061f86dee7deb5b1ade7b152ef36870525e01d99b3694d5b7973ec0c35f7",
+          "bytes": 5420
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/output_parser_test.py",
+          "sha256": "7d9cd880465aeaeaaea6766c3c6b612e638462cc98985574b989d276f2572a1b",
+          "bytes": 1378
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/parse_state_keys_test.py",
+          "sha256": "ea767f5d33772e173d9281931085b2801c6c74e0dd4e8e8b0eac8faac7423958",
+          "bytes": 546
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/research_web_test.py",
+          "sha256": "4f8b58035f54daea4b0b5bbfd14e85b76e1bbc97f1e04ed5ae0d021d773b3f43",
+          "bytes": 1175
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/schema_transform_test.py",
+          "sha256": "b136bd4ceaf9a892c54563f7c4a358b9af281acb10c277101e7bb85ae5569255",
+          "bytes": 784
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/test_proxy_rotation.py",
+          "sha256": "7ac69a06e984fbf9d45d669447de8e2e4bd0de5d96208042ef681ca3d6802fc3",
+          "bytes": 3460
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/tests/utils/test_sys_dynamic_import.py",
+          "sha256": "73c3c6200f5566f0c9bbeb782aa0894964edc1c9dd0c4c1569a2a118213378ea",
+          "bytes": 2203
+        },
+        {
+          "path": "reference/Scrapegraph-ai-main/uv.lock",
+          "sha256": "2fd36ae40e1eda563043b7204bd32755b67078abc471c8cf29f3f48c9c309771",
+          "bytes": 689158
+        }
+      ]
+    }
+  ]
+}

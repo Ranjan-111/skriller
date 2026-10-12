@@ -1,0 +1,202 @@
+{
+  "created": "2026-10-12",
+  "status": "inspection_map_not_runtime_provenance",
+  "sources": {
+    "S-HTTP": {
+      "code_paths": [
+        "reference/Scrapling-main/scrapling/fetchers/requests.py",
+        "reference/Scrapling-main/scrapling/engines/static.py"
+      ],
+      "test_paths": [
+        "reference/Scrapling-main/tests/fetchers/async/test_requests.py",
+        "reference/Scrapling-main/tests/fetchers/async/test_requests_session.py"
+      ]
+    },
+    "S-PARSE": {
+      "code_paths": [
+        "reference/Scrapling-main/scrapling/parser.py",
+        "reference/Scrapling-main/scrapling/core"
+      ],
+      "test_paths": [
+        "reference/Scrapling-main/tests/parser/test_general.py",
+        "reference/Scrapling-main/tests/parser/test_adaptive.py",
+        "reference/Scrapling-main/tests/parser/test_find_similar_advanced.py"
+      ]
+    },
+    "S-STORE": {
+      "code_paths": [
+        "reference/Scrapling-main/scrapling/core/storage.py"
+      ],
+      "test_paths": [
+        "reference/Scrapling-main/tests/core/test_storage_core.py"
+      ]
+    },
+    "S-BROWSER": {
+      "code_paths": [
+        "reference/Scrapling-main/scrapling/fetchers/chrome.py",
+        "reference/Scrapling-main/scrapling/engines/_browsers"
+      ],
+      "test_paths": [
+        "reference/Scrapling-main/tests/fetchers/async/test_dynamic.py",
+        "reference/Scrapling-main/tests/fetchers/async/test_dynamic_session.py"
+      ]
+    },
+    "S-STEALTH": {
+      "code_paths": [
+        "reference/Scrapling-main/scrapling/fetchers/stealth_chrome.py",
+        "reference/Scrapling-main/scrapling/engines/_browsers/_stealth.py"
+      ],
+      "test_paths": [
+        "reference/Scrapling-main/tests/fetchers/test_cloudflare_solver.py",
+        "reference/Scrapling-main/tests/fetchers/async/test_stealth.py"
+      ]
+    },
+    "S-RATE": {
+      "code_paths": [
+        "reference/Scrapling-main/scrapling/spiders/throttle.py",
+        "reference/Scrapling-main/scrapling/engines/toolbelt/proxy_rotation.py"
+      ],
+      "test_paths": [
+        "reference/Scrapling-main/tests/spiders/test_throttle.py",
+        "reference/Scrapling-main/tests/fetchers/test_proxy_rotation.py"
+      ]
+    },
+    "S-CACHE": {
+      "code_paths": [
+        "reference/Scrapling-main/scrapling/spiders/cache.py",
+        "reference/Scrapling-main/scrapling/spiders/checkpoint.py"
+      ],
+      "test_paths": [
+        "reference/Scrapling-main/tests/spiders/test_cache.py",
+        "reference/Scrapling-main/tests/spiders/test_checkpoint.py"
+      ]
+    },
+    "A-CORE": {
+      "code_paths": [
+        "reference/Agent-Reach-main/agent_reach/channels/base.py",
+        "reference/Agent-Reach-main/agent_reach/channels/__init__.py",
+        "reference/Agent-Reach-main/agent_reach/doctor.py",
+        "reference/Agent-Reach-main/agent_reach/probe.py",
+        "reference/Agent-Reach-main/agent_reach/integrations/mcp_server.py"
+      ],
+      "test_paths": [
+        "reference/Agent-Reach-main/tests/test_channel_contracts.py",
+        "reference/Agent-Reach-main/tests/test_doctor.py",
+        "reference/Agent-Reach-main/tests/test_probe.py",
+        "reference/Agent-Reach-main/tests/test_mcp_server.py"
+      ]
+    },
+    "A-SEC": {
+      "code_paths": [
+        "reference/Agent-Reach-main/agent_reach/utils/url.py",
+        "reference/Agent-Reach-main/agent_reach/utils/paths.py",
+        "reference/Agent-Reach-main/agent_reach/utils/text.py",
+        "reference/Agent-Reach-main/agent_reach/utils/process.py"
+      ],
+      "test_paths": [
+        "reference/Agent-Reach-main/tests/test_url_security.py",
+        "reference/Agent-Reach-main/tests/test_private_file_writes.py",
+        "reference/Agent-Reach-main/tests/test_scrub_credentials.py",
+        "reference/Agent-Reach-main/tests/test_process.py"
+      ]
+    },
+    "A-LI": {
+      "code_paths": [
+        "reference/Agent-Reach-main/agent_reach/channels/linkedin.py",
+        "reference/Agent-Reach-main/agent_reach/channels/mcporter.py"
+      ],
+      "test_paths": [
+        "reference/Agent-Reach-main/tests/test_mcporter_config.py",
+        "reference/Agent-Reach-main/tests/test_doctor_credential_boundaries.py"
+      ]
+    },
+    "A-REDDIT": {
+      "code_paths": [
+        "reference/Agent-Reach-main/agent_reach/channels/reddit.py",
+        "reference/Agent-Reach-main/agent_reach/backends/opencli.py"
+      ],
+      "test_paths": [
+        "reference/Agent-Reach-main/tests/test_reddit_channel.py",
+        "reference/Agent-Reach-main/tests/test_opencli_backend.py"
+      ]
+    },
+    "A-PUBLIC": {
+      "code_paths": [
+        "reference/Agent-Reach-main/agent_reach/channels/github.py",
+        "reference/Agent-Reach-main/agent_reach/channels/rss.py",
+        "reference/Agent-Reach-main/agent_reach/channels/youtube.py",
+        "reference/Agent-Reach-main/agent_reach/channels/web.py"
+      ],
+      "test_paths": [
+        "reference/Agent-Reach-main/tests/test_youtube_channel.py",
+        "reference/Agent-Reach-main/tests/test_web_channel.py",
+        "reference/Agent-Reach-main/tests/test_channels.py"
+      ]
+    },
+    "A-SOCIAL": {
+      "code_paths": [
+        "reference/Agent-Reach-main/agent_reach/channels/twitter.py",
+        "reference/Agent-Reach-main/agent_reach/channels/instagram.py",
+        "reference/Agent-Reach-main/agent_reach/channels/facebook.py",
+        "reference/Agent-Reach-main/agent_reach/channels/_opencli_site.py",
+        "reference/Agent-Reach-main/agent_reach/channels/bilibili.py",
+        "reference/Agent-Reach-main/agent_reach/channels/xiaohongshu.py"
+      ],
+      "test_paths": [
+        "reference/Agent-Reach-main/tests/test_twitter_channel.py",
+        "reference/Agent-Reach-main/tests/test_opencli_backend.py",
+        "reference/Agent-Reach-main/tests/test_xhs_format.py"
+      ]
+    },
+    "G-GRAPH": {
+      "code_paths": [
+        "reference/Scrapegraph-ai-main/scrapegraphai/graphs/smart_scraper_graph.py",
+        "reference/Scrapegraph-ai-main/scrapegraphai/graphs/abstract_graph.py",
+        "reference/Scrapegraph-ai-main/scrapegraphai/graphs/base_graph.py"
+      ],
+      "test_paths": [
+        "reference/Scrapegraph-ai-main/tests/integration/test_smart_scraper_integration.py",
+        "reference/Scrapegraph-ai-main/tests/graphs/abstract_graph_test.py"
+      ]
+    },
+    "G-EXTRACT": {
+      "code_paths": [
+        "reference/Scrapegraph-ai-main/scrapegraphai/nodes/generate_answer_node.py",
+        "reference/Scrapegraph-ai-main/scrapegraphai/nodes/parse_node.py",
+        "reference/Scrapegraph-ai-main/scrapegraphai/nodes/fetch_node.py",
+        "reference/Scrapegraph-ai-main/scrapegraphai/prompts",
+        "reference/Scrapegraph-ai-main/scrapegraphai/utils/output_parser.py"
+      ],
+      "test_paths": [
+        "reference/Scrapegraph-ai-main/tests/test_generate_answer_node.py",
+        "reference/Scrapegraph-ai-main/tests/nodes/fetch_node_test.py",
+        "reference/Scrapegraph-ai-main/tests/utils/output_parser_test.py"
+      ]
+    },
+    "G-CLEAN": {
+      "code_paths": [
+        "reference/Scrapegraph-ai-main/scrapegraphai/utils/cleanup_html.py",
+        "reference/Scrapegraph-ai-main/scrapegraphai/utils/convert_to_md.py",
+        "reference/Scrapegraph-ai-main/scrapegraphai/utils/split_text_into_chunks.py"
+      ],
+      "test_paths": [
+        "reference/Scrapegraph-ai-main/tests/test_cleanup_html.py",
+        "reference/Scrapegraph-ai-main/tests/utils/convert_to_md_test.py"
+      ]
+    },
+    "G-EXPORT": {
+      "code_paths": [
+        "reference/Scrapegraph-ai-main/scrapegraphai/utils/data_export.py"
+      ],
+      "test_paths": []
+    },
+    "G-PRIVACY": {
+      "code_paths": [
+        "reference/Scrapegraph-ai-main/scrapegraphai/telemetry/telemetry.py"
+      ],
+      "test_paths": [
+        "reference/Scrapegraph-ai-main/tests/test_telemetry_flag.py"
+      ]
+    }
+  }
+}
