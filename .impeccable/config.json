@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "tests/fixtures/research/company.html"
+        ],
+        "createdAt": "2026-10-12T14:34:35.405Z",
+        "reason": "Codex decided: synthetic scraping fixture for extraction, evidence and changed-DOM regression tests; not a product interface. Preserve fixture markup."
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "tests/fixtures/research/changed.html"
+        ],
+        "createdAt": "2026-10-12T14:34:35.466Z",
+        "reason": "Codex decided: synthetic scraping fixture for extraction, evidence and changed-DOM regression tests; not a product interface. Preserve fixture markup."
+      }
+    ]
+  }
+}

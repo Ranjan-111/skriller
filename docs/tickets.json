@@ -256,7 +256,7 @@
       "title": "Bootstrap web, API and local services",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-005"
@@ -284,15 +284,13 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-006-web.md"
+          "docs/completions/SKR-006.md"
         ],
         "passed_checks": [
-          "Partial checks recorded in report"
+          "Actual local PostgreSQL/RabbitMQ/service checks and scoped evidence passed"
         ],
-        "remaining": [
-          "Current complete local-stack smoke and object-volume wiring"
-        ],
-        "recorded_at": "2026-10-12T09:37:53.852314+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-12T14:12:23.397550+00:00"
       }
     },
     {
@@ -517,15 +515,16 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-011.md"
+          "docs/completions/SKR-011.md",
+          "docs/completions/EXA-KEYLESS.json"
         ],
         "passed_checks": [
-          "Scoped partial checks passed as reported"
+          "Three live keyless company/LinkedIn/Reddit searches returned2references each; prototype provider selected"
         ],
         "remaining": [
-          "Live search corpus, billed costs, providerselection pendingcredentials"
+          "Commercial storage/use and broader quality remain unverified; formal dorks/pagination not supported guarantees"
         ],
-        "recorded_at": "2026-10-12T10:14:02.509239+00:00"
+        "recorded_at": "2026-10-12T15:42:47.512281+00:00"
       }
     },
     {
@@ -616,12 +615,12 @@
           "docs/completions/SKR-013.md"
         ],
         "passed_checks": [
-          "Partial checks recorded in report"
+          "User reports Google setup ready; SDK/RSA verification tests passed"
         ],
         "remaining": [
-          "Real Firebase sign-in verification"
+          "Actual user-session/token roundtrip unverified; live browser inspection permission declined"
         ],
-        "recorded_at": "2026-10-12T09:37:53.881239+00:00"
+        "recorded_at": "2026-10-12T15:42:47.524548+00:00"
       }
     },
     {
@@ -938,7 +937,7 @@
       "title": "Dispatch jobs through transactional outbox",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -970,12 +969,10 @@
           "docs/completions/SKR-021.md"
         ],
         "passed_checks": [
-          "Scoped partial checks passed as reported"
+          "Actual local PostgreSQL/RabbitMQ/service checks and scoped evidence passed"
         ],
-        "remaining": [
-          "ActualRabbitMQ durable publication/confirm gate unavailable"
-        ],
-        "recorded_at": "2026-10-12T10:14:02.513975+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-12T14:12:23.406145+00:00"
       }
     },
     {
@@ -983,7 +980,7 @@
       "title": "Execute checkpointed idempotent worker stages",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "in_progress",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-021"
@@ -1012,12 +1009,14 @@
         }
       ],
       "verification": {
-        "reports": [],
-        "passed_checks": [],
-        "remaining": [
-          "Implementation and required verification in progress"
+        "reports": [
+          "docs/completions/SKR-022.md"
         ],
-        "recorded_at": "2026-10-12T10:18:57.070379+00:00"
+        "passed_checks": [
+          "7 real PostgreSQL/RabbitMQ worker tests plus4 budget races/accounting tests passed"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-12T14:27:51.355286+00:00"
       }
     },
     {
@@ -1061,7 +1060,7 @@
       "title": "Reserve and reconcile job spending budgets",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -1091,15 +1090,14 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-024.md"
+          "docs/completions/SKR-024.md",
+          "docs/completions/SKR-022.md"
         ],
         "passed_checks": [
-          "Scoped partial checks passed as reported"
+          "7 real PostgreSQL/RabbitMQ worker tests plus4 budget races/accounting tests passed"
         ],
-        "remaining": [
-          "Worker external-call reservation/reconciliation integration pending022"
-        ],
-        "recorded_at": "2026-10-12T10:14:02.518669+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-12T14:27:51.363559+00:00"
       }
     },
     {
@@ -1441,7 +1439,7 @@
       "title": "Implement chosen search-provider adapter",
       "phase": "P0",
       "epic": "Discovery",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-011",
@@ -1469,7 +1467,19 @@
           "scenario": "Budget permits one page only",
           "expected": "second page is not requested"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-033.md"
+        ],
+        "passed_checks": [
+          "14 SDK/adapter tests and3genuinePostgreSQL budget/cancellation tests pass; actual keyless search succeeds"
+        ],
+        "remaining": [
+          "Deployment egress027 and providerreview011 gates; full candidate/stage wiring pending"
+        ],
+        "recorded_at": "2026-10-12T15:50:25.450154+00:00"
+      }
     },
     {
       "id": "SKR-034",
@@ -1851,7 +1861,7 @@
       "title": "Adapt copied HTML cleanup and chunking without evidence loss",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "in_progress",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -1883,12 +1893,16 @@
         }
       ],
       "verification": {
-        "reports": [],
-        "passed_checks": [],
-        "remaining": [
-          "Implementation and required verification in progress"
+        "reports": [
+          "docs/completions/SKR-044.md"
         ],
-        "recorded_at": "2026-10-12T10:18:57.078139+00:00"
+        "passed_checks": [
+          "34 copied/product cleanup checks; provenance passed"
+        ],
+        "remaining": [
+          "Collected-artifact fetch-stage integration pending036; deployment tokenizer asset provisioning"
+        ],
+        "recorded_at": "2026-10-12T14:12:23.415745+00:00"
       }
     },
     {

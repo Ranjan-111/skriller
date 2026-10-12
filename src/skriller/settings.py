@@ -1,5 +1,7 @@
 """Validated environment configuration with explicit production boundaries."""
 
+from typing import Literal
+
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -19,6 +21,7 @@ class Settings(BaseSettings):
         default="amqp://skriller:local-development@127.0.0.1:56729//", repr=False
     )
     firebase_project_id: str | None = None
+    search_provider: Literal["exa_keyless", "disabled"] = "exa_keyless"
     allow_demo_auth: bool = False
     object_directory: str = ".runtime/objects"
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]

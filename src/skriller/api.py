@@ -12,6 +12,7 @@ from kombu import Connection
 from sqlalchemy import create_engine, text
 
 from skriller.auth import Identity, require_identity
+from skriller.connectors.search import ExaKeylessSearch
 from skriller.contracts import Capability, ExecutionContext, Failure, ProgressEvent, SearchPlan
 from skriller.db import Database
 from skriller.progress import router as progress_router
@@ -53,6 +54,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(title="Skriller", version="0.1.0", lifespan=lifespan)
     app.state.settings = configuration
+    app.state.search_provider = (
+        ExaKeylessSearch() if configuration.search_provider == "exa_keyless" else None
+    )
     app.state.database = Database(configuration.application_database_url)
     app.include_router(progress_router)
     app.add_middleware(

@@ -239,6 +239,8 @@ attempts = scoped(
     sa.Column("state", sa.String(16), nullable=False, default="pending"),
     sa.Column("started_at", sa.DateTime(timezone=True)),
     sa.Column("finished_at", sa.DateTime(timezone=True)),
+    sa.Column("reservation_id", UUID(as_uuid=False)),
+    sa.Column("result_entity_ids", sa.JSON),
     constraints=(
         sa.ForeignKeyConstraint(["workspace_id", "job_id"], ["jobs.workspace_id", "jobs.id"]),
         sa.UniqueConstraint("workspace_id", "job_id", "logical_key"),

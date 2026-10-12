@@ -16,6 +16,7 @@ def client(verifier):
 def claims():
     return {
         "uid": "user-a",
+        "sub": "user-a",
         "aud": "test-project",
         "iss": "https://securetoken.google.com/test-project",
     }
@@ -43,6 +44,8 @@ def test_wrong_audience_and_expired_verification_fail():
 
 
 def test_unconfigured_identity_is_explicitly_unavailable():
-    api = TestClient(create_app(Settings(environment="test")))
+    api = TestClient(
+        create_app(Settings(environment="test", firebase_project_id=None, _env_file=None))
+    )
     response = api.get("/v1/me", headers={"Authorization": "Bearer synthetic"})
     assert response.status_code == 503

@@ -3,9 +3,11 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 
-import firebase_admin
+import requests
+from cachecontrol import CacheControl
 from fastapi import HTTPException, Request
-from firebase_admin import auth as firebase_auth
+from google.auth.transport.requests import Request as CertificateRequest
+from google.oauth2.id_token import verify_firebase_token
 
 
 @dataclass(frozen=True)
@@ -14,20 +16,23 @@ class Identity:
     email: str | None = None
 
 
+_certificate_transport = CertificateRequest(session=CacheControl(requests.Session()))
+
+
+def _certificate_request(url, method="GET", **kwargs):
+    return _certificate_transport(url, method=method, timeout=5, **kwargs)
+
+
 def firebase_verify(token: str, project: str) -> dict:
-    name = f"skriller-{project}"
-    try:
-        app = firebase_admin.get_app(name)
-    except ValueError:
-        app = firebase_admin.initialize_app(options={"projectId": project}, name=name)
-    # The SDK verifies signatures, expiry, issuer and project audience.
-    return firebase_auth.verify_id_token(token, app=app)
+    # Public-key verification requires no privileged Firebase service-account key.
+    # Google Auth checks signature, iat/expiry and audience; issuer is checked below.
+    return verify_firebase_token(token, _certificate_request, audience=project)
 
 
 def verify_identity(token: str, project: str, verifier: Callable = firebase_verify) -> Identity:
     try:
         claims = verifier(token, project)
-        uid = claims.get("uid") or claims.get("sub")
+        uid = claims.get("sub")
         if not isinstance(uid, str) or not uid or len(uid) > 128:
             raise ValueError("Invalid subject")
         if (

@@ -1,0 +1,36 @@
+{
+  "provider": "exa_keyless",
+  "authenticated": false,
+  "paid_fallback": false,
+  "queries": [
+    {
+      "id": "company",
+      "status": "passed",
+      "returned_references": 2,
+      "rejected_references": 0,
+      "truncated": false,
+      "elapsed_seconds": 5.94
+    },
+    {
+      "id": "linkedin",
+      "status": "passed",
+      "returned_references": 2,
+      "rejected_references": 0,
+      "truncated": false,
+      "elapsed_seconds": 3.09
+    },
+    {
+      "id": "reddit",
+      "status": "passed",
+      "returned_references": 2,
+      "rejected_references": 0,
+      "truncated": false,
+      "elapsed_seconds": 3.242
+    }
+  ],
+  "qualified_lead_accuracy": "not_measured",
+  "pagination": "not_supported",
+  "formal_dork_semantics": "not_verified",
+  "domains": "validated_post_filter",
+  "billed_cost": "no_authenticated_billing_account"
+}

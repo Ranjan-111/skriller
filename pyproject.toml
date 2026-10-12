@@ -8,8 +8,9 @@ dependencies = [
   "fastapi>=0.143,<1", "uvicorn>=0.35", "pydantic-settings>=2",
   "sqlalchemy>=2,<3", "psycopg[binary]>=3", "alembic>=1",
   "celery>=5.6,<6", "cryptography>=46", "httpx>=0.28",
-  "firebase-admin>=7", "boto3>=1", "prometheus-client>=0.23",
+  "firebase-admin>=7", "google-auth>=2,<3", "cachecontrol>=0.14,<1", "requests>=2,<3", "boto3>=1", "prometheus-client>=0.23",
   "langchain-google-genai>=3",
+  "mcp>=1.20,<2",
 ]
 
 [dependency-groups]

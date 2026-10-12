@@ -288,7 +288,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-006"></a>
 #### SKR-006 — Bootstrap web, API and local services
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-005](#skr-005)
 
@@ -639,7 +639,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-021"></a>
 #### SKR-021 — Dispatch jobs through transactional outbox
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-017](#skr-017), [SKR-020](#skr-020)
 
@@ -662,7 +662,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-022"></a>
 #### SKR-022 — Execute checkpointed idempotent worker stages
 
-**Phase:** P0 · **Size:** M · **Status:** in_progress
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-021](#skr-021)
 
@@ -708,7 +708,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-024"></a>
 #### SKR-024 — Reserve and reconcile job spending budgets
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-017](#skr-017), [SKR-022](#skr-022)
 
@@ -919,7 +919,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-033"></a>
 #### SKR-033 — Implement chosen search-provider adapter
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-011](#skr-011), [SKR-019](#skr-019), [SKR-024](#skr-024), [SKR-027](#skr-027)
 
@@ -1176,7 +1176,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-044"></a>
 #### SKR-044 — Adapt copied HTML cleanup and chunking without evidence loss
 
-**Phase:** P0 · **Size:** M · **Status:** in_progress
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-004](#skr-004), [SKR-036](#skr-036)
 

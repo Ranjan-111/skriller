@@ -153,9 +153,11 @@ Initial freshness policy: search snippets expire after 24 hours; claims about cu
 
 ### Search
 
-Start the feasibility trial with Brave's programmatic search, not direct Google result-page scraping as a critical dependency. Support Google-style query generation and a pluggable Google-capable provider when chosen. Validate `site:`, quoted terms, exclusion semantics, result pagination, freshness, regional behaviour, and source coverage using actual response fixtures.
+The user cannot activate a paid search plan. The development provider is therefore **Exa keyless MCP**, selected after actual company, LinkedIn and Reddit reference probes. Use the official MCP Python SDK with a fixed search-only endpoint, no credentials, bounded requests and no automatic paid fallback. Agent-Reach already references Exa; its channel supplies setup diagnostics, while the real operation now uses the hosted provider. [Official Exa authentication/tools documentation](https://exa.ai/docs/get-started/exa-mcp).
 
-Brave's checked pricing page lists $5 per 1,000 Search requests with $5 monthly credits. This is a dated observation, not guaranteed future pricing or a blanket grant to store/use all returned content. Billing conditions, region availability, search-data storage rights, and the intended product use must be reviewed before enabling the hosted connector. [Brave pricing](https://brave.com/search/api/)
+Keyless access is free but rate-limited; it is a prototype route, not a promise of unlimited production search. Current tool input supports query/objective/result count and no pagination. Domain filtering is enforced on returned reference URLs; exact Google-style operators and exclusion semantics are not advertised as provider guarantees. Query, original rank, URL, snippet and observation time remain metadata, with snippets explicitly labelled as search evidence rather than fetched-page facts.
+
+Brave remains an optional explicit feasibility probe if the user later chooses it. No Brave key or activation is required for the chosen local prototype. Production quality, data storage/use and capacity decisions retain their release gates.
 
 ### AI
 

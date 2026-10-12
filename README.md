@@ -63,3 +63,22 @@ SKRILLER_DATABASE_URL=postgresql+psycopg://skriller:local-development@127.0.0.1:
 ```
 
 [Ticket execution status](docs/TICKET_STATUS.md) records verified completion separately from implemented work awaiting acceptance checks.
+
+## Current running development stack
+
+This workspace's ignored `.env` now points to the isolated native PostgreSQL54439 and RabbitMQ56739 services. Firebase browser configuration is in ignored `apps/web/.env.local`; server ID-token verification uses public signing certificates and needs no service-account JSON. Google sign-in must be enabled in your Firebase project and localhost authorised before the live login check.
+
+```sh
+.venv/bin/python scripts/native_rabbitmq.py status
+.venv/bin/uvicorn skriller.api:app --host 127.0.0.1 --port 8000 --no-access-log
+```
+
+In another terminal, run `pnpm dev` from `apps/web`. The current local app is available at http://localhost:3000 and real API readiness is at http://localhost:8000/health/ready. Use `scripts/native_rabbitmq.py start` or `stop` to control only the isolated project broker; it uses the installed Homebrew RabbitMQ, not a global startup service.
+
+The development search provider is `SKRILLER_SEARCH_PROVIDER=exa_keyless`: no key or paid plan. Set it to `disabled` to turn it off. An opt-in live probe uses three bounded public queries:
+
+```sh
+.venv/bin/python scripts/probes/exa.py --live
+```
+
+Actual probes found company, LinkedIn and Reddit references. Free-tier limits, unsupported pagination and unverified formal dork semantics remain explicit; indexed references are not qualified leads or verified platform reads. The full prompt-to-export workflow remains incomplete. Brave is optional and has no automatic fallback path.

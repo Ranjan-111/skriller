@@ -5,7 +5,7 @@ Date: 12 October 2026
 Product name: Skriller (working name; branding is undecided)  
 Companion document: [Technical stack and architecture](TECH_STACK.md)  
 Delivery backlog: [Implementation tickets](IMPLEMENTATION_TICKETS.md) · [Source reuse map](REUSE_MAP.md)  
-Original input: [Brainstorm transcript](../Branch%20%E2%80%A2%20Modern%20AI%20Web%20Scraping%20Tools.md)
+Original input: the brainstorm transcript previously named `Branch • Modern AI Web Scraping Tools.md`. It has been removed from the current checkout; its requirements are captured in this PRD.
 
 This document specifies a new product. No application, connector, benchmark, or production integration has been implemented or validated yet. Requirements, initial operating limits, and performance targets below are proposed engineering decisions, not claims of existing performance.
 
