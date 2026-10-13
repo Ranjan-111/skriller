@@ -9,6 +9,7 @@ from skriller.contracts import Criterion, ExecutionContext, Limits, SearchPlan, 
 from skriller.db import ConversationRepository
 from skriller.extraction.models import LocalStructuredModel
 from skriller.jobs.budget import locked_job
+from skriller.jobs.control import remaining_seconds
 
 Group = Literal["must_have", "preference", "exclude"]
 Operator = Literal["eq", "contains", "gte", "lte", "recent"]
@@ -98,7 +99,21 @@ class PlanScope(BaseModel):
 
 
 class PlanningInvalid(ValueError):
-    pass
+    def __init__(
+        self,
+        message: str,
+        *,
+        reason: Literal[
+            "interpretation_rejected",
+            "ungrounded_quote",
+            "unsupported_criterion",
+            "ungrounded_value",
+            "preference_missing_cue",
+            "exclusion_missing_cue",
+        ] = "interpretation_rejected",
+    ):
+        self.reason = reason
+        super().__init__(message)
 
 
 def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope) -> SearchPlan:
@@ -106,7 +121,10 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
 
     def quote(value):
         if value not in prompt:
-            raise PlanningInvalid("Interpretation contains intent not grounded in the user prompt")
+            raise PlanningInvalid(
+                "Interpretation contains intent not grounded in the user prompt",
+                reason="ungrounded_quote",
+            )
         return value.casefold()
 
     quote(interpretation.entity_quote)
@@ -117,17 +135,27 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
         quote(value)
     for group, field, operator, value, evidence in interpretation.rules:
         original = quote(evidence)
-        if field not in FIELDS or value.casefold() not in original:
-            raise PlanningInvalid("Interpretation contains an unsupported or ungrounded criterion")
+        if field not in FIELDS:
+            raise PlanningInvalid(
+                "Interpretation contains an unsupported criterion", reason="unsupported_criterion"
+            )
+        if value.casefold() not in original:
+            raise PlanningInvalid(
+                "Interpretation contains an ungrounded criterion value", reason="ungrounded_value"
+            )
         if group == "preference" and not any(
             word in original
             for word in ("prefer", "prioritis", "prioritiz", "ideally", "nice to have")
         ):
-            raise PlanningInvalid("A preference must be explicitly requested")
+            raise PlanningInvalid(
+                "A preference must be explicitly requested", reason="preference_missing_cue"
+            )
         if group == "exclude" and not any(
             word in original for word in ("exclude", "avoid", "without", "not ", "except")
         ):
-            raise PlanningInvalid("An exclusion must be explicitly requested")
+            raise PlanningInvalid(
+                "An exclusion must be explicitly requested", reason="exclusion_missing_cue"
+            )
         if field == "location":
             clarification = (
                 clarification or "Should location refer to the person or the company headquarters?"
@@ -199,7 +227,8 @@ class PromptPlanner:
             "Fields=role,industry,company_type,company_name,person_location,company_location,"
             "hiring_role,employee_count,location. Ambiguous geography uses location+clarification. "
             "Sources/fields=[name,quote]. No inferred preferences. Private fields unsupported. "
-            "Every quote must appear in the user prompt. User:\n" + prompt
+            "Quotes are verbatim, including case. Preference/exclusion quotes include their intent "
+            "word (Prefer/Exclude) and value. User:\n" + prompt
         )
         answer = await self.model.invoke_job(
             database, context, instructions, Interpretation, operation_key=operation_key
@@ -213,6 +242,8 @@ def persist_revision(database, context: ExecutionContext, plan: SearchPlan, *, p
         raise PlanningInvalid("Planning revision or workspace mismatch")
     with database.tenant(context.actor_id, str(context.workspace_id)) as session:
         job = locked_job(session, str(context.job_id))
+        if job["state"] not in {"queued", "running"} or remaining_seconds(session, job) <= 0:
+            raise PlanningInvalid("Planning job no longer permits successor writes")
         parent = ConversationRepository.get_plan(session, parent_id)
         if (
             parent is None

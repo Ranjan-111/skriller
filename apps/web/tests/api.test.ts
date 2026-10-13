@@ -6,6 +6,34 @@ const response = (data: unknown, status = 200) =>
     headers: { "Content-Type": "application/json" },
   });
 describe("research service client", () => {
+  it("cancels only the requested workspace run using the app bearer token", async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValue(
+        response({ id: "j1", workspace_id: "w1", state: "cancelled" }),
+      );
+    await createApi("http://api", fetcher, async () => "test-token").cancel(
+      "j1",
+      "w1",
+    );
+    expect(fetcher.mock.calls[0][0]).toBe(
+      "http://api/v1/jobs/j1/cancel?workspace_id=w1",
+    );
+    expect(fetcher.mock.calls[0][1].method).toBe("POST");
+    expect(fetcher.mock.calls[0][1].headers.get("Authorization")).toBe(
+      "Bearer test-token",
+    );
+  });
+  it("does not confirm cancellation for another run or workspace", async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValue(
+        response({ id: "j2", workspace_id: "w2", state: "cancelled" }),
+      );
+    await expect(
+      createApi("http://api", fetcher).cancel("j1", "w1"),
+    ).rejects.toThrow("not confirmed");
+  });
   it("checks liveness and readiness separately", async () => {
     const fetcher = vi
       .fn()

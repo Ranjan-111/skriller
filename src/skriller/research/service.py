@@ -20,6 +20,7 @@ from skriller.jobs.control import permit_call
 from skriller.jobs.outbox import CeleryPublisher, DispatchScope, OutboxDispatcher
 from skriller.jobs.state import TERMINAL_STATES, finish
 from skriller.jobs.worker import CheckpointWorker, StageHandler, TaskIdentity
+from skriller.research.queries import build_queries
 
 DOMAINS = {
     "linkedin": ("linkedin.com",),
@@ -142,6 +143,8 @@ def discovery_handler(database, actor, job_id, provider=None):
                 .limit(1)
             ).scalar_one()
 
+        batch = build_queries(plan, prompt)
+
         async def discover():
             data, calls = [], 0
             loop = asyncio.get_running_loop()
@@ -149,8 +152,10 @@ def discovery_handler(database, actor, job_id, provider=None):
             window = timeout_seconds - 1 if timeout_seconds > 1 else timeout_seconds * 0.8
             end = loop.time() + max(0, window)
             stop_reason = None
-            for source in plan.sources:
+            for variant in batch.variants:
+                source = variant.source
                 entry = {"source": source, "page": None, "error": stop_reason, "failure": None}
+                entry["query_warnings"] = list(batch.warnings)
                 if stop_reason:
                     data.append(entry)
                     continue
@@ -162,18 +167,14 @@ def discovery_handler(database, actor, job_id, provider=None):
                     entry["error"] = stop_reason
                     data.append(entry)
                     continue
-                domains = DOMAINS[source]
-                query = prompt
-                if domains:
-                    query += " " + " OR ".join(f"site:{domain}" for domain in domains)
                 calls += 1
                 try:
                     async with asyncio.timeout(time_left):
                         entry["page"] = await provider.search(
-                            query[:2000],
-                            objective=prompt,
+                            variant.query,
+                            objective=variant.objective,
                             limit=min(plan.limits.result_limit, 10),
-                            domains=domains,
+                            domains=variant.target_domains,
                         )
                 except SearchUnavailable as exc:
                     entry["error"] = exc.failure.code
@@ -219,7 +220,15 @@ def discovery_handler(database, actor, job_id, provider=None):
             job_id,
             "discovery:summary",
             "discovery_summary",
-            {"source_failures": failures, "result_count": len(ids)},
+            {
+                "source_failures": failures,
+                "result_count": len(ids),
+                "query_warnings": list(
+                    dict.fromkeys(
+                        warning for entry in data for warning in entry.get("query_warnings", [])
+                    )
+                ),
+            },
         )
         return ids
 

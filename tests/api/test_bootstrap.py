@@ -8,12 +8,22 @@ from skriller.settings import Settings
 def test_liveness_and_dependency_failure(monkeypatch):
     monkeypatch.setattr("skriller.api.database_available", lambda _: False)
     monkeypatch.setattr("skriller.api.broker_available", lambda _: True)
+    monkeypatch.setattr("skriller.api.worker_available", lambda _: True)
     client = TestClient(create_app(Settings(environment="test")))
     assert client.get("/health/live").status_code == 200
     response = client.get("/health/ready")
     assert response.status_code == 503
-    assert response.json()["dependencies"] == {"database": False, "broker": True}
+    assert response.json()["dependencies"] == {"database": False, "broker": True, "worker": True}
     assert "local-development" not in response.text
+
+
+def test_missing_worker_does_not_report_research_ready(monkeypatch):
+    monkeypatch.setattr("skriller.api.database_available", lambda _: True)
+    monkeypatch.setattr("skriller.api.broker_available", lambda _: True)
+    monkeypatch.setattr("skriller.api.worker_available", lambda _: False)
+    response = TestClient(create_app(Settings(environment="test"))).get("/health/ready")
+    assert response.status_code == 503
+    assert response.json()["dependencies"]["worker"] is False
 
 
 def test_production_cannot_enable_demo_credentials():

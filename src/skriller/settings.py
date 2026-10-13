@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,8 +22,14 @@ class Settings(BaseSettings):
     )
     firebase_project_id: str | None = None
     search_provider: Literal["exa_keyless", "disabled"] = "exa_keyless"
+    model_provider: Literal["ollama", "groq"] = "ollama"
+    groq_api_key: SecretStr | None = Field(
+        default=None, validation_alias="GROQ_API_KEY", repr=False
+    )
+    groq_free_tier_confirmed: bool = False
     allow_demo_auth: bool = False
     object_directory: str = ".runtime/objects"
+    source_encryption_key_file: str | None = Field(default=None, repr=False)
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     @model_validator(mode="after")

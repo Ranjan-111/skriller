@@ -1,0 +1,42 @@
+{
+  "model": "llama3.2:3b",
+  "provider": "local_ollama",
+  "synthetic_fixture": true,
+  "one_attempt_only": true,
+  "timeout_seconds": 90,
+  "reserved_token_cap": 4096,
+  "tested_at": "2026-10-12T19:22:17.171695+00:00",
+  "material_change": "Explicit verbatim quote case and preference/exclusion cue-plus-value spans align prompt with unchanged grounding guards.",
+  "status": "failed",
+  "failure_code": "schema_invalid",
+  "error_type": "ModelUnavailable",
+  "elapsed_seconds": 9.469,
+  "reservations": [
+    {
+      "state": "committed",
+      "reconciliation_status": "confirmed",
+      "reserved_dimensions": {
+        "llm_calls": 1,
+        "tokens": 4096
+      },
+      "actual_dimensions": {
+        "llm_calls": 1,
+        "tokens": 962
+      },
+      "currency_cost_usd": "0E-8"
+    }
+  ],
+  "benchmark_limitations": [
+    "One synthetic prompt does not establish planner accuracy, production latency or multilingual coverage.",
+    "Initial planning-job routing and successor-job handoff are not integrated."
+  ],
+  "schema_validation_passed": false,
+  "semantic_checks_executed": false,
+  "quality_gate": "failed: schema-invalid output was rejected before grounding could be checked",
+  "live_calls_executed": 1,
+  "previous_reports": [
+    "docs/completions/PLANNER-LIVE-baseline.json",
+    "docs/completions/PLANNER-LIVE-schema-format.json"
+  ],
+  "diagnosis_limit": "The earlier grounding rejection did not retain a categorical reason. Cue-span prompt mismatch is a source-supported hypothesis; this trial does not confirm it."
+}

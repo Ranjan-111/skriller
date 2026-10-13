@@ -43,6 +43,7 @@ export function ResearchResultsPanel({
   const [results, setResults] = useState<ResearchResults | null>(null);
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
+  const [cancelling, setCancelling] = useState(false);
   useEffect(() => {
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout>;
@@ -103,6 +104,31 @@ export function ResearchResultsPanel({
         <h2 id="run-title">{labels[state] ?? "Checking research status"}</h2>
         {run?.stage && <p>Current stage: {run.stage.replaceAll("_", " ")}</p>}
         <p className="run-reference">Run {job.id}</p>
+        {!finished.has(state) && (
+          <button
+            className="text-button"
+            type="button"
+            disabled={cancelling}
+            onClick={async () => {
+              setCancelling(true);
+              setError("");
+              try {
+                await api.cancel(job.id, job.workspace_id);
+                setRetry((value) => value + 1);
+              } catch (failure) {
+                setError(
+                  failure instanceof Error
+                    ? failure.message
+                    : "Cancellation was not confirmed.",
+                );
+              } finally {
+                setCancelling(false);
+              }
+            }}
+          >
+            {cancelling ? "Stopping research…" : "Stop research"}
+          </button>
+        )}
       </div>
       {error && (
         <div className="notice error" role="alert">
@@ -193,6 +219,12 @@ export function ResearchResultsPanel({
                     </h4>
                     <p className="candidate-meta">
                       {candidate.source} · Search snippet · Unverified
+                    </p>
+                    <p className="candidate-meta">
+                      Retrieved{" "}
+                      <time dateTime={candidate.observed_at}>
+                        {candidate.observed_at}
+                      </time>
                     </p>
                     <p className="candidate-snippet">
                       {candidate.snippet || "No search snippet was provided."}

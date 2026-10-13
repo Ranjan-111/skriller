@@ -296,8 +296,9 @@ def test_rate_limit_retains_earlier_results_and_stops_new_calls(database, monkey
         async def search(self, query, **kwargs):
             if self.calls == 1:
                 self.calls += 1
-                raise SearchUnavailable(Failure(code="rate_limited", message="Wait",
-                                                retry_after_seconds=30))
+                raise SearchUnavailable(
+                    Failure(code="rate_limited", message="Wait", retry_after_seconds=30)
+                )
             return await super().search(query, **kwargs)
 
     provider = LimitedProvider()
@@ -308,9 +309,3 @@ def test_rate_limit_retains_earlier_results_and_stops_new_calls(database, monkey
     assert response["state"] == "partial" and len(response["results"]) == 1
     with database.tenant(actor, accepted["workspace_id"]) as session:
         assert current_usage(session, accepted["job_id"])[1]["search_calls"] == 2
-        # Source cadence is exposed only through the membership-checked lease API.
-        from skriller.jobs.capacity import CapacityUnavailable
-
-        with pytest.raises(CapacityUnavailable):
-            # This job is terminal, so a new active tenant job is needed below.
-            raise CapacityUnavailable("Separate capacity tests verify persisted RetryAfter")

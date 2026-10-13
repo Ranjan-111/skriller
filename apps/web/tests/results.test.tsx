@@ -42,6 +42,33 @@ function client() {
 }
 afterEach(() => vi.useRealTimers());
 describe("actual research results", () => {
+  it("stops an active scoped run and refreshes its actual terminal state", async () => {
+    const api = client();
+    api.job.mockResolvedValue({ ...run, state: "running" });
+    api.cancel = vi.fn().mockImplementation(async () => {
+      api.job.mockResolvedValue({
+        ...run,
+        state: "cancelled",
+        terminal_reason: "user_cancelled",
+      });
+    });
+    render(
+      <ResearchResultsPanel
+        api={api}
+        job={{ id: "j1", status: "accepted", workspace_id: "w1" }}
+      />,
+    );
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Stop research" }),
+    );
+    expect(
+      await screen.findByRole("heading", { name: "Research cancelled" }),
+    ).toBeVisible();
+    expect(api.cancel).toHaveBeenCalledWith("j1", "w1");
+    expect(
+      screen.queryByRole("button", { name: "Stop research" }),
+    ).not.toBeInTheDocument();
+  });
   it("renders fetched sources as unverified snippets with safe original links", async () => {
     const api = client();
     render(

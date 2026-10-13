@@ -415,3 +415,83 @@ async def test_copied_graph_schema_instructions_are_not_duplicated(database):
         database, context, prompt, Facts, operation_key="graph-schema", prompt_includes_schema=True
     )
     assert answer.data["contact"] is None
+
+
+async def test_official_ollama_sdk_sends_schema_format_without_shared_mutation(database):
+    import json
+
+    import httpx
+    from langchain_ollama import ChatOllama
+
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(
+            200,
+            headers={"Content-Type": "application/x-ndjson"},
+            content=json.dumps(
+                {
+                    "model": "llama3.2:3b",
+                    "created_at": "2026-10-13T00:00:00Z",
+                    "message": {
+                        "role": "assistant",
+                        "content": '{"company":"Aurora","contact":null}',
+                    },
+                    "done": True,
+                    "prompt_eval_count": 60,
+                    "eval_count": 20,
+                }
+            )
+            + "\n",
+        )
+
+    official = ChatOllama(
+        model="llama3.2:3b",
+        base_url="http://127.0.0.1:11434",
+        format="json",
+        num_predict=512,
+        num_ctx=4096,
+        reasoning=False,
+        client_kwargs={"timeout": 5, "trust_env": False},
+        async_client_kwargs={"transport": httpx.MockTransport(transport)},
+    )
+    context = context_for(database)
+    answer = await LocalStructuredModel(model_instance=official).invoke_job(
+        database, context, "Extract", Facts, operation_key="official-sdk"
+    )
+    assert answer.data["contact"] is None and answer.tokens == 80
+    assert len(requests) == 1 and str(requests[0].url) == "http://127.0.0.1:11434/api/chat"
+    payload = json.loads(requests[0].content)
+    assert payload["format"] == Facts.model_json_schema()
+    assert payload["model"] == "llama3.2:3b" and payload["options"]["num_predict"] == 512
+    assert payload["options"]["num_ctx"] == 4096 and payload["think"] is False
+    assert official.format == "json"
+
+
+async def test_official_sdk_failure_has_one_request_without_fallback(database):
+    import httpx
+    from langchain_ollama import ChatOllama
+
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(500, json={"error": "private local provider details"})
+
+    official = ChatOllama(
+        model="llama3.2:3b",
+        base_url="http://127.0.0.1:11434",
+        format="json",
+        num_predict=512,
+        client_kwargs={"timeout": 5, "trust_env": False},
+        async_client_kwargs={"transport": httpx.MockTransport(transport)},
+    )
+    context = context_for(database)
+    with pytest.raises(ModelUnavailable) as caught:
+        await LocalStructuredModel(model_instance=official).invoke_job(
+            database, context, "Extract", Facts, operation_key="official-sdk-failure"
+        )
+    assert caught.value.failure.code == "source_unavailable"
+    assert len(requests) == 1 and requests[0].url.host == "127.0.0.1"
+    assert "provider details" not in str(caught.value)

@@ -322,6 +322,31 @@ export function createApi(
         );
       return data as ResearchRun;
     },
+    async cancel(id: string, workspaceId?: string): Promise<void> {
+      const query = workspaceId
+        ? `?workspace_id=${encodeURIComponent(workspaceId)}`
+        : "";
+      const data = await jsonRequest(
+        `/v1/jobs/${encodeURIComponent(id)}/cancel${query}`,
+        { method: "POST" },
+      );
+      if (
+        !data ||
+        typeof data !== "object" ||
+        !("id" in data) ||
+        data.id !== id ||
+        !("workspace_id" in data) ||
+        typeof data.workspace_id !== "string" ||
+        (workspaceId && data.workspace_id !== workspaceId) ||
+        !("state" in data) ||
+        typeof data.state !== "string" ||
+        !["cancelled", "completed", "partial", "failed"].includes(data.state)
+      ) {
+        throw new ApiError(
+          "Cancellation was not confirmed. Check the run again.",
+        );
+      }
+    },
     async results(
       id: string,
       workspaceId?: string,

@@ -8,10 +8,11 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
-from kombu import Connection
+from kombu import Connection, Queue
 from sqlalchemy import create_engine, text
 
 from skriller.auth import Identity, require_identity
+from skriller.connections.router import router as connections_router
 from skriller.connectors.search import ExaKeylessSearch
 from skriller.contracts import Capability, ExecutionContext, Failure, ProgressEvent, SearchPlan
 from skriller.db import Database
@@ -42,6 +43,21 @@ def broker_available(url: str) -> bool:
         return False
 
 
+def worker_available(url: str) -> bool:
+    """Read the durable queue's consumer count without publishing or using control queues."""
+    try:
+        with Connection(url, connect_timeout=2, transport_options={"read_timeout": 2}) as connection:
+            connection.connect()
+            channel = connection.channel()
+            try:
+                status = Queue("skriller.jobs", channel=channel).queue_declare(passive=True)
+                return status.consumer_count > 0
+            finally:
+                channel.close()
+    except Exception:  # noqa: BLE001 - health must redact broker credentials/errors
+        return False
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     configuration = settings or Settings()
 
@@ -61,6 +77,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.database = Database(configuration.application_database_url)
     app.include_router(progress_router)
     app.include_router(research_router)
+    app.include_router(connections_router)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=configuration.cors_origins,
@@ -78,16 +95,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/health/ready")
     async def ready():
-        db, broker = await asyncio.gather(
+        db, broker, worker = await asyncio.gather(
             asyncio.to_thread(database_available, configuration.database_url),
             asyncio.to_thread(broker_available, configuration.broker_url),
+            asyncio.to_thread(worker_available, configuration.broker_url),
         )
         return JSONResponse(
             {
-                "status": "ready" if db and broker else "unavailable",
-                "dependencies": {"database": db, "broker": broker},
+                "status": "ready" if db and broker and worker else "unavailable",
+                "dependencies": {"database": db, "broker": broker, "worker": worker},
             },
-            status_code=200 if db and broker else 503,
+            status_code=200 if db and broker and worker else 503,
         )
 
     def openapi():

@@ -583,7 +583,7 @@
       "title": "Verify Firebase identity on API requests",
       "phase": "P0",
       "epic": "Identity and storage",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-006",
@@ -615,13 +615,12 @@
           "docs/completions/SKR-013.md"
         ],
         "passed_checks": [
-          "User confirmed successful live Google sign-in on 2026-10-12",
-          "44 frontend tests; controlled signed-token backend verification; frontend build/typecheck passed previously"
+          "User-confirmed live Google sign-in and authenticated results roundtrip 2026-10-13",
+          "Signed-token signature/expiry/audience/issuer tests passed",
+          "Frontend auth, forced-refresh and session tests passed; application build/typecheck passed"
         ],
-        "remaining": [
-          "Actual server-verified Firebase ID-token roundtrip through research workflow remains unverified"
-        ],
-        "recorded_at": "2026-10-12T17:19:47.379821+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-12T19:03:44.350581+00:00"
       }
     },
     {
@@ -1060,11 +1059,12 @@
           "docs/completions/SKR-023.md"
         ],
         "passed_checks": [
-          "12 shared-capacity PostgreSQL integration tests passed",
-          "Workflow worker capacity admission and Retry-After feedback verified"
+          "12 real PostgreSQL shared-capacity/backoff tests passed",
+          "Real discovery worker wired to shared admission and deadline; live RabbitMQ-to-Exa result test passed",
+          "Ruff and mypy passed"
         ],
         "remaining": [],
-        "recorded_at": "2026-10-12T17:41:42+00:00"
+        "recorded_at": "2026-10-12T19:03:44.358675+00:00"
       }
     },
     {
@@ -1117,7 +1117,7 @@
       "title": "Implement cancellation, deadline and resume semantics",
       "phase": "P0",
       "epic": "Execution core",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-020",
@@ -1146,7 +1146,19 @@
           "scenario": "Resume after quota/session pause",
           "expected": "only unfinished permitted stages run"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-025.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Active HTTP/model transport/process cancellation within the PRD target and browser-process cleanup remain open"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.363950+00:00"
+      }
     },
     {
       "id": "SKR-026",
@@ -1498,7 +1510,7 @@
       "title": "Generate bounded search/dork query variants",
       "phase": "P0",
       "epic": "Discovery",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-019",
@@ -1526,14 +1538,28 @@
           "scenario": "Provider lacks quoted-phrase support",
           "expected": "no exact-match claim"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-034.md"
+        ],
+        "passed_checks": [
+          "12 bounded query tests passed",
+          "20 source/workflow/query checks passed excluding broker, isolated broker diagnostic rerun passed4.84s",
+          "Live CLI discovery through new queries returned two references in4.212s"
+        ],
+        "remaining": [
+          "Initial semantic planner and broader provider/operator/source verification remain open"
+        ],
+        "recorded_at": "2026-10-12T19:17:02.793558+00:00"
+      }
     },
     {
       "id": "SKR-035",
       "title": "Normalise and deduplicate discovered candidates",
       "phase": "P0",
       "epic": "Discovery",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -1564,14 +1590,26 @@
           "scenario": "Similar names with different native IDs or meaningful query parameters",
           "expected": "remain distinct"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-035.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Platform-native ID extraction and full fetching/egress integration remain open"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.368746+00:00"
+      }
     },
     {
       "id": "SKR-036",
       "title": "Adapt copied Scrapling HTTP fetching into product stage",
       "phase": "P0",
       "epic": "Fetching",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-002",
@@ -1603,7 +1641,20 @@
           "scenario": "Slow or compressed oversized response",
           "expected": "bounded failure without memory growth"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-036.md"
+        ],
+        "passed_checks": [
+          "11 actual PostgreSQL/GuardedProxy/copiedFetcher integration tests passed",
+          "Ruff, mypy and copied Scrapling provenance passed"
+        ],
+        "remaining": [
+          "Production egress isolation and collecting-stage routing/integration remain open"
+        ],
+        "recorded_at": "2026-10-12T19:17:02.801898+00:00"
+      }
     },
     {
       "id": "SKR-037",
@@ -1872,13 +1923,13 @@
           "docs/completions/SKR-043.md"
         ],
         "passed_checks": [
-          "Semantic adaptive selector validation and relocation fixture tests passed",
-          "Ruff, Mypy, and copied Scrapling provenance verification passed"
+          "22 adaptive tests including seven real PostgreSQL semantic tests passed",
+          "Ruff, mypy and Scrapling provenance passed"
         ],
         "remaining": [
-          "Production fetching integration and live source recovery remain unverified"
+          "Production HTTP fetching stage does not yet call adaptive semantic validation"
         ],
-        "recorded_at": "2026-10-12T17:41:42+00:00"
+        "recorded_at": "2026-10-12T19:03:44.407311+00:00"
       }
     },
     {
@@ -1972,13 +2023,14 @@
           "docs/completions/SKR-045.md"
         ],
         "passed_checks": [
-          "22 bounded local-model adapter tests passed",
-          "Ruff and Mypy checks passed"
+          "22 actual PostgreSQL/stub model tests passed",
+          "Copied saved extraction wrapper and detached planner use bounded model ledger",
+          "Ruff and mypy passed"
         ],
         "remaining": [
-          "Production extraction/planning wiring, container controls, and live adapter trial remain"
+          "Live bounded adapter/model quality and initial prompt/extraction workflow integration remain open"
         ],
-        "recorded_at": "2026-10-12T17:41:42+00:00"
+        "recorded_at": "2026-10-12T19:03:44.414037+00:00"
       }
     },
     {
@@ -1986,7 +2038,7 @@
       "title": "Adapt SmartScraper graph to already-collected content",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -2016,14 +2068,26 @@
           "scenario": "Multiple chunks/failed answer",
           "expected": "all calls accounted and stop at cap"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-046.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Full ticket acceptance and production integration remain open; see report"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.373365+00:00"
+      }
     },
     {
       "id": "SKR-047",
       "title": "Validate extraction fields against schema and evidence",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -2054,7 +2118,19 @@
           "scenario": "Evidence ID missing/cross-tenant/deleted",
           "expected": "claim cannot be accepted"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-047.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Production extraction/qualification integration remain open"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.378097+00:00"
+      }
     },
     {
       "id": "SKR-048",
@@ -2201,7 +2277,7 @@
       "title": "Implement prompt-to-plan interpretation and clarification service",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-015",
@@ -2231,14 +2307,30 @@
           "scenario": "Ambiguous location or unsupported requested field",
           "expected": "relevant clarification or visible unavailable criterion without dropped intent"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-096.md",
+          "docs/completions/PLANNER-LIVE.json",
+          "docs/completions/PLANNER-LIVE-baseline.json"
+        ],
+        "passed_checks": [
+          "11 planner tests including cancelled successor fence passed",
+          "Actual model schema binding passed official SDK transport tests",
+          "Two separately bounded local trials recorded actual token/cost usage without retries"
+        ],
+        "remaining": [
+          "Live grounded semantic quality failed; initial durable planning-job bootstrap and user clarification remain unimplemented"
+        ],
+        "recorded_at": "2026-10-12T19:17:02.807448+00:00"
+      }
     },
     {
       "id": "SKR-052",
       "title": "Build prompt composer and editable interpretation UI",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-006",
@@ -2268,14 +2360,26 @@
           "scenario": "Ambiguous geography prompt",
           "expected": "clarification response updates plan without losing message"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-052.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Full semantic interpretation display, clarification/refinement and planning bootstrap remain open"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.388045+00:00"
+      }
     },
     {
       "id": "SKR-053",
       "title": "Build results and evidence detail views",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -2305,14 +2409,26 @@
           "scenario": "Conflicting role and anonymous discussion",
           "expected": "clear statuses, no fabricated identity"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-053.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Full accepted/near-match classifications, claim evidence panels and conflict/discussion views remain open"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.392784+00:00"
+      }
     },
     {
       "id": "SKR-054",
       "title": "Adapt copied export helpers for CSV, JSON and JSONL",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -2343,7 +2459,19 @@
           "scenario": "Cross-tenant export ID or expired signed link",
           "expected": "download denied"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-054.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Full ticket acceptance and production integration remain open; see report"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.397580+00:00"
+      }
     },
     {
       "id": "SKR-055",
@@ -2822,7 +2950,7 @@
       "title": "Verify first complete prompt-to-export slice",
       "phase": "P0",
       "epic": "Integration gates",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-021",
@@ -2874,7 +3002,19 @@
           "scenario": "Candidate unavailable and another mismatched",
           "expected": "actual counts/partial evidence preserved"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-067.md"
+        ],
+        "passed_checks": [
+          "Recorded focused checks and combined 99-check component suite; see report"
+        ],
+        "remaining": [
+          "Full evidenced semantic qualification and prompt-to-accepted-export gate remain open"
+        ],
+        "recorded_at": "2026-10-12T19:03:44.402578+00:00"
+      }
     },
     {
       "id": "SKR-068",

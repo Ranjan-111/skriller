@@ -1,0 +1,35 @@
+{
+  "model": "llama3.2:3b",
+  "provider": "local_ollama",
+  "synthetic_fixture": true,
+  "one_attempt_only": true,
+  "timeout_seconds": 90,
+  "reserved_token_cap": 4096,
+  "tested_at": "2026-10-12T19:04:08.401177+00:00",
+  "status": "failed",
+  "failure_code": "schema_invalid",
+  "error_type": "ModelUnavailable",
+  "elapsed_seconds": 9.484,
+  "reservations": [
+    {
+      "state": "committed",
+      "reconciliation_status": "confirmed",
+      "reserved_dimensions": {
+        "llm_calls": 1,
+        "tokens": 4096
+      },
+      "actual_dimensions": {
+        "llm_calls": 1,
+        "tokens": 915
+      },
+      "currency_cost_usd": "0E-8"
+    }
+  ],
+  "benchmark_limitations": [
+    "One synthetic prompt does not establish planner accuracy, production latency or multilingual coverage.",
+    "Initial planning-job routing and successor-job handoff are not integrated."
+  ],
+  "semantic_checks_executed": false,
+  "quality_gate": "failed: schema-invalid output was rejected before a SearchPlan could be evaluated",
+  "live_calls_executed": 1
+}

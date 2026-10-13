@@ -453,7 +453,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-013"></a>
 #### SKR-013 — Verify Firebase identity on API requests
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-006](#skr-006), [SKR-007](#skr-007)
 
@@ -685,7 +685,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-023"></a>
 #### SKR-023 — Enforce shared source and worker capacity limits
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-022](#skr-022)
 
@@ -731,7 +731,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-025"></a>
 #### SKR-025 — Implement cancellation, deadline and resume semantics
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-020](#skr-020), [SKR-022](#skr-022), [SKR-023](#skr-023), [SKR-024](#skr-024)
 
@@ -942,7 +942,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-034"></a>
 #### SKR-034 — Generate bounded search/dork query variants
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-019](#skr-019), [SKR-033](#skr-033), [SKR-096](#skr-096)
 
@@ -965,7 +965,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-035"></a>
 #### SKR-035 — Normalise and deduplicate discovered candidates
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-016](#skr-016), [SKR-027](#skr-027), [SKR-033](#skr-033)
 
@@ -990,7 +990,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-036"></a>
 #### SKR-036 — Adapt copied Scrapling HTTP fetching into product stage
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-002](#skr-002), [SKR-023](#skr-023), [SKR-024](#skr-024), [SKR-027](#skr-027), [SKR-035](#skr-035)
 
@@ -1153,7 +1153,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-043"></a>
 #### SKR-043 — Integrate copied adaptive selector matching with validation
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-036](#skr-036), [SKR-042](#skr-042)
 
@@ -1199,7 +1199,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-045"></a>
 #### SKR-045 — Adapt copied model creation and usage callbacks
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-012](#skr-012), [SKR-024](#skr-024), [SKR-044](#skr-044)
 
@@ -1222,7 +1222,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-046"></a>
 #### SKR-046 — Adapt SmartScraper graph to already-collected content
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-004](#skr-004), [SKR-044](#skr-044), [SKR-045](#skr-045)
 
@@ -1245,7 +1245,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-047"></a>
 #### SKR-047 — Validate extraction fields against schema and evidence
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-016](#skr-016), [SKR-019](#skr-019), [SKR-043](#skr-043), [SKR-046](#skr-046)
 
@@ -1364,7 +1364,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-096"></a>
 #### SKR-096 — Implement prompt-to-plan interpretation and clarification service
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-015](#skr-015), [SKR-019](#skr-019), [SKR-024](#skr-024), [SKR-045](#skr-045)
 
@@ -1387,7 +1387,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-052"></a>
 #### SKR-052 — Build prompt composer and editable interpretation UI
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-006](#skr-006), [SKR-013](#skr-013), [SKR-015](#skr-015), [SKR-019](#skr-019), [SKR-026](#skr-026), [SKR-096](#skr-096)
 
@@ -1410,7 +1410,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-053"></a>
 #### SKR-053 — Build results and evidence detail views
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-016](#skr-016), [SKR-026](#skr-026), [SKR-049](#skr-049), [SKR-050](#skr-050), [SKR-051](#skr-051)
 
@@ -1433,7 +1433,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-054"></a>
 #### SKR-054 — Adapt copied export helpers for CSV, JSON and JSONL
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-004](#skr-004), [SKR-018](#skr-018), [SKR-047](#skr-047), [SKR-050](#skr-050), [SKR-051](#skr-051)
 
@@ -1736,7 +1736,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-067"></a>
 #### SKR-067 — Verify first complete prompt-to-export slice
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-021](#skr-021), [SKR-022](#skr-022), [SKR-023](#skr-023), [SKR-024](#skr-024), [SKR-025](#skr-025), [SKR-026](#skr-026), [SKR-034](#skr-034), [SKR-036](#skr-036), [SKR-037](#skr-037), [SKR-044](#skr-044), [SKR-047](#skr-047), [SKR-049](#skr-049), [SKR-050](#skr-050), [SKR-051](#skr-051), [SKR-052](#skr-052), [SKR-053](#skr-053), [SKR-054](#skr-054), [SKR-058](#skr-058), [SKR-066](#skr-066)
 

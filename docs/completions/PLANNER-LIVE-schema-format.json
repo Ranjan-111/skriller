@@ -1,0 +1,39 @@
+{
+  "model": "llama3.2:3b",
+  "provider": "local_ollama",
+  "synthetic_fixture": true,
+  "one_attempt_only": true,
+  "timeout_seconds": 90,
+  "reserved_token_cap": 4096,
+  "tested_at": "2026-10-12T19:08:17.176578+00:00",
+  "material_change": "Per-call Ollama JSON-schema format mirrors copied GenerateAnswerNode; no client mutation.",
+  "status": "failed",
+  "error_type": "PlanningInvalid",
+  "failure_code": "interpretation_rejected",
+  "elapsed_seconds": 5.174,
+  "reservations": [
+    {
+      "state": "committed",
+      "reconciliation_status": "confirmed",
+      "reserved_dimensions": {
+        "llm_calls": 1,
+        "tokens": 4096
+      },
+      "actual_dimensions": {
+        "llm_calls": 1,
+        "tokens": 941
+      },
+      "currency_cost_usd": "0E-8"
+    }
+  ],
+  "benchmark_limitations": [
+    "One synthetic prompt does not establish planner accuracy, production latency or multilingual coverage.",
+    "Initial planning-job routing and successor-job handoff are not integrated."
+  ],
+  "schema_validation_passed": true,
+  "grounding_validation_passed": false,
+  "semantic_checks_executed": false,
+  "quality_gate": "failed: schema-valid interpretation was rejected by prompt-grounding checks before a SearchPlan was returned",
+  "live_calls_executed": 1,
+  "baseline_report": "docs/completions/PLANNER-LIVE-baseline.json"
+}

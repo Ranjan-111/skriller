@@ -90,6 +90,147 @@
         "title": "Capability",
         "type": "object"
       },
+      "ConnectionInput": {
+        "additionalProperties": false,
+        "properties": {
+          "auth_kind": {
+            "enum": [
+              "session",
+              "oauth",
+              "api_key"
+            ],
+            "title": "Auth Kind",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/SecretPayload"
+          },
+          "scopes": {
+            "items": {
+              "enum": [
+                "read",
+                "discover"
+              ],
+              "type": "string"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Scopes",
+            "type": "array"
+          },
+          "source": {
+            "enum": [
+              "linkedin",
+              "reddit",
+              "web",
+              "github",
+              "rss",
+              "youtube",
+              "x",
+              "instagram",
+              "facebook"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "auth_kind",
+          "payload",
+          "expires_at"
+        ],
+        "title": "ConnectionInput",
+        "type": "object"
+      },
+      "ConnectionMetadata": {
+        "additionalProperties": false,
+        "properties": {
+          "access_validation": {
+            "const": "not_performed",
+            "default": "not_performed",
+            "title": "Access Validation",
+            "type": "string"
+          },
+          "auth_kind": {
+            "enum": [
+              "session",
+              "oauth",
+              "api_key"
+            ],
+            "title": "Auth Kind",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "remote_revocation": {
+            "const": "not_performed",
+            "default": "not_performed",
+            "title": "Remote Revocation",
+            "type": "string"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Scopes",
+            "type": "array"
+          },
+          "source": {
+            "enum": [
+              "linkedin",
+              "reddit",
+              "web",
+              "github",
+              "rss",
+              "youtube",
+              "x",
+              "instagram",
+              "facebook"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "active",
+              "expired",
+              "revoked"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "workspace_id",
+          "source",
+          "auth_kind",
+          "scopes",
+          "state",
+          "expires_at"
+        ],
+        "title": "ConnectionMetadata",
+        "type": "object"
+      },
       "ConversationInput": {
         "additionalProperties": false,
         "properties": {
@@ -552,6 +693,61 @@
         "title": "QueryProvenance",
         "type": "object"
       },
+      "ReconnectInput": {
+        "additionalProperties": false,
+        "properties": {
+          "auth_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "session",
+                  "oauth",
+                  "api_key"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Kind"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/SecretPayload"
+          },
+          "scopes": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "read",
+                    "discover"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 2,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scopes"
+          }
+        },
+        "required": [
+          "payload",
+          "expires_at"
+        ],
+        "title": "ReconnectInput",
+        "type": "object"
+      },
       "ResearchCandidate": {
         "additionalProperties": false,
         "properties": {
@@ -935,6 +1131,25 @@
           "entity_type"
         ],
         "title": "SearchPlan",
+        "type": "object"
+      },
+      "SecretPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "credentials": {
+            "additionalProperties": {
+              "format": "password",
+              "type": "string",
+              "writeOnly": true
+            },
+            "title": "Credentials",
+            "type": "object"
+          }
+        },
+        "required": [
+          "credentials"
+        ],
+        "title": "SecretPayload",
         "type": "object"
       },
       "SubmissionOutput": {
@@ -1348,6 +1563,246 @@
           }
         },
         "summary": "Current User"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/connections": {
+      "get": {
+        "operationId": "list_connections_v1_workspaces__workspace_id__connections_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConnectionMetadata"
+                  },
+                  "title": "Response List Connections V1 Workspaces  Workspace Id  Connections Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Connections"
+      },
+      "post": {
+        "operationId": "connect_v1_workspaces__workspace_id__connections_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionMetadata"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Connect"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/connections/purge-expired": {
+      "post": {
+        "operationId": "purge_expired_v1_workspaces__workspace_id__connections_purge_expired_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Purge Expired"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/connections/{connection_id}/reconnect": {
+      "post": {
+        "operationId": "reconnect_source_v1_workspaces__workspace_id__connections__connection_id__reconnect_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "connection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Connection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconnectInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionMetadata"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reconnect Source"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/connections/{connection_id}/revoke": {
+      "post": {
+        "operationId": "revoke_source_v1_workspaces__workspace_id__connections__connection_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "connection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Connection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionMetadata"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke Source"
       }
     },
     "/v1/workspaces/{workspace_id}/jobs/{job_id}": {

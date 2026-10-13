@@ -293,12 +293,28 @@ def results(
     workspace, job = read_job(request, identity, job_id, workspace_id)
     with request.app.state.database.tenant(identity.uid, workspace) as session:
         rows = result_rows(session, str(job_id))
+        summaries = [
+            event["details"]
+            for event in JobRepository.events_after(session, str(job_id), limit=1000)
+            if event["kind"] == "discovery_summary"
+        ]
+    limitations = list(LIMITATIONS)
+    for summary in summaries:
+        for failure in summary.get("source_failures", []):
+            limitations.append(
+                f"{failure['source']}: search interrupted ({failure['code'].replace('_', ' ')})."
+            )
+        if summary.get("query_warnings"):
+            limitations.append(
+                "Search operators and candidate matches still require source evidence; "
+                "search does not prove that all requested criteria match."
+            )
     return {
         "job_id": str(job_id),
         "workspace_id": workspace,
         "state": job["state"],
         "results": rows,
-        "limitations": LIMITATIONS,
+        "limitations": list(dict.fromkeys(limitations)),
     }
 
 

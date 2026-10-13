@@ -5,11 +5,5 @@
   "source": "exa_keyless",
   "paid_key_used": false,
   "firebase_user_roundtrip": false,
-  "elapsed_seconds": 10.695,
-  "observed_at": "2026-10-12T17:27:05.636780+00:00",
-  "runtime_pool": "solo",
-  "notes": [
-    "Actual CLI worker and RabbitMQ delivery with real free search; separate probe actor, not a Firebase user-token test.",
-    "Initial macOS prefork attempt failed; isolated new run completed after correcting local pool and disabling unsupported broker mingle/gossip."
-  ]
+  "elapsed_seconds": 4.212
 }

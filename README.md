@@ -1,6 +1,6 @@
 # Skriller
 
-Prompt-first lead discovery and evidence-backed research. Implementation is in progress; the UI currently supports service checks and typed submission while the research job pipeline is being connected. It does not yet claim complete LinkedIn/Reddit access or production readiness.
+Prompt-first lead discovery and evidence-backed research. Implementation is in progress. Authenticated prompts now execute durable free-search jobs and show real, unverified source snippets with local JSON/CSV downloads. It does not yet claim complete LinkedIn/Reddit access or production readiness.
 
 ## Local setup
 
@@ -54,7 +54,7 @@ See [PRD](docs/PRD.md), [tickets](docs/IMPLEMENTATION_TICKETS.md), [reuse map](d
 
 ## Current native PostgreSQL test alternative
 
-Docker currently cannot start its daemon on this machine. An isolated official PostgreSQL 18.4 runtime was built in `.runtime/postgres` and is running on loopback port 54439. It was used for the real database checks; RabbitMQ/container checks still require Docker recovery. Build provenance and cluster start/stop commands are in `.runtime/postgres/NATIVE_RUNTIME.md`.
+Docker currently cannot start its daemon on this machine. An isolated official PostgreSQL 18.4 runtime was built in `.runtime/postgres` and is running on loopback port 54439. It was used for the real database checks; RabbitMQ is also running natively and has passed real delivery/restart checks; production container/egress isolation still needs Docker recovery. Build provenance and cluster start/stop commands are in `.runtime/postgres/NATIVE_RUNTIME.md`.
 
 To run the database suite against this cluster:
 
@@ -66,7 +66,7 @@ SKRILLER_DATABASE_URL=postgresql+psycopg://skriller:local-development@127.0.0.1:
 
 ## Current running development stack
 
-This workspace's ignored `.env` now points to the isolated native PostgreSQL54439 and RabbitMQ56739 services. Firebase browser configuration is in ignored `apps/web/.env.local`; server ID-token verification uses public signing certificates and needs no service-account JSON. Google sign-in must be enabled in your Firebase project and localhost authorised before the live login check.
+This workspace's ignored `.env` now points to the isolated native PostgreSQL54439 and RabbitMQ56739 services. Firebase browser configuration is in ignored `apps/web/.env.local`; server ID-token verification uses public signing certificates and needs no service-account JSON. The user has confirmed Google sign-in and authenticated source results. No additional Firebase setup is currently needed.
 
 ```sh
 .venv/bin/python scripts/native_rabbitmq.py status
@@ -81,4 +81,16 @@ The development search provider is `SKRILLER_SEARCH_PROVIDER=exa_keyless`: no ke
 .venv/bin/python scripts/probes/exa.py --live
 ```
 
-Actual probes found company, LinkedIn and Reddit references. Free-tier limits, unsupported pagination and unverified formal dork semantics remain explicit; indexed references are not qualified leads or verified platform reads. The full prompt-to-export workflow remains incomplete. Brave is optional and has no automatic fallback path.
+Actual probes found company, LinkedIn and Reddit references. Free-tier limits, unsupported pagination and unverified formal dork semantics remain explicit; indexed references are not qualified leads or verified platform reads. Semantic planning, page extraction, qualification and accepted-lead export remain incomplete; the current prompt-to-snippet discovery path is working. Brave is optional and has no automatic fallback path.
+
+## Start the complete local application
+
+After PostgreSQL/RabbitMQ are running, use one foreground terminal:
+
+```sh
+.venv/bin/python scripts/dev_stack.py
+```
+
+This starts the API, durable research worker and web app together. Keep that terminal open. Existing processes on ports3000/8000 are left running, and Ctrl-C stops only the children started by this command. Separate worker command: `.venv/bin/python -m skriller.research.runtime`. macOS uses the local solo pool to avoid multiprocessing spawn incompatibility; Linux defaults to prefork. Application I/O deadlines remain bounded in both modes. Production process/container isolation is still a separate acceptance gate.
+
+A live CLI/RabbitMQ/free-Exa probe returned two real references in10.695seconds; the user separately confirmed results through Firebase-authenticated UI. Evidence: `docs/completions/WORKFLOW-LIVE.json`. This is a discovery check, not a claim of verified lead qualification.

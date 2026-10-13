@@ -65,6 +65,21 @@ def setup(database):
     return context, scope, parent["id"]
 
 
+def test_cancelled_planning_job_cannot_publish_a_late_successor(database):
+    from skriller.jobs.control import cancel
+
+    context, scope, parent = setup(database)
+    plan = grounded_plan(
+        "Find founders", Interpretation(entity_type="person", entity_quote="founders"), scope
+    )
+    with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+        cancel(session, str(context.job_id))
+    with pytest.raises(PlanningInvalid, match="no longer permits"):
+        persist_revision(database, context, plan, parent_id=parent)
+    with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+        assert ConversationRepository.get_plan(session, parent)["revision"] == 1
+
+
 class Fixture:
     def __init__(self, answer):
         self.answer = answer
@@ -242,3 +257,71 @@ def test_persistence_rejects_mismatched_identity_and_revision(database):
     ]:
         with pytest.raises(PlanningInvalid):
             persist_revision(database, context, wrong, parent_id=parent)
+
+
+async def test_prompt_guides_exact_quote_case_and_intent_cue_spans_without_weakening_guards(
+    database,
+):
+    context, scope, _ = setup(database)
+    prompt = "Find founders. Exclude agencies. Prefer companies hiring engineers."
+
+    class GuidanceFixture(Fixture):
+        async def ainvoke(self, messages, config):
+            assert "Quotes are verbatim, including case" in messages[1].content
+            assert (
+                "quotes include their intent word (Prefer/Exclude) and value" in messages[1].content
+            )
+            return await super().ainvoke(messages, config)
+
+    fixture = GuidanceFixture(
+        {
+            "entity_type": "person",
+            "entity_quote": "founders",
+            "rules": [
+                ["exclude", "company_type", "contains", "agencies", "Exclude agencies"],
+                [
+                    "preference",
+                    "hiring_role",
+                    "contains",
+                    "engineers",
+                    "Prefer companies hiring engineers",
+                ],
+            ],
+        }
+    )
+    plan = await PromptPlanner(LocalStructuredModel(model_instance=fixture)).interpret(
+        database, context, prompt, scope, operation_key="cue-guidance"
+    )
+    assert plan.preferences[0].value == "engineers" and plan.exclusions[0].value == "agencies"
+    for rule, reason in [
+        (
+            ["preference", "hiring_role", "contains", "engineers", "companies hiring engineers"],
+            "preference_missing_cue",
+        ),
+        (["exclude", "company_type", "contains", "agencies", "agencies"], "exclusion_missing_cue"),
+    ]:
+        with pytest.raises(PlanningInvalid) as caught:
+            grounded_plan(
+                prompt,
+                Interpretation(entity_type="person", entity_quote="founders", rules=[rule]),
+                scope,
+            )
+        assert caught.value.reason == reason
+
+
+def test_safe_grounding_diagnostics_do_not_echo_user_or_model_text():
+    scope = PlanScope(
+        workspace_id=uuid4(),
+        conversation_id=uuid4(),
+        revision=1,
+        limits=Limits(),
+        allowed_sources=["web"],
+    )
+    with pytest.raises(PlanningInvalid) as caught:
+        grounded_plan(
+            "Find founders",
+            Interpretation(entity_type="person", entity_quote="PRIVATE_FAKE_QUOTE"),
+            scope,
+        )
+    assert caught.value.reason == "ungrounded_quote"
+    assert "PRIVATE_FAKE_QUOTE" not in str(caught.value)

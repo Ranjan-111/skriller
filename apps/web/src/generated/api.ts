@@ -136,6 +136,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/workspaces/{workspace_id}/connections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Connections */
+        get: operations["list_connections_v1_workspaces__workspace_id__connections_get"];
+        put?: never;
+        /** Connect */
+        post: operations["connect_v1_workspaces__workspace_id__connections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/connections/purge-expired": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Purge Expired */
+        post: operations["purge_expired_v1_workspaces__workspace_id__connections_purge_expired_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/connections/{connection_id}/reconnect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reconnect Source */
+        post: operations["reconnect_source_v1_workspaces__workspace_id__connections__connection_id__reconnect_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/connections/{connection_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke Source */
+        post: operations["revoke_source_v1_workspaces__workspace_id__connections__connection_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/workspaces/{workspace_id}/jobs/{job_id}": {
         parameters: {
             query?: never;
@@ -207,6 +276,74 @@ export interface components {
             source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
             /** Version */
             version: string;
+        };
+        /** ConnectionInput */
+        ConnectionInput: {
+            /**
+             * Auth Kind
+             * @enum {string}
+             */
+            auth_kind: "session" | "oauth" | "api_key";
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            payload: components["schemas"]["SecretPayload"];
+            /** Scopes */
+            scopes?: ("read" | "discover")[];
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
+        };
+        /** ConnectionMetadata */
+        ConnectionMetadata: {
+            /**
+             * Access Validation
+             * @default not_performed
+             * @constant
+             */
+            access_validation: "not_performed";
+            /**
+             * Auth Kind
+             * @enum {string}
+             */
+            auth_kind: "session" | "oauth" | "api_key";
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Remote Revocation
+             * @default not_performed
+             * @constant
+             */
+            remote_revocation: "not_performed";
+            /** Scopes */
+            scopes: string[];
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "active" | "expired" | "revoked";
+            /**
+             * Workspace Id
+             * Format: uuid
+             */
+            workspace_id: string;
         };
         /** ConversationInput */
         ConversationInput: {
@@ -406,6 +543,19 @@ export interface components {
              */
             source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
         };
+        /** ReconnectInput */
+        ReconnectInput: {
+            /** Auth Kind */
+            auth_kind?: ("session" | "oauth" | "api_key") | null;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            payload: components["schemas"]["SecretPayload"];
+            /** Scopes */
+            scopes?: ("read" | "discover")[] | null;
+        };
         /** ResearchCandidate */
         ResearchCandidate: {
             /**
@@ -559,6 +709,13 @@ export interface components {
              * Format: uuid
              */
             workspace_id: string;
+        };
+        /** SecretPayload */
+        SecretPayload: {
+            /** Credentials */
+            credentials: {
+                [key: string]: string;
+            };
         };
         /** SubmissionOutput */
         SubmissionOutput: {
@@ -832,6 +989,171 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    list_connections_v1_workspaces__workspace_id__connections_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    connect_v1_workspaces__workspace_id__connections_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    purge_expired_v1_workspaces__workspace_id__connections_purge_expired_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reconnect_source_v1_workspaces__workspace_id__connections__connection_id__reconnect_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                connection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReconnectInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_source_v1_workspaces__workspace_id__connections__connection_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                connection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
