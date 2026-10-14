@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-13",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "scope": "Sol stabilization batch; not all Sol roadmap tickets",
+  "checks": [
+    {
+      "suite": "final backend integration",
+      "passed": 114,
+      "seconds": 18.28
+    },
+    {
+      "suite": "fetch/connectors active cancellation",
+      "passed": 74
+    },
+    {
+      "suite": "actual Python 3.12 kernel/runner/container cancellation",
+      "passed": 17,
+      "seconds": 7.57
+    },
+    {
+      "suite": "generated API contracts and web typecheck",
+      "status": "passed"
+    },
+    {
+      "suite": "three copied repository provenance checks",
+      "status": "passed"
+    },
+    {
+      "suite": "browser components and actual installed containers",
+      "passed": 22
+    },
+    {
+      "suite": "security and real-container cleanup on final installed browser image",
+      "passed": 36,
+      "seconds": 8.79
+    }
+  ],
+  "overlapping_suites_not_summed": true,
+  "live_search": {
+    "state": "completed",
+    "result_count": 2,
+    "all_snippets_unverified": true,
+    "source": "exa_keyless",
+    "paid_key_used": false,
+    "firebase_user_roundtrip": false,
+    "elapsed_seconds": 8.633
+  },
+  "status_counts": {
+    "done": 21,
+    "implemented_pending_verification": 35,
+    "planned": 40
+  },
+  "remaining": [
+    "Production collecting-stage HTTP-to-browser escalation and connection-aware resume",
+    "Local semantic-planning quality gate",
+    "List/report UI and further pipeline/source/deployment roadmap tickets"
+  ]
+}

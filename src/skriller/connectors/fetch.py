@@ -4,6 +4,7 @@ Public DNS pinning is enforced by the configured GuardedProxy; deployment must
 also forbid a worker's alternative egress routes (SKR-027). No direct fallback.
 """
 
+import asyncio
 import ipaddress
 import json
 import logging
@@ -25,8 +26,9 @@ from scrapling.engines.toolbelt.custom import Response
 from scrapling.spiders.throttle import parse_retry_after
 
 from skriller.connectors.classification import PageClassification, classify_page
+from skriller.connectors.switches import is_disabled
 from skriller.contracts import ExecutionContext, Failure, Source
-from skriller.db import ConversationRepository
+from skriller.db import ConversationRepository, JobRepository
 from skriller.db.schema import reservations
 from skriller.jobs.budget import BudgetExhausted, locked_job, reconcile, reserve
 from skriller.jobs.capacity import CapacityUnavailable, acquire, release
@@ -60,7 +62,7 @@ class FetchArtifact:
     content_type: str
     content_hash: str
     decoded_bytes: int
-    network_seconds: float
+    network_seconds: float | None
     parser_seconds: float
     attempts: int
     workspace_id: str
@@ -68,6 +70,7 @@ class FetchArtifact:
     classification: PageClassification
     access_route: str = "scrapling_http_guarded_proxy"
     evidence_kind: str = "page_read"
+    browser_seconds: float | None = None
 
     def persist(self, session, storage):
         """Persist raw bytes plus private JSON metadata referencing their evidence ID."""
@@ -106,6 +109,7 @@ class FetchArtifact:
             "classification": self.classification.status,
             "next_method": self.classification.next_method,
             "network_seconds": self.network_seconds,
+            "browser_seconds": self.browser_seconds,
             "parser_seconds": self.parser_seconds,
             "attempts": self.attempts,
         }
@@ -194,6 +198,30 @@ class HTTPFetcher:
         operation_key: str,
         minimum_interval: float = 0,
     ) -> FetchArtifact:
+        """Synchronous callers run the same copied asynchronous fetch boundary."""
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return asyncio.run(
+                self.afetch(
+                    context,
+                    url,
+                    source=source,
+                    operation_key=operation_key,
+                    minimum_interval=minimum_interval,
+                )
+            )
+        raise RuntimeError("Use await HTTPFetcher.afetch inside an active event loop")
+
+    async def afetch(
+        self,
+        context: ExecutionContext,
+        url: str,
+        *,
+        source: Source,
+        operation_key: str,
+        minimum_interval: float = 0,
+    ) -> FetchArtifact:
         if source not in get_args(Source):
             raise ValueError("Unsupported source identity")
         if context.connection_ref is not None:
@@ -214,7 +242,7 @@ class HTTPFetcher:
             raise _failure("budget_exhausted", "No fetch attempts remain")
         current, network_seconds, attempts_used = requested, 0.0, 0
         # Reuse one copied connection/session across bounded manual redirect hops.
-        with FetcherSession(
+        async with FetcherSession(
             proxy=self.proxy,
             impersonate=None,
             stealthy_headers=False,
@@ -223,9 +251,9 @@ class HTTPFetcher:
             verify=True,
             selector_config={"adaptive": False},
         ) as engine:
-            engine._curl_session.trust_env = False
-            engine._curl_session.curl_options[CurlOpt.NOPROXY] = ""
-            engine._curl_session.curl_options[CurlOpt.MAXFILESIZE_LARGE] = self.max_body_bytes
+            engine._async_curl_session.trust_env = False
+            engine._async_curl_session.curl_options[CurlOpt.NOPROXY] = ""
+            engine._async_curl_session.curl_options[CurlOpt.MAXFILESIZE_LARGE] = self.max_body_bytes
             for hop in range(self.max_redirects + 1):
                 remaining = (context.deadline - datetime.now(UTC)).total_seconds()
                 if remaining <= 0:
@@ -235,6 +263,8 @@ class HTTPFetcher:
                 # Commit persisted deadline/state control before an expected
                 # refusal is raised, so the tenant transaction cannot undo it.
                 with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
+                    if is_disabled(session, source, "read"):
+                        raise _failure("unsupported_operation", "Source reads are disabled")
                     permitted = permit_call(session, str(context.job_id))
                 if permitted <= 0:
                     raise _failure("deadline_exceeded", "Job no longer permits source reads")
@@ -312,17 +342,49 @@ class HTTPFetcher:
                     )
                     if timeout <= 0:
                         raise TimeoutError("Dispatch window expired")
-                    reply = engine.get(
-                        current,
-                        timeout=timeout,
-                        follow_redirects=False,
-                        retries=0,
-                        content_callback=consume,
-                        discard_cookies=True,
-                        headers={"Accept": "text/html,application/xhtml+xml,text/plain"},
+                    request = asyncio.create_task(
+                        engine.get(
+                            current,
+                            timeout=timeout,
+                            follow_redirects=False,
+                            retries=0,
+                            content_callback=consume,
+                            discard_cookies=True,
+                            headers={"Accept": "text/html,application/xhtml+xml,text/plain"},
+                        )
                     )
+                    try:
+                        while not request.done():
+                            done, _ = await asyncio.wait((request,), timeout=0.5)
+                            if done:
+                                break
+
+                            def check_control():
+                                with self.database.tenant(
+                                    context.actor_id, str(context.workspace_id)
+                                ) as session:
+                                    allowed = permit_call(session, str(context.job_id))
+                                    state = JobRepository.get(session, str(context.job_id))["state"]
+                                    disabled = is_disabled(session, source, "read")
+                                    return allowed, state, disabled
+
+                            allowed, state, disabled = await asyncio.to_thread(check_control)
+                            if disabled:
+                                raise _failure("unsupported_operation", "Source reads are disabled")
+                            if allowed <= 0 or datetime.now(UTC) >= context.deadline:
+                                raise _failure(
+                                    "cancelled" if state == "cancelled" else "deadline_exceeded",
+                                    "Source execution was stopped",
+                                )
+                        reply = await request
+                    finally:
+                        if not request.done():
+                            request.cancel()
+                        await asyncio.gather(request, return_exceptions=True)
                     headers = {str(k).lower(): str(v) for k, v in reply.headers.items()}
                     succeeded = True
+                except FetchUnavailable:
+                    raise
                 except Exception as error:  # noqa: BLE001 - redact source URL/provider exceptions
                     if oversized or getattr(error, "code", None) == 63:
                         raise _failure(

@@ -1,0 +1,8 @@
+# Test-only Python 3.13 base: production application requires Python 3.12.
+# Same proxy/network/firewall implementation; no product backend is installed.
+services:
+  proxy:
+    image: skriller-egress-proxy-fixture
+    build:
+      args:
+        BASE_IMAGE: python:3.13-slim@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285

@@ -1,6 +1,21 @@
 import pytest
 
 from skriller.jobs.outbox import CeleryPublisher
+from skriller.jobs.worker import create_worker_app
+
+
+def test_publisher_preserves_current_worker_and_private_task_registry():
+    from celery import current_app
+
+    first_database, second_database = object(), object()
+    worker = create_worker_app(first_database, "memory://", {})
+    worker.set_current()
+    publisher = CeleryPublisher("memory://", allow_memory=True)
+    assert current_app._get_current_object() is worker
+    assert "skriller.jobs.execute_attempt" not in publisher.app.tasks
+    other = create_worker_app(second_database, "memory://", {})
+    assert worker.tasks["skriller.jobs.execute_attempt"].run.__self__.database is first_database
+    assert other.tasks["skriller.jobs.execute_attempt"].run.__self__.database is second_database
 
 
 def test_memory_transport_requires_opt_in_and_payload_is_id_only():

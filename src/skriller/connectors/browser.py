@@ -22,6 +22,7 @@ from scrapling.fetchers.chrome import DynamicFetcher
 
 from skriller.connectors.classification import PageClassification, classify_page
 from skriller.connectors.fetch import FetchUnavailable, _failure, _public_url
+from skriller.connectors.switches import is_disabled
 from skriller.contracts import ExecutionContext, Failure, Source
 from skriller.db import ConversationRepository
 from skriller.db.schema import reservations
@@ -39,11 +40,20 @@ class BrowserRequest:
     max_body_bytes: int = 2 * 1024 * 1024
 
     def __post_init__(self):
+        if not isinstance(self.url, str) or not isinstance(self.readiness_selector, str):
+            raise TypeError("Typed public URL and readiness selector required")
         _public_url(self.url)
         if not self.readiness_selector or len(self.readiness_selector) > 500:
             raise ValueError("Bounded readiness selector required")
         if (
-            not 0 < self.timeout_seconds <= 45
+            isinstance(self.timeout_seconds, bool)
+            or not isinstance(self.timeout_seconds, (float, int))
+            or not math.isfinite(self.timeout_seconds)
+            or isinstance(self.max_requests, bool)
+            or not isinstance(self.max_requests, int)
+            or isinstance(self.max_body_bytes, bool)
+            or not isinstance(self.max_body_bytes, int)
+            or not 0 < self.timeout_seconds <= 45
             or not 1 <= self.max_requests <= 64
             or not 1 <= self.max_body_bytes <= 2 * 1024 * 1024
         ):
@@ -80,7 +90,9 @@ class BrowserResult:
 class IsolatedBrowserExecutor(Protocol):
     """Must enforce hard child/container timeout and confirm descendant cleanup."""
 
-    def execute(self, request: BrowserRequest) -> BrowserResult: ...
+    def execute(
+        self, request: BrowserRequest, *, cancel_check: Callable[[], bool] | None = None
+    ) -> BrowserResult: ...
 
 
 def copied_engine_options(request: BrowserRequest, page_setup: Callable) -> dict:
@@ -96,7 +108,7 @@ def copied_engine_options(request: BrowserRequest, page_setup: Callable) -> dict
         "extra_flags": [
             "--disable-quic",
             "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
-            "--host-resolver-rules=MAP * ~NOTFOUND",
+            "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 172.29.0.2",
             "--proxy-bypass-list=<-loopback>",
         ],
         "additional_args": {"service_workers": "block", "accept_downloads": False},
@@ -105,6 +117,9 @@ def copied_engine_options(request: BrowserRequest, page_setup: Callable) -> dict
         "wait_selector_state": "attached",
         "page_setup": page_setup,
         "network_idle": False,
+        # Copied browser config's retries count includes the initial attempt.
+        "retries": 1,
+        "solve_cloudflare": False,
         "google_search": False,
         "load_dom": True,
         "selector_config": {"adaptive": False},
@@ -149,6 +164,8 @@ def run_copied_browser_in_container(request: BrowserRequest) -> BrowserResult:
         options = copied_engine_options(request, setup)
         options["user_data_dir"] = profile
         response = DynamicFetcher.fetch(request.url, **options)
+    if not response.css(request.readiness_selector):
+        raise _failure("source_unavailable", "Rendered page did not meet readiness")
     raw = response.body
     if len(raw) > request.max_body_bytes:
         raise _failure("budget_exhausted", "Rendered page exceeds output budget")
@@ -186,6 +203,8 @@ class DynamicBrowserAdapter:
         prefix = f"fetch:{sha256(url.encode()).hexdigest()}:"
         key = prefix + operation_key + ":browser"
         with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
+            if is_disabled(session, source, "read"):
+                raise _failure("unsupported_operation", "Source reads are disabled")
             remaining = permit_call(session, str(context.job_id))
         remaining = min(remaining, (context.deadline - datetime.now(UTC)).total_seconds(), 45)
         if remaining <= 0 or context.attempt_budget < 1:
@@ -240,43 +259,64 @@ class DynamicBrowserAdapter:
                 raise _failure("budget_exhausted", "Browser request budget exhausted") from None
         result = None
         started = monotonic()
+        stop_reason = None
+
+        def cancelled():
+            nonlocal stop_reason
+            with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
+                allowed = permit_call(session, str(context.job_id))
+                if is_disabled(session, source, "read"):
+                    stop_reason = "unsupported_operation"
+                elif allowed <= 0 or datetime.now(UTC) >= context.deadline:
+                    from skriller.db import JobRepository
+
+                    state = JobRepository.get(session, str(context.job_id))["state"]
+                    stop_reason = "cancelled" if state == "cancelled" else "deadline_exceeded"
+            return stop_reason is not None
+
         try:
             timeout = min(request.timeout_seconds, lease.deadline_monotonic - monotonic())
             if timeout <= 0:
                 raise TimeoutError("Browser execution window expired")
             bounded = BrowserRequest(url, readiness_selector, timeout, request.max_requests)
-            result = self.executor.execute(bounded)
+            candidate = self.executor.execute(bounded, cancel_check=cancelled)
             if (
-                not 0 <= result.request_count <= request.max_requests
-                or len(result.content) > request.max_body_bytes
+                not 0 <= candidate.request_count <= request.max_requests
+                or len(candidate.content) > request.max_body_bytes
             ):
                 raise _failure("budget_exhausted", "Browser worker exceeded response limits")
-            _public_url(result.final_url)
+            _public_url(candidate.final_url)
+            result = candidate
         except FetchUnavailable:
+            if stop_reason:
+                raise _failure(stop_reason, "Browser execution was stopped") from None
             raise
         except Exception:  # noqa: BLE001 - redact raw page/process errors
             raise _failure(
                 "source_unavailable", "Isolated browser execution did not complete"
             ) from None
         finally:
-            with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
-                locked_job(session, str(context.job_id))
-                reconcile(
-                    session,
-                    str(context.job_id),
-                    reservation["id"],
-                    status="confirmed" if result is not None else "estimated",
-                    cost=0,
-                    actual_dimensions={"fetch_attempts": max(1, result.request_count)}
-                    if result is not None
-                    else None,
-                )
-                release(
-                    session,
-                    lease,
-                    latency=monotonic() - started,
-                    ok=result is not None and result.status < 400,
-                )
+            try:
+                with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
+                    locked_job(session, str(context.job_id))
+                    reconcile(
+                        session,
+                        str(context.job_id),
+                        reservation["id"],
+                        status="confirmed" if result is not None else "estimated",
+                        cost=0,
+                        actual_dimensions={"fetch_attempts": max(1, result.request_count)}
+                        if result is not None
+                        else None,
+                    )
+            finally:
+                with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
+                    release(
+                        session,
+                        lease,
+                        latency=monotonic() - started,
+                        ok=result is not None and result.status < 400,
+                    )
         classification = classify_page(
             result.content, source=source, final_url=result.final_url, status=result.status
         )

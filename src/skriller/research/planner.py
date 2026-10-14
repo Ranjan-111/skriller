@@ -7,9 +7,11 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from skriller.contracts import Criterion, ExecutionContext, Limits, SearchPlan, Source
 from skriller.db import ConversationRepository
+from skriller.extraction.groq import structured_model
 from skriller.extraction.models import LocalStructuredModel
 from skriller.jobs.budget import locked_job
 from skriller.jobs.control import remaining_seconds
+from skriller.settings import Settings
 
 Group = Literal["must_have", "preference", "exclude"]
 Operator = Literal["eq", "contains", "gte", "lte", "recent"]
@@ -206,8 +208,22 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
 
 
 class PromptPlanner:
-    def __init__(self, model: LocalStructuredModel):
-        self.model = model
+    def __init__(
+        self, model: LocalStructuredModel | None = None, *, settings: Settings | None = None
+    ):
+        self._owns_model = model is None
+        self.model = model if model is not None else structured_model(settings or Settings())
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *_exc):
+        await self.aclose()
+
+    async def aclose(self):
+        """Configured clients are planner-owned; injected clients stay caller-owned."""
+        if self._owns_model and hasattr(self.model, "aclose"):
+            await self.model.aclose()
 
     async def interpret(
         self,

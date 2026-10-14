@@ -1,0 +1,22 @@
+{
+  "model": "deepseek-r1:8b",
+  "synthetic_fixture": true,
+  "tested_at": "2026-10-13T11:29:05.571691+00:00",
+  "status": "inconclusive_report_failure",
+  "live_calls_executed": 1,
+  "usage": [
+    {
+      "status": "confirmed",
+      "dimensions": {
+        "llm_calls": 1,
+        "tokens": 1057
+      },
+      "currency_cost_usd": "0E-8"
+    }
+  ],
+  "limitations": [
+    "Probe result serialization referenced the wrong ledger column after the model call. Semantic outcome was not retained, so this is not a passing quality benchmark.",
+    "The 1024-output setup was refused before IO; one default512-output trial executed. No retry or cloud model was invoked.",
+    "Synthetic jobs were cancelled during cleanup."
+  ]
+}

@@ -334,7 +334,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-008"></a>
 #### SKR-008 — Set up ticket-level CI and artifact reporting
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-006](#skr-006), [SKR-007](#skr-007)
 
@@ -825,7 +825,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-029"></a>
 #### SKR-029 — Store source credentials with tenant-scoped access
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-014](#skr-014), [SKR-018](#skr-018), [SKR-028](#skr-028)
 
@@ -848,7 +848,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-030"></a>
 #### SKR-030 — Implement source connect, expire, reconnect and revoke
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-025](#skr-025), [SKR-029](#skr-029)
 
@@ -896,7 +896,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-032"></a>
 #### SKR-032 — Adapt doctor/probe results and expose connector status
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031)
 
@@ -1013,7 +1013,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-037"></a>
 #### SKR-037 — Classify challenges, empty pages and unavailable access
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-036](#skr-036)
 
@@ -1036,7 +1036,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-038"></a>
 #### SKR-038 — Adapt copied dynamic browser engine and bounded pool
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-002](#skr-002), [SKR-023](#skr-023), [SKR-025](#skr-025), [SKR-027](#skr-027), [SKR-037](#skr-037)
 
@@ -1105,7 +1105,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-041"></a>
 #### SKR-041 — Adapt copied cache logic to access-scoped freshness
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-018](#skr-018), [SKR-030](#skr-030), [SKR-036](#skr-036)
 
@@ -1222,7 +1222,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-046"></a>
 #### SKR-046 — Adapt SmartScraper graph to already-collected content
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-004](#skr-004), [SKR-044](#skr-044), [SKR-045](#skr-045)
 
@@ -1268,7 +1268,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-048"></a>
 #### SKR-048 — Adapt bounded LLM selector repair and template promotion
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-025](#skr-025), [SKR-043](#skr-043), [SKR-045](#skr-045), [SKR-047](#skr-047)
 
@@ -1293,7 +1293,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-049"></a>
 #### SKR-049 — Resolve entity identity with reversible links
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-016](#skr-016), [SKR-035](#skr-035), [SKR-047](#skr-047)
 
@@ -1316,7 +1316,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-050"></a>
 #### SKR-050 — Evaluate essential criteria and preference ranking
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-019](#skr-019), [SKR-047](#skr-047), [SKR-049](#skr-049)
 
@@ -1339,7 +1339,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-051"></a>
 #### SKR-051 — Validate contacts and per-claim freshness
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-041](#skr-041), [SKR-047](#skr-047), [SKR-049](#skr-049)
 
@@ -1433,7 +1433,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-054"></a>
 #### SKR-054 — Adapt copied export helpers for CSV, JSON and JSONL
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-004](#skr-004), [SKR-018](#skr-018), [SKR-047](#skr-047), [SKR-050](#skr-050), [SKR-051](#skr-051)
 
@@ -1456,7 +1456,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-055"></a>
 #### SKR-055 — Implement saved-list snapshots and refresh
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-015](#skr-015), [SKR-049](#skr-049), [SKR-053](#skr-053), [SKR-054](#skr-054)
 
@@ -1479,7 +1479,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-056"></a>
 #### SKR-056 — Implement evidence-grounded research follow-ups
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-015](#skr-015), [SKR-045](#skr-045), [SKR-047](#skr-047), [SKR-053](#skr-053)
 
@@ -1525,7 +1525,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-058"></a>
 #### SKR-058 — Build partial results, reconnect and usage UX
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-024](#skr-024), [SKR-025](#skr-025), [SKR-030](#skr-030), [SKR-032](#skr-032), [SKR-052](#skr-052), [SKR-053](#skr-053)
 
@@ -1642,7 +1642,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-063"></a>
 #### SKR-063 — Adapt GitHub public research connector
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-035](#skr-035), [SKR-047](#skr-047)
 
@@ -1665,7 +1665,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-064"></a>
 #### SKR-064 — Adapt RSS/Atom feed connector
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-031](#skr-031), [SKR-035](#skr-035), [SKR-036](#skr-036), [SKR-047](#skr-047)
 
@@ -1688,7 +1688,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-065"></a>
 #### SKR-065 — Adapt public YouTube metadata and available transcripts
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-035](#skr-035), [SKR-047](#skr-047)
 
@@ -1711,7 +1711,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-066"></a>
 #### SKR-066 — Create company/directory extraction presets using copied engine
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-036](#skr-036), [SKR-043](#skr-043), [SKR-044](#skr-044), [SKR-047](#skr-047), [SKR-051](#skr-051)
 
@@ -1784,7 +1784,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-069"></a>
 #### SKR-069 — Enforce workspace entitlements and abuse limits
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-014](#skr-014), [SKR-024](#skr-024), [SKR-025](#skr-025), [SKR-032](#skr-032)
 
@@ -1807,7 +1807,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-070"></a>
 #### SKR-070 — Instrument stages, source health and costs
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-017](#skr-017), [SKR-024](#skr-024), [SKR-032](#skr-032)
 
@@ -1830,7 +1830,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-071"></a>
 #### SKR-071 — Enforce evidence and export retention
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-018](#skr-018), [SKR-041](#skr-041), [SKR-054](#skr-054)
 

@@ -1,0 +1,1272 @@
+{
+  "version": 1,
+  "state": "active",
+  "recommended_first_model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "completed_tickets_excluded": [
+    "SKR-001",
+    "SKR-002",
+    "SKR-003",
+    "SKR-004",
+    "SKR-005",
+    "SKR-006",
+    "SKR-007",
+    "SKR-008",
+    "SKR-013",
+    "SKR-014",
+    "SKR-015",
+    "SKR-016",
+    "SKR-017",
+    "SKR-019",
+    "SKR-020",
+    "SKR-021",
+    "SKR-022",
+    "SKR-023",
+    "SKR-024",
+    "SKR-026",
+    "SKR-031",
+    "SKR-032",
+    "SKR-037",
+    "SKR-038",
+    "SKR-042",
+    "SKR-046",
+    "SKR-054"
+  ],
+  "tickets": [
+    {
+      "ticket_id": "SKR-008",
+      "title": "Set up ticket-level CI and artifact reporting",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-006",
+        "SKR-007"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "done"
+    },
+    {
+      "ticket_id": "SKR-009",
+      "title": "Validate LinkedIn backend route and acquire missing implementation",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-003",
+        "SKR-007"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-010",
+      "title": "Validate Reddit route and acquire missing implementation",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-003",
+        "SKR-007"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-011",
+      "title": "Validate search coverage, operators and provider terms",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-007"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-012",
+      "title": "Validate cloud/local models against copied extraction code",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-004",
+        "SKR-005",
+        "SKR-007"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-018",
+      "title": "Implement private evidence object storage",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-014",
+        "SKR-016"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-025",
+      "title": "Implement cancellation, deadline and resume semantics",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-020",
+        "SKR-022",
+        "SKR-023",
+        "SKR-024"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-027",
+      "title": "Adapt public URL validation and network egress controls",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-003",
+        "SKR-006",
+        "SKR-007"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-028",
+      "title": "Adapt subprocess helpers into isolated backend runner",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-003",
+        "SKR-005",
+        "SKR-027"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-029",
+      "title": "Store source credentials with tenant-scoped access",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-014",
+        "SKR-018",
+        "SKR-028"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-030",
+      "title": "Implement source connect, expire, reconnect and revoke",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-025",
+        "SKR-029"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-032",
+      "title": "Adapt doctor/probe results and expose connector status",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "done"
+    },
+    {
+      "ticket_id": "SKR-033",
+      "title": "Implement chosen search-provider adapter",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-011",
+        "SKR-019",
+        "SKR-024",
+        "SKR-027"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-034",
+      "title": "Generate bounded search/dork query variants",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-019",
+        "SKR-033",
+        "SKR-096"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-035",
+      "title": "Normalise and deduplicate discovered candidates",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-016",
+        "SKR-027",
+        "SKR-033"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-036",
+      "title": "Adapt copied Scrapling HTTP fetching into product stage",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-002",
+        "SKR-023",
+        "SKR-024",
+        "SKR-027",
+        "SKR-035"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-037",
+      "title": "Classify challenges, empty pages and unavailable access",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-036"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "done"
+    },
+    {
+      "ticket_id": "SKR-038",
+      "title": "Adapt copied dynamic browser engine and bounded pool",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-002",
+        "SKR-023",
+        "SKR-025",
+        "SKR-027",
+        "SKR-037"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "done"
+    },
+    {
+      "ticket_id": "SKR-039",
+      "title": "Adapt copied stealth/challenge engine with bounded retries",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-038"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-040",
+      "title": "Adapt copied proxy rotation and session continuity",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-023",
+        "SKR-024",
+        "SKR-029",
+        "SKR-039"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-041",
+      "title": "Adapt copied cache logic to access-scoped freshness",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-018",
+        "SKR-030",
+        "SKR-036"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-043",
+      "title": "Integrate copied adaptive selector matching with validation",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-036",
+        "SKR-042"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-044",
+      "title": "Adapt copied HTML cleanup and chunking without evidence loss",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-004",
+        "SKR-036"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-045",
+      "title": "Adapt copied model creation and usage callbacks",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-012",
+        "SKR-024",
+        "SKR-044"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-046",
+      "title": "Adapt SmartScraper graph to already-collected content",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-004",
+        "SKR-044",
+        "SKR-045"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "done"
+    },
+    {
+      "ticket_id": "SKR-047",
+      "title": "Validate extraction fields against schema and evidence",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-016",
+        "SKR-019",
+        "SKR-043",
+        "SKR-046"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-048",
+      "title": "Adapt bounded LLM selector repair and template promotion",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-025",
+        "SKR-043",
+        "SKR-045",
+        "SKR-047"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-049",
+      "title": "Resolve entity identity with reversible links",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-016",
+        "SKR-035",
+        "SKR-047"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-050",
+      "title": "Evaluate essential criteria and preference ranking",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-019",
+        "SKR-047",
+        "SKR-049"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-051",
+      "title": "Validate contacts and per-claim freshness",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-041",
+        "SKR-047",
+        "SKR-049"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-096",
+      "title": "Implement prompt-to-plan interpretation and clarification service",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-015",
+        "SKR-019",
+        "SKR-024",
+        "SKR-045"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-052",
+      "title": "Build prompt composer and editable interpretation UI",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-006",
+        "SKR-013",
+        "SKR-015",
+        "SKR-019",
+        "SKR-026",
+        "SKR-096"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-053",
+      "title": "Build results and evidence detail views",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-016",
+        "SKR-026",
+        "SKR-049",
+        "SKR-050",
+        "SKR-051"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-054",
+      "title": "Adapt copied export helpers for CSV, JSON and JSONL",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-004",
+        "SKR-018",
+        "SKR-047",
+        "SKR-050",
+        "SKR-051"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "done"
+    },
+    {
+      "ticket_id": "SKR-055",
+      "title": "Implement saved-list snapshots and refresh",
+      "status_at_allocation": "in_progress",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-015",
+        "SKR-049",
+        "SKR-053",
+        "SKR-054"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-056",
+      "title": "Implement evidence-grounded research follow-ups",
+      "status_at_allocation": "in_progress",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-015",
+        "SKR-045",
+        "SKR-047",
+        "SKR-053"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-057",
+      "title": "Implement conversational refinement and plan reevaluation",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-034",
+        "SKR-050",
+        "SKR-052",
+        "SKR-055",
+        "SKR-056"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-058",
+      "title": "Build partial results, reconnect and usage UX",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-024",
+        "SKR-025",
+        "SKR-030",
+        "SKR-032",
+        "SKR-052",
+        "SKR-053"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-059",
+      "title": "Adapt LinkedIn discovery and candidate routing",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-009",
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-034",
+        "SKR-035"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-060",
+      "title": "Adapt LinkedIn profile, company and post reads",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-059",
+        "SKR-037",
+        "SKR-039",
+        "SKR-040",
+        "SKR-047",
+        "SKR-051"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-061",
+      "title": "Adapt Reddit discussion discovery",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-010",
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-034",
+        "SKR-035"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-062",
+      "title": "Adapt Reddit post/comment reading and signal extraction",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-061",
+        "SKR-037",
+        "SKR-047",
+        "SKR-050"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-063",
+      "title": "Adapt GitHub public research connector",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-035",
+        "SKR-047"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-064",
+      "title": "Adapt RSS/Atom feed connector",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-031",
+        "SKR-035",
+        "SKR-036",
+        "SKR-047"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-065",
+      "title": "Adapt public YouTube metadata and available transcripts",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-035",
+        "SKR-047"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-066",
+      "title": "Create company/directory extraction presets using copied engine",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-036",
+        "SKR-043",
+        "SKR-044",
+        "SKR-047",
+        "SKR-051"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-067",
+      "title": "Verify first complete prompt-to-export slice",
+      "status_at_allocation": "implemented_pending_verification",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-021",
+        "SKR-022",
+        "SKR-023",
+        "SKR-024",
+        "SKR-025",
+        "SKR-026",
+        "SKR-034",
+        "SKR-036",
+        "SKR-037",
+        "SKR-044",
+        "SKR-047",
+        "SKR-049",
+        "SKR-050",
+        "SKR-051",
+        "SKR-052",
+        "SKR-053",
+        "SKR-054",
+        "SKR-058",
+        "SKR-066"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-068",
+      "title": "Verify combined LinkedIn/Reddit research journey",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-056",
+        "SKR-057",
+        "SKR-059",
+        "SKR-060",
+        "SKR-061",
+        "SKR-062",
+        "SKR-067"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-069",
+      "title": "Enforce workspace entitlements and abuse limits",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-014",
+        "SKR-024",
+        "SKR-025",
+        "SKR-032"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-070",
+      "title": "Instrument stages, source health and costs",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-017",
+        "SKR-024",
+        "SKR-032"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "implemented_pending_verification"
+    },
+    {
+      "ticket_id": "SKR-071",
+      "title": "Enforce evidence and export retention",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-018",
+        "SKR-041",
+        "SKR-054"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-072",
+      "title": "Propagate deletion and suppress rediscovery",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-030",
+        "SKR-049",
+        "SKR-055",
+        "SKR-071"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-073",
+      "title": "Implement encrypted backups and restore rehearsal",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-017",
+        "SKR-018",
+        "SKR-072"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-074",
+      "title": "Package and deploy bounded hosted pilot",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-008",
+        "SKR-027",
+        "SKR-028",
+        "SKR-029",
+        "SKR-069",
+        "SKR-070",
+        "SKR-071",
+        "SKR-073"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-075",
+      "title": "Benchmark parser, full-job latency and resource use",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-038",
+        "SKR-039",
+        "SKR-040",
+        "SKR-067",
+        "SKR-070",
+        "SKR-074"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-076",
+      "title": "Evaluate field, qualification and identity quality",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-048",
+        "SKR-049",
+        "SKR-050",
+        "SKR-051",
+        "SKR-060",
+        "SKR-062",
+        "SKR-063",
+        "SKR-064",
+        "SKR-065",
+        "SKR-066",
+        "SKR-068"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-077",
+      "title": "Verify tenant boundaries and prompt-injection resistance",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-027",
+        "SKR-028",
+        "SKR-029",
+        "SKR-030",
+        "SKR-047",
+        "SKR-056",
+        "SKR-058",
+        "SKR-072",
+        "SKR-074"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-078",
+      "title": "Verify recovery, rate limits and budget races",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-022",
+        "SKR-023",
+        "SKR-024",
+        "SKR-025",
+        "SKR-039",
+        "SKR-068",
+        "SKR-074"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-079",
+      "title": "Prepare runbook and execute small customer pilot",
+      "status_at_allocation": "planned",
+      "phase": "P0",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-009",
+        "SKR-010",
+        "SKR-011",
+        "SKR-012",
+        "SKR-068",
+        "SKR-075",
+        "SKR-076",
+        "SKR-077",
+        "SKR-078"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-080",
+      "title": "Schedule idempotent saved-research refreshes",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-055",
+        "SKR-071",
+        "SKR-078"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-081",
+      "title": "Report meaningful changes and optional notifications",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-056",
+        "SKR-072",
+        "SKR-080"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-082",
+      "title": "Connect owner-authorised YouTube Analytics OAuth",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-030",
+        "SKR-065"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-083",
+      "title": "Retrieve and summarise owner analytics reports",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-056",
+        "SKR-082"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-084",
+      "title": "Adapt X discussion/professional connector",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-085",
+      "title": "Adapt Instagram business/creator connector",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-086",
+      "title": "Adapt Facebook company/content connector",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-087",
+      "title": "Add job/pricing/industry research presets",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-048",
+        "SKR-056",
+        "SKR-066",
+        "SKR-079"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-088",
+      "title": "Export qualified records into selected CRM",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-054",
+        "SKR-072",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-089",
+      "title": "Deliver signed idempotent webhooks",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-027",
+        "SKR-054",
+        "SKR-072",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-090",
+      "title": "Automate billing and entitlements",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-024",
+        "SKR-069",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-091",
+      "title": "Add selected language and locale support",
+      "status_at_allocation": "planned",
+      "phase": "P1",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-052",
+        "SKR-054",
+        "SKR-056",
+        "SKR-076"
+      ],
+      "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-092",
+      "title": "Adapt first regional-platform connector",
+      "status_at_allocation": "planned",
+      "phase": "P2",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-028",
+        "SKR-030",
+        "SKR-031",
+        "SKR-047",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-093",
+      "title": "Expose read-only MCP research interface",
+      "status_at_allocation": "planned",
+      "phase": "P2",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-019",
+        "SKR-056",
+        "SKR-069",
+        "SKR-077",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-094",
+      "title": "Evaluate optional semantic retrieval before adding infrastructure",
+      "status_at_allocation": "planned",
+      "phase": "P2",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-056",
+        "SKR-070",
+        "SKR-076",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    },
+    {
+      "ticket_id": "SKR-095",
+      "title": "Evaluate local companion only if selected routes require it",
+      "status_at_allocation": "planned",
+      "phase": "P2",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "depends_on": [
+        "SKR-009",
+        "SKR-010",
+        "SKR-028",
+        "SKR-030",
+        "SKR-079"
+      ],
+      "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
+      "current_status": "planned"
+    }
+  ],
+  "execution_rules": [
+    "Implementation resumed by user on GPT-6.1 Sol Medium; work only on Sol ownership or its explicit integration/review seams.",
+    "Use dependency-ready batches; model groups cannot be completed in two uninterrupted passes because dependencies cross groups.",
+    "Preserve existing copied source engines; do not rewrite verified components.",
+    "Only mark done after the whole acceptance scope and required tests pass; retain live/deployment gaps.",
+    "Luna owns assigned tickets; Sol reviews changes to authorization, evidence truth, model budgets, exported private data or production gates.",
+    "No retries of passing suites or broad redesign without a new failure/change.",
+    "No new paid services or automatic cloud fallback. Keep Ollama default.",
+    "Escalate Luna work to Sol for an architectural change, security ambiguity or repeated unresolved failure; record the reason."
+  ],
+  "active_model": "gpt-6.1-sol",
+  "active_reasoning_effort": "medium",
+  "execution_note": "User selected Sol Medium on 2026-10-14; durable collection, isolated JS escalation and saved-page graph integrated. Continue the next eligible Sol tickets without broadening completed component scopes into hosted deployment gates.",
+  "unfinished_ticket_count": 69
+}

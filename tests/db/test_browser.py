@@ -71,7 +71,7 @@ class FixtureExecutor:
         self.fail = fail
         self.requests = []
 
-    def execute(self, request):
+    def execute(self, request, *, cancel_check=None):
         self.requests.append(request)
         if self.fail:
             raise TimeoutError("private page content")
@@ -99,6 +99,26 @@ def test_default_browser_execution_is_unavailable_without_isolation(database):
         assert current_usage(session, str(ctx.job_id))[1]["fetch_attempts"] == 0
 
 
+def test_disabled_read_never_starts_browser_or_charges(database):
+    from skriller.connectors.switches import set_disabled
+
+    ctx = context(database)
+    fixture = FixtureExecutor()
+    with database.tenant(ctx.actor_id, str(ctx.workspace_id)) as session:
+        set_disabled(session, "web", "read", True)
+    with pytest.raises(FetchUnavailable, match="disabled"):
+        DynamicBrowserAdapter(database, executor=fixture, isolation_verified=True).fetch(
+            ctx,
+            "https://example.com",
+            source="web",
+            readiness_selector="h1",
+            operation_key=uuid4().hex,
+        )
+    assert not fixture.requests
+    with database.tenant(ctx.actor_id, str(ctx.workspace_id)) as session:
+        assert current_usage(session, str(ctx.job_id))[1]["fetch_attempts"] == 0
+
+
 def test_controlled_executor_charges_resources_and_returns_classified_output(database):
     ctx = context(database)
     fixture = FixtureExecutor()
@@ -122,7 +142,7 @@ def test_timeout_killed_fixture_child_releases_pool_for_other_work(database, tmp
     ctx = context(database)
 
     class ChildTimeout:
-        def execute(self, request):
+        def execute(self, request, *, cancel_check=None):
             outcome = bounded_process(
                 [sys.executable, "-c", "import time;time.sleep(5)"],
                 cwd=tmp_path,
@@ -185,7 +205,7 @@ def test_two_page_pool_blocks_third_executor_and_releases_on_completion(database
         def __init__(self, index):
             self.index = index
 
-        def execute(self, request):
+        def execute(self, request, *, cancel_check=None):
             started[self.index].set()
             assert finish.wait(3)
             return BrowserResult(
@@ -291,3 +311,81 @@ def test_child_calls_copied_factory_with_fresh_profile_and_public_only_routes(mo
     run_copied_browser_in_container(request)
     assert profiles[0] != profiles[1] and all(not Path(profile).exists() for profile in profiles)
     assert actions == ["continue", "abort", "abort", "continue"] * 2
+
+
+def test_invalid_executor_result_stays_estimated_and_releases_capacity(database):
+    from skriller.db.schema import reservations
+
+    ctx = context(database)
+
+    class OverLimit:
+        def execute(self, request, *, cancel_check=None):
+            return BrowserResult(
+                b"<html><h1>Invalid worker</h1></html>",
+                request.url,
+                200,
+                request.max_requests + 1,
+                0.01,
+            )
+
+    with pytest.raises(FetchUnavailable) as caught:
+        DynamicBrowserAdapter(database, executor=OverLimit(), isolation_verified=True).fetch(
+            ctx,
+            "https://example.com",
+            source="web",
+            readiness_selector="h1",
+            operation_key=uuid4().hex,
+            max_requests=2,
+        )
+    assert caught.value.failure.code == "budget_exhausted"
+    with database.tenant(ctx.actor_id, str(ctx.workspace_id)) as session:
+        row = session.execute(sa.select(reservations)).mappings().one()
+        assert row["reconciliation_status"] == "estimated"
+        assert row["actual_dimensions"] == {"fetch_attempts": 2}
+        lease = acquire(
+            session, str(ctx.job_id), kind="browser", source="reddit", host="reddit.com"
+        )
+        assert release(session, lease)
+    from skriller.settings import Settings
+
+    owner = sa.create_engine(Settings().database_url)
+    try:
+        with owner.connect() as connection:
+            assert (
+                connection.execute(
+                    sa.text("SELECT count(*) FROM capacity_leases WHERE job_id=:job"),
+                    {"job": str(ctx.job_id)},
+                ).scalar_one()
+                == 0
+            )
+    finally:
+        owner.dispose()
+
+
+def test_reconciliation_failure_still_releases_browser_lease(database, monkeypatch):
+    import skriller.connectors.browser as module
+
+    ctx = context(database)
+    releases = []
+    original = module.release
+
+    def recorded_release(*args, **kwargs):
+        result = original(*args, **kwargs)
+        releases.append(result)
+        return result
+
+    def failed_reconcile(*args, **kwargs):
+        raise RuntimeError("controlled accounting failure")
+
+    monkeypatch.setattr(module, "reconcile", failed_reconcile)
+    monkeypatch.setattr(module, "release", recorded_release)
+    with pytest.raises(RuntimeError, match="controlled accounting failure"):
+        DynamicBrowserAdapter(database, executor=FixtureExecutor(), isolation_verified=True).fetch(
+            ctx,
+            "https://example.com",
+            source="web",
+            readiness_selector="h1",
+            operation_key=uuid4().hex,
+            max_requests=3,
+        )
+    assert releases == [True]

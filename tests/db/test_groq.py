@@ -193,6 +193,11 @@ async def test_transport_bounds_and_schema_invalid_known_usage(database):
 
 
 def test_settings_secret_local_default_and_explicit_groq_opt_in():
+    from pydantic import ValidationError
+
+    assert structured_model(Settings(ollama_model="deepseek-r1:8b")).model_name == "deepseek-r1:8b"
+    with pytest.raises(ValidationError):
+        Settings(ollama_model="unreviewed-model")
     settings = Settings(_env_file=None, GROQ_API_KEY="synthetic-not-real-key")
     assert settings.model_provider == "ollama" and "synthetic" not in repr(settings)
     assert structured_model(settings).source == "ollama"

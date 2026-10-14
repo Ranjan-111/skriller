@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 import time
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -28,6 +29,18 @@ class RunResult:
     elapsed_ms: int
 
 
+def _control_status(cancel_check: Callable[[], bool] | None) -> str | None:
+    if cancel_check is None:
+        return None
+    try:
+        cancelled = cancel_check()
+        if not isinstance(cancelled, bool):
+            return "control_unavailable"
+        return "cancelled" if cancelled else None
+    except Exception:  # noqa: BLE001 - fail closed without exposing control credentials
+        return "control_unavailable"
+
+
 def bounded_process(
     argv: list[str],
     *,
@@ -35,11 +48,15 @@ def bounded_process(
     env: dict[str, str],
     timeout: float = 30,
     max_output: int = 1024 * 1024,
+    cancel_check: Callable[[], bool] | None = None,
 ) -> RunResult:
     """Drain both pipes while enforcing a combined byte/time budget and group kill."""
     if timeout <= 0 or max_output < 1:
         raise ValueError("Process budgets must be positive")
     started = time.monotonic()
+    stopped = _control_status(cancel_check)
+    if stopped:
+        return RunResult(stopped, None, "", "", round((time.monotonic() - started) * 1000))
     output = {"stdout": bytearray(), "stderr": bytearray()}
     status = "completed"
     total = 0
@@ -66,7 +83,11 @@ def bounded_process(
             for name, stream in (("stdout", stdout), ("stderr", stderr)):
                 os.set_blocking(stream.fileno(), False)
                 selector.register(stream, selectors.EVENT_READ, name)
-            while selector.get_map():
+            while selector.get_map() or process.poll() is None:
+                stopped = _control_status(cancel_check)
+                if stopped:
+                    status = stopped
+                    break
                 remaining = timeout - (time.monotonic() - started)
                 if remaining <= 0:
                     status = "timeout"
@@ -84,12 +105,6 @@ def bounded_process(
                         break
                 if status != "completed":
                     break
-            if status == "completed":
-                remaining = timeout - (time.monotonic() - started)
-                try:
-                    process.wait(timeout=max(0.001, remaining))
-                except subprocess.TimeoutExpired:
-                    status = "timeout"
     finally:
         # Kill residual descendants even if the parent exited before pipe EOF.
         try:
@@ -139,19 +154,29 @@ class IsolatedRunner:
     proxy_ip: str = "172.29.0.2"
 
     def __post_init__(self):
-        if not re.fullmatch(r"[a-zA-Z0-9._/:-]+@sha256:[a-f0-9]{64}", self.image):
-            raise ValueError("Worker image must be pinned to an immutable registry digest")
+        if not re.fullmatch(r"(?:[a-zA-Z0-9._/:-]+@)?sha256:[a-f0-9]{64}", self.image):
+            raise ValueError("Worker image requires an immutable registry digest or local image ID")
         if self.network != "skriller_egress_workers" or self.proxy_ip != "172.29.0.2":
             raise ValueError("Runner requires the reviewed guarded network topology")
         if not self.docker.is_absolute():
             raise ValueError("Docker executable must use an administrator-owned absolute path")
 
     def run(
-        self, operation: str, target: str, *, timeout: float = 60, max_output: int = 1024 * 1024
+        self,
+        operation: str,
+        target: str,
+        *,
+        timeout: float = 60,
+        max_output: int = 1024 * 1024,
+        cancel_check: Callable[[], bool] | None = None,
     ) -> RunResult:
         if not 0 < timeout <= 180 or not 0 < max_output <= 10 * 1024 * 1024:
             raise ValueError("Backend budget exceeds the execution boundary")
         command = reviewed_command(operation, target)
+        started = time.monotonic()
+        stopped = _control_status(cancel_check)
+        if stopped:
+            return RunResult(stopped, None, "", "", round((time.monotonic() - started) * 1000))
         container = "skriller-backend-" + uuid.uuid4().hex
         # Pass a non-empty allowlist into the reused helper so it cannot fall
         # back to os.environ. No host token, proxy or credential variables leak.
@@ -219,7 +244,12 @@ class IsolatedRunner:
             ]
             try:
                 result = bounded_process(
-                    argv, cwd=workspace, env=env, timeout=timeout, max_output=max_output
+                    argv,
+                    cwd=workspace,
+                    env=env,
+                    timeout=timeout,
+                    max_output=max_output,
+                    cancel_check=cancel_check,
                 )
             finally:
                 # Killing the docker client alone does not terminate a daemon-
@@ -237,6 +267,12 @@ class IsolatedRunner:
                     result.returncode,
                     result.stdout,
                     "Isolated worker cleanup could not be confirmed",
-                    result.elapsed_ms,
+                    round((time.monotonic() - started) * 1000),
                 )
-            return result
+            return RunResult(
+                result.status,
+                result.returncode,
+                result.stdout,
+                result.stderr,
+                round((time.monotonic() - started) * 1000),
+            )

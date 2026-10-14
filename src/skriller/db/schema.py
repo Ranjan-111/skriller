@@ -199,6 +199,7 @@ jobs = scoped(
     sa.Column("version", sa.Integer, nullable=False, default=1),
     sa.Column("completed_at", sa.DateTime(timezone=True)),
     sa.Column("failure_code", sa.String(64)),
+    sa.Column("purpose", sa.String(16), nullable=False, server_default="research"),
     sa.Column("terminal_reason", sa.String(64)),
     constraints=(
         sa.ForeignKeyConstraint(
@@ -210,6 +211,7 @@ jobs = scoped(
             "state IN ('planned','queued','running','waiting_for_connection','paused','completed','partial','failed','cancelled')"
         ),
         sa.CheckConstraint("version > 0"),
+        sa.CheckConstraint("purpose IN ('research','planning')"),
         sa.CheckConstraint(
             "(state IN ('completed','partial','failed','cancelled')) = "
             "(terminal_reason IS NOT NULL)",
@@ -227,7 +229,7 @@ jobs = scoped(
             name="terminal_reason_consistent",
         ),
         sa.CheckConstraint(
-            "stage IS NULL OR stage IN ('discovering','collecting','extracting','resolving','qualifying')"
+            "stage IS NULL OR stage IN ('planning','discovering','collecting','extracting','resolving','qualifying')"
         ),
     ),
 )
@@ -269,6 +271,7 @@ outbox = scoped(
     sa.Column("topic", sa.String(32), nullable=False),
     sa.Column("idempotency_key", sa.String(200), nullable=False),
     sa.Column("published_at", sa.DateTime(timezone=True)),
+    sa.Column("discarded_at", sa.DateTime(timezone=True)),
     constraints=(
         sa.ForeignKeyConstraint(["workspace_id", "job_id"], ["jobs.workspace_id", "jobs.id"]),
         sa.ForeignKeyConstraint(
@@ -309,7 +312,7 @@ reservations = scoped(
     sa.Column("actual_cost_usd", sa.Numeric(20, 8)),
     constraints=(
         sa.ForeignKeyConstraint(["workspace_id", "job_id"], ["jobs.workspace_id", "jobs.id"]),
-        sa.UniqueConstraint("workspace_id", "idempotency_key"),
+        sa.UniqueConstraint("workspace_id", "job_id", "idempotency_key"),
         sa.CheckConstraint("amount_usd >= 0"),
         sa.CheckConstraint("state IN ('held','committed','released')"),
         sa.CheckConstraint("actual_cost_usd IS NULL OR actual_cost_usd >= 0"),

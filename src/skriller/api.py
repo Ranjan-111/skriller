@@ -13,9 +13,14 @@ from sqlalchemy import create_engine, text
 
 from skriller.auth import Identity, require_identity
 from skriller.connections.router import router as connections_router
+from skriller.connectors.router import router as connectors_router
 from skriller.connectors.search import ExaKeylessSearch
 from skriller.contracts import Capability, ExecutionContext, Failure, ProgressEvent, SearchPlan
 from skriller.db import Database
+from skriller.entitlements_router import router as entitlements_router
+from skriller.erasure_router import router as erasure_router
+from skriller.exports.router import router as exports_router
+from skriller.lists_router import router as lists_router
 from skriller.progress import router as progress_router
 from skriller.research.router import router as research_router
 from skriller.settings import Settings
@@ -46,7 +51,9 @@ def broker_available(url: str) -> bool:
 def worker_available(url: str) -> bool:
     """Read the durable queue's consumer count without publishing or using control queues."""
     try:
-        with Connection(url, connect_timeout=2, transport_options={"read_timeout": 2}) as connection:
+        with Connection(
+            url, connect_timeout=2, transport_options={"read_timeout": 2}
+        ) as connection:
             connection.connect()
             channel = connection.channel()
             try:
@@ -78,10 +85,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(progress_router)
     app.include_router(research_router)
     app.include_router(connections_router)
+    app.include_router(connectors_router)
+    app.include_router(exports_router)
+    app.include_router(lists_router)
+    app.include_router(entitlements_router)
+    app.include_router(erasure_router)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=configuration.cors_origins,
-        allow_methods=["GET", "POST", "DELETE"],
+        allow_methods=["GET", "POST", "PUT", "DELETE"],
         allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "Last-Event-ID"],
     )
 

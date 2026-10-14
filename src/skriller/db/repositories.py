@@ -226,8 +226,11 @@ class ResearchRepository:
         content_hash: str | None = None,
         expires_at=None,
     ):
+        from skriller.retention import expiry_for
+
         from .schema import evidence
 
+        expires_at = expiry_for(source_platform, collected_at, expires_at)
         return insert_row(
             session,
             evidence,
@@ -644,7 +647,7 @@ class JobRepository:
                 "amount_usd": money(amount_usd),
                 "state": "held",
             },
-            ["idempotency_key"],
+            ["job_id", "idempotency_key"],
             immutable_keys=["job_id", "amount_usd"],
         )
 

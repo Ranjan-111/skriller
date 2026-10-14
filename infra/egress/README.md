@@ -37,10 +37,32 @@ Real host loopback HTTP proxy tests verify public forwarding, metadata redirect
 denial, internal subresource denial and private CONNECT denial. Unit tests verify
 DNS rebinding prevention and private/mixed/mapped-IP rejection.
 
-Both attempted Docker image builds failed in Docker Desktop's storage layer:
-`/var/lib/docker/buildkit/containerd-overlayfs/metadata_v2.db: input/output error`.
-No existing images/volumes/containers were deleted or restarted. Consequently,
-kernel firewall behaviour and container filesystem isolation are **not yet
-operationally verified** on this host; SKR-027/028 remain partial until that gate
-and browser-worker integration pass. Restoring Docker storage is an external
-prerequisite, not a reason to disable the security boundary.
+Docker Desktop recovered on 2026-10-13 without deleting or resetting any
+existing images, containers or volumes. The pinned Python 3.12 production-base
+metadata request remained stalled, so the actual isolation gate was run with a
+separate digest-pinned Python 3.13 fixture. The product requires Python 3.12:
+this fixture does not prove the product runtime is installed or compatible.
+
+The fixture uses the same proxy code, guarded entrypoint, Docker restrictions
+and internal network. Reproduce it with:
+
+```sh
+docker build --build-arg BASE_IMAGE=python:3.13-slim@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285 -f infra/egress/Dockerfile.worker-base -t skriller-egress-worker-test .
+docker compose -f infra/egress/compose.yaml -f infra/egress/fixture.compose.yaml up -d --build
+SKRILLER_EGRESS_CONTAINER_TESTS=1 .venv/bin/pytest -q tests/security/test_egress.py tests/security/test_runner.py tests/security/test_container_boundary.py
+```
+
+The actual container gate verifies unprivileged execution, zero effective and
+child-inherited capabilities, host file/environment/Docker-socket exclusion,
+read-only root filesystem, direct public/private/metadata/loopback TCP denial,
+UDP denial and proxy denial of metadata HTTP/HTTPS CONNECT. Test workers are
+removed by their own unique names in `finally`. No host port is exposed.
+The proxy fixture can be stopped with the same two compose files and `down`
+(no volume deletion). It is not an installed browser or source reader.
+
+Production digest-pinned platform/browser images, their integration with this
+network, and real application-level extraction remain required release gates.
+
+## Python 3.12 verification update
+
+The Dockerfile defaults now pin the official Python 3.12 Bookworm index (`sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258`). Both the project proxy and worker base built and executed successfully on native arm64. The real kernel and cancellation gates passed with Python 3.12.15; the earlier 3.13 fixture is historical evidence. Set `SKRILLER_EGRESS_TEST_IMAGE` to the trusted immutable local image ID when testing another administrator-built image. Base-runtime verification does not by itself prove an installed browser or platform adapter.

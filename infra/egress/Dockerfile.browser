@@ -1,0 +1,11 @@
+# Existing guarded Python 3.12 worker base, immutable local reviewed image.
+ARG WORKER_BASE=skriller-egress-worker-bookworm@sha256:1f545e03d388697e527d64bcf573d3a91a7d0a52457fca2b14923c9bdbd9cc68
+FROM ${WORKER_BASE}
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright PYTHONPATH=/app/src:/app/third_party/scrapling:/app/third_party/agent-reach PYTHONDONTWRITEBYTECODE=1
+COPY infra/egress/browser-requirements.txt /app/browser-requirements.txt
+RUN pip install --no-cache-dir --no-deps -r /app/browser-requirements.txt
+RUN python -m playwright install --with-deps chromium && chmod -R a+rX /opt/playwright
+COPY third_party/scrapling/scrapling /app/third_party/scrapling/scrapling
+COPY third_party/agent-reach/agent_reach /app/third_party/agent-reach/agent_reach
+COPY src/skriller /app/src/skriller
+ENTRYPOINT ["/usr/local/bin/guarded-worker"]

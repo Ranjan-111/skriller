@@ -1,3 +1,4 @@
+import asyncio
 import gzip
 import json
 import threading
@@ -19,6 +20,22 @@ from skriller.security.urls import Destination, EgressDenied
 from skriller.storage import BlobUnavailable, EvidenceStorage, LocalBlobBackend
 
 pytestmark = pytest.mark.integration_db
+
+
+def test_disabled_read_never_starts_http_or_charges(database, proxy):
+    from skriller.connectors.switches import set_disabled
+
+    context = ctx(database)
+    endpoint, requests, _ = proxy
+    with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+        set_disabled(session, "web", "read", True)
+    with pytest.raises(FetchUnavailable, match="disabled"):
+        HTTPFetcher(database, trusted_proxy_url=endpoint).fetch(
+            context, "https://example.com/company", source="web", operation_key=uuid4().hex
+        )
+    assert not requests
+    with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+        assert current_usage(session, str(context.job_id))[1]["fetch_attempts"] == 0
 
 
 @pytest.fixture
@@ -43,6 +60,8 @@ def proxy(monkeypatch):
             requests.append(self.path)
             if self.path == "/slow":
                 time.sleep(0.3)
+            if self.path == "/idle-headers":
+                time.sleep(10)
             status = 200
             body, extras = company, {}
             if self.path == "/large":
@@ -257,3 +276,112 @@ def test_cancelled_job_is_denied_before_any_request_or_reservation(database, pro
     assert requests == []
     with database.tenant(context.actor_id, str(context.workspace_id)) as session:
         assert current_usage(session, str(context.job_id))[1]["fetch_attempts"] == 0
+
+
+@pytest.mark.parametrize("stop", ["cancelled", "deadline_exceeded", "disabled"])
+async def test_actual_async_fetch_stops_idle_headers_within_five_seconds(
+    database, proxy, monkeypatch, stop, caplog
+):
+    from curl_cffi.requests import AsyncSession
+
+    from skriller.connectors.switches import set_disabled
+    from skriller.db.schema import evidence, jobs, reservations
+    from skriller.jobs.control import cancel
+
+    endpoint, requests, _ = proxy
+    context = ctx(database)
+    releases = []
+    original = AsyncSession.release_curl
+
+    def release_curl(self, curl):
+        original(self, curl)
+        releases.append(True)
+
+    monkeypatch.setattr(AsyncSession, "release_curl", release_curl)
+    fetcher = HTTPFetcher(database, trusted_proxy_url=endpoint, timeout_seconds=20)
+    task = asyncio.create_task(
+        fetcher.afetch(
+            context, "http://example.com/idle-headers", source="web", operation_key=uuid4().hex
+        )
+    )
+
+    def persist_stop():
+        with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+            if stop == "cancelled":
+                cancel(session, str(context.job_id))
+            elif stop == "disabled":
+                set_disabled(session, "web", "read", True)
+            else:
+                session.execute(
+                    sa.update(jobs)
+                    .where(jobs.c.id == str(context.job_id))
+                    .values(created_at=sa.func.now() - sa.text("interval '1 hour'"))
+                )
+
+    try:
+        async with asyncio.timeout(3):
+            while not requests:
+                await asyncio.sleep(0.01)
+        started = time.monotonic()
+        await asyncio.to_thread(persist_stop)
+        with pytest.raises(FetchUnavailable) as caught:
+            await asyncio.wait_for(task, 5)
+        assert time.monotonic() - started < 5
+        assert caught.value.failure.code == (
+            "unsupported_operation" if stop == "disabled" else stop
+        )
+        assert requests == ["/idle-headers"] and releases == [True]
+        assert "idle-headers" not in caplog.text
+        with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+            rows = session.execute(sa.select(reservations)).mappings().all()
+            assert len(rows) == 1
+            assert rows[0]["reconciliation_status"] == "estimated"
+            assert current_usage(session, str(context.job_id))[1]["fetch_attempts"] == 1
+            assert (
+                session.execute(sa.select(sa.func.count()).select_from(evidence)).scalar_one() == 0
+            )
+        with pytest.raises(FetchUnavailable):
+            await fetcher.afetch(
+                context, "http://example.com/company", source="web", operation_key=uuid4().hex
+            )
+        assert requests == ["/idle-headers"]
+    finally:
+        if not task.done():
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
+
+
+async def test_sync_fetch_rejects_active_loop_before_creating_coroutine(database, proxy):
+    endpoint, requests, _ = proxy
+    with pytest.raises(RuntimeError, match="afetch"):
+        HTTPFetcher(database, trusted_proxy_url=endpoint).fetch(
+            ctx(database), "http://example.com/company", source="web", operation_key=uuid4().hex
+        )
+    assert requests == []
+
+
+async def test_async_fetch_caller_cancellation_keeps_dispatched_usage(database, proxy):
+    from skriller.db.schema import reservations
+
+    endpoint, requests, _ = proxy
+    context = ctx(database)
+    task = asyncio.create_task(
+        HTTPFetcher(database, trusted_proxy_url=endpoint).afetch(
+            context, "http://example.com/idle-headers", source="web", operation_key=uuid4().hex
+        )
+    )
+    try:
+        async with asyncio.timeout(3):
+            while not requests:
+                await asyncio.sleep(0.01)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await asyncio.wait_for(task, 5)
+        assert requests == ["/idle-headers"]
+        with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+            rows = session.execute(sa.select(reservations)).mappings().all()
+            assert len(rows) == 1 and rows[0]["reconciliation_status"] == "estimated"
+    finally:
+        if not task.done():
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)

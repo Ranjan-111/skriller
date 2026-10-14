@@ -3,7 +3,11 @@
 import sqlalchemy as sa
 from alembic import context
 
-import skriller.connections.tables  # noqa: F401 - register credential tables for schema comparison
+import skriller.connections.tables
+import skriller.connectors.switches
+import skriller.lists
+import skriller.qualification.contacts
+import skriller.qualification.identity  # noqa: F401 - register reversible identity links
 from skriller.db.schema import metadata
 from skriller.settings import Settings
 

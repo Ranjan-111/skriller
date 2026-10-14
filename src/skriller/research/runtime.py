@@ -6,9 +6,16 @@ RabbitMQ carries IDs only; PostgreSQL checkpoints survive worker restarts.
 import argparse
 import sys
 
-from skriller.db import Database
+import sqlalchemy as sa
+
+from skriller.db import Database, JobRepository
+from skriller.db.schema import attempts
+from skriller.jobs.budget import locked_job
 from skriller.jobs.control import permit_call
 from skriller.jobs.worker import CheckpointWorker, TaskIdentity, create_worker_app
+from skriller.research.bootstrap import execute_planning
+from skriller.research.collection import execute_collection
+from skriller.research.page_extraction import execute_page_extraction
 from skriller.research.service import dispatch, execute_discovery
 from skriller.settings import Settings
 
@@ -20,19 +27,84 @@ app.tasks.pop("skriller.jobs.execute_job", None)
 app.tasks.pop("skriller.jobs.execute_attempt", None)
 
 
-@app.task(name="skriller.jobs.execute_job")
+@app.task(name="skriller.jobs.execute_job", shared=False, lazy=False)
 def schedule(payload):
     identity = TaskIdentity.model_validate(payload)
+    with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+        from skriller.retention_runtime import register
+
+        register(session)
     outcome = CheckpointWorker(database, {}).schedule(payload)
     dispatch(database, settings.broker_url, identity.actor_id, str(identity.workspace_id))
     return outcome
 
 
-@app.task(name="skriller.jobs.execute_attempt", bind=True)
+@app.task(name="skriller.jobs.execute_attempt", bind=True, shared=False, lazy=False)
 def execute(self, payload):
-    if settings.search_provider == "disabled":
-        raise RuntimeError("Discovery provider is disabled")
-    outcome = execute_discovery(database, payload)
+    identity = TaskIdentity.model_validate(payload)
+    with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+        stage = session.execute(
+            sa.select(attempts.c.stage).where(
+                attempts.c.workspace_id == str(identity.workspace_id),
+                attempts.c.job_id == str(identity.job_id),
+                attempts.c.id == str(identity.attempt_id),
+            )
+        ).scalar_one()
+    if stage == "discovering" and settings.search_provider == "disabled":
+        with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+            job = locked_job(session, str(identity.job_id))
+            if job["state"] in {"queued", "running"}:
+                JobRepository.transition(
+                    session, job["id"], "paused", failure_code="search_disabled"
+                )
+                JobRepository.event(
+                    session,
+                    job["id"],
+                    f"configuration:{identity.attempt_id}:disabled",
+                    "discovery_summary",
+                    {
+                        "source_failures": [{"source": "search", "code": "source_disabled"}],
+                        "result_count": 0,
+                    },
+                )
+        return {"status": "source_disabled"}
+    if stage == "planning":
+        outcome = execute_planning(database, payload, settings)
+    elif stage == "discovering":
+        outcome = execute_discovery(
+            database, payload, collection_proxy_url=settings.public_collection_proxy_url
+        )
+    elif stage == "collecting" and settings.public_collection_proxy_url:
+        browser = None
+        if settings.enable_dynamic_collection:
+            from skriller.connectors.browser import DynamicBrowserAdapter
+            from skriller.connectors.browser_executor import ConcreteBrowserExecutor
+
+            browser = DynamicBrowserAdapter(
+                database,
+                executor=ConcreteBrowserExecutor(settings.public_browser_image),
+                isolation_verified=True,
+            )
+        outcome = execute_collection(
+            database,
+            payload,
+            settings.public_collection_proxy_url,
+            enable_extraction=settings.enable_page_extraction,
+            browser=browser,
+        )
+    elif stage == "extracting" and settings.enable_page_extraction:
+        outcome = execute_page_extraction(database, payload, settings=settings)
+    else:
+        if stage in {"collecting", "extracting"}:
+            with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+                job = locked_job(session, str(identity.job_id))
+                if job["state"] in {"queued", "running"}:
+                    JobRepository.transition(
+                        session, job["id"], "paused", failure_code=f"{stage}_disabled"
+                    )
+        return {"status": "unsupported_operation"}
+    if stage in {"planning", "discovering", "collecting"}:
+        dispatch(database, settings.broker_url, identity.actor_id, str(identity.workspace_id))
     if outcome["status"] in {"leased", "capacity_exhausted"}:
         identity = TaskIdentity.model_validate(payload)
         with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:

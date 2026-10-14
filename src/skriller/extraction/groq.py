@@ -127,7 +127,7 @@ class GroqStructuredModel(LocalStructuredModel):
 def structured_model(settings):
     """Operator-only provider choice; credentials never become a browser setting."""
     if settings.model_provider == "ollama":
-        return LocalStructuredModel()
+        return LocalStructuredModel(ModelBounds(model=settings.ollama_model))
     if settings.groq_api_key is None:
         raise ValueError("Configured Groq provider requires GROQ_API_KEY")
     return GroqStructuredModel(

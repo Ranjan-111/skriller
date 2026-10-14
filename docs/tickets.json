@@ -343,7 +343,7 @@
       "title": "Set up ticket-level CI and artifact reporting",
       "phase": "P0",
       "epic": "Foundation",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-006",
@@ -376,12 +376,13 @@
           "docs/completions/SKR-008.md"
         ],
         "passed_checks": [
-          "Partial checks recorded in report"
+          "6 CI workflow contract tests passed and live opt-out emitted a genuine skipped JUnit testcase",
+          "Ruff and MyPy workflow commands remain fatal in the configured jobs; report upload and cleanup paths contract-tested",
+          "77 frontend tests, frontend typecheck/build and generated API contract drift check passed",
+          "Backend CI workflow provisions PostgreSQL/RabbitMQ, emits separate integration/offline/live JUnit artifacts, and verifies copied-source provenance"
         ],
-        "remaining": [
-          "Required queue/container CI checks"
-        ],
-        "recorded_at": "2026-10-12T09:37:53.862662+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-13T17:45:44.313532+00:00"
       }
     },
     {
@@ -519,12 +520,21 @@
           "docs/completions/EXA-KEYLESS.json"
         ],
         "passed_checks": [
-          "Three live keyless company/LinkedIn/Reddit searches returned2references each; prototype provider selected"
+          "Three live keyless Exa feasibility queries with provider scope recorded",
+          "Production commercial-terms fail-closed configuration test",
+          "79 frontend tests",
+          "apps/web typecheck",
+          "apps/web production build",
+          "Impeccable detector",
+          "Ruff",
+          "MyPy",
+          "git diff --check"
         ],
         "remaining": [
-          "Commercial storage/use and broader quality remain unverified; formal dorks/pagination not supported guarantees"
+          "Written confirmation of commercial SaaS use and search-result storage/export rights",
+          "Broader source-quality and operator/pagination validation"
         ],
-        "recorded_at": "2026-10-12T15:42:47.512281+00:00"
+        "recorded_at": "2026-10-13T18:58:27.317710+00:00"
       }
     },
     {
@@ -1149,15 +1159,20 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-025.md"
+          "docs/completions/SKR-025.md",
+          "docs/completions/SKR-038.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "114 final backend integration tests passed",
+          "74 HTTP fetch/connector regressions passed with active cancellation",
+          "Actual model cancellation and usage-safe resume API verified",
+          "Actual active Chromium cancellation/removal 0.213s; estimated usage and capacity release verified",
+          "17 actual Python 3.12 kernel/runner/cancellation tests passed"
         ],
         "remaining": [
-          "Active HTTP/model transport/process cancellation within the PRD target and browser-process cleanup remain open"
+          "Connection-aware resume and collecting-stage integration"
         ],
-        "recorded_at": "2026-10-12T19:03:44.363950+00:00"
+        "recorded_at": "2026-10-13T16:41:31.587884+00:00"
       }
     },
     {
@@ -1246,12 +1261,14 @@
           "docs/completions/SKR-027.md"
         ],
         "passed_checks": [
-          "Partial checks recorded in report"
+          "17 actual Python 3.12 kernel/runner/container cancellation tests passed",
+          "Public destination/proxy validation regressions passed"
         ],
         "remaining": [
-          "Actual isolated container network gate"
+          "Installed browser/platform adapter end-to-end egress proof",
+          "Operational deployment checks"
         ],
-        "recorded_at": "2026-10-12T09:37:53.890195+00:00"
+        "recorded_at": "2026-10-13T16:32:22.807014+00:00"
       }
     },
     {
@@ -1295,12 +1312,14 @@
           "docs/completions/SKR-028.md"
         ],
         "passed_checks": [
-          "Partial checks recorded in report"
+          "17 actual Python 3.12 kernel/runner/container cancellation tests passed",
+          "Unique-container removal confirmed on cancellation"
         ],
         "remaining": [
-          "Actual container runner gate"
+          "Installed browser/platform read runtime integration",
+          "Credential mount integration"
         ],
-        "recorded_at": "2026-10-12T09:37:53.894474+00:00"
+        "recorded_at": "2026-10-13T16:32:22.815490+00:00"
       }
     },
     {
@@ -1308,7 +1327,7 @@
       "title": "Store source credentials with tenant-scoped access",
       "phase": "P0",
       "epic": "Source safety",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-014",
@@ -1338,14 +1357,26 @@
           "scenario": "Error output includes credential URL/cookie",
           "expected": "output redacted"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-029.md"
+        ],
+        "passed_checks": [
+          "11 real PostgreSQL vault tests passed."
+        ],
+        "remaining": [
+          "Source runner secret injection and isolated deployment gates remain open."
+        ],
+        "recorded_at": "2026-10-13T11:08:27.995841+00:00"
+      }
     },
     {
       "id": "SKR-030",
       "title": "Implement source connect, expire, reconnect and revoke",
       "phase": "P0",
       "epic": "Source safety",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-025",
@@ -1373,7 +1404,19 @@
           "scenario": "Disconnect while queued",
           "expected": "no backend call uses revoked connection"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-030.md"
+        ],
+        "passed_checks": [
+          "6 real PostgreSQL API lifecycle tests plus 11 vault regressions passed."
+        ],
+        "remaining": [
+          "Live source authorization, remote revocation and active runner cancellation remain unverified."
+        ],
+        "recorded_at": "2026-10-13T11:08:28.005812+00:00"
+      }
     },
     {
       "id": "SKR-031",
@@ -1425,7 +1468,7 @@
       "title": "Adapt doctor/probe results and expose connector status",
       "phase": "P0",
       "epic": "Discovery",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-028",
@@ -1456,7 +1499,19 @@
           "scenario": "Disabled read capability",
           "expected": "queued dispatcher will not start it"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-032.md"
+        ],
+        "passed_checks": [
+          "Six PostgreSQL/API diagnostics and owner-switch tests passed; disabled source receives no new request and existing results remain",
+          "77 frontend tests passed including source readiness UI",
+          "TypeScript, API contract drift and UI detector passed"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-13T17:47:15.772701+00:00"
+      }
     },
     {
       "id": "SKR-033",
@@ -1644,16 +1699,24 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-036.md"
+          "docs/completions/SKR-036.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
         ],
         "passed_checks": [
-          "11 actual PostgreSQL/GuardedProxy/copiedFetcher integration tests passed",
-          "Ruff, mypy and copied Scrapling provenance passed"
+          "164 backend/component/PostgreSQL tests",
+          "real isolated Chromium collecting-stage JS escalation",
+          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
+          "84 web tests",
+          "Ruff and MyPy",
+          "web typecheck, API contracts and production build",
+          "OpenAPI drift and git diff checks",
+          "UI detector: no findings"
         ],
         "remaining": [
-          "Production egress isolation and collecting-stage routing/integration remain open"
+          "Isolated HTTP collecting-worker packaging and production egress verification",
+          "Registered source-operation feasibility and hosted source gates"
         ],
-        "recorded_at": "2026-10-12T19:17:02.801898+00:00"
+        "recorded_at": "2026-10-13T21:07:26.668571+00:00"
       }
     },
     {
@@ -1661,7 +1724,7 @@
       "title": "Classify challenges, empty pages and unavailable access",
       "phase": "P0",
       "epic": "Fetching",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-036"
@@ -1689,14 +1752,32 @@
           "scenario": "Genuine empty result versus JS-only page",
           "expected": "different outcomes"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-037.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
+        ],
+        "passed_checks": [
+          "164 backend/component/PostgreSQL tests",
+          "real isolated Chromium collecting-stage JS escalation",
+          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
+          "84 web tests",
+          "Ruff and MyPy",
+          "web typecheck, API contracts and production build",
+          "OpenAPI drift and git diff checks",
+          "UI detector: no findings"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-13T21:07:26.647472+00:00"
+      }
     },
     {
       "id": "SKR-038",
       "title": "Adapt copied dynamic browser engine and bounded pool",
       "phase": "P0",
       "epic": "Fetching",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-002",
@@ -1727,7 +1808,25 @@
           "scenario": "Crash/navigation timeout",
           "expected": "pool capacity released and other job continues"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-038.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
+        ],
+        "passed_checks": [
+          "164 backend/component/PostgreSQL tests",
+          "real isolated Chromium collecting-stage JS escalation",
+          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
+          "84 web tests",
+          "Ruff and MyPy",
+          "web typecheck, API contracts and production build",
+          "OpenAPI drift and git diff checks",
+          "UI detector: no findings"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-13T21:07:26.656700+00:00"
+      }
     },
     {
       "id": "SKR-039",
@@ -1805,7 +1904,7 @@
       "title": "Adapt copied cache logic to access-scoped freshness",
       "phase": "P0",
       "epic": "Fetching",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-018",
@@ -1835,7 +1934,19 @@
           "scenario": "Expired role claim/old post fetched today",
           "expected": "freshness criteria remain accurate"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-041.md"
+        ],
+        "passed_checks": [
+          "9 real PostgreSQL copied-cache/private-storage tests passed; Ruff, MyPy and provenance passed."
+        ],
+        "remaining": [
+          "Production collection/cache integration, HTTP304 renewal and source-specific retention/deployment policies remain open."
+        ],
+        "recorded_at": "2026-10-13T11:28:24.559409+00:00"
+      }
     },
     {
       "id": "SKR-042",
@@ -1970,15 +2081,23 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-044.md"
+          "docs/completions/SKR-044.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
         ],
         "passed_checks": [
-          "34 copied/product cleanup checks; provenance passed"
+          "164 backend/component/PostgreSQL tests",
+          "real isolated Chromium collecting-stage JS escalation",
+          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
+          "84 web tests",
+          "Ruff and MyPy",
+          "web typecheck, API contracts and production build",
+          "OpenAPI drift and git diff checks",
+          "UI detector: no findings"
         ],
         "remaining": [
-          "Collected-artifact fetch-stage integration pending036; deployment tokenizer asset provisioning"
+          "Provision copied tokenizer assets in isolated collection/extraction deployment and verify offline boot"
         ],
-        "recorded_at": "2026-10-12T14:12:23.415745+00:00"
+        "recorded_at": "2026-10-13T21:07:26.675607+00:00"
       }
     },
     {
@@ -2038,7 +2157,7 @@
       "title": "Adapt SmartScraper graph to already-collected content",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -2071,15 +2190,21 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-046.md"
+          "docs/completions/SKR-046.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "164 backend/component/PostgreSQL tests",
+          "real isolated Chromium collecting-stage JS escalation",
+          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
+          "84 web tests",
+          "Ruff and MyPy",
+          "web typecheck, API contracts and production build",
+          "OpenAPI drift and git diff checks",
+          "UI detector: no findings"
         ],
-        "remaining": [
-          "Full ticket acceptance and production integration remain open; see report"
-        ],
-        "recorded_at": "2026-10-12T19:03:44.373365+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-13T21:07:26.662950+00:00"
       }
     },
     {
@@ -2137,7 +2262,7 @@
       "title": "Adapt bounded LLM selector repair and template promotion",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-025",
@@ -2168,14 +2293,26 @@
           "scenario": "Model proposes script or wrong selector",
           "expected": "rejected without execution"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-048.md"
+        ],
+        "passed_checks": [
+          "14 new PostgreSQL repair checks plus 14 semantic/graph regressions passed; Ruff/Mypy passed."
+        ],
+        "remaining": [
+          "Production repair orchestration, active template selection/audit and repair quality benchmark remain open."
+        ],
+        "recorded_at": "2026-10-13T11:15:58.730034+00:00"
+      }
     },
     {
       "id": "SKR-049",
       "title": "Resolve entity identity with reversible links",
       "phase": "P0",
       "epic": "Qualification",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -2202,14 +2339,26 @@
           "scenario": "Wrong merge reversed after review",
           "expected": "claims/lists retain traceable identity history"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-049.md"
+        ],
+        "passed_checks": [
+          "Nine real PostgreSQL identity tests passed; Ruff and typed MyPy passed."
+        ],
+        "remaining": [
+          "Production candidate callers, source-native identity semantics, list integration and owner review API/UI remain open."
+        ],
+        "recorded_at": "2026-10-13T11:21:23.617717+00:00"
+      }
     },
     {
       "id": "SKR-050",
       "title": "Evaluate essential criteria and preference ranking",
       "phase": "P0",
       "epic": "Qualification",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-019",
@@ -2236,14 +2385,26 @@
           "scenario": "Recent hiring criterion supported by old post only",
           "expected": "fails freshness requirement"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-050.md"
+        ],
+        "passed_checks": [
+          "18 criterion unit cases and 10 real PostgreSQL trusted claim/identity adapter cases passed; 37 related checks passed; Ruff/Mypy passed."
+        ],
+        "remaining": [
+          "Production qualification orchestration and API/UI integration remain open."
+        ],
+        "recorded_at": "2026-10-13T11:28:24.569614+00:00"
+      }
     },
     {
       "id": "SKR-051",
       "title": "Validate contacts and per-claim freshness",
       "phase": "P0",
       "epic": "Qualification",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-041",
@@ -2270,7 +2431,19 @@
           "scenario": "Refresh finds changed role",
           "expected": "old claim retained but not shown as current"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-051.md"
+        ],
+        "passed_checks": [
+          "32 contact/freshness and identity checks passed; Ruff/MyPy passed; qualification adapter excludes historical/unknown roles."
+        ],
+        "remaining": [
+          "Trusted subject/date review and production source/refresh orchestration remain open."
+        ],
+        "recorded_at": "2026-10-13T11:33:58.110436+00:00"
+      }
     },
     {
       "id": "SKR-096",
@@ -2311,18 +2484,17 @@
       "verification": {
         "reports": [
           "docs/completions/SKR-096.md",
-          "docs/completions/PLANNER-LIVE.json",
-          "docs/completions/PLANNER-LIVE-baseline.json"
+          "docs/completions/PLANNER-DEEPSEEK-LIVE.json"
         ],
         "passed_checks": [
-          "11 planner tests including cancelled successor fence passed",
-          "Actual model schema binding passed official SDK transport tests",
-          "Two separately bounded local trials recorded actual token/cost usage without retries"
+          "Durable planning bootstrap, immutable successor/outbox and scoped plan-view checks passed",
+          "19 plan/resume/bootstrap tests passed; contracts and frontend typecheck passed"
         ],
         "remaining": [
-          "Live grounded semantic quality failed; initial durable planning-job bootstrap and user clarification remain unimplemented"
+          "Grounded local-model semantic quality gate",
+          "Complete user clarification/resubmission workflow"
         ],
-        "recorded_at": "2026-10-12T19:17:02.807448+00:00"
+        "recorded_at": "2026-10-13T16:33:22.889034+00:00"
       }
     },
     {
@@ -2366,12 +2538,19 @@
           "docs/completions/SKR-052.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "78 frontend tests",
+          "apps/web typecheck",
+          "apps/web contracts check",
+          "apps/web production build",
+          "Impeccable detector",
+          "git diff --check"
         ],
         "remaining": [
-          "Full semantic interpretation display, clarification/refinement and planning bootstrap remain open"
+          "User clarification/refinement round trip and plan refresh",
+          "Ambiguous-geography end-to-end verification",
+          "Planning bootstrap acceptance"
         ],
-        "recorded_at": "2026-10-12T19:03:44.388045+00:00"
+        "recorded_at": "2026-10-13T18:41:38.690191+00:00"
       }
     },
     {
@@ -2412,15 +2591,24 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-053.md"
+          "docs/completions/SKR-053.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "164 backend/component/PostgreSQL tests",
+          "real isolated Chromium collecting-stage JS escalation",
+          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
+          "84 web tests",
+          "Ruff and MyPy",
+          "web typecheck, API contracts and production build",
+          "OpenAPI drift and git diff checks",
+          "UI detector: no findings"
         ],
         "remaining": [
-          "Full accepted/near-match classifications, claim evidence panels and conflict/discussion views remain open"
+          "Confirmed/near-match qualification and subject identity views",
+          "Conflicting source and anonymous discussion workflows"
         ],
-        "recorded_at": "2026-10-12T19:03:44.392784+00:00"
+        "recorded_at": "2026-10-13T21:07:26.687851+00:00"
       }
     },
     {
@@ -2428,7 +2616,7 @@
       "title": "Adapt copied export helpers for CSV, JSON and JSONL",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -2465,12 +2653,12 @@
           "docs/completions/SKR-054.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "12 PostgreSQL export integration tests",
+          "Ruff",
+          "MyPy"
         ],
-        "remaining": [
-          "Full ticket acceptance and production integration remain open; see report"
-        ],
-        "recorded_at": "2026-10-12T19:03:44.397580+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-13T18:56:01.935925+00:00"
       }
     },
     {
@@ -2478,7 +2666,7 @@
       "title": "Implement saved-list snapshots and refresh",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-015",
@@ -2507,14 +2695,29 @@
           "scenario": "Suppressed entity found under another URL",
           "expected": "not reintroduced"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-055.md"
+        ],
+        "passed_checks": [
+          "75 saved-list/API/contact/identity/qualification tests passed; 18 authenticated list API cases",
+          "Root application registration and generated client typecheck passed"
+        ],
+        "remaining": [
+          "Saved-list UI",
+          "Durable external refresh scheduling",
+          "Complete suppression/privacy administration and historical erasure/retention"
+        ],
+        "recorded_at": "2026-10-13T16:32:22.786308+00:00"
+      }
     },
     {
       "id": "SKR-056",
       "title": "Implement evidence-grounded research follow-ups",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-015",
@@ -2544,7 +2747,21 @@
           "scenario": "Retrieved page requests unrelated tools/secrets",
           "expected": "plan unchanged and no action dispatched"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-056.md"
+        ],
+        "passed_checks": [
+          "15 real PostgreSQL extractive-report tests passed; related model/graph regressions passed"
+        ],
+        "remaining": [
+          "Follow-up job allocation, persistence and API/UI",
+          "Answer relevance and coverage benchmark",
+          "Registered-operation research expansion"
+        ],
+        "recorded_at": "2026-10-13T16:32:22.798526+00:00"
+      }
     },
     {
       "id": "SKR-057",
@@ -2590,7 +2807,7 @@
       "title": "Build partial results, reconnect and usage UX",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-024",
@@ -2622,7 +2839,23 @@
           "scenario": "Asked 25, only 9 qualify",
           "expected": "actual count and separate near matches shown"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-058.md"
+        ],
+        "passed_checks": [
+          "2 PostgreSQL usage API tests passed: accounting split and cross-workspace denial",
+          "81 frontend tests passed across nine files, including usage UI and validation",
+          "Ruff, MyPy, TypeScript, generated-contract checks, Next production build, Impeccable detector and git diff checks passed"
+        ],
+        "remaining": [
+          "Source-specific reconnect actions require source credential lifecycle/UI",
+          "Qualified, near-match and missing-field evidence require production qualification/result pipeline",
+          "Hosted authenticated-source e2e cases remain unverified"
+        ],
+        "recorded_at": "2026-10-13T19:08:41.837472+00:00"
+      }
     },
     {
       "id": "SKR-059",
@@ -2794,7 +3027,7 @@
       "title": "Adapt GitHub public research connector",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-028",
@@ -2826,14 +3059,29 @@
           "scenario": "Agent requests gh issue/PR creation or inaccessible private repo",
           "expected": "operation denied/unavailable"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-063.md"
+        ],
+        "passed_checks": [
+          "8 synthetic async connector tests passed for public metadata, read-only allowlist, inaccessible resources, URL scope, rate limits, redirect refusal and response cap",
+          "Two-request live read verified dated public repository and profile responses",
+          "Ruff and MyPy passed for connector and tests"
+        ],
+        "remaining": [
+          "Collection routing, workspace evidence persistence and shared budget integration",
+          "Evidence qualification and production source-operation verification"
+        ],
+        "recorded_at": "2026-10-13T19:12:44.437133+00:00"
+      }
     },
     {
       "id": "SKR-064",
       "title": "Adapt RSS/Atom feed connector",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-031",
@@ -2864,14 +3112,29 @@
           "scenario": "Feed link points to internal address",
           "expected": "denied before follow-up fetch"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-064.md"
+        ],
+        "passed_checks": [
+          "4 RSS/Atom fixture tests passed; copied URL guard rejects private links",
+          "Ruff and MyPy passed",
+          "Dependency is declared directly and the frozen lockfile is consistent"
+        ],
+        "remaining": [
+          "Collection-stage routing, tenant evidence persistence and shared-budget integration",
+          "Source-specific output/result classification"
+        ],
+        "recorded_at": "2026-10-13T17:47:15.761683+00:00"
+      }
     },
     {
       "id": "SKR-065",
       "title": "Adapt public YouTube metadata and available transcripts",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-028",
@@ -2903,14 +3166,29 @@
           "scenario": "Transcript segment supports creator claim",
           "expected": "correct timestamp/source citation"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-065.md"
+        ],
+        "passed_checks": [
+          "5 synthetic connector tests passed for dated metadata, public counter labels, missing captions, timestamped cited captions, source identity and bounds",
+          "Ruff and MyPy passed for connector and tests"
+        ],
+        "remaining": [
+          "Verify/install reviewed yt-dlp runtime in the digest-pinned isolated worker",
+          "Retrieve provided captions through isolated worker output; never generate missing captions",
+          "Connect tenant persistence, shared budgets, result UI and qualification"
+        ],
+        "recorded_at": "2026-10-13T19:15:09.817406+00:00"
+      }
     },
     {
       "id": "SKR-066",
       "title": "Create company/directory extraction presets using copied engine",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-036",
@@ -2943,7 +3221,28 @@
           "scenario": "Changed directory markup",
           "expected": "adaptive mapping correct or explicitly flagged"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-066.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
+        ],
+        "passed_checks": [
+          "164 backend/component/PostgreSQL tests",
+          "real isolated Chromium collecting-stage JS escalation",
+          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
+          "84 web tests",
+          "Ruff and MyPy",
+          "web typecheck, API contracts and production build",
+          "OpenAPI drift and git diff checks",
+          "UI detector: no findings"
+        ],
+        "remaining": [
+          "Connect the other page-specific presets to trusted operation routing",
+          "Production identity/qualification and cross-source corroboration"
+        ],
+        "recorded_at": "2026-10-13T21:07:26.682037+00:00"
+      }
     },
     {
       "id": "SKR-067",
@@ -3065,7 +3364,7 @@
       "title": "Enforce workspace entitlements and abuse limits",
       "phase": "P0",
       "epic": "Operations",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-014",
@@ -3093,14 +3392,30 @@
           "scenario": "Client submits custom oversized limits",
           "expected": "server effective limits remain enforced"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-069.md"
+        ],
+        "passed_checks": [
+          "11 real PostgreSQL entitlement/owner/dispatch/provider-gate tests",
+          "193 combined backend checks including real broker and immutable Chromium",
+          "88 web tests",
+          "web typecheck, contracts and production build",
+          "Ruff/MyPy, provenance and drift checks",
+          "UI detector: no findings",
+          "restarted local service readiness: 200"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-13T21:57:33.265569+00:00"
+      }
     },
     {
       "id": "SKR-070",
       "title": "Instrument stages, source health and costs",
       "phase": "P0",
       "epic": "Operations",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -3131,14 +3446,39 @@
           "scenario": "Credentials/private content injected into errors",
           "expected": "redacted trace/log outputs"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-070.md"
+        ],
+        "passed_checks": [
+          "7 worker database integration tests",
+          "2 usage API database integration tests",
+          "81 web tests",
+          "TypeScript typecheck",
+          "API contract generation check",
+          "production web build",
+          "Ruff",
+          "MyPy",
+          "OpenAPI contract check",
+          "git diff --check",
+          "Impeccable detector"
+        ],
+        "remaining": [
+          "Separate parser/network/browser/queue/LLM timings",
+          "Request/trace correlation",
+          "Blocked-response categories and denominators",
+          "Broader integration and security verification"
+        ],
+        "recorded_at": "2026-10-13T19:18:28.746849+00:00"
+      }
     },
     {
       "id": "SKR-071",
       "title": "Enforce evidence and export retention",
       "phase": "P0",
       "epic": "Operations",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-018",
@@ -3167,7 +3507,23 @@
           "scenario": "Cleanup task delivered twice",
           "expected": "safe no-op after first completion"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-071.md"
+        ],
+        "passed_checks": [
+          "6 real PostgreSQL retention/lease/idempotency/tenant cases",
+          "83 related backend regressions",
+          "actual bounded cleanup child execution",
+          "88 web tests, typecheck/contracts/build",
+          "Ruff/MyPy and drift checks",
+          "UI detector: no findings",
+          "running retention daemon; local readiness 200"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-13T22:28:14.136805+00:00"
+      }
     },
     {
       "id": "SKR-072",

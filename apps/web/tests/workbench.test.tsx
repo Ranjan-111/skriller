@@ -14,6 +14,7 @@ const mock = vi.hoisted(() => ({
   submit: vi.fn(),
   job: vi.fn(),
   results: vi.fn(),
+  allowance: vi.fn(),
   authStatus: "signed_in",
   authUid: "account-one",
 }));
@@ -37,6 +38,19 @@ beforeEach(() => {
   mock.authStatus = "signed_in";
   mock.authUid = "account-one";
   mock.health.mockResolvedValue({ live: true, ready: true });
+  mock.allowance.mockResolvedValue({
+    workspace_id: "w1",
+    tier: "trial",
+    enabled: true,
+    can_manage: false,
+    run_limit: 25,
+    result_cap: 25,
+    source_cap: 3,
+    result_limit: 25,
+    source_limit: 3,
+    used_runs: 0,
+    remaining_runs: 25,
+  });
   mock.job.mockReturnValue(new Promise(() => {}));
 });
 describe("research workbench", () => {
@@ -56,6 +70,10 @@ describe("research workbench", () => {
       ).toBeEnabled(),
     );
     expect(mock.submit).not.toHaveBeenCalled();
+    expect(screen.getByText(/Search prompts go to Exa/)).toBeVisible();
+    expect(
+      screen.getByRole("link", { name: "Exa privacy policy" }),
+    ).toHaveAttribute("href", "https://exa.ai/privacy-policy");
     expect(
       screen.getByText(/Start a research run to discover sources/),
     ).toBeVisible();

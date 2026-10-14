@@ -29,6 +29,17 @@ const result = {
       evidence_kind: "search_snippet",
       qualification: "unverified",
       observed_at: "2026-10-12T00:00:00Z",
+      provenance: [
+        {
+          source: "web",
+          original_url: "https://search.example/result/1",
+          query: "Aurora Ledger fintech",
+          rank: 2,
+          provider: "exa_keyless",
+          observed_at: "2026-10-12T00:00:00Z",
+          evidence_kind: "search_snippet",
+        },
+      ],
     },
   ],
 };
@@ -38,10 +49,111 @@ function client() {
     ...api,
     job: vi.fn().mockResolvedValue(run),
     results: vi.fn().mockResolvedValue(result),
+    plan: vi.fn().mockResolvedValue({
+      job_id: "j1",
+      plan_id: "p1",
+      workspace_id: "w1",
+      status: "ready",
+      interpretation: {
+        schema_version: 1,
+        workspace_id: "w1",
+        conversation_id: "c1",
+        revision: 1,
+        entity_type: "person",
+        must_have: [
+          { field: "location", operator: "contains", value: "Bengaluru" },
+        ],
+        preferences: [],
+        exclusions: [],
+        requested_fields: [],
+        sources: ["web"],
+        freshness_days: null,
+        unsupported_criteria: [],
+        clarification: null,
+        limits: {},
+      },
+    }),
+    usage: vi.fn().mockResolvedValue({
+      job_id: "j1",
+      workspace_id: "w1",
+      currency: "USD",
+      budget_cap_usd: "1",
+      confirmed_cost_usd: "0.1",
+      estimated_cost_usd: "0.2",
+      reserved_cost_usd: "0.1",
+      exposure_ceiling_usd: "0.4",
+      remaining_budget_usd: "0.6",
+      dimensions: { confirmed: {}, estimated: {}, reserved: {} },
+      stage_metrics: [
+        {
+          stage: "discovering",
+          source: "exa_keyless",
+          observations: 1,
+          succeeded: 1,
+          failed: 0,
+          accepted_result_count: 2,
+          stage_io_seconds: "2.5",
+          confirmed_cost_usd: "0",
+          estimated_cost_usd: "0",
+          unpriced_observations: 0,
+        },
+      ],
+      invalid_stage_observations: 0,
+      stage_metrics_truncated: false,
+    }),
   };
 }
 afterEach(() => vi.useRealTimers());
 describe("actual research results", () => {
+  it("shows saved-page quotes as unverified and escapes source markup", async () => {
+    const api = client();
+    api.results.mockResolvedValue({
+      ...result,
+      results: [
+        {
+          ...result.results[0],
+          collection: { status: "read", failure_code: null },
+          extraction: {
+            status: "observed",
+            failure_code: null,
+            coverage_complete: false,
+            rejected_claims: 2,
+            omitted_chunks: 1,
+            observations: [
+              {
+                claim_id: "c1",
+                field: "company_name",
+                value: "Aurora Ledger",
+                quote: '<script>alert("source")</script>',
+                status: "unverified",
+              },
+            ],
+          },
+        },
+      ],
+    });
+    const { container } = render(
+      <ResearchResultsPanel
+        api={api}
+        job={{ id: "j1", status: "accepted", workspace_id: "w1" }}
+      />,
+    );
+    const summary = await screen.findByText(
+      "Page observations (1) · Unverified",
+    );
+    fireEvent.click(summary);
+    expect(screen.getByText("company name: Aurora Ledger")).toBeVisible();
+    expect(screen.getByText('<script>alert("source")</script>')).toBeVisible();
+    expect(
+      screen.getByText("2 unsupported model drafts were rejected."),
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        "Part of the page was outside this run’s extraction coverage.",
+      ),
+    ).toBeVisible();
+    expect(container.querySelector("script")).toBeNull();
+  });
   it("stops an active scoped run and refreshes its actual terminal state", async () => {
     const api = client();
     api.job.mockResolvedValue({ ...run, state: "running" });
@@ -84,9 +196,17 @@ describe("actual research results", () => {
     expect(link).toHaveAttribute("href", "https://example.com/");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
     expect(screen.getByText("web · Search snippet · Unverified")).toBeVisible();
+    expect(await screen.findByText("What this run understood")).toBeVisible();
+    expect(screen.getByText("location contains Bengaluru")).toBeVisible();
     expect(screen.getByText("No qualification performed.")).toBeVisible();
+    fireEvent.click(await screen.findByText("Search references (1)"));
+    expect(screen.getByText(/do not mean the page was read/)).toBeVisible();
+    expect(
+      screen.getByRole("link", { name: /Open search reference/ }),
+    ).toHaveAttribute("href", "https://search.example/result/1");
     expect(api.job).toHaveBeenCalledWith("j1", "w1", expect.any(AbortSignal));
     expect(api.results).toHaveBeenCalledTimes(1);
+    expect(api.plan).toHaveBeenCalledWith("j1", "w1", expect.any(AbortSignal));
   });
   it("never links script addresses or credential-bearing URLs", async () => {
     const api = client();
@@ -102,7 +222,14 @@ describe("actual research results", () => {
       <ResearchResultsPanel api={api} job={{ id: "j1", status: "accepted" }} />,
     );
     expect(await screen.findByText(/Source link unavailable/)).toBeVisible();
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(
+      screen
+        .getAllByRole("link")
+        .every((link) => link.getAttribute("href")?.startsWith("https://")),
+    ).toBe(true);
+    expect(
+      screen.queryByRole("link", { name: /Acme source/ }),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("<script>bad()</script>")).toBeVisible();
     expect(document.querySelector("script")).toBeNull();
   });
@@ -175,6 +302,88 @@ describe("actual research results", () => {
     expect(
       screen.getByText(/Some source requests could not finish/),
     ).toBeVisible();
+  });
+  it("offers checkpoint-guarded resume for a paused run and refreshes its state", async () => {
+    const api = client();
+    api.job.mockResolvedValueOnce({ ...run, state: "paused", result_count: 1 });
+    api.resume = vi.fn().mockImplementation(async () => {
+      api.job.mockResolvedValue({ ...run, state: "queued", result_count: 1 });
+    });
+    render(
+      <ResearchResultsPanel
+        api={api}
+        job={{ id: "j1", status: "accepted", workspace_id: "w1" }}
+      />,
+    );
+    expect(
+      await screen.findByRole("heading", { name: "Research paused" }),
+    ).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Resume research" }));
+    expect(
+      await screen.findByRole("heading", { name: "Research queued" }),
+    ).toBeVisible();
+    expect(api.resume).toHaveBeenCalledWith("j1", "w1");
+  });
+  it("shows truthful source access scope without claiming credential validation", async () => {
+    const api = client();
+    api.sourceDiagnostics = vi.fn().mockResolvedValue([
+      {
+        capability: {
+          source: "linkedin",
+          operation: "discover",
+          engineering_status: "tested",
+          operational_status: "experimental",
+          auth_kind: "none",
+          access_route: "Exa keyless public indexed references",
+          version: "exa_keyless_v1",
+          allowed_fields: ["title", "url", "snippet"],
+        },
+        disabled: false,
+        setup_state: "experimental",
+        evidence_scope: "public_indexed_references",
+        credential_validation: "not_performed",
+      },
+    ]);
+    render(
+      <ResearchResultsPanel
+        api={api}
+        job={{ id: "j1", status: "accepted", workspace_id: "w1" }}
+      />,
+    );
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Check source readiness" }),
+    );
+    expect(
+      await screen.findByText(
+        /public search references; not direct platform access/i,
+      ),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/does not test credentials or sign in to a platform/i),
+    ).toBeVisible();
+  });
+  it("shows confirmed, uncertain and reserved cost separately", async () => {
+    const api = client();
+    render(
+      <ResearchResultsPanel
+        api={api}
+        job={{ id: "j1", status: "accepted", workspace_id: "w1" }}
+      />,
+    );
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Show run usage and budget" }),
+    );
+    expect(await screen.findByText("Confirmed cost")).toBeVisible();
+    expect(
+      await screen.findByRole("heading", { name: "Work by stage" }),
+    ).toBeVisible();
+    expect(screen.getByText(/1 succeeded \/ 1 observed/)).toBeVisible();
+    expect(screen.getByText("Confirmed cost").parentElement).toHaveTextContent(
+      "0.1 USD",
+    );
+    expect(screen.getByText("Uncertain estimate")).toBeVisible();
+    expect(screen.getByText(/not final provider invoices/)).toBeVisible();
+    expect(api.usage).toHaveBeenCalledWith("j1", "w1");
   });
 });
 

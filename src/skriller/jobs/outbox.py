@@ -36,7 +36,10 @@ class CeleryPublisher:
             raise ValueError("Publisher requires RabbitMQ transport")
         if broker_url.startswith("memory:") and not allow_memory:
             raise ValueError("Memory transport requires explicit test opt-in")
-        self.app = Celery("skriller-dispatch", broker=broker_url)
+        # Publishing from inside a worker must not replace its current Celery
+        # app: task deserialization would then resolve against a publisher-only
+        # task registry (or an unrelated generic handler).
+        self.app = Celery("skriller-dispatch", broker=broker_url, set_as_current=False)
         self.app.conf.update(
             task_default_queue="skriller.jobs",
             task_default_delivery_mode="persistent",
@@ -113,6 +116,7 @@ class OutboxDispatcher:
                     .where(
                         outbox.c.workspace_id == scope(session),
                         outbox.c.published_at.is_(None),
+                        outbox.c.discarded_at.is_(None),
                     )
                     .order_by(outbox.c.created_at, outbox.c.id)
                     .with_for_update(skip_locked=True)
@@ -123,6 +127,20 @@ class OutboxDispatcher:
             )
             if row is None:
                 return None
+            if row["topic"] in {"execute_job", "execute_attempt"}:
+                from skriller.entitlements import execution_allowed
+                from skriller.jobs.budget import locked_job
+
+                job = locked_job(session, row["job_id"])
+                if job["state"] not in {"queued", "running"} or not execution_allowed(
+                    session, row["job_id"]
+                ):
+                    session.execute(
+                        sa.update(outbox)
+                        .where(outbox.c.workspace_id == scope(session), outbox.c.id == row["id"])
+                        .values(discarded_at=sa.func.clock_timestamp())
+                    )
+                    return str(row["id"])
             self.publisher.publish(str(row["id"]), row["topic"], JobRepository.broker_payload(row))
             session.execute(
                 sa.update(outbox)
@@ -135,6 +153,7 @@ class OutboxDispatcher:
             return str(row["id"])
 
     def dispatch_batch(self, identity: DispatchScope, *, limit: int = 20) -> int:
+        """Count processed records, including explicit nonpublished discards."""
         if not 1 <= limit <= 100:
             raise ValueError("Publication batch must contain 1–100 messages")
         count = 0

@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict
 
 from skriller.contracts import ExecutionContext, Limits, SearchPlan
 from skriller.db import ConversationRepository
-from skriller.extraction.cleanup import ContextChunk, PreparedContext, prepare_context
+from skriller.extraction.cleanup import ContextChunk, EvidenceNode, PreparedContext
 from skriller.extraction.graph import extract_saved
 from skriller.extraction.models import LocalStructuredModel
 from skriller.jobs.budget import current_usage
@@ -65,16 +65,27 @@ def context_for(database, call_cap=2):
 
 
 def prepared():
-    value = prepare_context(
-        "<html><head><title>Company</title></head><body><p>Aurora Ledger</p></body></html>",
-        "https://example.org/company",
+    # Saved-context consumer fixture: HTML cleanup/tokenizer asset integration is
+    # verified separately. Provider tests must not fetch tokenizer assets.
+    return PreparedContext(
+        source_url="https://example.org/company",
+        source_sha256="a" * 64,
+        title="Company",
+        chunks=(ContextChunk("fixture", "Aurora Ledger", 3),),
+        evidence=(EvidenceNode("company-name", "/html/body/p", "Aurora Ledger", "text"),),
+        input_bytes=90,
+        total_chunks=1,
+        omitted_chunks=0,
+        omitted_evidence_nodes=0,
+        omitted_scripts=0,
+        issues=(),
     )
-    assert isinstance(value, PreparedContext)
-    return value
 
 
 @pytest.mark.asyncio
-async def test_saved_html_reuses_copied_node_without_fetch_and_accounts_call(database, monkeypatch):
+async def test_saved_context_reuses_copied_node_without_fetch_and_accounts_call(
+    database, monkeypatch
+):
     from scrapegraphai.nodes import FetchNode
 
     monkeypatch.setattr(
@@ -174,3 +185,140 @@ async def test_chunk_cap_does_not_spawn_parallel_or_merge_calls(database):
         await extract_saved(
             database, context, "https://example.org", "Extract company", Facts, operation_key="url"
         )
+
+
+async def test_configured_groq_owned_client_uses_caller_loop_and_closes(database, monkeypatch):
+    import asyncio
+
+    import httpx
+    from pydantic import SecretStr
+
+    from skriller.extraction import graph
+    from skriller.extraction.groq import GROQ_MODEL, GroqStructuredModel
+    from skriller.settings import Settings
+
+    loop = asyncio.get_running_loop()
+    calls = []
+
+    def transport(request):
+        assert asyncio.get_running_loop() is loop
+        calls.append(request)
+        return httpx.Response(
+            200,
+            json={
+                "id": "fixture",
+                "object": "chat.completion",
+                "created": 1,
+                "model": GROQ_MODEL,
+                "choices": [
+                    {
+                        "index": 0,
+                        "finish_reason": "stop",
+                        "message": {"role": "assistant", "content": '{"company":"Aurora Ledger"}'},
+                    }
+                ],
+                "usage": {"prompt_tokens": 60, "completion_tokens": 20, "total_tokens": 80},
+            },
+        )
+
+    client = GroqStructuredModel(
+        SecretStr("synthetic-not-real-key"),
+        free_tier_confirmed=True,
+        transport=httpx.MockTransport(transport),
+    )
+    settings = Settings(_env_file=None, model_provider="groq")
+
+    def factory(selected):
+        assert selected is settings
+        return client
+
+    monkeypatch.setattr(graph, "structured_model", factory)
+    source = replace(
+        prepared(),
+        chunks=(ContextChunk("a", "Aurora Ledger", 3), ContextChunk("b", "Aurora Ledger", 3)),
+        total_chunks=2,
+    )
+    result = await extract_saved(
+        database,
+        context_for(database),
+        source,
+        "Extract company",
+        Facts,
+        operation_key="configured-groq",
+        settings=settings,
+    )
+    assert result.failure is None and len(result.answers) == len(calls) == 2
+    assert all(answer.model == GROQ_MODEL for answer in result.answers)
+    assert client.http_client.is_closed
+
+
+async def test_injected_provider_client_remains_caller_owned(database):
+    class Closable(LocalStructuredModel):
+        closed = False
+
+        async def aclose(self):
+            self.closed = True
+
+    client = Closable(model_instance=Stub())
+    result = await extract_saved(
+        database,
+        context_for(database),
+        prepared(),
+        "Extract company",
+        Facts,
+        operation_key="caller-owned",
+        model=client,
+    )
+    assert result.failure is None and not client.closed
+
+
+async def test_owned_client_closes_after_bounded_inflight_call_and_stops_next_chunk(
+    database, monkeypatch
+):
+    import asyncio
+
+    from skriller.extraction import graph
+
+    class Waiting(Stub):
+        def __init__(self):
+            super().__init__()
+            self.entered = asyncio.Event()
+            self.finish = asyncio.Event()
+
+        async def ainvoke(self, messages, config):
+            self.entered.set()
+            await self.finish.wait()
+            return await super().ainvoke(messages, config)
+
+    class Closable(LocalStructuredModel):
+        closed = False
+
+        async def aclose(self):
+            self.closed = True
+
+    stub = Waiting()
+    client = Closable(model_instance=stub)
+    monkeypatch.setattr(graph, "structured_model", lambda _settings: client)
+    source = replace(
+        prepared(),
+        chunks=(ContextChunk("a", "Aurora Ledger", 3), ContextChunk("b", "Aurora Ledger", 3)),
+        total_chunks=2,
+    )
+    task = asyncio.create_task(
+        extract_saved(
+            database,
+            context_for(database),
+            source,
+            "Extract company",
+            Facts,
+            operation_key="cancel-owned",
+        )
+    )
+    await asyncio.wait_for(stub.entered.wait(), 2)
+    task.cancel()
+    await asyncio.sleep(0)
+    assert not client.closed
+    stub.finish.set()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert client.closed and len(stub.prompts) == 1

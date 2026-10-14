@@ -15,6 +15,7 @@ const candidate: ResearchCandidate = {
   evidence_kind: "search_snippet",
   qualification: "unverified",
   observed_at: "2026-10-12T00:00:00Z",
+  provenance: [],
 };
 afterEach(() => {
   vi.restoreAllMocks();

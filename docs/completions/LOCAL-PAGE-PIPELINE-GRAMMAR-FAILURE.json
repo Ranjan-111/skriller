@@ -1,0 +1,34 @@
+{
+  "model": "llama3.2:3b",
+  "provider": "local_ollama",
+  "synthetic_fixture": true,
+  "status": "quality_failed",
+  "worker_status": "checkpointed",
+  "elapsed_seconds": 3.539,
+  "usage": {
+    "search_calls": 2,
+    "candidates": 0,
+    "fetch_attempts": 1,
+    "llm_calls": 1,
+    "tokens": 4096
+  },
+  "cost_usd": "0E-8",
+  "extraction": {
+    "status": "unavailable",
+    "failure_code": "source_unavailable",
+    "observations": [],
+    "rejected_claims": 0,
+    "coverage_complete": false,
+    "omitted_chunks": 1
+  },
+  "synthetic_transport_diagnostics": [
+    {
+      "type": "ResponseError",
+      "message": "model runner has unexpectedly stopped, this may be due to resource limitations or an internal error, check ollama server logs for details (status code: 500)"
+    }
+  ],
+  "limitations": [
+    "One synthetic fixture; this is not a release quality benchmark.",
+    "Source identity and qualification remain unverified."
+  ]
+}

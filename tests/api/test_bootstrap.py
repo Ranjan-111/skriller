@@ -31,6 +31,36 @@ def test_production_cannot_enable_demo_credentials():
         Settings(environment="production", allow_demo_auth=True)
 
 
+@pytest.mark.parametrize(
+    "options",
+    [
+        {"enable_page_extraction": True},
+        {"public_collection_proxy_url": "http://untrusted.example:8080"},
+        {"enable_dynamic_collection": True},
+        {"environment": "production", "public_collection_proxy_url": "http://127.0.0.1:8080"},
+    ],
+)
+def test_unconfigured_or_unisolated_collection_rejected_before_runtime(options):
+    with pytest.raises(ValueError):
+        Settings(_env_file=None, **options)
+
+
+def test_production_keyless_search_requires_commercial_terms_review():
+    production = {
+        "environment": "production",
+        "firebase_project_id": "skriller-production",
+        "database_url": "postgresql+psycopg://app:secret@db.example/skriller",
+        "application_database_url": "postgresql+psycopg://app:secret@db.example/skriller",
+        "broker_url": "amqp://app:secret@mq.example/skriller",
+    }
+    with pytest.raises(ValueError, match="commercial-use terms"):
+        Settings(**production)
+    reviewed = Settings(**production, search_commercial_terms_confirmed=True)
+    assert reviewed.search_provider == "exa_keyless"
+    disabled = Settings(**production, search_provider="disabled")
+    assert disabled.search_provider == "disabled"
+
+
 @pytest.mark.integration_db
 def test_real_database_and_broker_readiness():
     settings = Settings(environment="test")

@@ -1,6 +1,7 @@
 name: skriller-egress
 services:
   proxy:
+    image: skriller-egress-proxy-production
     build:
       context: ../..
       dockerfile: infra/egress/Dockerfile.proxy

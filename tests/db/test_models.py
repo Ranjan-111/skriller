@@ -1,6 +1,6 @@
 import asyncio
 from datetime import UTC, datetime, timedelta
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 import sqlalchemy as sa
@@ -8,7 +8,7 @@ from langchain_core.messages import AIMessage
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from skriller.contracts import ExecutionContext, Limits, SearchPlan
-from skriller.db import ConversationRepository
+from skriller.db import ConversationRepository, JobRepository
 from skriller.db.schema import reservations
 from skriller.extraction.models import LocalStructuredModel, ModelBounds, ModelUnavailable
 from skriller.jobs.budget import BudgetExhausted, current_usage
@@ -65,6 +65,22 @@ class ModelFixture:
         self.calls += 1
         await asyncio.sleep(0.01)
         return self.message
+
+
+async def test_operation_idempotency_is_per_job_not_workspace(database):
+    context = context_for(database)
+    with database.tenant(context.actor_id, str(context.workspace_id)) as session:
+        original = JobRepository.get(session, str(context.job_id))
+        next_job = submit(session, original["conversation_id"], original["plan_id"], str(uuid4()))
+    second_context = context.model_copy(update={"job_id": UUID(next_job["id"])})
+    fixture = ModelFixture()
+    client = LocalStructuredModel(model_instance=fixture)
+    for selected in (context, second_context):
+        await client.invoke_job(database, selected, "Extract", Facts, operation_key="same-stage")
+    assert fixture.calls == 2
+    for selected in (context, second_context):
+        with database.tenant(selected.actor_id, str(selected.workspace_id)) as session:
+            assert current_usage(session, str(selected.job_id))[1]["llm_calls"] == 1
 
 
 def reservation(database, context, key):

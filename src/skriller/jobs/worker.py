@@ -77,9 +77,8 @@ class CheckpointWorker:
                 raise ValueError("Plan scope mismatch")
             if job["state"] != "queued":
                 return {"status": "not_dispatchable"}
-            attempt = JobRepository.attempt(
-                session, job["id"], f"discovering:{plan.revision}", "discovering"
-            )
+            stage = "planning" if job["purpose"] == "planning" else "discovering"
+            attempt = JobRepository.attempt(session, job["id"], f"{stage}:{plan.revision}", stage)
             JobRepository.enqueue(
                 session,
                 job["id"],
@@ -126,6 +125,10 @@ class CheckpointWorker:
             if now >= job["created_at"] + timedelta(seconds=plan.limits.deadline_seconds):
                 JobRepository.transition(session, job["id"], "paused")
                 return {"status": "deadline_exceeded"}
+            from skriller.entitlements import execution_allowed
+
+            if not execution_allowed(session, job["id"]):
+                return {"status": "entitlement_blocked"}
             if attempt["reservation_id"]:
                 previous = (
                     session.execute(
@@ -224,7 +227,9 @@ class CheckpointWorker:
                     io_ok = False
                     if feedback.retry_after_seconds is not None:
                         retry_headers = {"Retry-After": str(feedback.retry_after_seconds)}
+            io_elapsed = monotonic() - io_started
         except Exception as error:  # noqa: BLE001 - never persist raw page/provider exceptions
+            io_elapsed = monotonic() - io_started
             failure = getattr(error, "failure", None)
             if isinstance(failure, Failure) and failure.retry_after_seconds is not None:
                 retry_headers = {"Retry-After": str(failure.retry_after_seconds)}
@@ -255,6 +260,22 @@ class CheckpointWorker:
                     f"attempt:{token}:uncertain",
                     "external_call_uncertain",
                     {"attempt_id": str(identity.attempt_id), "reservation_id": reservation["id"]},
+                )
+                JobRepository.event(
+                    session,
+                    str(identity.job_id),
+                    f"metrics:{identity.attempt_id}:{generation}",
+                    "stage_observation",
+                    {
+                        "stage": attempt["stage"],
+                        "source": handler.capacity_source,
+                        "outcome": "source_unavailable",
+                        "attempt_count": 1,
+                        "accepted_result_count": 0,
+                        "stage_io_seconds": round(io_elapsed, 6),
+                        "cost_usd": None,
+                        "cost_status": "estimated",
+                    },
                 )
             return {"status": "source_unavailable"}
         finally:
@@ -335,6 +356,22 @@ class CheckpointWorker:
                 "stage_checkpointed",
                 {"attempt_id": row["id"], "entity_count": len(entity_ids)},
             )
+            JobRepository.event(
+                session,
+                job["id"],
+                f"metrics:{row['id']}:{generation}",
+                "stage_observation",
+                {
+                    "stage": row["stage"],
+                    "source": handler.capacity_source,
+                    "outcome": "succeeded",
+                    "attempt_count": 1,
+                    "accepted_result_count": len(entity_ids),
+                    "stage_io_seconds": round(io_elapsed, 6),
+                    "cost_usd": str(actual_cost),
+                    "cost_status": "confirmed",
+                },
+            )
             return {"status": "checkpointed", "entity_ids": entity_ids}
 
 
@@ -354,6 +391,9 @@ def create_worker_app(database, broker_url, handlers):
         task_time_limit=120,
         broker_connection_retry_on_startup=False,
     )
-    app.task(name="skriller.jobs.execute_job")(worker.schedule)
-    app.task(name="skriller.jobs.execute_attempt")(worker.execute)
+    # These handlers belong to this configured app/database. Celery's default
+    # shared lazy registration can copy generic handlers into another app and
+    # overwrite the production research handlers during app finalization.
+    app.task(name="skriller.jobs.execute_job", shared=False, lazy=False)(worker.schedule)
+    app.task(name="skriller.jobs.execute_attempt", shared=False, lazy=False)(worker.execute)
     return app

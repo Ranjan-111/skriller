@@ -61,6 +61,15 @@ def test_redelivery_after_checkpoint_before_ack_never_duplicates_results(databas
     with database.tenant(payload["actor_id"], payload["workspace_id"]) as session:
         assert session.execute(sa.text("SELECT count(*) FROM entities")).scalar_one() == 1
         assert current_usage(session, payload["job_id"])[1]["tokens"] == 5
+        metrics = [
+            row for row in JobRepository.events_after(session, payload["job_id"])
+            if row["kind"] == "stage_observation"
+        ]
+        assert len(metrics) == 1
+        assert metrics[0]["details"]["outcome"] == "succeeded"
+        assert metrics[0]["details"]["attempt_count"] == 1
+        assert metrics[0]["details"]["accepted_result_count"] == 1
+        assert metrics[0]["details"]["cost_usd"] == "0"
 
 
 def test_expired_owner_recovery_fences_old_work_and_accounts_uncertainty(database):
@@ -109,6 +118,12 @@ def test_interrupted_external_call_is_estimated_and_not_blindly_repeated(databas
         events = JobRepository.events_after(session, payload["job_id"])
         assert "sensitive source body" not in str(events)
         assert any(row["kind"] == "external_call_uncertain" for row in events)
+        metrics = [row for row in events if row["kind"] == "stage_observation"]
+        assert len(metrics) == 1
+        assert metrics[0]["details"]["outcome"] == "source_unavailable"
+        assert metrics[0]["details"]["accepted_result_count"] == 0
+        assert metrics[0]["details"]["cost_status"] == "estimated"
+        assert "sensitive source body" not in str(metrics[0]["details"])
 
 
 def test_missing_executor_and_untrusted_task_input_fail_closed(database):
@@ -156,6 +171,7 @@ def test_actual_rabbitmq_celery_delivery_commits_checkpoint(database):
         Settings().broker_url,
         {"discovering": handler(lambda _: ("Queue result", 0, {"llm_calls": 1, "tokens": 2}))},
     )
+    queue_name = f"skriller.worker-fixture.{uuid4()}"
 
     class BoundedController(TestWorkController):
         def ensure_started(self):
@@ -171,8 +187,17 @@ def test_actual_rabbitmq_celery_delivery_commits_checkpoint(database):
         use_eventloop=False,
         logfile=".runtime/worker-test.log",
         loglevel="INFO",
+        queues=[queue_name],
     ):
-        CeleryPublisher(Settings().broker_url).publish(str(uuid4()), "execute_attempt", payload)
+        publisher = CeleryPublisher(Settings().broker_url)
+        publisher.app.send_task(
+            publisher.TOPICS["execute_attempt"],
+            args=[payload],
+            task_id=str(uuid4()),
+            queue=queue_name,
+            delivery_mode=2,
+            retry=False,
+        )
         for _ in range(100):
             with database.tenant(payload["actor_id"], payload["workspace_id"]) as session:
                 state = session.execute(
@@ -200,9 +225,17 @@ def test_process_killed_after_checkpoint_before_ack_replays_once(database):
     payload = context(database)
     publisher = CeleryPublisher(Settings().broker_url)
     message_id = str(uuid4())
-    publisher.publish(message_id, "execute_attempt", payload)
+    queue_name = f"skriller.crash-fixture.{uuid4()}"
+    publisher.app.send_task(
+        publisher.TOPICS["execute_attempt"],
+        args=[payload],
+        task_id=message_id,
+        queue=queue_name,
+        delivery_mode=2,
+        retry=False,
+    )
     child_source = """
-import signal
+import signal,sys
 from decimal import Decimal
 from skriller.db import Database, ResearchRepository
 from skriller.jobs.outbox import CeleryPublisher
@@ -214,14 +247,14 @@ def persist(session,data):
     return [ResearchRepository.entity(session,"company",display_name=data)["id"]]
 handler=StageHandler(lambda _: ("Crash proof",0,{"llm_calls":1,"tokens":2}),persist,Decimal(0),{"llm_calls":1,"tokens":10})
 with CeleryPublisher(settings.broker_url).app.connection_for_read() as connection:
-    queue=connection.SimpleQueue("skriller.jobs")
+    queue=connection.SimpleQueue(sys.argv[1])
     message=queue.get(block=True,timeout=5)
     assert CheckpointWorker(db,{"discovering":handler}).execute(message.payload[0][0])["status"]=="checkpointed"
     print("CHECKPOINT COMMITTED",flush=True)
     signal.pause()
 """
     child = subprocess.Popen(
-        [sys.executable, "-c", child_source],
+        [sys.executable, "-c", child_source, queue_name],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
@@ -234,7 +267,7 @@ with CeleryPublisher(settings.broker_url).app.connection_for_read() as connectio
         child.kill()
         child.communicate(timeout=5)
     with publisher.app.connection_for_read() as connection:
-        queue = connection.SimpleQueue("skriller.jobs")
+        queue = connection.SimpleQueue(queue_name)
         message = queue.get(block=True, timeout=5)
         try:
             assert message.headers["id"] == message_id

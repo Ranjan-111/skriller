@@ -325,3 +325,31 @@ def test_safe_grounding_diagnostics_do_not_echo_user_or_model_text():
         )
     assert caught.value.reason == "ungrounded_quote"
     assert "PRIVATE_FAKE_QUOTE" not in str(caught.value)
+
+
+async def test_planner_configured_provider_lifecycle_and_injected_ownership(monkeypatch):
+    from skriller.research import planner
+    from skriller.settings import Settings
+
+    class Provider:
+        source = "groq"
+        closed = False
+
+        async def aclose(self):
+            self.closed = True
+
+    owned = Provider()
+    settings = Settings(_env_file=None, model_provider="groq")
+
+    def factory(selected):
+        assert selected is settings
+        return owned
+
+    monkeypatch.setattr(planner, "structured_model", factory)
+    async with planner.PromptPlanner(settings=settings) as configured:
+        assert configured.model is owned and not owned.closed
+    assert owned.closed
+    injected = Provider()
+    async with planner.PromptPlanner(injected):
+        pass
+    assert not injected.closed

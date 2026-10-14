@@ -11,6 +11,9 @@ import socket
 import subprocess
 import time
 from pathlib import Path
+from urllib.parse import urlsplit
+
+from skriller.settings import Settings
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -20,7 +23,11 @@ def main():
     python = ROOT / ".venv/bin/python"
     if not pnpm or not python.exists():
         raise SystemExit("Install the locked Python and web dependencies first; see README.md.")
-    for port in (8000, 3000):
+    settings = Settings(_env_file=ROOT / ".env")
+    proxy = urlsplit(settings.public_collection_proxy_url or "")
+    local_proxy = proxy.hostname in {"127.0.0.1", "localhost"}
+    ports = [8000, 3000] + ([proxy.port] if local_proxy else [])
+    for port in ports:
         with socket.socket() as probe:
             if probe.connect_ex(("127.0.0.1", port)) == 0:
                 raise SystemExit(
@@ -42,11 +49,17 @@ def main():
             ROOT,
         ),
         ([str(python), "-m", "skriller.research.runtime"], ROOT),
+        ([str(python), "-m", "skriller.retention_runtime"], ROOT),
         (
             [pnpm, "exec", "next", "dev", "--hostname", "127.0.0.1", "--port", "3000"],
             ROOT / "apps/web",
         ),
     ]
+    if local_proxy:
+        commands.insert(
+            0,
+            ([str(python), str(ROOT / "scripts/egress_proxy.py"), "--port", str(proxy.port)], ROOT),
+        )
     children: list[subprocess.Popen] = []
 
     def stop(_signal, _frame):

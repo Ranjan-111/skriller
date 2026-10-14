@@ -23,6 +23,7 @@ import {
 
 import { IdentityControls, useIdentity } from "./identity";
 import { ResearchResultsPanel } from "./research-results";
+import { WorkspaceAllowancePanel } from "./workspace-allowance";
 const sources = [
   { id: "linkedin", name: "LinkedIn", detail: "Professional discovery" },
   { id: "reddit", name: "Reddit", detail: "Discussions & demand" },
@@ -323,7 +324,17 @@ export function Workbench() {
             <span id="prompt-help">
               Every result should lead back to its source.
             </span>
-            <span>Optional controls. One prompt.</span>
+            <span>
+              Optional controls. One prompt. Search prompts go to Exa; avoid
+              confidential information and private personal details.{" "}
+              <a
+                href="https://exa.ai/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Exa privacy policy
+              </a>
+            </span>
           </div>
           {error && (
             <div id="request-error" className="notice error" role="alert">
@@ -354,6 +365,13 @@ export function Workbench() {
             jobAccount === accountId && (
               <ResearchResultsPanel key={job.id} api={api} job={job} />
             )}
+          {identity.status === "signed_in" && accountId && (
+            <WorkspaceAllowancePanel
+              key={accountId}
+              api={api}
+              refreshKey={job?.id}
+            />
+          )}
           <section className="examples" aria-labelledby="examples-title">
             <h2 id="examples-title">Start with a question</h2>
             {examples[mode].map((example) => (

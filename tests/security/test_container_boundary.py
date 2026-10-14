@@ -57,7 +57,12 @@ udp=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 udp.bind(('127.0.0.1',0))
 udp.settimeout(.3)
 sender=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-sender.sendto(b'direct DNS/QUIC attempt',udp.getsockname())
+try:
+    sender.sendto(b'direct DNS/QUIC attempt',udp.getsockname())
+except OSError:
+    # A kernel OUTPUT DROP may reject sendto immediately rather than silently
+    # dropping the datagram. Both outcomes enforce the same denial boundary.
+    pass
 try:
     udp.recvfrom(1024)
 except socket.timeout:
@@ -109,7 +114,7 @@ print('kernel and filesystem boundaries verified')
         "SKRILLER_RUN_UID=65532",
         "--env",
         "SKRILLER_RUN_GID=65532",
-        "skriller-egress-worker-test",
+        os.environ.get("SKRILLER_EGRESS_TEST_IMAGE", "skriller-egress-worker-test"),
         "python",
         "-c",
         code,

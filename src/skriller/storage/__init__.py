@@ -218,6 +218,9 @@ class EvidenceStorage:
         workspace = scope(session)
         if len(content) > self.max_bytes:
             raise BlobTooLarge("Object exceeds byte limit")
+        from skriller.retention import expiry_for
+
+        expires_at = expiry_for(source_platform, collected_at, expires_at)
         if expires_at is not None and (
             expires_at.tzinfo is None or expires_at <= datetime.now(UTC)
         ):

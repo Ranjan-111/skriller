@@ -40,8 +40,8 @@ class Provider:
         )
 
 
-def prepare(database, monkeypatch, actor):
-    app = create_app(Settings())
+def prepare(database, monkeypatch, actor, *, settings=None):
+    app = create_app(settings or Settings())
     app.state.database = database
     app.dependency_overrides[require_identity] = lambda: Identity(actor)
     monkeypatch.setattr("skriller.research.router.safe_dispatch", lambda *args: True)
@@ -129,6 +129,85 @@ def test_partial_source_failure_retains_unverified_results(database, monkeypatch
         ]
 
 
+def test_query_stop_is_visible_failure_without_provider_io(database, monkeypatch):
+    from skriller.research.queries import build_queries as original
+
+    actor = f"workflow-{uuid4()}"
+    _, client, accepted = prepare(database, monkeypatch, actor)
+    monkeypatch.setattr(
+        service,
+        "build_queries",
+        lambda *args: replace(
+            original(*args), variants=(), stop_reason="provider_objective_bound_exceeded"
+        ),
+    )
+    provider = Provider()
+    run(database, actor, accepted, provider, monkeypatch)
+    assert provider.calls == 0
+    snapshot = client.get(f"/v1/jobs/{accepted['job_id']}").json()
+    assert snapshot["state"] == "failed"
+    assert snapshot["result_count"] == 0
+    assert any(
+        "provider objective bound exceeded" in item
+        for item in client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["limitations"]
+    )
+
+
+def test_cancel_interrupts_active_async_source_and_preserves_uncertain_charge(
+    database, monkeypatch
+):
+    import asyncio
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
+    import sqlalchemy as sa
+
+    from skriller.db.schema import external_calls, reservations
+
+    actor = f"workflow-{uuid4()}"
+    _, client, accepted = prepare(database, monkeypatch, actor)
+    started, stopped = threading.Event(), threading.Event()
+
+    class WaitingProvider(Provider):
+        async def search(self, query, **kwargs):
+            self.calls += 1
+            started.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                stopped.set()
+
+    provider = WaitingProvider()
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(run, database, actor, accepted, provider, monkeypatch)
+        assert started.wait(2)
+        response = client.post(f"/v1/jobs/{accepted['job_id']}/cancel")
+        assert response.status_code == 200
+        assert response.json()["state"] == "cancelled"
+        assert stopped.wait(3)
+        assert future.result(timeout=3)[1]["status"] == "source_unavailable"
+    assert provider.calls == 1
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        call = (
+            session.execute(
+                sa.select(external_calls).where(external_calls.c.job_id == accepted["job_id"])
+            )
+            .mappings()
+            .one()
+        )
+        reservation = (
+            session.execute(
+                sa.select(reservations).where(reservations.c.id == call["reservation_id"])
+            )
+            .mappings()
+            .one()
+        )
+        assert call["state"] == "uncertain"
+        assert reservation["state"] == "committed"
+        assert reservation["reconciliation_status"] == "estimated"
+    assert client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"] == []
+
+
 def test_invalid_request_is_not_dispatched(database, monkeypatch):
     actor = f"workflow-{uuid4()}"
     _, client, _accepted = prepare(database, monkeypatch, actor)
@@ -193,7 +272,9 @@ def test_real_broker_dispatch_runs_source_handler_and_finishes(database, monkeyp
     provider = Provider()
     monkeypatch.setattr(runtime, "database", database)
     monkeypatch.setattr(
-        runtime, "execute_discovery", lambda db, payload: execute_discovery(db, payload, provider)
+        runtime,
+        "execute_discovery",
+        lambda db, payload, **kwargs: execute_discovery(db, payload, provider, **kwargs),
     )
     # Isolate this delivery test from the developer's concurrently running worker.
     from skriller.jobs.outbox import CeleryPublisher
@@ -211,6 +292,7 @@ def test_real_broker_dispatch_runs_source_handler_and_finishes(database, monkeyp
         )
 
     monkeypatch.setattr(CeleryPublisher, "publish", publish_fixture)
+    assert runtime.app.tasks["skriller.jobs.execute_attempt"].run.__module__ == runtime.__name__
     # Real RabbitMQ task publication/delivery; controlled source is explicitly a fixture.
     with start_worker(
         runtime.app,
@@ -218,6 +300,7 @@ def test_real_broker_dispatch_runs_source_handler_and_finishes(database, monkeyp
         concurrency=1,
         perform_ping_check=False,
         shutdown_timeout=8,
+        loglevel="INFO",
         use_eventloop=False,
         queues=[queue],
     ):
@@ -249,7 +332,8 @@ def test_runtime_retries_temporary_admission_without_dropping_job(database, monk
         "actor_id": actor,
     }
     monkeypatch.setattr(runtime, "database", database)
-    monkeypatch.setattr(runtime, "execute_discovery", lambda *args: {"status": status})
+    payload["attempt_id"] = CheckpointWorker(database, {}).schedule(payload)["attempt_id"]
+    monkeypatch.setattr(runtime, "execute_discovery", lambda *args, **kwargs: {"status": status})
 
     def retry(**kwargs):
         assert 0 < kwargs["countdown"] <= 5
@@ -309,3 +393,30 @@ def test_rate_limit_retains_earlier_results_and_stops_new_calls(database, monkey
     assert response["state"] == "partial" and len(response["results"]) == 1
     with database.tenant(actor, accepted["workspace_id"]) as session:
         assert current_usage(session, accepted["job_id"])[1]["search_calls"] == 2
+
+
+def test_queued_source_disable_skips_io_retains_results_and_reenable_allows_new_job(
+    database, monkeypatch
+):
+    from skriller.connectors.switches import set_disabled
+
+    actor = f"workflow-{uuid4()}"
+    _, client, accepted = prepare(database, monkeypatch, actor)
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        set_disabled(session, "linkedin", "discover", True)
+    provider = Provider()
+    run(database, actor, accepted, provider, monkeypatch)
+    assert provider.calls == 1
+    result = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()
+    assert len(result["results"]) == 1
+    assert result["results"][0]["source"] == "web"
+    assert any("source disabled" in item for item in result["limitations"])
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        set_disabled(session, "linkedin", "discover", False)
+    assert (
+        client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"] == result["results"]
+    )
+    _, _, next_accepted = prepare(database, monkeypatch, actor)
+    next_provider = Provider()
+    run(database, actor, next_accepted, next_provider, monkeypatch)
+    assert next_provider.calls == 2

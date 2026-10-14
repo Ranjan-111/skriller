@@ -1,0 +1,37 @@
+{
+  "model": "llama3.2:3b",
+  "provider": "local_ollama",
+  "synthetic_fixture": true,
+  "status": "passed",
+  "worker_status": "checkpointed",
+  "elapsed_seconds": 9.487,
+  "usage": {
+    "search_calls": 2,
+    "candidates": 0,
+    "fetch_attempts": 1,
+    "llm_calls": 1,
+    "tokens": 1141
+  },
+  "cost_usd": "0E-8",
+  "extraction": {
+    "status": "observed",
+    "failure_code": null,
+    "observations": [
+      {
+        "claim_id": "74d96e13-2822-4826-9900-abad897119ff",
+        "field": "company_name",
+        "value": "Aurora Ledger",
+        "quote": "\"name\":\"Aurora Ledger\"",
+        "status": "unverified"
+      }
+    ],
+    "rejected_claims": 5,
+    "coverage_complete": true,
+    "omitted_chunks": 0
+  },
+  "synthetic_transport_diagnostics": [],
+  "limitations": [
+    "One synthetic fixture; this is not a release quality benchmark.",
+    "Source identity and qualification remain unverified."
+  ]
+}

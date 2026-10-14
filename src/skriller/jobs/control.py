@@ -44,6 +44,11 @@ def permit_call(session, job_id):
     if not remaining:
         JobRepository.transition(session, job_id, "paused")
         JobRepository.event(session, job_id, "deadline:reached", "deadline_reached")
+        return 0.0
+    from skriller.entitlements import execution_allowed
+
+    if not execution_allowed(session, job_id):
+        return 0.0
     return remaining
 
 
@@ -112,6 +117,8 @@ def resume(session, job_id, request_key):
         raise ValueError("Only a paused job can be resumed")
     if job["state"] != "paused":
         return dict(job)
+    if job["failure_code"] in {"clarification_required", "unsupported_criteria"}:
+        raise ValueError("This run needs a corrected prompt before more work can be dispatched")
     if remaining_seconds(session, job) <= 0:
         raise ValueError("Original job deadline expired; start a new run")
     plan = plan_for_job(session, job)

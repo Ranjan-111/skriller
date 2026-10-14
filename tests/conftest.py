@@ -5,6 +5,37 @@ import os
 import socket
 
 import pytest
+from alembic import command
+from alembic.config import Config
+
+from skriller.db import Database, bootstrap
+from skriller.settings import Settings
+
+# A developer may enable live collection in .env. Ordinary fixtures must not
+# inherit those opt-ins, including modules that instantiate Settings at import.
+# Explicit Settings keyword arguments and live-test flags remain available.
+for test_option, test_value in {
+    "SKRILLER_PUBLIC_COLLECTION_PROXY_URL": "",
+    "SKRILLER_PUBLIC_BROWSER_IMAGE": "",
+    "SKRILLER_ENABLE_PAGE_EXTRACTION": "false",
+    "SKRILLER_ENABLE_DYNAMIC_COLLECTION": "false",
+    "SKRILLER_ENABLE_AI_PLANNING": "false",
+    "SKRILLER_MODEL_PROVIDER": "ollama",
+}.items():
+    os.environ[test_option] = test_value
+
+
+@pytest.fixture(scope="session")
+def database():
+    """One application-role DB fixture across API, worker and imported helpers."""
+    settings = Settings()
+    bootstrap(settings.database_url, application_password="local-development")
+    config = Config("alembic.ini")
+    config.attributes["database_url"] = settings.database_url
+    command.upgrade(config, "head")
+    db = Database(settings.application_database_url, pool_size=1)
+    yield db
+    db.dispose()
 
 
 @pytest.fixture(autouse=True)
