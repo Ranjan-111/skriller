@@ -5,6 +5,7 @@ must supply their evidence schema; schema validity alone is not factual evidence
 """
 
 import asyncio
+import hashlib
 import math
 from datetime import UTC, datetime
 from time import monotonic
@@ -214,8 +215,29 @@ class LocalStructuredModel:
                     if status == "confirmed"
                     else None,
                 )
+                if context.attempt_id is not None:
+                    event_id = hashlib.sha256(operation_key.encode()).hexdigest()[:32]
+                    JobRepository.event(
+                        session,
+                        str(context.job_id),
+                        f"llm-metric:{context.attempt_id}:{event_id}",
+                        "stage_observation",
+                        {
+                            "stage": "llm",
+                            "source": self.source,
+                            "outcome": metric_outcome,
+                            "attempt_count": 1,
+                            "attempt_id": str(context.attempt_id),
+                            "accepted_result_count": 0,
+                            "stage_io_seconds": round(monotonic() - model_started, 6),
+                            "cost_usd": "0" if status == "confirmed" else None,
+                            "cost_status": status,
+                        },
+                    )
 
         failure_headers = None
+        metric_outcome = "succeeded"
+        model_started = monotonic()
 
         def release_lease():
             with database.tenant(context.actor_id, str(context.workspace_id)) as session:
@@ -279,16 +301,24 @@ class LocalStructuredModel:
                 # because JsonOutputParser itself does not enforce model fields.
                 data = schema.model_validate(parser.parse(text)).model_dump(mode="json")
             except asyncio.CancelledError:
+                metric_outcome = "cancelled"
                 await asyncio.shield(asyncio.to_thread(finish, "estimated"))
                 raise
-            except ModelUnavailable:
+            except ModelUnavailable as error:
+                metric_outcome = error.failure.code
                 await asyncio.shield(asyncio.to_thread(finish, "estimated"))
                 raise
             except TimeoutError:
+                metric_outcome = "deadline_exceeded"
                 await asyncio.shield(asyncio.to_thread(finish, "estimated"))
                 raise ModelUnavailable("deadline_exceeded", "Local model call timed out.") from None
             except Exception as error:  # noqa: BLE001 - redact SDK and parser failures at this boundary
                 known_tokens = usage_tokens(message)
+                if invoked:
+                    metric_outcome = "schema_invalid"
+                else:
+                    model_failure, failure_headers = self.provider_failure(error)
+                    metric_outcome = model_failure.failure.code
                 await asyncio.shield(
                     asyncio.to_thread(
                         finish,
@@ -300,18 +330,29 @@ class LocalStructuredModel:
                     raise ModelUnavailable(
                         "schema_invalid", "Model did not return a valid result."
                     ) from None
-                failure, failure_headers = self.provider_failure(error)
-                raise failure from None
+                if invoked:
+                    raise ModelUnavailable(
+                        "schema_invalid", "Model did not return a valid result."
+                    ) from None
+                raise model_failure from None
             tokens = usage_tokens(message)
             status: Literal["confirmed", "estimated"] = (
                 "confirmed" if tokens is not None else "estimated"
             )
+            usage = getattr(message, "usage_metadata", None)
+            if tokens is not None and tokens > self.bounds.token_bound:
+                metric_outcome = "budget_exhausted"
+            elif (
+                tokens is not None
+                and isinstance(usage, dict)
+                and usage["output_tokens"] > self.bounds.output_tokens
+            ):
+                metric_outcome = "schema_invalid"
             await asyncio.shield(asyncio.to_thread(finish, status, tokens))
             if tokens is not None and tokens > self.bounds.token_bound:
                 raise ModelUnavailable(
                     "budget_exhausted", "Model usage exceeded the reserved token bound."
                 )
-            usage = getattr(message, "usage_metadata", None)
             if (
                 tokens is not None
                 and isinstance(usage, dict)

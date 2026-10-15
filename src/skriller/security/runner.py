@@ -126,14 +126,16 @@ def bounded_process(
 
 
 def reviewed_command(operation: str, target: str) -> list[str]:
-    if operation == "youtube_metadata":
+    if operation in {"youtube_metadata", "youtube_read"}:
         from agent_reach.utils.url import host_matches
 
         url = normalize_public_http_url(target)
         if not host_matches(url, "youtube.com", "youtu.be"):
             raise ValueError("YouTube metadata requires a YouTube URL")
+        if operation == "youtube_read":
+            return ["python", "-m", "skriller.connectors.youtube_worker", url]
         return [
-            "/app/.venv/bin/yt-dlp",
+            "/usr/local/bin/yt-dlp",
             "--ignore-config",
             "--no-playlist",
             "--skip-download",

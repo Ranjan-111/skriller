@@ -132,6 +132,28 @@ def test_uncertain_attempt_and_cross_tenant_resume_denied(database):
         cancel(session, payload["job_id"])
 
 
+def test_resume_collection_still_refuses_exhausted_fetch_quota(database):
+    payload = context(database)
+    with database.tenant(payload["actor_id"], payload["workspace_id"]) as session:
+        job = JobRepository.get(session, payload["job_id"])
+        plan = SearchPlan.model_validate(
+            ConversationRepository.get_plan(session, job["plan_id"])["interpretation"]
+        )
+        session.execute(
+            sa.update(attempts)
+            .where(attempts.c.id == payload["attempt_id"])
+            .values(state="succeeded")
+        )
+        JobRepository.attempt(session, job["id"], "collect:pending", "collecting")
+        JobRepository.usage(
+            session, job["id"], "spent-fetches", "fetch_attempts", plan.limits.fetch_attempts, 0
+        )
+        JobRepository.transition(session, job["id"], "paused", stage="collecting")
+        with pytest.raises(ValueError, match="budget"):
+            resume(session, job["id"], "cannot-expand-budget")
+        assert JobRepository.get(session, job["id"])["state"] == "paused"
+
+
 def test_personal_workspace_concurrent_creation_and_actor_lookup(database):
     actor = str(uuid4())
     engine = sa.create_engine(database.engine.url, pool_size=2, max_overflow=0)

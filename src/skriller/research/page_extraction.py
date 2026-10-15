@@ -4,22 +4,35 @@ import asyncio
 import json
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from functools import lru_cache
+from typing import Any
+from urllib.parse import urlsplit
 from uuid import UUID
 
 import sqlalchemy as sa
+from pydantic import BaseModel, create_model
 
 from skriller.contracts import ExecutionContext, Failure
 from skriller.db import JobRepository, ResearchRepository
 from skriller.db.repositories import scope
 from skriller.db.schema import attempts, entities, evidence
 from skriller.extraction.cleanup import CleanupLimits, prepare_context
-from skriller.extraction.presets import extract_directory_page
+from skriller.extraction.presets import PresetId, extract_directory_page
+from skriller.extraction.validation import Citation, validate_extraction
 from skriller.jobs.budget import locked_job
 from skriller.jobs.state import TERMINAL_STATES
 from skriller.jobs.worker import CheckpointWorker, StageHandler, TaskIdentity
+from skriller.research.adaptive_templates import template_observations
 from skriller.research.collection import finish_collection_pipeline
 from skriller.settings import Settings
-from skriller.storage import BlobIntegrityError, BlobUnavailable, EvidenceStorage, LocalBlobBackend
+from skriller.storage import BlobIntegrityError, BlobUnavailable
+from skriller.storage.configuration import configured_storage
+
+
+@lru_cache(maxsize=40)
+def observation_schema(field: str) -> type[BaseModel]:
+    fields: dict[str, Any] = {field: (str | int | float | bool, ...)}
+    return create_model("SavedPageObservation", **fields)
 
 
 def schedule_extraction(session, job):
@@ -39,7 +52,11 @@ def schedule_extraction(session, job):
     scheduled = 0
     for identifier in ids:
         entity = ResearchRepository.get_entity(session, identifier)
-        if entity is None or entity["attributes"].get("collection", {}).get("status") != "read":
+        if (
+            entity is None
+            or entity["attributes"].get("source") != "web"
+            or entity["attributes"].get("collection", {}).get("status") != "read"
+        ):
             continue
         attempt = JobRepository.attempt(
             session, job["id"], f"extracting:{identifier}", "extracting"
@@ -55,6 +72,30 @@ def schedule_extraction(session, job):
     if scheduled:
         JobRepository.transition(session, job["id"], "running", stage="extracting")
     return bool(scheduled)
+
+
+def preset_for_source_url(source_url: str) -> PresetId:
+    """Choose a bounded preset from the public page's path, never model output.
+
+    A generic/company page remains the conservative fallback. Path matching is
+    intentionally explicit so query strings and unrelated words in a hostname
+    cannot silently select a more specialized extraction schema.
+    """
+    path = urlsplit(source_url).path.lower().rstrip("/")
+    segments = {segment for segment in path.split("/") if segment}
+    if segments & {"team", "people", "leadership", "founders", "founder"}:
+        return "team"
+    if segments & {"careers", "career", "jobs", "job", "openings", "positions"}:
+        return "careers"
+    if segments & {"services", "solutions", "products"}:
+        return "services"
+    if segments & {"contact", "contacts"}:
+        return "contact"
+    if segments & {"directory", "companies", "vendors", "suppliers"}:
+        return "directory"
+    if segments & {"about", "company", "organization", "organisation"}:
+        return "company"
+    return "directory"
 
 
 def extraction_handler(database, identity, storage, settings, model):
@@ -95,7 +136,9 @@ def extraction_handler(database, identity, storage, settings, model):
 
     def run(plan, timeout_seconds):
         result = None
-        failure_code = None
+        adaptive_claims = ()
+        adaptive_diagnostics = []
+        failure_code: str | None = None
         try:
             with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
                 body = storage.retrieve(session, body_id)
@@ -122,13 +165,21 @@ def extraction_handler(database, identity, storage, settings, model):
                         datetime.now(UTC) + timedelta(seconds=max(0, timeout_seconds - 1)),
                     ),
                     attempt_budget=2,
+                    attempt_id=identity.attempt_id,
+                )
+                adaptive_claims, adaptive_diagnostics = template_observations(
+                    database,
+                    context,
+                    body.decode("utf-8"),
+                    record["source_url"],
+                    settings.reviewed_page_templates_file,
                 )
                 result = asyncio.run(
                     extract_directory_page(
                         database,
                         context,
                         prepared,
-                        "directory",
+                        preset_for_source_url(record["source_url"]),
                         operation_key=f"page:{identity.attempt_id}",
                         settings=settings,
                         model=model,
@@ -138,7 +189,11 @@ def extraction_handler(database, identity, storage, settings, model):
                 failure_code = result.failure_code
         except (BlobUnavailable, BlobIntegrityError, UnicodeError):
             failure_code = "evidence_missing"
-        return (result, failure_code), Decimal(0), {"llm_calls": 0}
+        return (
+            (result, failure_code, adaptive_claims, adaptive_diagnostics),
+            Decimal(0),
+            {"llm_calls": 0},
+        )
 
     def persist(session, data):
         from skriller.erasure import privacy_lock, suppressed
@@ -160,7 +215,7 @@ def extraction_handler(database, identity, storage, settings, model):
             or suppressed(session, entity_id=entity_id)
         ):
             return []
-        result, failure_code = data
+        result, failure_code, adaptive_claims, adaptive_diagnostics = data
         record = (
             session.execute(
                 sa.select(evidence)
@@ -174,9 +229,10 @@ def extraction_handler(database, identity, storage, settings, model):
             .one_or_none()
         )
         now = session.execute(sa.select(sa.func.clock_timestamp())).scalar_one()
-        observations, seen = [], set()
+        observations: list[dict] = []
+        seen = set()
         rejected = result.rejected_claims if result else 0
-        for draft in result.claims if result else ():
+        for draft in (*(result.claims if result else ()), *adaptive_claims):
             key = (draft.field, json.dumps(draft.value), draft.quote)
             if key in seen:
                 continue
@@ -193,22 +249,25 @@ def extraction_handler(database, identity, storage, settings, model):
                 rejected += 1
                 continue
             # Exact source occurrence cannot establish subject identity or fit.
-            claim = ResearchRepository.claim(
+            checked = validate_extraction(
                 session,
-                entity_id,
-                draft.field,
-                draft.value,
-                mode="observed",
-                status="unverified",
-                evidence_ids=[body_id],
+                UUID(entity_id),
+                {draft.field: draft.value},
+                observation_schema(draft.field),
+                citations={draft.field: Citation((UUID(body_id),), draft.quote)},
+                persist=True,
             )
+            claim = checked.fields[draft.field]
+            if claim.value is None:
+                rejected += 1
+                continue
             observations.append(
                 {
-                    "claim_id": claim["id"],
+                    "claim_id": claim.claim_id,
                     "field": draft.field,
                     "value": draft.value,
                     "quote": draft.quote,
-                    "status": claim["status"],
+                    "status": claim.status,
                 }
             )
         statuses = {
@@ -228,7 +287,13 @@ def extraction_handler(database, identity, storage, settings, model):
         session.execute(
             sa.update(entities)
             .where(entities.c.workspace_id == scope(session), entities.c.id == entity_id)
-            .values(attributes={**entity["attributes"], "extraction": summary})
+            .values(
+                attributes={
+                    **entity["attributes"],
+                    "extraction": summary,
+                    "_adaptive_validation": adaptive_diagnostics,
+                }
+            )
         )
         JobRepository.event(
             session,
@@ -261,7 +326,11 @@ def execute_page_extraction(database, payload, *, settings=None, storage=None, m
     if identity.attempt_id is None:
         raise ValueError("Extraction attempt required")
     settings = settings or Settings()
-    storage = storage or EvidenceStorage(LocalBlobBackend(settings.object_directory))
+    if storage is None:
+        with configured_storage(settings) as owned_storage:
+            return execute_page_extraction(
+                database, payload, settings=settings, storage=owned_storage, model=model
+            )
     handler = extraction_handler(database, identity, storage, settings, model)
     outcome = CheckpointWorker(database, {"extracting": handler}).execute(payload)
     if outcome["status"] in {"checkpointed", "source_unavailable"}:

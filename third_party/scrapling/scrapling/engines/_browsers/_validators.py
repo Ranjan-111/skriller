@@ -150,9 +150,8 @@ class StealthConfig(PlaywrightConfig, kw_only=True, frozen=False, weakref=True):
     def __post_init__(self):
         """Custom validation after msgspec validation"""
         super(StealthConfig, self).__post_init__()
-        # Cloudflare timeout adjustment
-        if self.solve_cloudflare and self.timeout < 60_000:
-            self.timeout = 60_000
+        # Skriller patch: challenge solving must never increase a caller-owned
+        # job deadline. The copied solver and isolated executor share this cap.
 
 
 @dataclass

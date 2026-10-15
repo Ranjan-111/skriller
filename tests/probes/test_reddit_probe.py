@@ -36,10 +36,15 @@ def cookie_file(tmp_path):
     return path
 
 
-def test_fixture_search_reuses_acquired_client_parser_and_reports_pagination(cookie_file):
+@pytest.mark.parametrize("subreddit,expected", [(None, 2), ("python", 1)])
+def test_fixture_search_reuses_acquired_client_parser_and_reports_pagination(
+    cookie_file, subreddit, expected
+):
     Credential, _Client, parse_listing, parse_detail = module.backend()
     observed = []
     fixture = json.loads((module.SOURCE / "tests/fixtures/listing.json").read_text())
+    # The acquired field fixture omits the API envelope discriminator.
+    fixture["kind"] = "Listing"
 
     class Client:
         def __init__(self, credential, **kwargs):
@@ -52,12 +57,20 @@ def test_fixture_search_reuses_acquired_client_parser_and_reports_pagination(coo
             pass
 
         def search(self, **kwargs):
-            assert kwargs == {"query": "fintech", "limit": 5}
+            assert kwargs == {
+                "query": "fintech",
+                "limit": 5,
+                "subreddit": subreddit,
+                "sort": "relevance",
+                "time_filter": "all",
+                "after": None,
+            }
             return fixture
 
     result = module.probe(
         live=True,
         cookie_file=cookie_file,
+        subreddit=subreddit,
         backend_loader=lambda: (Credential, Client, parse_listing, parse_detail),
     )
     assert observed == [
@@ -66,8 +79,9 @@ def test_fixture_search_reuses_acquired_client_parser_and_reports_pagination(coo
             {"timeout": 15, "request_delay": 1, "max_retries": 0},
         )
     ]
-    assert result["status"] == "verified"
-    assert result["count"] == len(fixture["data"]["children"])
+    assert result["status"] == ("verified" if subreddit is None else "partial")
+    assert result["validated"] is (subreddit is None)
+    assert result["count"] == expected
     assert result["pagination_cursor_present"] == bool(fixture["data"]["after"])
     assert "title" in result["fields"]
     assert "explicit-test-session" not in json.dumps(result)

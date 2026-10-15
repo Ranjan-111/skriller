@@ -20,7 +20,7 @@ from skriller.db.schema import metadata
 from skriller.retention import cleanup_expired
 from skriller.security.runner import bounded_process
 from skriller.settings import Settings
-from skriller.storage import EvidenceStorage, LocalBlobBackend
+from skriller.storage.configuration import configured_storage
 
 schedules = sa.Table(
     "retention_schedules",
@@ -151,7 +151,7 @@ def tick(database, storage, *, bounded=False):
 if __name__ == "__main__":
     settings = Settings()
     database = Database(settings.application_database_url)
-    storage = EvidenceStorage(LocalBlobBackend(settings.object_directory))
+    storage = configured_storage(settings)
     try:
         if len(sys.argv) == 3 and sys.argv[1] == "--once":
             print(json.dumps(execute_cleanup(database, json.loads(sys.argv[2]), storage)))
@@ -165,4 +165,7 @@ if __name__ == "__main__":
                 )
             time.sleep(60)
     finally:
-        database.dispose()
+        try:
+            storage.close()
+        finally:
+            database.dispose()

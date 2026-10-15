@@ -3,6 +3,7 @@
 import hashlib
 import os
 import re
+import stat
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
@@ -97,14 +98,22 @@ class LocalBlobBackend:
             raise ValueError("Positive byte limit required")
         directory, name = self._directory_fd(workspace_id, key, create=False)
         try:
-            descriptor = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=directory)
-            with os.fdopen(descriptor, "rb") as stream:
-                if os.fstat(stream.fileno()).st_size > max_bytes:
+            descriptor = os.open(
+                name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory
+            )
+            try:
+                metadata = os.fstat(descriptor)
+                if not stat.S_ISREG(metadata.st_mode):
+                    raise BlobUnavailable("Object unavailable")
+                if metadata.st_size > max_bytes:
                     raise BlobTooLarge("Stored object exceeds byte limit")
-                content = stream.read(max_bytes + 1)
+                with os.fdopen(descriptor, "rb", closefd=False) as stream:
+                    content = stream.read(max_bytes + 1)
                 if len(content) > max_bytes:
                     raise BlobTooLarge("Stored object exceeds byte limit")
                 return content
+            finally:
+                os.close(descriptor)
         except OSError as error:
             raise BlobUnavailable("Object unavailable") from error
         finally:
@@ -121,6 +130,7 @@ class LocalBlobBackend:
 
 
 class S3Client(Protocol):
+    def close(self) -> None: ...
     def get_public_access_block(self, **kwargs: Any) -> dict: ...
     def get_bucket_acl(self, **kwargs: Any) -> dict: ...
     def put_object(self, **kwargs: Any) -> dict: ...
@@ -154,6 +164,17 @@ class S3BlobBackend:
         acl = client.get_bucket_acl(Bucket=bucket)
         if any(grant.get("Grantee", {}).get("URI") for grant in acl.get("Grants", [])):
             raise ValueError("Bucket must have no group ACL grants")
+        owner_id = acl.get("Owner", {}).get("ID")
+        grants = acl.get("Grants")
+        if not isinstance(owner_id, str) or not owner_id or not isinstance(grants, list):
+            raise ValueError("Bucket owner ACL must be verifiable")
+        if any(
+            grant.get("Grantee", {}).get("Type") != "CanonicalUser"
+            or grant.get("Grantee", {}).get("ID") != owner_id
+            or grant.get("Permission") != "FULL_CONTROL"
+            for grant in grants
+        ):
+            raise ValueError("Bucket ACL must grant access only to its owner")
         self.client, self.bucket = client, bucket
 
     def put(self, workspace_id: str, key: str, content: bytes) -> None:
@@ -197,12 +218,26 @@ class S3BlobBackend:
         validate_key(workspace_id, key)
         self.client.delete_object(Bucket=self.bucket, Key=key)
 
+    def close(self) -> None:
+        self.client.close()
+
 
 class EvidenceStorage:
     def __init__(self, backend: BlobBackend, *, max_bytes: int = 10 * 1024 * 1024):
         if max_bytes <= 0:
             raise ValueError("Positive byte limit required")
         self.backend, self.max_bytes = backend, max_bytes
+
+    def close(self) -> None:
+        close = getattr(self.backend, "close", None)
+        if close is not None:
+            close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.close()
 
     def store(
         self,
@@ -220,6 +255,8 @@ class EvidenceStorage:
             raise BlobTooLarge("Object exceeds byte limit")
         from skriller.retention import expiry_for
 
+        if expires_at is not None and expires_at.tzinfo is None:
+            raise BlobUnavailable("Expiration must be in the future with timezone")
         expires_at = expiry_for(source_platform, collected_at, expires_at)
         if expires_at is not None and (
             expires_at.tzinfo is None or expires_at <= datetime.now(UTC)

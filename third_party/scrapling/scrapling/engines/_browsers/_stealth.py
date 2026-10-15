@@ -1,6 +1,7 @@
 from random import randint
 from re import compile as re_compile
 from time import sleep as time_sleep
+from time import monotonic
 from asyncio import sleep as asyncio_sleep
 
 from playwright.sync_api import Locator, Page
@@ -105,14 +106,31 @@ class StealthySession(SyncSession, StealthySessionMixin):
         else:
             raise RuntimeError("Session has been already started")
 
-    def _cloudflare_solver(self, page: Page, _attempts: int = 0) -> None:  # pragma: no cover
+    def _cloudflare_solver(self, page: Page, _attempts: int = 0, _deadline: float | None = None) -> None:  # pragma: no cover
         """Solve the cloudflare challenge displayed on the playwright page passed
 
         :param page: The targeted page
         :param _attempts: The number of solve attempts done so far, used internally to cap the retries.
         :return:
         """
-        self._wait_for_networkidle(page, timeout=5000)
+        # Skriller patch: recursive attempts and waiting loops share the caller's
+        # deadline. The isolated executor additionally enforces a hard process cap.
+        if _deadline is None:
+            _deadline = monotonic() + self._config.timeout / 1000
+
+        def remaining_ms():
+            remaining = int((_deadline - monotonic()) * 1000)
+            if remaining <= 0:
+                raise TimeoutError("Challenge solver deadline expired")
+            page.set_default_timeout(remaining)
+            page.set_default_navigation_timeout(remaining)
+            return remaining
+
+        def wait(milliseconds):
+            page.wait_for_timeout(min(milliseconds, remaining_ms()))
+            remaining_ms()
+
+        self._wait_for_networkidle(page, timeout=min(5000, remaining_ms()))
         challenge_type = self._detect_cloudflare(ResponseFactory._get_page_content(page))
         if not challenge_type:
             log.error("No Cloudflare challenge found.")
@@ -125,12 +143,12 @@ class StealthySession(SyncSession, StealthySessionMixin):
             if challenge_type == "non-interactive":
                 while self._detect_cloudflare(ResponseFactory._get_page_content(page)) == "non-interactive":
                     log.info("Waiting for Cloudflare wait page to disappear.")
-                    page.wait_for_timeout(1000)
-                    page.wait_for_load_state()
+                    wait(1000)
+                    page.wait_for_load_state(timeout=remaining_ms())
                 if self._challenge_cleared(ResponseFactory._get_page_content(page), challenge_type):
                     log.info("Cloudflare captcha is solved")
                     return None
-                return self._cloudflare_solver(page, _attempts + 1)
+                return self._cloudflare_solver(page, _attempts + 1, _deadline)
 
             else:
                 box_selector = "#cf_turnstile div, #cf-turnstile div, .turnstile>div>div"
@@ -142,7 +160,7 @@ class StealthySession(SyncSession, StealthySessionMixin):
                             ResponseFactory._get_page_content(page), challenge_type
                         ):
                             break
-                        page.wait_for_timeout(500)
+                        wait(500)
 
                 outer_box: Any = {}
                 iframe = page.frame(url=__CF_PATTERN__)
@@ -152,7 +170,7 @@ class StealthySession(SyncSession, StealthySessionMixin):
                     if challenge_type != "embedded":
                         while not iframe.frame_element().is_visible():
                             # Double-checking that the iframe is loaded
-                            page.wait_for_timeout(500)
+                            wait(500)
 
                     outer_box = iframe.frame_element().bounding_box()
 
@@ -163,8 +181,8 @@ class StealthySession(SyncSession, StealthySessionMixin):
 
                     outer_box = page.locator(box_selector).last.bounding_box()
                     if not outer_box:
-                        page.wait_for_timeout(1000)
-                        return self._cloudflare_solver(page, _attempts + 1)
+                        wait(1000)
+                        return self._cloudflare_solver(page, _attempts + 1, _deadline)
 
                 # Calculate the Captcha coordinates for any viewport
                 captcha_x, captcha_y = outer_box["x"] + randint(26, 28), outer_box["y"] + randint(25, 27)
@@ -180,7 +198,7 @@ class StealthySession(SyncSession, StealthySessionMixin):
                         if attempts >= 100:
                             log.info("Cloudflare page didn't disappear after 10s, continuing...")
                             break
-                        page.wait_for_timeout(100)
+                        wait(100)
                         attempts += 1
 
                 self._wait_for_page_stability(page, True, False)
@@ -190,7 +208,7 @@ class StealthySession(SyncSession, StealthySessionMixin):
                     return None
                 else:
                     log.info("Looks like Cloudflare captcha is still present, solving again")
-                    return self._cloudflare_solver(page, _attempts + 1)
+                    return self._cloudflare_solver(page, _attempts + 1, _deadline)
 
     def fetch(self, url: str, **kwargs: Unpack[StealthFetchParams]) -> Response:
         """Opens up the browser and do your request based on your chosen options.

@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/public-clis/rdt-cli",
+  "commit": "5e4fb3720d5c174e976cd425ccc3b879d52cac66",
+  "license_declaration": "Apache-2.0",
+  "license_files_present_in_acquired_snapshot": false,
+  "modifications": "None; only Python package namespace differs. Auth/client/browser-cookie import paths are excluded.",
+  "files": {
+    "models.py": {
+      "source": "rdt_cli/models.py",
+      "sha256": "62d39361f890b0ec78d69c063b70be7f146f6709359226478bec30b4afa4a23b"
+    },
+    "parser.py": {
+      "source": "rdt_cli/parser.py",
+      "sha256": "5807f33ac5789ec18fc2dcd88cdf586bd2ad4e8fc1c65db764be4fdd06291811"
+    }
+  }
+}

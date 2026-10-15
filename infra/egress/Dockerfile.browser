@@ -5,6 +5,7 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright PYTHONPATH=/app/src:/app/third_part
 COPY infra/egress/browser-requirements.txt /app/browser-requirements.txt
 RUN pip install --no-cache-dir --no-deps -r /app/browser-requirements.txt
 RUN python -m playwright install --with-deps chromium && chmod -R a+rX /opt/playwright
+RUN python -m patchright install chromium && chmod -R a+rX /opt/playwright
 COPY third_party/scrapling/scrapling /app/third_party/scrapling/scrapling
 COPY third_party/agent-reach/agent_reach /app/third_party/agent-reach/agent_reach
 COPY src/skriller /app/src/skriller

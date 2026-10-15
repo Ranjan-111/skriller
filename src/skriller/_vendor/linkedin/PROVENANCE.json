@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/stickerdaniel/linkedin-mcp-server",
+  "commit": "f1ba6aa87234526cf22812e59233e0c619073529",
+  "license": "Apache-2.0",
+  "files": {
+    "search_urls.py": {
+      "source": "linkedin_mcp_server/linkedin/search_urls.py",
+      "source_sha256": "54086178fb40c87e3f1650e60d4fc6c6c9b4b866c14f7724115af620e32f6012",
+      "sha256": "3c6b84a54f9fac759a2e7e78845f5723535c4191a56a224daa7ca985b79fb7f6"
+    },
+    "link_metadata.py": {
+      "source": "linkedin_mcp_server/linkedin/link_metadata.py",
+      "source_sha256": "89ce3746ef122e674882b069e3a0e9a6bd7c6ad6eac7c21c8223d5d5c8e2bc7c",
+      "sha256": "89ce3746ef122e674882b069e3a0e9a6bd7c6ad6eac7c21c8223d5d5c8e2bc7c"
+    }
+  },
+  "filter_errors.py": "Exact FilterValidationError class extracted from linkedin_mcp_server/linkedin/contracts.py; other contracts excluded.",
+  "modifications": "search_urls.py imports its extracted exception via a relative package import. link_metadata.py is unchanged. No browser/client/login code included."
+}

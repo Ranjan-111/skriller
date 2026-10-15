@@ -1,6 +1,7 @@
 """Detached, grounded prompt interpretation; initial-job routing is not wired here."""
 
-from typing import Literal
+import re
+from typing import Literal, get_args
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -9,6 +10,7 @@ from skriller.contracts import Criterion, ExecutionContext, Limits, SearchPlan, 
 from skriller.db import ConversationRepository
 from skriller.extraction.groq import structured_model
 from skriller.extraction.models import LocalStructuredModel
+from skriller.extraction.validation import literal_value
 from skriller.jobs.budget import locked_job
 from skriller.jobs.control import remaining_seconds
 from skriller.settings import Settings
@@ -40,13 +42,13 @@ PUBLIC_FIELDS = {
 }
 PRIVATE_FIELDS = {"private_email", "private_phone", "password", "session_cookie"}
 FIELD_WORDS = {
-    "name": ("name",),
-    "source_url": ("url", "link", "source"),
+    "name": ("name", "names"),
+    "source_url": ("url", "urls", "link", "links", "source", "sources"),
     "company_name": ("company", "companies"),
-    "founder_name": ("founder",),
-    "location": ("location", "city", "where"),
+    "founder_name": ("founder", "founders"),
+    "location": ("location", "locations", "city", "cities", "where"),
     "hiring_role": ("hiring",),
-    "employee_count": ("employee", "headcount"),
+    "employee_count": ("employee", "employees", "headcount"),
     "public_contact": ("public contact",),
     "private_email": ("private email",),
     "private_phone": ("private phone",),
@@ -141,10 +143,37 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
             raise PlanningInvalid(
                 "Interpretation contains an unsupported criterion", reason="unsupported_criterion"
             )
-        if value.casefold() not in original:
+        numeric = operator in {"gte", "lte", "recent"}
+        if numeric:
+            try:
+                grounded = (
+                    literal_value(int(value), original)
+                    if value.lstrip("+-").isdigit()
+                    else literal_value(float(value), original)
+                )
+            except ValueError:
+                grounded = False
+        else:
+            grounded = literal_value(value.casefold(), original)
+            # Explicit grammatical forms only, never arbitrary substring/stem matching.
+            aliases = {
+                ("role", "founder"): "founders",
+                ("role", "engineer"): "engineers",
+                ("company_type", "agency"): "agencies",
+            }
+            alias = aliases.get((field, value.casefold()))
+            grounded = grounded or bool(alias and literal_value(alias, original))
+        if not grounded:
             raise PlanningInvalid(
                 "Interpretation contains an ungrounded criterion value", reason="ungrounded_value"
             )
+        comparison_cues = {
+            "gte": r"\b(?:at\s+least|minimum(?:\s+of)?|no\s+fewer\s+than)\b",
+            "lte": r"\b(?:at\s+most|maximum(?:\s+of)?|no\s+more\s+than)\b",
+            "recent": r"\b(?:last|past|within)\s+\d+\s+days?\b",
+        }
+        if numeric and not re.search(comparison_cues[operator], original):
+            raise PlanningInvalid("Numeric comparison must be explicitly grounded")
         if group == "preference" and not any(
             word in original
             for word in ("prefer", "prioritis", "prioritiz", "ideally", "nice to have")
@@ -173,7 +202,7 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
         groups[group].append(criterion)
     selected: list[Source] = []
     for source, evidence in interpretation.sources:
-        if source.casefold() not in quote(evidence):
+        if not literal_value(source.casefold(), quote(evidence)):
             raise PlanningInvalid("A source preference must be explicitly requested")
         if source not in scope.allowed_sources:
             unsupported.append(evidence)
@@ -182,7 +211,9 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
     requested = list(scope.default_fields)
     for field, evidence in interpretation.fields:
         original = quote(evidence)
-        if field not in FIELD_WORDS or not any(word in original for word in FIELD_WORDS[field]):
+        if field not in FIELD_WORDS or not any(
+            literal_value(word, original) for word in FIELD_WORDS[field]
+        ):
             raise PlanningInvalid("A requested field must be explicitly grounded")
         if field in PRIVATE_FIELDS:
             unsupported.append(evidence)
@@ -190,6 +221,55 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
             raise PlanningInvalid("Unsupported requested field")
         elif field not in requested:
             requested.append(field)
+    # The model may omit an explicit material constraint while still returning
+    # schema-valid JSON. Pause rather than execute a silently weaker plan.
+    cues = [
+        (r"\b(?:exclude|avoid|without)\b", bool(groups["exclude"]), "exclusion"),
+        (r"\b(?:prefer|ideally|prioriti[sz]e)\b", bool(groups["preference"]), "preference"),
+        (
+            r"\bheadquartered\b",
+            any(rule.field == "company_location" for rule in groups["must_have"]),
+            "company headquarters",
+        ),
+        (
+            r"\b(?:founders|people|persons)\s+based\s+in\b",
+            any(rule.field == "person_location" for rule in groups["must_have"]),
+            "person location",
+        ),
+        (
+            r"\bat\s+least\s+\d+\s+employees\b",
+            any(
+                rule.field == "employee_count" and rule.operator == "gte"
+                for rule in groups["must_have"]
+            ),
+            "minimum employee count",
+        ),
+    ]
+    missing = [
+        name for pattern, present, name in cues if re.search(pattern, prompt, re.IGNORECASE) and not present
+    ]
+    represented_sources = {source for source, _ in interpretation.sources}
+    for source in get_args(Source):
+        # X/web are common words outside source preferences. Require a source
+        # preposition for these ambiguous names; other platform names are exact.
+        pattern = (
+            r"\b(?:on|from|using|across)\s+(?:the\s+)?" + source + r"\b"
+            if source in {"x", "web"}
+            else r"\b" + source + r"\b"
+        )
+        if (
+            re.search(pattern, prompt, re.IGNORECASE)
+            and source not in represented_sources
+            and not any(re.search(pattern, value, re.IGNORECASE) for value in unsupported)
+        ):
+            missing.append(source + " source selection")
+    if missing:
+        clarification = clarification or "Please confirm the requested " + ", ".join(missing) + "."
+    for field in PRIVATE_FIELDS:
+        for phrase in FIELD_WORDS[field]:
+            match = re.search(r"\b" + re.escape(phrase) + r"\b", prompt, re.IGNORECASE)
+            if match:
+                unsupported.append(match.group())
     # Every identity, revision and spending limit is injected by the server.
     return SearchPlan(
         workspace_id=scope.workspace_id,
@@ -236,18 +316,30 @@ class PromptPlanner:
     ) -> SearchPlan:
         if scope.workspace_id != context.workspace_id:
             raise PlanningInvalid("Planning workspace does not match execution scope")
-        if not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 1500:
-            raise PlanningInvalid("Planning prompt must contain 1–1500 characters")
+        if not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 3500:
+            raise PlanningInvalid("Planning context must contain 1–3,500 characters")
         instructions = (
-            "Interpret intent only. Rules=[must_have|preference|exclude,field,operator,value,exact quote]. "
-            "Fields=role,industry,company_type,company_name,person_location,company_location,"
-            "hiring_role,employee_count,location. Ambiguous geography uses location+clarification. "
-            "Sources/fields=[name,quote]. No inferred preferences. Private fields unsupported. "
-            "Quotes are verbatim, including case. Preference/exclusion quotes include their intent "
-            "word (Prefer/Exclude) and value. User:\n" + prompt
+            "Interpret intent only. entity_type is what the user wants to find: founders means person; "
+            "entity_quote is the exact nonempty phrase naming that target. Rules are "
+            "[must_have|preference|exclude,field,operator,value,exact quote] and are only for "
+            "qualification criteria, never output fields. Fields are only requested result attributes. "
+            "Allowed rule fields=role,industry,company_type,company_name,person_location,company_location,"
+            "hiring_role,employee_count,location. If location could refer to either a person or their "
+            "company, emit a location rule; the server will ask for clarification and remove that filter. "
+            "Sources/fields=[name,exact quote]. No inferred preferences. Private fields unsupported. "
+            "Every quote must be a nonempty verbatim substring of the user text, including case. "
+            "Preference/exclusion quotes include their intent word (Prefer/Exclude) and value. "
+            "Example: for `Find founders at companies in London.`, return entity_type=person, "
+            "entity_quote=`founders`, rules=[[must_have,location,eq,London,companies in London]], "
+            "and empty sources, fields, and unsupported lists. User:\n" + prompt
         )
         answer = await self.model.invoke_job(
-            database, context, instructions, Interpretation, operation_key=operation_key
+            database,
+            context,
+            instructions,
+            Interpretation,
+            operation_key=operation_key,
+            prompt_includes_schema=True,
         )
         return grounded_plan(prompt, Interpretation.model_validate(answer.data), scope)
 

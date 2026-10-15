@@ -10,6 +10,7 @@ import json
 import logging
 import math
 import re
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
@@ -154,6 +155,7 @@ class HTTPFetcher:
         max_body_bytes=5 * 1024 * 1024,
         timeout_seconds=20,
         max_redirects=2,
+        proxy_route_factory=None,
     ):
         parsed = urlsplit(trusted_proxy_url)
         # The proxy address is operator configuration, never a target URL option.
@@ -182,12 +184,63 @@ class HTTPFetcher:
         ):
             raise ValueError("Fetch limits exceed pilot bounds")
         self.database = database
+        # Trusted server-side factory only; target options cannot supply routes.
+        self.proxy_route_factory = proxy_route_factory
         self.proxy = trusted_proxy_url
         self.max_body_bytes, self.timeout_seconds, self.max_redirects = (
             max_body_bytes,
             timeout_seconds,
             max_redirects,
         )
+
+    @asynccontextmanager
+    async def proxy_for(self, context, source):
+        """Own the configured task gateway until client I/O and cleanup finish."""
+        if self.proxy_route_factory is None:
+            from skriller.connectors.proxies import configured_task_proxy
+
+            manager = configured_task_proxy(
+                self.database, context, source=source, trusted_proxy_url=self.proxy
+            )
+        else:
+            manager = self.proxy_route_factory(context, source)
+
+        async def settle_owned(task):
+            # Repeated caller cancellation must not abandon an owned gateway.
+            while not task.done():
+                try:
+                    await asyncio.shield(task)
+                except asyncio.CancelledError:
+                    continue
+            return task.result()
+
+        async def cleanup():
+            task = asyncio.create_task(asyncio.to_thread(manager.__exit__, None, None, None))
+            try:
+                await asyncio.shield(task)
+            except asyncio.CancelledError:
+                await settle_owned(task)
+                raise
+
+        startup = asyncio.create_task(asyncio.to_thread(manager.__enter__))
+        try:
+            proxy = await asyncio.shield(startup)
+        except asyncio.CancelledError:
+            try:
+                await settle_owned(startup)
+            except Exception:  # noqa: BLE001, S110 - failed entry owns cleanup; errors may contain secrets
+                pass
+            else:
+                await cleanup()
+            raise
+        except Exception:  # noqa: BLE001 - redact credential/gateway control-plane diagnostics
+            raise _failure(
+                "source_unavailable", "Task proxy route is unavailable or needs configuration"
+            ) from None
+        try:
+            yield proxy
+        finally:
+            await cleanup()
 
     def fetch(
         self,
@@ -240,17 +293,33 @@ class HTTPFetcher:
             raise _failure("access_denied", "Source is outside public HTTP policy") from None
         if context.attempt_budget < 1:
             raise _failure("budget_exhausted", "No fetch attempts remain")
+        # Preserve typed job/source refusals before creating a scoped gateway.
+        with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
+            if is_disabled(session, source, "read"):
+                raise _failure("unsupported_operation", "Source reads are disabled")
+            permitted = permit_call(session, str(context.job_id))
+            job = locked_job(session, str(context.job_id))
+            plan = ConversationRepository.get_plan(session, job["plan_id"])
+            if source not in plan["interpretation"]["sources"]:
+                raise _failure("access_denied", "Source was not approved by this plan")
+            if plan["revision"] != context.plan_revision:
+                raise ValueError("Fetch plan revision mismatch")
+        if permitted <= 0 or datetime.now(UTC) >= context.deadline:
+            raise _failure("deadline_exceeded", "Job no longer permits source reads")
         current, network_seconds, attempts_used = requested, 0.0, 0
         # Reuse one copied connection/session across bounded manual redirect hops.
-        async with FetcherSession(
-            proxy=self.proxy,
-            impersonate=None,
-            stealthy_headers=False,
-            follow_redirects=False,
-            retries=0,
-            verify=True,
-            selector_config={"adaptive": False},
-        ) as engine:
+        async with (
+            self.proxy_for(context, source) as proxy,
+            FetcherSession(
+                proxy=proxy,
+                impersonate=None,
+                stealthy_headers=False,
+                follow_redirects=False,
+                retries=0,
+                verify=True,
+                selector_config={"adaptive": False},
+            ) as engine,
+        ):
             engine._async_curl_session.trust_env = False
             engine._async_curl_session.curl_options[CurlOpt.NOPROXY] = ""
             engine._async_curl_session.curl_options[CurlOpt.MAXFILESIZE_LARGE] = self.max_body_bytes
@@ -455,7 +524,15 @@ class HTTPFetcher:
                 if not 200 <= reply.status < 300:
                     raise _failure("source_unavailable", "Source returned an unavailable response")
                 content_type = headers.get("content-type", "").split(";", 1)[0].lower()
-                if content_type not in {"text/html", "application/xhtml+xml", "text/plain"}:
+                allowed_types = {"text/html", "application/xhtml+xml", "text/plain"}
+                if source == "rss":
+                    allowed_types |= {
+                        "application/rss+xml",
+                        "application/atom+xml",
+                        "application/xml",
+                        "text/xml",
+                    }
+                if content_type not in allowed_types:
                     raise _failure("unsupported_operation", "Source content type is not supported")
                 raw = bytes(buffer)
                 with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
@@ -485,6 +562,24 @@ class HTTPFetcher:
                     content_type=content_type,
                     document=parsed_response,
                 )
+                if (
+                    source == "rss"
+                    and reply.status == 200
+                    and content_type
+                    in {
+                        "application/rss+xml",
+                        "application/atom+xml",
+                        "application/xml",
+                        "text/xml",
+                    }
+                ):
+                    from skriller.connectors.rss import parse_feed
+
+                    feed = parse_feed(raw, current)
+                    if not feed.malformed:
+                        classification = PageClassification(
+                            "readable", "extract", "page_read", "validated_rss_atom_xml"
+                        )
                 if not classification.accepts_content:
                     code = {
                         "challenge": "challenge_detected",

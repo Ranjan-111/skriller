@@ -77,7 +77,13 @@ class CheckpointWorker:
                 raise ValueError("Plan scope mismatch")
             if job["state"] != "queued":
                 return {"status": "not_dispatchable"}
-            stage = "planning" if job["purpose"] == "planning" else "discovering"
+            stage = (
+                "planning"
+                if job["purpose"] == "planning"
+                else "reporting"
+                if job["purpose"] == "followup"
+                else "discovering"
+            )
             attempt = JobRepository.attempt(session, job["id"], f"{stage}:{plan.revision}", stage)
             JobRepository.enqueue(
                 session,
@@ -208,6 +214,7 @@ class CheckpointWorker:
             time_left = remaining_seconds(session, job)
         io_started = monotonic()
         io_ok = False
+        stage_outcome = "succeeded"
         retry_headers = None
         try:
             # No database transaction remains open during source/model IO.
@@ -225,12 +232,20 @@ class CheckpointWorker:
                 feedback = handler.feedback_failure(data)
                 if isinstance(feedback, Failure):
                     io_ok = False
+                    stage_outcome = feedback.code
                     if feedback.retry_after_seconds is not None:
                         retry_headers = {"Retry-After": str(feedback.retry_after_seconds)}
             io_elapsed = monotonic() - io_started
         except Exception as error:  # noqa: BLE001 - never persist raw page/provider exceptions
             io_elapsed = monotonic() - io_started
             failure = getattr(error, "failure", None)
+            outcome = (
+                failure.code
+                if isinstance(failure, Failure)
+                else "deadline_exceeded"
+                if isinstance(error, TimeoutError)
+                else "source_unavailable"
+            )
             if isinstance(failure, Failure) and failure.retry_after_seconds is not None:
                 retry_headers = {"Retry-After": str(failure.retry_after_seconds)}
             with self.database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
@@ -269,8 +284,14 @@ class CheckpointWorker:
                     {
                         "stage": attempt["stage"],
                         "source": handler.capacity_source,
-                        "outcome": "source_unavailable",
+                        "outcome": outcome,
                         "attempt_count": 1,
+                        "attempt_id": str(identity.attempt_id),
+                        "queue_wait_seconds": round(
+                            max(0, (now - attempt["created_at"]).total_seconds()), 6
+                        )
+                        if generation == 1
+                        else None,
                         "accepted_result_count": 0,
                         "stage_io_seconds": round(io_elapsed, 6),
                         "cost_usd": None,
@@ -364,8 +385,14 @@ class CheckpointWorker:
                 {
                     "stage": row["stage"],
                     "source": handler.capacity_source,
-                    "outcome": "succeeded",
+                    "outcome": stage_outcome,
                     "attempt_count": 1,
+                    "attempt_id": row["id"],
+                    "queue_wait_seconds": round(
+                        max(0, (now - attempt["created_at"]).total_seconds()), 6
+                    )
+                    if generation == 1
+                    else None,
                     "accepted_result_count": len(entity_ids),
                     "stage_io_seconds": round(io_elapsed, 6),
                     "cost_usd": str(actual_cost),

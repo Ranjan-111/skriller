@@ -1,6 +1,29 @@
 {
   "components": {
     "schemas": {
+      "Anchor": {
+        "additionalProperties": false,
+        "properties": {
+          "css": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Css",
+            "type": "string"
+          },
+          "expected_text": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Expected Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "css",
+          "expected_text"
+        ],
+        "title": "Anchor",
+        "type": "object"
+      },
       "Capability": {
         "additionalProperties": false,
         "properties": {
@@ -88,6 +111,22 @@
           "version"
         ],
         "title": "Capability",
+        "type": "object"
+      },
+      "ClarificationInput": {
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Answer",
+            "type": "string"
+          }
+        },
+        "required": [
+          "answer"
+        ],
+        "title": "ClarificationInput",
         "type": "object"
       },
       "CollectionView": {
@@ -210,6 +249,75 @@
         "title": "CollectionView",
         "type": "object"
       },
+      "ComponentTimings": {
+        "additionalProperties": false,
+        "properties": {
+          "browser_samples": {
+            "minimum": 0.0,
+            "title": "Browser Samples",
+            "type": "integer"
+          },
+          "browser_seconds": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Browser Seconds"
+          },
+          "network_samples": {
+            "minimum": 0.0,
+            "title": "Network Samples",
+            "type": "integer"
+          },
+          "network_seconds": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Network Seconds"
+          },
+          "observations": {
+            "minimum": 0.0,
+            "title": "Observations",
+            "type": "integer"
+          },
+          "parser_samples": {
+            "minimum": 0.0,
+            "title": "Parser Samples",
+            "type": "integer"
+          },
+          "parser_seconds": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parser Seconds"
+          }
+        },
+        "required": [
+          "observations",
+          "network_seconds",
+          "network_samples",
+          "parser_seconds",
+          "parser_samples",
+          "browser_seconds",
+          "browser_samples"
+        ],
+        "title": "ComponentTimings",
+        "type": "object"
+      },
       "ConnectionInput": {
         "additionalProperties": false,
         "properties": {
@@ -244,19 +352,27 @@
             "type": "array"
           },
           "source": {
-            "enum": [
-              "linkedin",
-              "reddit",
-              "web",
-              "github",
-              "rss",
-              "youtube",
-              "x",
-              "instagram",
-              "facebook"
+            "anyOf": [
+              {
+                "enum": [
+                  "linkedin",
+                  "reddit",
+                  "web",
+                  "github",
+                  "rss",
+                  "youtube",
+                  "x",
+                  "instagram",
+                  "facebook"
+                ],
+                "type": "string"
+              },
+              {
+                "const": "proxy",
+                "type": "string"
+              }
             ],
-            "title": "Source",
-            "type": "string"
+            "title": "Source"
           }
         },
         "required": [
@@ -310,19 +426,27 @@
             "type": "array"
           },
           "source": {
-            "enum": [
-              "linkedin",
-              "reddit",
-              "web",
-              "github",
-              "rss",
-              "youtube",
-              "x",
-              "instagram",
-              "facebook"
+            "anyOf": [
+              {
+                "enum": [
+                  "linkedin",
+                  "reddit",
+                  "web",
+                  "github",
+                  "rss",
+                  "youtube",
+                  "x",
+                  "instagram",
+                  "facebook"
+                ],
+                "type": "string"
+              },
+              {
+                "const": "proxy",
+                "type": "string"
+              }
             ],
-            "title": "Source",
-            "type": "string"
+            "title": "Source"
           },
           "state": {
             "enum": [
@@ -441,6 +565,7 @@
         "type": "object"
       },
       "CriterionResult": {
+        "additionalProperties": false,
         "properties": {
           "criterion": {
             "$ref": "#/components/schemas/Criterion"
@@ -473,6 +598,40 @@
           "reason"
         ],
         "title": "CriterionResult",
+        "type": "object"
+      },
+      "DiscussionView": {
+        "additionalProperties": false,
+        "properties": {
+          "author_handle": {
+            "title": "Author Handle",
+            "type": "null"
+          },
+          "author_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Author Identity",
+            "type": "string"
+          },
+          "evidence_kind": {
+            "const": "indexed_reference",
+            "title": "Evidence Kind",
+            "type": "string"
+          },
+          "resource_kind": {
+            "enum": [
+              "post",
+              "comment"
+            ],
+            "title": "Resource Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource_kind",
+          "evidence_kind"
+        ],
+        "title": "DiscussionView",
         "type": "object"
       },
       "EntitlementSettings": {
@@ -572,6 +731,115 @@
         "title": "EntitlementView",
         "type": "object"
       },
+      "ErasureResult": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Entity Ids",
+            "type": "array"
+          },
+          "status": {
+            "const": "erased",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "entity_ids"
+        ],
+        "title": "ErasureResult",
+        "type": "object"
+      },
+      "EvidenceCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "content_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Hash"
+          },
+          "content_hash_status": {
+            "const": "stored_metadata_not_revalidated",
+            "title": "Content Hash Status",
+            "type": "string"
+          },
+          "excerpt": {
+            "maxLength": 4096,
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "excerpt_truncated": {
+            "title": "Excerpt Truncated",
+            "type": "boolean"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "source_platform": {
+            "enum": [
+              "linkedin",
+              "reddit",
+              "web",
+              "github",
+              "rss",
+              "youtube",
+              "x",
+              "instagram",
+              "facebook"
+            ],
+            "title": "Source Platform",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 4096,
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source_url",
+          "source_platform",
+          "collected_at",
+          "expires_at",
+          "excerpt",
+          "excerpt_truncated",
+          "content_hash",
+          "content_hash_status"
+        ],
+        "title": "EvidenceCitation",
+        "type": "object"
+      },
       "ExecutionContext": {
         "additionalProperties": false,
         "properties": {
@@ -586,6 +854,19 @@
             "minimum": 0,
             "title": "Attempt Budget",
             "type": "integer"
+          },
+          "attempt_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Attempt Id"
           },
           "connection_ref": {
             "anyOf": [
@@ -643,6 +924,22 @@
           "attempt_budget"
         ],
         "title": "ExecutionContext",
+        "type": "object"
+      },
+      "ExpansionInput": {
+        "additionalProperties": false,
+        "properties": {
+          "prompt": {
+            "maxLength": 1500,
+            "minLength": 3,
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "ExpansionInput",
         "type": "object"
       },
       "ExportInput": {
@@ -842,7 +1139,119 @@
         "title": "Failure",
         "type": "object"
       },
+      "FeedEntryView": {
+        "additionalProperties": false,
+        "properties": {
+          "entry_id": {
+            "maxLength": 4096,
+            "title": "Entry Id",
+            "type": "string"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "summary": {
+            "maxLength": 4096,
+            "title": "Summary",
+            "type": "string"
+          },
+          "summary_truncated": {
+            "title": "Summary Truncated",
+            "type": "boolean"
+          },
+          "title": {
+            "maxLength": 1000,
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "url": {
+            "maxLength": 4096,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entry_id",
+          "title",
+          "url",
+          "published_at",
+          "updated_at",
+          "summary",
+          "summary_truncated"
+        ],
+        "title": "FeedEntryView",
+        "type": "object"
+      },
+      "FeedView": {
+        "additionalProperties": false,
+        "properties": {
+          "duplicate_count": {
+            "minimum": 0.0,
+            "title": "Duplicate Count",
+            "type": "integer"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/FeedEntryView"
+            },
+            "maxItems": 20,
+            "title": "Entries",
+            "type": "array"
+          },
+          "evidence_expired": {
+            "title": "Evidence Expired",
+            "type": "boolean"
+          },
+          "feed_url": {
+            "maxLength": 4096,
+            "title": "Feed Url",
+            "type": "string"
+          },
+          "invalid_link_count": {
+            "minimum": 0.0,
+            "title": "Invalid Link Count",
+            "type": "integer"
+          },
+          "omitted_entry_count": {
+            "minimum": 0.0,
+            "title": "Omitted Entry Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "feed_url",
+          "entries",
+          "duplicate_count",
+          "invalid_link_count",
+          "omitted_entry_count",
+          "evidence_expired"
+        ],
+        "title": "FeedView",
+        "type": "object"
+      },
       "Fit": {
+        "additionalProperties": false,
         "properties": {
           "essential": {
             "items": {
@@ -897,6 +1306,215 @@
         "title": "Fit",
         "type": "object"
       },
+      "FollowupInput": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "question": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity_id",
+          "question"
+        ],
+        "title": "FollowupInput",
+        "type": "object"
+      },
+      "FollowupObservation": {
+        "additionalProperties": false,
+        "properties": {
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "excerpt_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Excerpt Sha256",
+            "type": "string"
+          },
+          "qualification": {
+            "const": "source_statement_not_independently_verified",
+            "title": "Qualification",
+            "type": "string"
+          },
+          "quote": {
+            "maxLength": 300,
+            "title": "Quote",
+            "type": "string"
+          },
+          "source_platform": {
+            "enum": [
+              "linkedin",
+              "reddit",
+              "web",
+              "github",
+              "rss",
+              "youtube",
+              "x",
+              "instagram",
+              "facebook"
+            ],
+            "title": "Source Platform",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 2048,
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "quote",
+          "source_url",
+          "source_platform",
+          "collected_at",
+          "excerpt_sha256",
+          "qualification"
+        ],
+        "title": "FollowupObservation",
+        "type": "object"
+      },
+      "FollowupSubmission": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "planned",
+              "queued",
+              "running",
+              "waiting_for_connection",
+              "paused",
+              "completed",
+              "partial",
+              "failed",
+              "cancelled"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "workspace_id",
+          "state"
+        ],
+        "title": "FollowupSubmission",
+        "type": "object"
+      },
+      "FollowupView": {
+        "additionalProperties": false,
+        "properties": {
+          "coverage_complete": {
+            "const": false,
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "expansion_status": {
+            "const": "unavailable",
+            "title": "Expansion Status",
+            "type": "string"
+          },
+          "inference_status": {
+            "const": "unavailable",
+            "title": "Inference Status",
+            "type": "string"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/FollowupObservation"
+            },
+            "maxItems": 5,
+            "title": "Observations",
+            "type": "array"
+          },
+          "source_job_id": {
+            "format": "uuid",
+            "title": "Source Job Id",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "planned",
+              "queued",
+              "running",
+              "waiting_for_connection",
+              "paused",
+              "completed",
+              "partial",
+              "failed",
+              "cancelled"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "answered",
+              "unknown"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unknowns": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Unknowns",
+            "type": "array"
+          }
+        },
+        "required": [
+          "job_id",
+          "source_job_id",
+          "entity_id",
+          "state",
+          "status",
+          "observations",
+          "unknowns",
+          "coverage_complete",
+          "inference_status",
+          "expansion_status"
+        ],
+        "title": "FollowupView",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -908,6 +1526,290 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "IdentityEvidenceView": {
+        "additionalProperties": false,
+        "properties": {
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "excerpt": {
+            "maxLength": 4096,
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "excerpt_truncated": {
+            "title": "Excerpt Truncated",
+            "type": "boolean"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "source_platform": {
+            "title": "Source Platform",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source_url",
+          "source_platform",
+          "collected_at",
+          "expires_at",
+          "excerpt",
+          "excerpt_truncated"
+        ],
+        "title": "IdentityEvidenceView",
+        "type": "object"
+      },
+      "IdentityFactView": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/IdentityEvidenceView"
+            },
+            "maxItems": 10,
+            "title": "Evidence",
+            "type": "array"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "field",
+          "value",
+          "evidence"
+        ],
+        "title": "IdentityFactView",
+        "type": "object"
+      },
+      "IdentityPair": {
+        "additionalProperties": false,
+        "properties": {
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "target_id": {
+            "format": "uuid",
+            "title": "Target Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "target_id"
+        ],
+        "title": "IdentityPair",
+        "type": "object"
+      },
+      "IdentityReviewDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "can_review": {
+            "title": "Can Review",
+            "type": "boolean"
+          },
+          "current_reason": {
+            "title": "Current Reason",
+            "type": "string"
+          },
+          "eligible": {
+            "title": "Eligible",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "review_outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Outcome"
+          },
+          "source": {
+            "$ref": "#/components/schemas/IdentitySubjectView"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "suggestion",
+              "linked",
+              "reversed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/IdentitySubjectView"
+          },
+          "target_id": {
+            "format": "uuid",
+            "title": "Target Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source_id",
+          "target_id",
+          "state",
+          "reason",
+          "source",
+          "target",
+          "eligible",
+          "current_reason",
+          "can_review"
+        ],
+        "title": "IdentityReviewDetail",
+        "type": "object"
+      },
+      "IdentityReviewView": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "review_outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Outcome"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "suggestion",
+              "linked",
+              "reversed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "target_id": {
+            "format": "uuid",
+            "title": "Target Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source_id",
+          "target_id",
+          "state",
+          "reason"
+        ],
+        "title": "IdentityReviewView",
+        "type": "object"
+      },
+      "IdentitySubjectView": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "context_complete": {
+            "title": "Context Complete",
+            "type": "boolean"
+          },
+          "display_name": {
+            "maxLength": 200,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "identity_facts": {
+            "items": {
+              "$ref": "#/components/schemas/IdentityFactView"
+            },
+            "maxItems": 20,
+            "title": "Identity Facts",
+            "type": "array"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "display_name",
+          "kind",
+          "available",
+          "identity_facts",
+          "context_complete"
+        ],
+        "title": "IdentitySubjectView",
         "type": "object"
       },
       "JobSnapshot": {
@@ -1236,6 +2138,15 @@
             "title": "Claim Id",
             "type": "string"
           },
+          "evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
           "field": {
             "maxLength": 40,
             "title": "Field",
@@ -1322,6 +2233,61 @@
         "title": "PlanView",
         "type": "object"
       },
+      "PlatformReference": {
+        "additionalProperties": false,
+        "properties": {
+          "access": {
+            "const": "indexed_reference_only",
+            "default": "indexed_reference_only",
+            "title": "Access",
+            "type": "string"
+          },
+          "direct_read_status": {
+            "const": "not_attempted",
+            "default": "not_attempted",
+            "title": "Direct Read Status",
+            "type": "string"
+          },
+          "discovery_backend": {
+            "const": "exa_keyless",
+            "default": "exa_keyless",
+            "title": "Discovery Backend",
+            "type": "string"
+          },
+          "resource_kind": {
+            "enum": [
+              "profile",
+              "company",
+              "post",
+              "comment",
+              "community",
+              "unknown"
+            ],
+            "title": "Resource Kind",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "linkedin",
+              "reddit"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "subject_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Subject Identity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "resource_kind"
+        ],
+        "title": "PlatformReference",
+        "type": "object"
+      },
       "ProgressEvent": {
         "additionalProperties": false,
         "properties": {
@@ -1340,6 +2306,55 @@
           "details"
         ],
         "title": "ProgressEvent",
+        "type": "object"
+      },
+      "QualificationGroups": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmed": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Confirmed",
+            "type": "array"
+          },
+          "excluded": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Excluded",
+            "type": "array"
+          },
+          "near_match": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Near Match",
+            "type": "array"
+          },
+          "unverified": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Unverified",
+            "type": "array"
+          }
+        },
+        "required": [
+          "confirmed",
+          "near_match",
+          "excluded",
+          "unverified"
+        ],
+        "title": "QualificationGroups",
         "type": "object"
       },
       "QueryProvenance": {
@@ -1458,6 +2473,22 @@
         "title": "ReconnectInput",
         "type": "object"
       },
+      "RefinementInput": {
+        "additionalProperties": false,
+        "properties": {
+          "prompt": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "RefinementInput",
+        "type": "object"
+      },
       "RefreshInput": {
         "additionalProperties": false,
         "properties": {
@@ -1497,6 +2528,16 @@
               }
             ]
           },
+          "discussion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DiscussionView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "evidence_kind": {
             "const": "search_snippet",
             "title": "Evidence Kind",
@@ -1512,6 +2553,26 @@
               }
             ]
           },
+          "feed": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FeedView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Fit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -1521,6 +2582,16 @@
             "format": "date-time",
             "title": "Observed At",
             "type": "string"
+          },
+          "platform_reference": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlatformReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "provenance": {
             "items": {
@@ -1569,6 +2640,16 @@
             "maxLength": 4096,
             "title": "Url",
             "type": "string"
+          },
+          "youtube": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/YouTubeView"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -1632,6 +2713,16 @@
       "ResearchResults": {
         "additionalProperties": false,
         "properties": {
+          "groups": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QualificationGroups"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "job_id": {
             "format": "uuid",
             "title": "Job Id",
@@ -1754,6 +2845,110 @@
           "result_count"
         ],
         "title": "ResearchSnapshot",
+        "type": "object"
+      },
+      "ReviewedField": {
+        "additionalProperties": false,
+        "properties": {
+          "anchors": {
+            "items": {
+              "$ref": "#/components/schemas/Anchor"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Anchors",
+            "type": "array"
+          },
+          "container_xpath": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Container Xpath",
+            "type": "string"
+          },
+          "css": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Css",
+            "type": "string"
+          },
+          "expected_text": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Expected Text",
+            "type": "string"
+          },
+          "field": {
+            "enum": [
+              "company_name",
+              "description",
+              "headquarters",
+              "industry",
+              "service_name"
+            ],
+            "title": "Field",
+            "type": "string"
+          },
+          "identifier": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Identifier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "identifier",
+          "css",
+          "expected_text",
+          "container_xpath",
+          "anchors"
+        ],
+        "title": "ReviewedField",
+        "type": "object"
+      },
+      "ReviewedTemplate": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewedField"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Fields",
+            "type": "array"
+          },
+          "source_url": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Source Url",
+            "type": "string"
+          },
+          "template_id": {
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          },
+          "template_version": {
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Template Version",
+            "type": "integer"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "source_url",
+          "template_id",
+          "template_version",
+          "fields"
+        ],
+        "title": "ReviewedTemplate",
         "type": "object"
       },
       "SearchPlan": {
@@ -2105,6 +3300,15 @@
       },
       "SnapshotValue": {
         "properties": {
+          "claim_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 300,
+            "title": "Claim Ids",
+            "type": "array"
+          },
           "evidence": {
             "items": {
               "$ref": "#/components/schemas/SnapshotEvidence"
@@ -2115,6 +3319,15 @@
           "field": {
             "title": "Field",
             "type": "string"
+          },
+          "source_entity_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Source Entity Ids",
+            "type": "array"
           },
           "value": {
             "anyOf": [
@@ -2198,9 +3411,24 @@
             "title": "Accepted Result Count",
             "type": "integer"
           },
+          "collection_timings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ComponentTimings"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "confirmed_cost_usd": {
             "title": "Confirmed Cost Usd",
             "type": "string"
+          },
+          "correlated_attempt_observations": {
+            "minimum": 0.0,
+            "title": "Correlated Attempt Observations",
+            "type": "integer"
           },
           "estimated_cost_usd": {
             "title": "Estimated Cost Usd",
@@ -2215,6 +3443,23 @@
             "minimum": 1.0,
             "title": "Observations",
             "type": "integer"
+          },
+          "outcomes": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "maxProperties": 16,
+            "title": "Outcomes",
+            "type": "object"
+          },
+          "queue_wait_samples": {
+            "minimum": 0.0,
+            "title": "Queue Wait Samples",
+            "type": "integer"
+          },
+          "queue_wait_seconds": {
+            "title": "Queue Wait Seconds",
+            "type": "string"
           },
           "source": {
             "maxLength": 100,
@@ -2253,7 +3498,11 @@
           "stage_io_seconds",
           "confirmed_cost_usd",
           "estimated_cost_usd",
-          "unpriced_observations"
+          "unpriced_observations",
+          "outcomes",
+          "correlated_attempt_observations",
+          "queue_wait_seconds",
+          "queue_wait_samples"
         ],
         "title": "StageMetric",
         "type": "object"
@@ -2384,6 +3633,55 @@
         "title": "SwitchInput",
         "type": "object"
       },
+      "TemplatePublication": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "template": {
+            "$ref": "#/components/schemas/ReviewedTemplate"
+          }
+        },
+        "required": [
+          "template"
+        ],
+        "title": "TemplatePublication",
+        "type": "object"
+      },
+      "TemplateRollback": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_version": {
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "target_version": {
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Target Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "target_version",
+          "expected_version"
+        ],
+        "title": "TemplateRollback",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -2422,6 +3720,289 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "YouTubeCaptionView": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "end_seconds": {
+            "exclusiveMinimum": 0.0,
+            "title": "End Seconds",
+            "type": "number"
+          },
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "start_seconds": {
+            "minimum": 0.0,
+            "title": "Start Seconds",
+            "type": "number"
+          },
+          "text": {
+            "maxLength": 4000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_seconds",
+          "end_seconds",
+          "text",
+          "evidence_id",
+          "claim_id"
+        ],
+        "title": "YouTubeCaptionView",
+        "type": "object"
+      },
+      "YouTubeVideoEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "channel": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "channel_url": {
+            "anyOf": [
+              {
+                "maxLength": 2048,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel Url"
+          },
+          "counter_scope": {
+            "const": "public_metadata",
+            "default": "public_metadata",
+            "title": "Counter Scope",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 8192,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "duration_seconds": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Seconds"
+          },
+          "evidence_kind": {
+            "const": "public_video_metadata",
+            "default": "public_video_metadata",
+            "title": "Evidence Kind",
+            "type": "string"
+          },
+          "like_count": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Like Count"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "published_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published On"
+          },
+          "source": {
+            "const": "youtube",
+            "default": "youtube",
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 2048,
+            "title": "Source Url",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "transcript_languages": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 30,
+            "title": "Transcript Languages",
+            "type": "array"
+          },
+          "transcript_state": {
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Transcript State",
+            "type": "string"
+          },
+          "view_count": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "View Count"
+          }
+        },
+        "required": [
+          "source_url",
+          "observed_at",
+          "title",
+          "transcript_state",
+          "transcript_languages"
+        ],
+        "title": "YouTubeVideoEvidence",
+        "type": "object"
+      },
+      "YouTubeView": {
+        "additionalProperties": false,
+        "properties": {
+          "caption_language": {
+            "anyOf": [
+              {
+                "enum": [
+                  "en",
+                  "en-orig",
+                  "en-US",
+                  "en-GB"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption Language"
+          },
+          "caption_origin": {
+            "anyOf": [
+              {
+                "enum": [
+                  "provided",
+                  "platform_automatic"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption Origin"
+          },
+          "caption_status": {
+            "enum": [
+              "retrieved",
+              "unavailable",
+              "unsupported_format_or_language",
+              "read_failed"
+            ],
+            "title": "Caption Status",
+            "type": "string"
+          },
+          "evidence_expired": {
+            "title": "Evidence Expired",
+            "type": "boolean"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/YouTubeVideoEvidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata_truncated": {
+            "title": "Metadata Truncated",
+            "type": "boolean"
+          },
+          "omitted_segments": {
+            "minimum": 0.0,
+            "title": "Omitted Segments",
+            "type": "integer"
+          },
+          "segments": {
+            "items": {
+              "$ref": "#/components/schemas/YouTubeCaptionView"
+            },
+            "maxItems": 20,
+            "title": "Segments",
+            "type": "array"
+          },
+          "subject_identity": {
+            "const": "unknown",
+            "title": "Subject Identity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "metadata",
+          "metadata_truncated",
+          "caption_status",
+          "caption_origin",
+          "caption_language",
+          "segments",
+          "omitted_segments",
+          "subject_identity",
+          "evidence_expired"
+        ],
+        "title": "YouTubeView",
         "type": "object"
       }
     }
@@ -2683,6 +4264,325 @@
         "summary": "Cancel Job"
       }
     },
+    "/v1/jobs/{job_id}/clarifications": {
+      "post": {
+        "operationId": "submit_clarification_v1_jobs__job_id__clarifications_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 170,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClarificationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FollowupSubmission"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Clarification"
+      }
+    },
+    "/v1/jobs/{job_id}/evidence/{evidence_id}": {
+      "get": {
+        "operationId": "cited_evidence_v1_jobs__job_id__evidence__evidence_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "evidence_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Evidence Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceCitation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cited Evidence"
+      }
+    },
+    "/v1/jobs/{job_id}/expand": {
+      "post": {
+        "operationId": "submit_expansion_v1_jobs__job_id__expand_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 170,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpansionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FollowupSubmission"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Expansion"
+      }
+    },
+    "/v1/jobs/{job_id}/followups": {
+      "post": {
+        "operationId": "submit_followup_v1_jobs__job_id__followups_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 170,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowupInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FollowupSubmission"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Followup"
+      }
+    },
     "/v1/jobs/{job_id}/plan": {
       "get": {
         "operationId": "job_plan_v1_jobs__job_id__plan_get",
@@ -2738,6 +4638,147 @@
           }
         },
         "summary": "Job Plan"
+      }
+    },
+    "/v1/jobs/{job_id}/refine": {
+      "post": {
+        "operationId": "submit_refinement_v1_jobs__job_id__refine_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 170,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefinementInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FollowupSubmission"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Refinement"
+      }
+    },
+    "/v1/jobs/{job_id}/report": {
+      "get": {
+        "operationId": "read_followup_report_v1_jobs__job_id__report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FollowupView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Followup Report"
       }
     },
     "/v1/jobs/{job_id}/results": {
@@ -3196,6 +5237,67 @@
         "summary": "Revoke Source"
       }
     },
+    "/v1/workspaces/{workspace_id}/entities/{entity_id}": {
+      "delete": {
+        "operationId": "delete_v1_workspaces__workspace_id__entities__entity_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entity Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 100,
+              "minLength": 1,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErasureResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete"
+      }
+    },
     "/v1/workspaces/{workspace_id}/entitlements": {
       "get": {
         "operationId": "read_v1_workspaces__workspace_id__entitlements_get",
@@ -3380,6 +5482,211 @@
           }
         },
         "summary": "Export Download"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/identity-reviews": {
+      "get": {
+        "operationId": "list_reviews_v1_workspaces__workspace_id__identity_reviews_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IdentityReviewView"
+                  },
+                  "title": "Response List Reviews V1 Workspaces  Workspace Id  Identity Reviews Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Reviews"
+      },
+      "post": {
+        "operationId": "create_review_v1_workspaces__workspace_id__identity_reviews_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityPair"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityReviewView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Review"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/identity-reviews/{review_id}": {
+      "get": {
+        "operationId": "review_detail_v1_workspaces__workspace_id__identity_reviews__review_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityReviewDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Detail"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/identity-reviews/{review_id}/{action}": {
+      "post": {
+        "operationId": "change_review_v1_workspaces__workspace_id__identity_reviews__review_id___action__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "action",
+            "required": true,
+            "schema": {
+              "enum": [
+                "approve",
+                "reverse"
+              ],
+              "title": "Action",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityReviewView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Review"
       }
     },
     "/v1/workspaces/{workspace_id}/jobs/{job_id}": {
@@ -3807,6 +6114,158 @@
           }
         },
         "summary": "Historical Snapshot"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/page-templates": {
+      "get": {
+        "operationId": "active_templates_v1_workspaces__workspace_id__page_templates_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewedTemplate"
+                  },
+                  "title": "Response Active Templates V1 Workspaces  Workspace Id  Page Templates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Active Templates"
+      },
+      "post": {
+        "operationId": "publish_v1_workspaces__workspace_id__page_templates_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatePublication"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewedTemplate"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publish"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/page-templates/{template_id}/rollback": {
+      "post": {
+        "operationId": "rollback_v1_workspaces__workspace_id__page_templates__template_id__rollback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateRollback"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewedTemplate"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rollback"
       }
     },
     "/v1/workspaces/{workspace_id}/sources": {

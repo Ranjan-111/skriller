@@ -29,7 +29,10 @@ def delete(
     try:
         with request.app.state.database.tenant(identity.uid, str(workspace_id)) as session:
             return erase(
-                session, request.app.state.storage, str(entity_id), request_key=idempotency_key
+                session,
+                request.app.state.evidence_storage,
+                str(entity_id),
+                request_key=idempotency_key,
             )
     except WorkspaceAccessDenied:
         raise HTTPException(403, "Workspace owner permission required") from None

@@ -94,6 +94,28 @@ def test_concrete_executor_pre_cancel_performs_no_io(monkeypatch):
     assert failure.value.failure.code == "cancelled"
 
 
+def test_copied_solver_deadline_is_typed_and_the_container_is_removed(monkeypatch):
+    from skriller.connectors import browser_executor as module
+
+    calls = []
+
+    def run(argv, **kwargs):
+        calls.append(argv)
+        if argv[1] == "rm":
+            return RunResult("completed", 0, "", "", 0)
+        return RunResult("failed", 1, '{"error":"deadline_exceeded"}', "", 0.1)
+
+    monkeypatch.setattr(module, "bounded_process", run)
+    with pytest.raises(FetchUnavailable) as failure:
+        ConcreteBrowserExecutor(IMAGE).execute(
+            BrowserRequest(
+                "https://example.com", "h1", 1, 2, engine="stealth", solve_challenge=True
+            )
+        )
+    assert failure.value.failure.code == "deadline_exceeded"
+    assert calls[-1][1:3] == ["rm", "-f"]
+
+
 @pytest.mark.parametrize(
     "changes",
     [

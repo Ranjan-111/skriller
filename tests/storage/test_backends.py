@@ -46,6 +46,40 @@ def test_local_rejects_traversal_and_symlink_escape(tmp_path):
     assert list(outside.iterdir()) == []
 
 
+@pytest.mark.parametrize("kind", ["fifo", "directory"])
+def test_local_special_file_is_unavailable_without_blocking(tmp_path, kind):
+    import os
+    import subprocess
+    import sys
+
+    backend = LocalBlobBackend(tmp_path / "private")
+    workspace, object_key = key()
+    path = backend.directory / object_key
+    path.parent.mkdir(parents=True)
+    if kind == "fifo":
+        os.mkfifo(path)
+    else:
+        path.mkdir()
+    subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "import sys; from skriller.storage import LocalBlobBackend, BlobUnavailable\n"
+                "try: LocalBlobBackend(sys.argv[1]).get(sys.argv[2], sys.argv[3], 8)\n"
+                "except BlobUnavailable: pass\n"
+                "else: raise AssertionError('Special file accepted')"
+            ),
+            str(backend.directory),
+            workspace,
+            object_key,
+        ],
+        check=True,
+        timeout=3,
+        capture_output=True,
+    )
+
+
 class S3ContractClient:
     """Wire-contract double, not a claim of live S3 verification."""
 
@@ -63,7 +97,7 @@ class S3ContractClient:
         return {"PublicAccessBlockConfiguration": self.configuration}
 
     def get_bucket_acl(self, **kwargs):
-        return {"Grants": self.grants}
+        return {"Owner": {"ID": "bucket-owner"}, "Grants": self.grants}
 
     def put_object(self, **kwargs):
         self.calls.append(kwargs)
@@ -105,6 +139,35 @@ def test_s3_privacy_and_wire_contract():
     client.grants = [{"Grantee": {"URI": "http://acs.amazonaws.com/groups/global/AllUsers"}}]
     with pytest.raises(ValueError, match="group ACL"):
         S3BlobBackend(client, "public")
+
+
+@pytest.mark.parametrize(
+    "grant",
+    [
+        {"Grantee": {"Type": "CanonicalUser", "ID": "other-account"}, "Permission": "READ"},
+        {"Grantee": {"Type": "CanonicalUser", "ID": "other-account"}, "Permission": "FULL_CONTROL"},
+        {
+            "Grantee": {"Type": "AmazonCustomerByEmail", "EmailAddress": "other@example.test"},
+            "Permission": "READ",
+        },
+    ],
+)
+def test_s3_rejects_private_cross_account_acl_grants(grant):
+    client = S3ContractClient()
+    client.grants = [grant]
+    with pytest.raises(ValueError, match="only to its owner"):
+        S3BlobBackend(client, "private-bucket")
+
+
+def test_s3_accepts_only_verified_owner_acl():
+    client = S3ContractClient()
+    client.grants = [
+        {"Grantee": {"Type": "CanonicalUser", "ID": "bucket-owner"}, "Permission": "FULL_CONTROL"}
+    ]
+    S3BlobBackend(client, "private-bucket")
+    client.get_bucket_acl = lambda **_: {"Grants": []}
+    with pytest.raises(ValueError, match="owner ACL"):
+        S3BlobBackend(client, "private-bucket")
 
 
 def test_storage_rejects_invalid_input_before_backend_write(tmp_path):
@@ -168,7 +231,11 @@ def test_s3_sdk_request_validation_and_typed_missing_response():
             },
             {"Bucket": "private-bucket"},
         )
-        stub.add_response("get_bucket_acl", {"Grants": []}, {"Bucket": "private-bucket"})
+        stub.add_response(
+            "get_bucket_acl",
+            {"Owner": {"ID": "bucket-owner"}, "Grants": []},
+            {"Bucket": "private-bucket"},
+        )
         stub.add_response(
             "put_object",
             {},

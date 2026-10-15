@@ -1,12 +1,15 @@
 import json
+import os
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
+import sqlalchemy as sa
 from langchain_core.messages import AIMessage
 
 from skriller.contracts import ExecutionContext, Limits, SearchPlan
 from skriller.db import ConversationRepository
+from skriller.db.schema import jobs, messages
 from skriller.extraction.models import LocalStructuredModel, ModelUnavailable
 from skriller.jobs.budget import current_usage
 from skriller.jobs.outbox import submit
@@ -78,6 +81,140 @@ def test_cancelled_planning_job_cannot_publish_a_late_successor(database):
         persist_revision(database, context, plan, parent_id=parent)
     with database.tenant(context.actor_id, str(context.workspace_id)) as session:
         assert ConversationRepository.get_plan(session, parent)["revision"] == 1
+
+
+def test_clarification_reply_keeps_context_and_queues_bounded_new_revision(database, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from skriller.api import create_app
+    from skriller.auth import Identity, require_identity
+    from skriller.db import JobRepository
+    from skriller.jobs.worker import CheckpointWorker
+    from skriller.research.bootstrap import execute_planning
+    from skriller.settings import Settings
+
+    context, scope, parent_id = setup(database)
+    prompt = "Find founders at companies in London."
+    actor, workspace = context.actor_id, str(context.workspace_id)
+    with database.tenant(actor, workspace) as session:
+        original = SearchPlan.model_validate(
+            ConversationRepository.get_plan(session, parent_id)["interpretation"]
+        )
+        seed_limits = original.limits.model_copy(
+            update={
+                "llm_calls": 1,
+                "token_cap": 4096,
+                "fetch_attempts": 0,
+            }
+        )
+        ConversationRepository.add_message(session, str(scope.conversation_id), "user", prompt)
+        paused_plan = original.model_copy(
+            update={
+                "revision": 2,
+                "limits": seed_limits,
+                "clarification": "Should location refer to the person or company headquarters?",
+            }
+        )
+        parent = ConversationRepository.revise_plan(
+            session,
+            str(scope.conversation_id),
+            paused_plan.model_dump(mode="json"),
+            parent_id=parent_id,
+        )
+        session.execute(
+            sa.update(jobs)
+            .where(jobs.c.id == str(context.job_id))
+            .values(
+                plan_id=parent["id"],
+                purpose="planning",
+                state="paused",
+                stage="planning",
+                failure_code="clarification_required",
+            )
+        )
+    planning_settings = Settings(
+        enable_ai_planning=True,
+        enable_page_extraction=True,
+        public_collection_proxy_url="http://127.0.0.1:8787",
+    )
+    app = create_app(planning_settings)
+    app.state.database = database
+    app.dependency_overrides[require_identity] = lambda: Identity(actor)
+    monkeypatch.setattr("skriller.research.router.safe_dispatch", lambda *args: True)
+    client = TestClient(app)
+    endpoint = f"/v1/jobs/{context.job_id}/clarifications?workspace_id={workspace}"
+    submitted = client.post(
+        endpoint, json={"answer": "Company headquarters"}, headers={"Idempotency-Key": "clarify-1"}
+    )
+    assert submitted.status_code == 202, submitted.text
+    new_job_id = submitted.json()["job_id"]
+    repeated = client.post(
+        endpoint, json={"answer": "Company headquarters"}, headers={"Idempotency-Key": "clarify-1"}
+    )
+    assert repeated.status_code == 202 and repeated.json()["job_id"] == new_job_id
+    with database.tenant(actor, workspace) as session:
+        old = JobRepository.get(session, str(context.job_id))
+        new = JobRepository.get(session, new_job_id)
+        assert old["state"] == "paused" and old["plan_id"] == parent["id"]
+        assert new["purpose"] == "planning" and new["state"] == "queued"
+        assert ConversationRepository.get_plan(session, parent_id)["revision"] == 1
+        saved_messages = (
+            session.execute(
+                sa.select(messages.c.content)
+                .where(
+                    messages.c.conversation_id == str(scope.conversation_id),
+                    messages.c.role == "user",
+                )
+                .order_by(messages.c.sequence)
+            )
+            .scalars()
+            .all()
+        )
+        assert saved_messages == [prompt, "Company headquarters"]
+    payload = {"actor_id": actor, "workspace_id": workspace, "job_id": new_job_id}
+    scheduled = CheckpointWorker(database, {}).schedule(payload)
+    assert scheduled["status"] == "scheduled"
+    payload["attempt_id"] = scheduled["attempt_id"]
+
+    class Answer:
+        calls = 0
+
+        async def ainvoke(self, model_messages, config):
+            self.calls += 1
+            assert "Find founders at companies in London." in model_messages[1].content
+            assert "Company headquarters" in model_messages[1].content
+            return AIMessage(
+                content=json.dumps(
+                    {
+                        "entity_type": "person",
+                        "entity_quote": "founders",
+                        "rules": [
+                            ["must_have", "company_location", "eq", "London", "companies in London"]
+                        ],
+                    }
+                ),
+                usage_metadata={"input_tokens": 100, "output_tokens": 50, "total_tokens": 150},
+            )
+
+    model = Answer()
+    outcome = execute_planning(
+        database,
+        payload,
+        planning_settings,
+        LocalStructuredModel(model_instance=model),
+    )
+    assert outcome["status"] == "checkpointed" and outcome["planning_status"] == "ready"
+    assert model.calls == 1
+    with database.tenant(actor, workspace) as session:
+        updated = JobRepository.get(session, new_job_id)
+        latest = SearchPlan.model_validate(
+            ConversationRepository.get_plan(session, updated["plan_id"])["interpretation"]
+        )
+        assert updated["purpose"] == "research" and latest.clarification is None
+        assert latest.must_have[0].field == "company_location"
+        assert latest.limits.llm_calls == 10
+        assert latest.limits.token_cap == 40960
+        assert latest.limits.fetch_attempts == 30
 
 
 class Fixture:
@@ -155,6 +292,27 @@ async def test_ambiguous_geography_requests_clarification(database):
     assert not plan.must_have
 
 
+@pytest.mark.skipif(
+    os.environ.get("SKRILLER_RUN_LOCAL_MODEL_TESTS") != "1",
+    reason="Set SKRILLER_RUN_LOCAL_MODEL_TESTS=1 to call the configured local Ollama model",
+)
+async def test_local_model_clarifies_ambiguous_geography(database):
+    context, scope, _parent = setup(database)
+    async with PromptPlanner(LocalStructuredModel()) as planner:
+        plan = await planner.interpret(
+            database,
+            context,
+            "Find founders at companies in London.",
+            scope,
+            operation_key="local-model-ambiguous-geography",
+        )
+
+    assert plan.clarification
+    assert "person" in plan.clarification.lower()
+    assert "company" in plan.clarification.lower()
+    assert not plan.must_have
+
+
 async def test_private_field_is_explicitly_unsupported_not_invented_contact(database):
     context, scope, _ = setup(database)
     prompt = "Find founders and their private email."
@@ -213,6 +371,141 @@ def test_ungrounded_criteria_and_invented_preferences_are_rejected():
             )
 
 
+@pytest.mark.parametrize(
+    "field,operator,value,quote",
+    [
+        ("employee_count", "gte", "25", "250 employees"),
+        ("employee_count", "gte", "25", "-25 employees"),
+        ("employee_count", "gte", "25", "25.5 employees"),
+        ("industry", "contains", "AI", "paid software"),
+    ],
+)
+def test_substring_and_numeric_fragment_cannot_change_user_intent(field, operator, value, quote):
+    scope = PlanScope(
+        workspace_id=uuid4(),
+        conversation_id=uuid4(),
+        revision=1,
+        limits=Limits(),
+        allowed_sources=["web"],
+    )
+    with pytest.raises(PlanningInvalid) as caught:
+        grounded_plan(
+            "Find companies with " + quote,
+            Interpretation(
+                entity_type="company",
+                entity_quote="companies",
+                rules=[("must_have", field, operator, value, quote)],
+            ),
+            scope,
+        )
+    assert caught.value.reason == "ungrounded_value"
+
+
+def test_platform_name_must_be_a_whole_explicit_source_word():
+    scope = PlanScope(
+        workspace_id=uuid4(),
+        conversation_id=uuid4(),
+        revision=1,
+        limits=Limits(),
+        allowed_sources=["x", "web"],
+    )
+    with pytest.raises(PlanningInvalid):
+        grounded_plan(
+            "Find founders; exclude agencies",
+            Interpretation(
+                entity_type="person", entity_quote="founders", sources=[("x", "exclude")]
+            ),
+            scope,
+        )
+
+
+@pytest.mark.parametrize(
+    "prompt,expected",
+    [
+        ("Find companies. Exclude agencies.", "exclusion"),
+        ("Find companies. Prefer hiring engineers.", "preference"),
+        ("Find companies headquartered in Paris.", "company headquarters"),
+        ("Find founders based in Bengaluru.", "person location"),
+        ("Find companies with at least 25 employees.", "minimum employee count"),
+    ],
+)
+def test_omitted_material_constraint_pauses_instead_of_searching(prompt, expected):
+    scope = PlanScope(
+        workspace_id=uuid4(),
+        conversation_id=uuid4(),
+        revision=1,
+        limits=Limits(),
+        allowed_sources=["web"],
+    )
+    target = "founders" if "founders" in prompt else "companies"
+    plan = grounded_plan(
+        prompt,
+        Interpretation(
+            entity_type="person" if target == "founders" else "company", entity_quote=target
+        ),
+        scope,
+    )
+    assert expected in plan.clarification
+    assert not plan.must_have and not plan.exclusions and not plan.preferences
+
+
+def test_omitted_private_field_is_still_reported_unsupported():
+    scope = PlanScope(
+        workspace_id=uuid4(),
+        conversation_id=uuid4(),
+        revision=1,
+        limits=Limits(),
+        allowed_sources=["web"],
+    )
+    plan = grounded_plan(
+        "Find founders and their Private Email.",
+        Interpretation(entity_type="person", entity_quote="founders"),
+        scope,
+    )
+    assert plan.unsupported_criteria == ["Private Email"]
+    assert plan.requested_fields == ["name", "source_url"]
+
+
+@pytest.mark.parametrize("source", ["LinkedIn", "Reddit", "GitHub", "YouTube", "X", "web"])
+def test_omitted_explicit_source_pauses_instead_of_expanding_search(source):
+    scope = PlanScope(
+        workspace_id=uuid4(), conversation_id=uuid4(), revision=1,
+        limits=Limits(), allowed_sources=["linkedin", "reddit", "web"],
+    )
+    plan = grounded_plan(
+        f"Find founders on {source}.",
+        Interpretation(entity_type="person", entity_quote="founders"), scope,
+    )
+    assert "source selection" in plan.clarification
+
+
+@pytest.mark.parametrize(
+    "operator,phrase,accepted",
+    [
+        ("gte", "at least 25 employees", True),
+        ("lte", "at most 25 employees", True),
+        ("gte", "at most 25 employees", False),
+        ("lte", "at least 25 employees", False),
+        ("gte", "25 employees", False),
+    ],
+)
+def test_numeric_filter_preserves_explicit_comparison(operator, phrase, accepted):
+    scope = PlanScope(
+        workspace_id=uuid4(), conversation_id=uuid4(), revision=1,
+        limits=Limits(), allowed_sources=["web"],
+    )
+    interpretation = Interpretation(
+        entity_type="company", entity_quote="companies",
+        rules=[("must_have", "employee_count", operator, "25", phrase)],
+    )
+    if accepted:
+        plan = grounded_plan(f"Find companies with {phrase}.", interpretation, scope)
+        assert plan.must_have[0].operator == operator
+    else:
+        with pytest.raises(PlanningInvalid, match="comparison"):
+            grounded_plan(f"Find companies with {phrase}.", interpretation, scope)
+
+
 def test_source_and_requested_field_grounding_keep_unsupported_intent_visible():
     scope = PlanScope(
         workspace_id=uuid4(),
@@ -267,10 +560,8 @@ async def test_prompt_guides_exact_quote_case_and_intent_cue_spans_without_weake
 
     class GuidanceFixture(Fixture):
         async def ainvoke(self, messages, config):
-            assert "Quotes are verbatim, including case" in messages[1].content
-            assert (
-                "quotes include their intent word (Prefer/Exclude) and value" in messages[1].content
-            )
+            assert "Every quote must be a nonempty verbatim substring" in messages[1].content
+            assert "Preference/exclusion quotes include their intent word" in messages[1].content
             return await super().ainvoke(messages, config)
 
     fixture = GuidanceFixture(

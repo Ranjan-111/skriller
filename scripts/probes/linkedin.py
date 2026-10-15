@@ -8,7 +8,9 @@ import hashlib
 import json
 import time
 from collections.abc import Awaitable, Callable
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -65,7 +67,7 @@ async def probe(
     configured: bool = False,
     caller: Callable[[str, str, dict], Awaitable[dict]] = call_mcp,
 ) -> dict:
-    report = {
+    report: dict[str, Any] = {
         "platform": "linkedin",
         "operation": operation,
         "source": verify_source(),
@@ -101,7 +103,19 @@ async def probe(
         args["max_scrolls"] = 1
     started = time.monotonic()
     try:
+        search = None
+        if operation in {"search_people", "search_posts"}:
+            from skriller.connectors.linkedin_discovery import LinkedInSearch
+
+            args.pop("max_pages", None)
+            search = LinkedInSearch.model_validate({"operation": operation, **args})
+            args = search.backend_arguments()
         data = await asyncio.wait_for(caller(endpoint, operation, args), timeout=60)
+        search_page = None
+        if search is not None:
+            from skriller.connectors.linkedin_discovery import parse_search_response
+
+            search_page = parse_search_response(data, search, observed_at=datetime.now(UTC))
         if not isinstance(data, dict) or not isinstance(data.get("sections"), dict):
             raise TypeError("Unexpected LinkedIn operation schema")
         sections = data["sections"]
@@ -123,6 +137,18 @@ async def probe(
                 if isinstance(value, list)
             ),
         )
+        if search_page is not None:
+            report.update(
+                reference_count=len(search_page.references),
+                rejected_references=search_page.rejected_count,
+                pagination_supported=search_page.pagination_supported,
+            )
+            if search_page.rejected_count:
+                report.update(
+                    status="partial",
+                    validated=False,
+                    reason="Some returned references failed source validation",
+                )
     except Exception as exc:  # noqa: BLE001 — external operation boundary must emit a failure report
         # Tool/server errors may contain session secrets outside URL syntax.
         report.update(status="failed", reason=f"{type(exc).__name__}: controlled operation failed")

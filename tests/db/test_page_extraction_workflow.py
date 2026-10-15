@@ -14,7 +14,7 @@ from skriller.db.schema import attempts
 from skriller.extraction.models import LocalStructuredModel
 from skriller.jobs.budget import current_usage
 from skriller.research.collection import execute_collection
-from skriller.research.page_extraction import execute_page_extraction
+from skriller.research.page_extraction import execute_page_extraction, preset_for_source_url
 from skriller.settings import Settings
 from skriller.storage import EvidenceStorage, LocalBlobBackend
 
@@ -36,6 +36,138 @@ class ModelFixture:
             '{"field":"employee_count","value":250,"quote":"25"}]}',
             usage_metadata={"input_tokens": 20, "output_tokens": 10, "total_tokens": 30},
         )
+
+
+class CareersModelFixture:
+    def __init__(self):
+        self.calls = 0
+
+    async def ainvoke(self, messages, config):
+        self.calls += 1
+        prompt = "\n".join(str(message.content) for message in messages)
+        assert "job_posted_date" in prompt and "careers_url" in prompt
+        assert config["callbacks"] == [] and "untrusted_source" in prompt
+        return AIMessage(
+            content=(
+                '{"claims":['
+                '{"field":"job_title","value":"engineers","quote":"Hiring engineers"},'
+                '{"field":"job_posted_date","value":"10 October 2026",'
+                '"quote":"10 October 2026"},'
+                '{"field":"company_name","value":"Aurora Ledger",'
+                '"quote":"Aurora Ledger"}]}'
+            ),
+            usage_metadata={"input_tokens": 20, "output_tokens": 10, "total_tokens": 30},
+        )
+
+
+class TeamModelFixture:
+    async def ainvoke(self, messages, config):
+        prompt = "\n".join(str(message.content) for message in messages)
+        assert "person_name" in prompt and "team_page_url" in prompt
+        assert config["callbacks"] == [] and "untrusted_source" in prompt
+        return AIMessage(
+            content=(
+                '{"claims":['
+                '{"field":"person_name","value":"Mira Rao","quote":"Mira Rao"},'
+                '{"field":"job_title","value":"Founder","quote":"Founder"},'
+                '{"field":"employee_count","value":25,"quote":"25"}]}'
+            ),
+            usage_metadata={"input_tokens": 20, "output_tokens": 10, "total_tokens": 30},
+        )
+
+
+@pytest.mark.parametrize(
+    ("url", "expected"),
+    [
+        ("https://example.org/about?next=/jobs", "company"),
+        ("https://example.org/team", "team"),
+        ("https://example.org/careers", "careers"),
+        ("https://example.org/services", "services"),
+        ("https://example.org/contact", "contact"),
+        ("https://example.org/directory", "directory"),
+        ("https://careers.example.org/overview", "directory"),
+    ],
+)
+def test_page_preset_router_uses_only_explicit_url_path(url, expected):
+    assert preset_for_source_url(url) == expected
+
+
+def test_team_page_uses_team_preset_and_rejects_company_fields(
+    database, monkeypatch, proxy, tmp_path
+):
+    endpoint, requests, _ = proxy
+    actor = f"page-team-{uuid4()}"
+    client, accepted, _, tasks, _ = discover(
+        database, monkeypatch, actor, endpoint, ["team"], extraction=True
+    )
+    storage = EvidenceStorage(LocalBlobBackend(tmp_path))
+    execute_collection(database, tasks[0], endpoint, storage=storage, enable_extraction=True)
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        attempt = (
+            session.execute(
+                sa.select(attempts).where(
+                    attempts.c.job_id == accepted["job_id"],
+                    attempts.c.stage == "extracting",
+                )
+            )
+            .mappings()
+            .one()
+        )
+    outcome = execute_page_extraction(
+        database,
+        {**tasks[0], "attempt_id": attempt["id"]},
+        storage=storage,
+        model=LocalStructuredModel(model_instance=TeamModelFixture()),
+    )
+    assert outcome["status"] == "checkpointed" and requests == ["/team"]
+    results = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"]
+    observations = results[0]["extraction"]["observations"]
+    assert {(row["field"], row["value"]) for row in observations} == {
+        ("person_name", "Mira Rao"),
+        ("job_title", "Founder"),
+    }
+    assert all(row["status"] == "unverified" for row in observations)
+
+
+def test_careers_page_uses_careers_preset_and_keeps_posting_date_unverified(
+    database, monkeypatch, proxy, tmp_path
+):
+    endpoint, requests, _ = proxy
+    actor = f"page-careers-{uuid4()}"
+    client, accepted, _, tasks, _ = discover(
+        database, monkeypatch, actor, endpoint, ["careers"], extraction=True
+    )
+    storage = EvidenceStorage(LocalBlobBackend(tmp_path))
+    execute_collection(database, tasks[0], endpoint, storage=storage, enable_extraction=True)
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        attempt = (
+            session.execute(
+                sa.select(attempts).where(
+                    attempts.c.job_id == accepted["job_id"],
+                    attempts.c.stage == "extracting",
+                )
+            )
+            .mappings()
+            .one()
+        )
+    task = {**tasks[0], "attempt_id": attempt["id"]}
+    model = CareersModelFixture()
+    outcome = execute_page_extraction(
+        database,
+        task,
+        storage=storage,
+        model=LocalStructuredModel(model_instance=model),
+    )
+    assert outcome["status"] == "checkpointed"
+    assert requests == ["/careers"]
+    results = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"]
+    observations = results[0]["extraction"]["observations"]
+    assert {(row["field"], row["value"]) for row in observations} == {
+        ("job_title", "engineers"),
+        ("job_posted_date", "10 October 2026"),
+    }
+    assert all(row["status"] == "unverified" for row in observations)
+    assert all(row["quote"] in {"Hiring engineers", "10 October 2026"} for row in observations)
 
 
 def prepare_page(database, monkeypatch, endpoint, tmp_path):
@@ -82,6 +214,9 @@ def test_saved_page_graph_claims_citations_budgets_and_replay(
     observed = result["extraction"]["observations"]
     assert len(observed) == 1 and observed[0]["value"] == "Aurora Ledger"
     assert observed[0]["status"] == "unverified" and observed[0]["quote"] == "Aurora Ledger"
+    assert len(observed[0]["evidence_ids"]) == 1
+    citation = client.get(f"/v1/jobs/{accepted['job_id']}/evidence/{observed[0]['evidence_ids'][0]}")
+    assert citation.status_code == 200 and citation.json()["collected_at"]
     with database.tenant(actor, accepted["workspace_id"]) as session:
         claims = ResearchRepository.claims_for(session, result["id"])
         assert len(claims) == 1 and claims[0]["status"] == "unverified"

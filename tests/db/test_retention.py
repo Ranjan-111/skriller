@@ -114,7 +114,9 @@ def test_expired_evidence_drops_cached_observation_from_current_view(database, t
             "quote": "Aurora Ledger",
             "status": "unverified",
         }
-        assert current_observations(session, entity["id"], [observation]) == ([observation], 0)
+        assert current_observations(session, entity["id"], [observation]) == (
+            [{**observation, "evidence_ids": [row["id"]]}], 0
+        )
         expire(session, row["id"])
         assert current_observations(session, entity["id"], [observation]) == ([], 1)
         cleanup_expired(session, storage)

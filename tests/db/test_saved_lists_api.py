@@ -42,7 +42,7 @@ def create(client, workspace, entity, plan):
 def test_http_snapshots_freeze_evidence_and_refresh_requires_latest_revision(database):
     owner, workspace, entity, plan, client = api(database)
     with database.tenant(owner, workspace) as session:
-        _, evidence = fact(session, entity, "company", "Example", excerpt="x" * 5000)
+        claim_id, evidence = fact(session, entity, "company", "Example", excerpt="x" * 5000)
         fact(session, entity, "email", "generic@company.example")
         fact(session, entity, "work_email", "person@company.example")
     path = create(client, workspace, entity, plan)
@@ -54,6 +54,7 @@ def test_http_snapshots_freeze_evidence_and_refresh_requires_latest_revision(dat
     values = before.json()["payload"]["members"][0]["values"]
     item = next(value for value in values if value["field"] == "company")
     assert item["evidence"][0]["id"] == evidence
+    assert item["claim_ids"] == [claim_id] and item["source_entity_ids"] == [entity]
     assert item["evidence"][0]["source_url"] == "https://example.org/profile"
     assert item["evidence"][0]["collected_at"]
     assert item["evidence"][0]["excerpt"] == "x" * 4096
@@ -238,8 +239,8 @@ def test_http_contact_ownership_is_not_transferred_to_alias(database):
     with database.tenant(owner, workspace) as session:
         alias = ResearchRepository.entity(session, "person", "Alias")["id"]
         fact(session, entity, "work_email", "person@company.example")
-        fact(session, entity, "native_id.linkedin", "contact-api-fixture")
-        fact(session, alias, "native_id.linkedin", "contact-api-fixture")
+        fact(session, entity, "native_id.linkedin", "person:contact-api-fixture")
+        fact(session, alias, "native_id.linkedin", "person:contact-api-fixture")
         review_link(session, suggest(session, entity, alias)["id"])
     path = create(client, workspace, alias, plan)
     values = client.get(path + "/snapshots/latest").json()["payload"]["members"][0]["values"]
@@ -250,8 +251,14 @@ def test_http_unverified_suppression_alias_retains_review_without_values(databas
     owner, workspace, entity, plan, client = api(database)
     with database.tenant(owner, workspace) as session:
         alias = ResearchRepository.entity(session, "person", "Unverified alias")["id"]
-        fact(session, entity, "native_id.linkedin", "suppression-api-fixture")
-        fact(session, alias, "native_id.linkedin", "suppression-api-fixture", status="unverified")
+        fact(session, entity, "native_id.linkedin", "person:suppression-api-fixture")
+        fact(
+            session,
+            alias,
+            "native_id.linkedin",
+            "person:suppression-api-fixture",
+            status="unverified",
+        )
         fact(session, alias, "company", "Example")
     response = client.post(
         f"/v1/workspaces/{workspace}/lists/suppressions",

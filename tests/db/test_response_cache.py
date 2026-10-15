@@ -190,6 +190,32 @@ async def test_blob_tampering_fails_integrity_before_upstream_decode(database, c
         await cache.get(database, actor, workspace, key())
 
 
+async def test_erasure_during_replay_hides_cached_bytes_and_validators(
+    database, cache, monkeypatch
+):
+    from skriller.db import ResearchRepository
+    from skriller.erasure import erase
+
+    actor, workspace = identity(database)
+    with database.tenant(actor, workspace) as session:
+        target = ResearchRepository.entity(
+            session, "person", "Synthetic subject", attributes={"url": key().source_url}
+        )
+    await cache.put(database, actor, workspace, key(), response(), collected_at=datetime.now(UTC))
+    original = ResponseCacheManager.get
+
+    async def erase_during_replay(*args, **kwargs):
+        replay = await original(*args, **kwargs)
+        with database.tenant(actor, workspace) as session:
+            erase(session, cache.storage, target["id"], request_key="cache-replay-erasure")
+        return replay
+
+    monkeypatch.setattr(ResponseCacheManager, "get", erase_during_replay)
+    assert await cache.get(database, actor, workspace, key()) is None
+    with database.tenant(actor, workspace) as session:
+        assert cache.conditional_headers(session, key()) == {}
+
+
 def test_rejects_credential_urls_invalid_scope_and_naive_freshness():
     for updates in [
         {"source_url": "https://www.linkedin.com/posts/example?access_token=secret"},

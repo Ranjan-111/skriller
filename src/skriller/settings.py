@@ -7,7 +7,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="SKRILLER_", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_prefix="SKRILLER_", extra="ignore", hide_input_in_errors=True
+    )
     environment: str = "development"
     database_url: str = Field(
         default="postgresql+psycopg://skriller:local-development@127.0.0.1:54329/skriller",
@@ -26,8 +28,12 @@ class Settings(BaseSettings):
     enable_ai_planning: bool = False
     public_collection_proxy_url: str | None = None
     enable_page_extraction: bool = False
+    reviewed_page_templates_file: str | None = Field(default=None, repr=False)
     enable_dynamic_collection: bool = False
+    enable_stealth_collection: bool = False
+    public_response_cache_ttl_seconds: int = Field(default=0, ge=0, le=300)
     public_browser_image: str | None = None
+    public_youtube_image: str | None = None
     model_provider: Literal["ollama", "groq"] = "ollama"
     ollama_model: Literal["llama3.2:3b", "deepseek-r1:8b"] = "llama3.2:3b"
     groq_api_key: SecretStr | None = Field(
@@ -36,10 +42,34 @@ class Settings(BaseSettings):
     groq_free_tier_confirmed: bool = False
     allow_demo_auth: bool = False
     object_directory: str = ".runtime/objects"
+    object_backend: Literal["local", "s3"] = "local"
+    s3_bucket: str | None = Field(default=None, min_length=3, max_length=63)
+    s3_region: str = Field(default="us-east-1", pattern=r"^[a-z0-9-]{1,64}$")
+    s3_endpoint_url: str | None = Field(default=None, repr=False)
+    s3_access_key_id: SecretStr | None = Field(
+        default=None, validation_alias="AWS_ACCESS_KEY_ID", repr=False
+    )
+    s3_secret_access_key: SecretStr | None = Field(
+        default=None, validation_alias="AWS_SECRET_ACCESS_KEY", repr=False
+    )
+    s3_session_token: SecretStr | None = Field(
+        default=None, validation_alias="AWS_SESSION_TOKEN", repr=False
+    )
     source_encryption_key_file: str | None = Field(default=None, repr=False)
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
-    @field_validator("public_collection_proxy_url", "public_browser_image", mode="before")
+    @field_validator(
+        "public_collection_proxy_url",
+        "public_browser_image",
+        "public_youtube_image",
+        "reviewed_page_templates_file",
+        "s3_endpoint_url",
+        "s3_bucket",
+        "s3_access_key_id",
+        "s3_secret_access_key",
+        "s3_session_token",
+        mode="before",
+    )
     @classmethod
     def empty_optional_configuration(cls, value):
         return None if value == "" else value
@@ -48,14 +78,47 @@ class Settings(BaseSettings):
     def validate_production(self):
         if self.environment not in {"development", "test", "production"}:
             raise ValueError("Unsupported environment")
-        if self.enable_page_extraction and (
-            not self.public_collection_proxy_url or self.enable_ai_planning
+        if self.object_backend == "s3" and not self.s3_bucket:
+            raise ValueError("S3 storage requires a private bucket")
+        if bool(self.s3_access_key_id) != bool(self.s3_secret_access_key) or (
+            self.s3_session_token is not None and not self.s3_access_key_id
         ):
-            raise ValueError("Page extraction requires public collection with planning disabled")
+            raise ValueError("S3 static credentials require a complete key pair")
+        if self.s3_endpoint_url:
+            from urllib.parse import urlsplit
+
+            endpoint = urlsplit(self.s3_endpoint_url)
+            if (
+                endpoint.scheme not in {"http", "https"}
+                or not endpoint.hostname
+                or endpoint.username is not None
+                or endpoint.password is not None
+                or endpoint.path not in {"", "/"}
+                or endpoint.query
+                or endpoint.fragment
+                or (
+                    endpoint.scheme == "http"
+                    and (
+                        self.environment == "production"
+                        or endpoint.hostname not in {"127.0.0.1", "localhost", "::1"}
+                    )
+                )
+            ):
+                raise ValueError("S3 endpoint requires HTTPS or a local development endpoint")
+        if self.enable_page_extraction and not self.public_collection_proxy_url:
+            raise ValueError("Page extraction requires the guarded public collection proxy")
         if self.public_collection_proxy_url:
             from skriller.connectors.fetch import HTTPFetcher
 
             HTTPFetcher(None, trusted_proxy_url=self.public_collection_proxy_url)
+        if self.enable_stealth_collection and not self.enable_dynamic_collection:
+            raise ValueError("Stealth collection requires the reviewed isolated dynamic worker")
+        if self.public_youtube_image:
+            if not self.public_collection_proxy_url:
+                raise ValueError("YouTube collection requires the guarded collection proxy")
+            from skriller.connectors.youtube_executor import ConcreteYouTubeExecutor
+
+            ConcreteYouTubeExecutor(self.public_youtube_image)
         if self.enable_dynamic_collection:
             if not self.public_collection_proxy_url or not self.public_browser_image:
                 raise ValueError(

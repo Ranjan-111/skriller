@@ -9,7 +9,9 @@ import os
 import re
 import sys
 import time
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from agent_reach.utils.paths import read_small_text_no_follow
 
@@ -54,12 +56,16 @@ def probe(
     cookie_file: Path | None = None,
     operation: str = "search",
     query: str = "fintech",
+    subreddit: str | None = None,
+    time_filter: str = "all",
+    sort: str = "relevance",
+    after: str | None = None,
     post_id: str | None = None,
     configured: bool = False,
     bridge_available: bool = False,
     backend_loader=backend,
 ) -> dict:
-    report = {
+    report: dict[str, Any] = {
         "platform": "reddit",
         "operation": operation,
         "source": verify_source(),
@@ -82,6 +88,20 @@ def probe(
         return report
     started = time.monotonic()
     try:
+        search = None
+        if operation == "search":
+            from skriller.connectors.reddit_discovery import RedditCursor, RedditSearch
+
+            search = RedditSearch.model_validate(
+                {
+                    "query": query,
+                    "subreddit": subreddit,
+                    "time_filter": time_filter,
+                    "sort": sort,
+                    "limit": 5,
+                    "cursor": RedditCursor(after=after) if after is not None else None,
+                }
+            )
         cookie_file = Path(cookie_file)
         raw = read_small_text_no_follow(cookie_file, max_bytes=64 * 1024)
         if raw is None:
@@ -100,21 +120,30 @@ def probe(
             isinstance(key, str) and isinstance(value, str) for key, value in cookies.items()
         ):
             raise ValueError("Unexpected cookie schema")
-        Credential, Client, parse_listing, parse_detail = backend_loader()
+        Credential, Client, _parse_listing, parse_detail = backend_loader()
         credential = Credential(cookies=cookies, source="explicit-probe-file")
         with Client(credential, timeout=15, request_delay=1, max_retries=0) as client:
             if operation == "search":
-                data = client.search(query=query, limit=5)
+                from skriller.connectors.reddit_discovery import parse_search_listing
+
+                if search is None:
+                    raise ValueError("Search request is unavailable")
+                data = client.search(**search.backend_arguments())
                 if not isinstance(data, dict) or not isinstance(
                     data.get("data", {}).get("children"), list
                 ):
                     raise ValueError("Unexpected Reddit search schema")
-                listing = parse_listing(data)
+                listing = parse_search_listing(data, search, observed_at=datetime.now(UTC))
                 children = data["data"]["children"]
                 report.update(
-                    count=len(listing.items),
+                    count=len(listing.posts),
                     fields=sorted(children[0].get("data", {})) if children else [],
-                    pagination_cursor_present=bool(listing.after),
+                    pagination_cursor_present=listing.next_cursor is not None,
+                    rejected_references=listing.rejected_count,
+                    duplicate_references=listing.duplicate_count,
+                    unknown_publication_dates=sum(
+                        post.published_at is None for post in listing.posts
+                    ),
                 )
             else:
                 data = client.get_post_comments(post_id=post_id, limit=5)
@@ -134,6 +163,12 @@ def probe(
             validated=True,
             reason="Controlled operation returned expected schema",
         )
+        if operation == "search" and listing.rejected_count:
+            report.update(
+                status="partial",
+                validated=False,
+                reason="Some search results failed requested source constraints",
+            )
     except Exception as exc:  # noqa: BLE001 — external operation boundary must emit a failure report
         # Never include exception payloads: they may include raw session cookies.
         report.update(status="failed", reason=f"{type(exc).__name__}: controlled operation failed")
@@ -149,6 +184,14 @@ def main() -> None:
     parser.add_argument("--bridge-available", action="store_true")
     parser.add_argument("--operation", choices=["search", "read"], default="search")
     parser.add_argument("--query", default="fintech")
+    parser.add_argument("--subreddit")
+    parser.add_argument(
+        "--time-filter", default="all", choices=["all", "hour", "day", "week", "month", "year"]
+    )
+    parser.add_argument(
+        "--sort", default="relevance", choices=["relevance", "hot", "top", "new", "comments"]
+    )
+    parser.add_argument("--after")
     parser.add_argument("--post-id")
     print(json.dumps(probe(**vars(parser.parse_args())), indent=2))
 

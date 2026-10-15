@@ -130,6 +130,13 @@ class ConcreteBrowserExecutor:
             if cleanup.status != "completed" and "No such container" not in cleanup.stderr:
                 raise _failure("source_unavailable", "Browser container cleanup was not confirmed")
             if outcome.status != "completed":
+                if outcome.status == "failed":
+                    try:
+                        error = json.loads(outcome.stdout)
+                    except (ValueError, TypeError):
+                        error = None
+                    if error == {"error": "deadline_exceeded"}:
+                        raise _failure("deadline_exceeded", "Copied solver reached its deadline")
                 code = {
                     "cancelled": "cancelled",
                     "timeout": "deadline_exceeded",

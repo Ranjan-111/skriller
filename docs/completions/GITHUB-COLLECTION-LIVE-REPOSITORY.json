@@ -1,0 +1,13 @@
+{
+  "status": "checkpointed",
+  "fixture": "public GitHub resource",
+  "source_url": "https://github.com/octocat/Hello-World",
+  "route": "fixed GitHub API through configured loopback GuardedProxy",
+  "fetch_attempts": 1,
+  "source_facts": 3,
+  "lead_fit": "unverified",
+  "model_calls": 0,
+  "currency_cost": 0,
+  "no_auth_header": true,
+  "observed_at": "2026-10-14T07:36:15.907546+00:00"
+}

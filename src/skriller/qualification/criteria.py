@@ -125,6 +125,8 @@ def evaluate(
     evidence = tuple(
         dict.fromkeys(identifier for fact in eligible for identifier in fact.evidence_ids)
     )
+    if len(evidence) > 10:
+        return CriterionResult(criterion, "unknown", "evidence_reference_budget_exhausted")
     return CriterionResult(
         criterion,
         "matched" if values[0] else "contradicted",

@@ -34,18 +34,32 @@ class SourceDiagnostic(BaseModel):
     credential_validation: Literal["not_performed"] = "not_performed"
 
 
-def default_registry(workspace_id: UUID) -> ConnectorRegistry:
+def default_registry(workspace_id: UUID, *, youtube_image: str | None = None) -> ConnectorRegistry:
     # The running search service provides public indexed discovery, not logged-in
     # platform access. No synthetic adapter registration or live proof is added.
-    return ConnectorRegistry(workspace_id)
+    from skriller.connectors.github import public_github_binding
+    from skriller.connectors.rss import public_rss_binding
+    from skriller.connectors.youtube_executor import ConcreteYouTubeExecutor, public_youtube_binding
+
+    registry = ConnectorRegistry(workspace_id)
+    registry.register_adapter(public_github_binding())
+    registry.register_adapter(public_rss_binding())
+    registry.register_adapter(
+        public_youtube_binding(ConcreteYouTubeExecutor(youtube_image) if youtube_image else None)
+    )
+    return registry
 
 
 def diagnose(
-    session, registry: ConnectorRegistry | None = None, *, search_enabled: bool = True
+    session,
+    registry: ConnectorRegistry | None = None,
+    *,
+    search_enabled: bool = True,
+    youtube_image: str | None = None,
 ) -> list[SourceDiagnostic]:
     from skriller.db.repositories import scope
 
-    registry = registry or default_registry(UUID(scope(session)))
+    registry = registry or default_registry(UUID(scope(session)), youtube_image=youtube_image)
     if str(registry.workspace_id) != scope(session):
         raise ValueError("Diagnostic registry belongs to another workspace")
     disabled = disabled_operations(session)

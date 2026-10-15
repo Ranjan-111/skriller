@@ -22,9 +22,11 @@ from skriller.erasure_router import router as erasure_router
 from skriller.exports.router import router as exports_router
 from skriller.lists_router import router as lists_router
 from skriller.progress import router as progress_router
+from skriller.qualification.router import router as identity_router
 from skriller.research.router import router as research_router
+from skriller.research.template_router import router as template_router
 from skriller.settings import Settings
-from skriller.storage import EvidenceStorage, LocalBlobBackend
+from skriller.storage.configuration import configured_storage
 
 
 def database_available(url: str) -> bool:
@@ -70,11 +72,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(application):
-        application.state.evidence_storage = EvidenceStorage(
-            LocalBlobBackend(configuration.object_directory)
-        )
-        yield
-        await asyncio.to_thread(application.state.database.dispose)
+        application.state.evidence_storage = configured_storage(configuration)
+        try:
+            yield
+        finally:
+            try:
+                await asyncio.to_thread(application.state.evidence_storage.close)
+            finally:
+                await asyncio.to_thread(application.state.database.dispose)
 
     app = FastAPI(title="Skriller", version="0.1.0", lifespan=lifespan)
     app.state.settings = configuration
@@ -84,12 +89,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.database = Database(configuration.application_database_url)
     app.include_router(progress_router)
     app.include_router(research_router)
+    app.include_router(template_router)
     app.include_router(connections_router)
     app.include_router(connectors_router)
     app.include_router(exports_router)
     app.include_router(lists_router)
     app.include_router(entitlements_router)
     app.include_router(erasure_router)
+    app.include_router(identity_router)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=configuration.cors_origins,

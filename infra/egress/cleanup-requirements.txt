@@ -1,0 +1,9 @@
+# Minimal copied cleanup/tokenizer closure pinned from uv.lock.
+beautifulsoup4==4.15.0
+html2text==2025.4.15
+minify-html==0.18.1
+regex==2026.9.29
+semchunk==4.1.1
+soupsieve==3.0.2
+tiktoken==0.14.0
+tqdm==4.70.1

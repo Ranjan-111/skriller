@@ -28,6 +28,7 @@ const sources = [
   { id: "linkedin", name: "LinkedIn", detail: "Professional discovery" },
   { id: "reddit", name: "Reddit", detail: "Discussions & demand" },
   { id: "web", name: "Web", detail: "Company websites & search" },
+  { id: "youtube", name: "YouTube", detail: "Public video references" },
 ] as const;
 const examples = {
   leads: [
@@ -363,7 +364,20 @@ export function Workbench() {
           {job &&
             identity.status === "signed_in" &&
             jobAccount === accountId && (
-              <ResearchResultsPanel key={job.id} api={api} job={job} />
+              <ResearchResultsPanel
+                key={job.id}
+                api={api}
+                job={job}
+                onExpanded={(next, nextPrompt) => {
+                  setPrompt(nextPrompt);
+                  setJob(next);
+                  setJobAccount(accountId);
+                }}
+                onClarification={(next) => {
+                  setJob(next);
+                  setJobAccount(accountId);
+                }}
+              />
             )}
           {identity.status === "signed_in" && accountId && (
             <WorkspaceAllowancePanel

@@ -766,5 +766,19 @@
       "copied_sha256": "b79909b47f95f0133140c0648c93f7c2b16fc93eeb644504d1431aa4805794b3"
     }
   ],
-  "patches": []
+  "patches": [
+    {
+      "reason": "SKR-039: preserve caller deadlines and bound copied synchronous challenge loops and recursive attempts; hard isolated executor remains mandatory",
+      "files": [
+        {
+          "path": "scrapling/engines/_browsers/_stealth.py",
+          "sha256": "c78f034cacecd1c197997bd0ab65fb4b18c75c603551f9f651654bb653bfc74c"
+        },
+        {
+          "path": "scrapling/engines/_browsers/_validators.py",
+          "sha256": "f523eb411826373823bb8c1203b3d0f89feb20377a87e71eeb6b958225891b4d"
+        }
+      ]
+    }
+  ]
 }

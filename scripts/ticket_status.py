@@ -69,6 +69,14 @@ def render(root: Path, data: dict):
         "| Ticket | Status | Verified evidence | Remaining acceptance checks |",
         "| --- | --- | --- | --- |",
     ]
+    deferred = data.get("user_deferred_gates", [])
+    if deferred:
+        lines[8:8] = [
+            "User-deferred verification gates:",
+            "",
+            *(f"- {item}" for item in deferred),
+            "",
+        ]
     for item in tickets:
         verification = item.get("verification", {})
         links = ", ".join(

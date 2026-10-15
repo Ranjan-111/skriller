@@ -28,7 +28,9 @@ def source_status(
     try:
         with request.app.state.database.tenant(identity.uid, str(workspace_id)) as session:
             return diagnose(
-                session, search_enabled=request.app.state.settings.search_provider != "disabled"
+                session,
+                search_enabled=request.app.state.settings.search_provider != "disabled",
+                youtube_image=request.app.state.settings.public_youtube_image,
             )
     except WorkspaceAccessDenied:
         raise HTTPException(404, "Workspace unavailable") from None
@@ -49,7 +51,9 @@ def source_switch(
             return next(
                 row
                 for row in diagnose(
-                    session, search_enabled=request.app.state.settings.search_provider != "disabled"
+                    session,
+                    search_enabled=request.app.state.settings.search_provider != "disabled",
+                    youtube_image=request.app.state.settings.public_youtube_image,
                 )
                 if row.capability.source == source and row.capability.operation == operation
             )

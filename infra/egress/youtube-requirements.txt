@@ -1,0 +1,7 @@
+# Agent-Reach's existing yt-dlp[default] backend; remaining dependencies are in the pinned base.
+brotli==1.2.0
+mutagen==1.48.1
+pycryptodomex==3.24.1
+websockets==16.1.1
+yt-dlp==2026.8.19
+yt-dlp-ejs==0.8.0

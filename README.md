@@ -131,3 +131,35 @@ A project operator may provision a finite manual pilot allowance using `scripts/
 ## Evidence retention
 
 The local stack includes `python -m skriller.retention_runtime`. It maintains one hourly cleanup schedule per registered workspace, with scoped leases, safe retries and a bounded child process. Default retention ceilings are seven days for social/feed sources, thirty days for web/GitHub/public YouTube, and one hour for export artifacts. Shorter requested expiries are preserved. Expired source quotes are hidden from current result views; expired private objects/excerpts are removed without touching retained data in another tenant.
+
+### Offline copied cleanup image
+
+The cleanup dependency image packages the copied ScrapeGraph HTML/markdown/chunk helpers and required tokenizer asset; it is separate from the complete hosted API/model-worker deployment. On the reviewed aarch64 local runtime:
+
+```sh
+uv run python scripts/provision_cleanup_assets.py --download
+# Later builds can verify staged wheels without --download.
+docker build --build-context cleanup_wheels=.runtime/cleanup-build -f infra/egress/Dockerfile.cleanup -t skriller-egress-cleanup .
+# Set this to the installed immutable image ID reported by docker image inspect.
+SKRILLER_CLEANUP_TEST_IMAGE=sha256:ef73de989393c311d729546b0d3cb3177f1753614cde683f6236cdbeea7c31d5 uv run pytest -q tests/extraction/test_cleanup_container.py
+```
+
+Eight wheel artifacts are checked against uv.lock before staging and during the image build. The tokenizer data has a pinned SHA-256 checksum. Runtime boot tests disable all container networking and verify unprivileged/read-only execution, copied cleanup output, preserved JSON-LD and typed failure when assets are unavailable. Build-time public dependency retrieval needs no API key. See [encrypted recovery runbook](docs/RECOVERY_RUNBOOK.md) for the separate database/object backup utility and its outstanding off-host deployment gates.
+
+Native workers also require the pinned tokenizer asset. Run `uv run python scripts/provision_tokenizer.py --download` once during local setup; later `uv run python scripts/provision_tokenizer.py` verifies it without a download. The persistent default is `.runtime/tiktoken-cache`, which survives a restart. `TIKTOKEN_CACHE_DIR` can select an operator-managed cache instead. Missing or tampered assets fail closed before the copied tokenizer runs; research execution does not download tokenizer data.
+
+Public static-page cache replay can be enabled locally with SKRILLER_PUBLIC_RESPONSE_CACHE_TTL_SECONDS=300 (default0, maximum300). It is tenant-scoped, preserves original collection times and avoids a fetch charge while fresh. Redirects, dynamic browser pages and account-backed sources are excluded. Expired content is fetched normally; HTTP304 renewal is still pending. Owner identity review is available through /v1/workspaces/{workspace_id}/identity-reviews and its approve/reverse actions; approval still requires corroborated facts and cannot force a same-name merge.
+
+
+Reviewed adaptive mappings are optional server configuration through `SKRILLER_REVIEWED_PAGE_TEMPLATES_FILE`. The bounded registry schema lives in `src/skriller/research/adaptive_templates.py`; `tests/db/test_adaptive_pipeline.py` demonstrates a workspace and exact-URL registration. Runtime only reuses reviewed fingerprints and retains unverified observations; publication remains a separate review operation. Native identity facts use the product representation `kind:opaque_id` (for example `person:known-id`) in platform-specific claim fields. Trusted source adapters/reviewers must establish that object kind; URLs and handles are not identity proof.
+
+
+The results acceptance harness uses a fresh Chromium profile and a synthetic tenant API, with all page requests confined to loopback. Run `uv run pytest -q tests/db/test_results_browser.py` after installing the locked Python and web dependencies. It uses installed macOS Chrome in an isolated profile, or Playwright Chromium elsewhere; `SKRILLER_TEST_CHROME_EXECUTABLE` can select a test browser. CI installs Chromium explicitly. It does not use your Firebase browser session, source cookies, cloud models or API keys. Saved-list values now preserve original claim/source-entity IDs so reviewed identity reversals remain traceable in immutable snapshots.
+
+## Private object backend
+
+Local evidence remains the default (`SKRILLER_OBJECT_BACKEND=local`). The API, collection/extraction workers and retention all use the same configured backend. To select S3-compatible storage, set `SKRILLER_OBJECT_BACKEND=s3`, `SKRILLER_S3_BUCKET`, optional `SKRILLER_S3_REGION` and HTTPS `SKRILLER_S3_ENDPOINT_URL`. Use a configured workload role or a complete `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` pair (and optional `AWS_SESSION_TOKEN`) in ignored configuration. Startup refuses unverified public-access blocking, unknown bucket ownership or ACL grants to other accounts. SDK calls have bounded connect/read timeouts and no automatic retries. Live bucket policy/provider compatibility remain a deployment verification gate.
+
+Switching the backend does not copy objects. Migrate immutable bytes under their existing workspace keys before switching; references and SHA256 checks remain stable. Local backup/rehearsal refuses a remote backend until remote object recovery is implemented and verified.
+
+Owners can publish reviewed adaptive mappings through `POST /v1/workspaces/{workspace_id}/page-templates` with a `template` matching `ReviewedTemplate` and the current `expected_version` (null for the first version). `GET` lists active mappings; `POST /{template_id}/rollback` selects an earlier immutable version using `target_version` and `expected_version`. PostgreSQL enforces tenant isolation and append-only version/audit history. Active database mappings supersede the matching legacy file template; ambiguous fields or changed source identity are rejected. Publication supplies selectors and expected literal relationships, not source evidence or identity acceptance. Runtime still validates the current saved page, quotes, retention and semantic anchors before retaining an unverified source observation.

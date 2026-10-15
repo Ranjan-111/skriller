@@ -19,7 +19,7 @@ from skriller.db.repositories import (
 from skriller.db.schema import claim_evidence, claims, evidence, scoped, suppressions
 from skriller.extraction.validation import CONTACT_FIELDS
 from skriller.qualification.contacts import check_contact
-from skriller.qualification.identity import compare, group_members
+from skriller.qualification.identity import compare, group_claims, group_members
 from skriller.qualification.service import load_facts, qualify_entity
 
 saved_lists = scoped(
@@ -64,7 +64,11 @@ def _plan(session, plan_id):
 
 
 def _suppressed(session, entity_id, entries):
-    members = group_members(session, entity_id)
+    from skriller.erasure import suppressed
+
+    if suppressed(session, entity_id=entity_id):
+        return True
+    members = group_members(session, entity_id, current_only=False)
     for entry in entries:
         if entry["kind"] == "entity":
             if entry["key"] in members:
@@ -227,6 +231,9 @@ def create_list(session, name: str, plan_id: str, entity_ids: tuple[str, ...]):
 
 def refresh_list(session, list_id: str, entity_ids: tuple[str, ...], *, expected_revision: int):
     require_owner(session)
+    from skriller.erasure import privacy_lock
+
+    privacy_lock(session)
     if (
         not isinstance(entity_ids, tuple)
         or len(entity_ids) > 100
@@ -271,12 +278,22 @@ def refresh_list(session, list_id: str, entity_ids: tuple[str, ...], *, expected
         entity = ResearchRepository.get_entity(session, identifier)
         if entity is None:
             raise LookupError("Snapshot entity unavailable")
-        if _suppressed(session, identifier, entries):
+        if entity["attributes"].get("erased") or _suppressed(session, identifier, entries):
             omitted.append({"entity_id": identifier, "reason": "suppressed"})
             continue
         unresolved = _unresolved_suppressed_identity(session, identifier, entries)
         fit = qualify_entity(session, plan, identifier)
         facts = load_facts(session, identifier, now=now)
+        originals = group_claims(session, identifier)
+        original_support: dict[str, set[str]] = {}
+        if originals:
+            for original_id, support_id in session.execute(
+                sa.select(claim_evidence.c.claim_id, claim_evidence.c.evidence_id).where(
+                    claim_evidence.c.workspace_id == scope(session),
+                    claim_evidence.c.claim_id.in_([claim["id"] for claim in originals]),
+                )
+            ):
+                original_support.setdefault(original_id, set()).add(support_id)
         if len(facts) > 30:
             raise ValueError("Snapshot entity exceeds30 fact bounds")
         values = []
@@ -326,6 +343,26 @@ def refresh_list(session, list_id: str, entity_ids: tuple[str, ...], *, expected
                 {
                     "field": fact.field,
                     "value": fact.value,
+                    "claim_ids": sorted(
+                        claim["id"]
+                        for claim in originals
+                        if claim["field"] == fact.field
+                        and claim["value"] == fact.value
+                        and claim["status"] == "accepted"
+                        and claim["mode"] == "observed"
+                        and original_support.get(claim["id"]) == set(fact.evidence_ids)
+                    ),
+                    "source_entity_ids": sorted(
+                        {
+                            claim["entity_id"]
+                            for claim in originals
+                            if claim["field"] == fact.field
+                            and claim["value"] == fact.value
+                            and claim["status"] == "accepted"
+                            and claim["mode"] == "observed"
+                            and original_support.get(claim["id"]) == set(fact.evidence_ids)
+                        }
+                    ),
                     "evidence": [
                         {**dict(row), "collected_at": row["collected_at"].isoformat()}
                         for row in records

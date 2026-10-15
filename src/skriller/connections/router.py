@@ -59,6 +59,7 @@ router = APIRouter(
     prefix="/v1/workspaces/{workspace_id}/connections", route_class=PrivateValidationRoute
 )
 AuthKind = Literal["session", "oauth", "api_key"]
+ConnectionSource = Source | Literal["proxy"]
 
 
 def read_scopes() -> list[Literal["read", "discover"]]:
@@ -67,7 +68,7 @@ def read_scopes() -> list[Literal["read", "discover"]]:
 
 class ConnectionInput(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
-    source: Source
+    source: ConnectionSource
     auth_kind: AuthKind
     payload: SecretPayload = Field(repr=False)
     expires_at: datetime
@@ -90,7 +91,7 @@ class ConnectionMetadata(BaseModel):
     model_config = ConfigDict(extra="forbid", from_attributes=True)
     id: UUID
     workspace_id: UUID
-    source: Source
+    source: ConnectionSource
     auth_kind: AuthKind
     scopes: tuple[str, ...]
     state: Literal["active", "expired", "revoked"]

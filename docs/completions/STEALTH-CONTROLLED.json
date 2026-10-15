@@ -1,0 +1,11 @@
+{
+  "image": "sha256:9451b865e1acdb9167af41924251384ca0c72c79ef5cd5142b1af7e406bd3d3b",
+  "outer_elapsed_ms": 6060,
+  "cleanup_confirmed": true,
+  "cleared_page": true,
+  "persistent_rejected": true,
+  "persistent_seconds": 3.003,
+  "network": "none",
+  "scope": "controlled non-interactive fixtures only; no live CAPTCHA or universal bypass claim",
+  "dynamic_collecting_stage": "passed actual isolated Chromium with persisted evidence and shared accounting"
+}

@@ -14,7 +14,30 @@ from skriller.db import (
 from skriller.db.schema import claims, suppressions
 from skriller.lists import create_list, list_snapshots, refresh_list, snapshot
 from skriller.qualification.contacts import DatedRole, record_role_refresh
-from skriller.qualification.identity import review_link, suggest
+from skriller.qualification.identity import reverse_link, review_link, suggest
+
+
+def test_review_reversal_keeps_snapshot_claim_origin_and_refresh_removes_alias_facts(database):
+    actor, workspace, entity, plan = setup(database)
+    with database.tenant(actor, workspace) as session:
+        alias = ResearchRepository.entity(session, "person", "Reviewed alias")["id"]
+        for identifier in (entity, alias):
+            fact(session, identifier, "native_id.linkedin", "person:shared-fixture")
+        claim_id, _ = fact(session, alias, "location", "India")
+        link = suggest(session, entity, alias)
+        assert review_link(session, link["id"])["state"] == "linked"
+        saved = create_list(session, "Reversible group", plan, (entity,))
+        before = snapshot(session, saved["id"], 1)
+        value = next(
+            row for row in before["payload"]["members"][0]["values"] if row["field"] == "location"
+        )
+        assert value["claim_ids"] == [claim_id] and value["source_entity_ids"] == [alias]
+        reverse_link(session, link["id"])
+        after = refresh_list(session, saved["id"], (entity,), expected_revision=1)
+        assert not any(
+            row["field"] == "location" for row in after["payload"]["members"][0]["values"]
+        )
+        assert snapshot(session, saved["id"], 1) == before
 
 
 def setup(database):
@@ -147,14 +170,14 @@ def test_suppression_blocks_reviewed_alias_under_different_url(database):
             session,
             entity,
             "native_id.linkedin",
-            "native-fixture",
+            "person:native-fixture",
             url="https://linkedin.com/in/old-url",
         )
         fact(
             session,
             alias,
             "native_id.linkedin",
-            "native-fixture",
+            "person:native-fixture",
             url="https://linkedin.com/in/new-url",
         )
         review_link(session, suggest(session, entity, alias)["id"])
@@ -175,14 +198,14 @@ def test_profile_suppression_matches_proven_native_identity_without_merging(data
             session,
             entity,
             "native_id.linkedin",
-            "native-fixture",
+            "person:native-fixture",
             url="https://linkedin.com/in/old-url",
         )
         fact(
             session,
             alias,
             "native_id.linkedin",
-            "native-fixture",
+            "person:native-fixture",
             url="https://linkedin.com/in/new-url",
         )
         suppress(session, actor, "https://linkedin.com/in/old-url", kind="profile")
@@ -194,8 +217,8 @@ def test_unverified_identity_is_not_automerged_or_promoted(database):
     actor, workspace, entity, plan = setup(database)
     with database.tenant(actor, workspace) as session:
         alias = ResearchRepository.entity(session, "person", "Same display name")["id"]
-        fact(session, entity, "native_id.linkedin", "native-fixture")
-        fact(session, alias, "native_id.linkedin", "native-fixture", status="unverified")
+        fact(session, entity, "native_id.linkedin", "person:native-fixture")
+        fact(session, alias, "native_id.linkedin", "person:native-fixture", status="unverified")
         suppress(session, actor, entity)
         saved = create_list(session, "Unverified list", plan, (alias,))
         item = snapshot(session, saved["id"], 1)["payload"]["members"][0]
@@ -236,8 +259,8 @@ def test_generic_email_not_snapshotted_and_professional_ownership_not_shared(dat
         assert any(item["value"] == "person@company.example" for item in values)
         assert not any(item["value"] == "generic@company.example" for item in values)
         alias = ResearchRepository.entity(session, "person", "Review Alias")["id"]
-        fact(session, entity, "native_id.linkedin", "native-contact-fixture")
-        fact(session, alias, "native_id.linkedin", "native-contact-fixture")
+        fact(session, entity, "native_id.linkedin", "person:native-contact-fixture")
+        fact(session, alias, "native_id.linkedin", "person:native-contact-fixture")
         review_link(session, suggest(session, entity, alias)["id"])
         refreshed = refresh_list(session, saved["id"], (alias,), expected_revision=1)
         assert not any(

@@ -1,9 +1,11 @@
 """Authenticated tenant claim-to-fact adapter; no snippet qualification shortcut."""
 
+from dataclasses import replace
+
 import sqlalchemy as sa
 
 from skriller.contracts import SearchPlan
-from skriller.db import WorkspaceAccessDenied
+from skriller.db import ResearchRepository, WorkspaceAccessDenied
 from skriller.db.repositories import scope
 from skriller.db.schema import claim_evidence, evidence
 from skriller.qualification.contacts import role_projection
@@ -89,4 +91,33 @@ def qualify_entity(session, plan: SearchPlan, entity_id: str) -> Fit:
     if str(plan.workspace_id) != scope(session):
         raise WorkspaceAccessDenied("Qualification plan belongs to another workspace")
     now = session.execute(sa.select(sa.func.clock_timestamp())).scalar_one()
-    return qualify(plan, load_facts(session, entity_id, now=now), now=now)
+    entity = ResearchRepository.get_entity(session, entity_id)
+    if entity is None or entity["attributes"].get("erased"):
+        raise LookupError("Entity unavailable in workspace")
+    fit = qualify(plan, load_facts(session, entity_id, now=now), now=now)
+    resource = entity["attributes"].get("_source_resource_type")
+    if resource in {"github_repository", "youtube_video"}:
+        return replace(
+            fit,
+            status="excluded",
+            limitations=fit.limitations
+            + (
+                "A video does not establish its creator's identity or lead qualification"
+                if resource == "youtube_video"
+                else "A repository is not a person or company lead",
+            ),
+        )
+    expected_kinds = {
+        "person": {"person"},
+        "company": {"company"},
+        "creator": {"person"},
+        "discussion": {"post", "community"},
+    }
+    if entity["kind"] not in expected_kinds[plan.entity_type]:
+        return replace(
+            fit,
+            status="near_match" if entity["kind"] == "other" else "excluded",
+            limitations=fit.limitations
+            + ("Requested entity type is not verified for this record",),
+        )
+    return fit

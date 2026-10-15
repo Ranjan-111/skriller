@@ -25,6 +25,8 @@ def main() -> int:
             "timeout_seconds",
             "max_requests",
             "max_body_bytes",
+            "engine",
+            "solve_challenge",
         }:
             raise ValueError("Typed request fields required")
         request = BrowserRequest(**data)
@@ -42,6 +44,9 @@ def main() -> int:
             )
         )
         return 0
+    except TimeoutError:
+        print('{"error":"deadline_exceeded"}')
+        return 1
     except Exception:  # noqa: BLE001 - serialize only typed redacted child failure
         # Never serialize page text, URL, stack traces or SDK/OS error details.
         print('{"error":"source_unavailable"}')

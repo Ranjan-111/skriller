@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-15",
+  "scope": "five synthetic production PromptPlanner cases, local PostgreSQL/Ollama, one bounded call per case, no cloud requests",
+  "cases": [
+    "person-location-exclusion-preference-source",
+    "company-headquarters-industry",
+    "minimum-headcount-exclusion",
+    "private-output-refusal",
+    "ambiguous-geography"
+  ],
+  "trials": [
+    {
+      "model": "llama3.2:3b",
+      "guidance": "original",
+      "passed": 1,
+      "failed": 4,
+      "seconds": 14.28
+    },
+    {
+      "model": "llama3.2:3b",
+      "guidance": "experimental-1",
+      "passed": 1,
+      "failed": 4,
+      "seconds": 16.34
+    },
+    {
+      "model": "deepseek-r1:8b",
+      "guidance": "experimental-1",
+      "passed": 3,
+      "failed": 2,
+      "seconds": 28.65
+    },
+    {
+      "model": "deepseek-r1:8b",
+      "guidance": "experimental-2",
+      "passed": 1,
+      "failed": 4,
+      "seconds": 18.86
+    }
+  ],
+  "decision": "Experimental prompt changes reverted; model configuration unchanged. Explicit omission guard added and verified separately. Semantic quality acceptance remains failing.",
+  "limitations": [
+    "Small corpus does not establish general model rankings.",
+    "Guard tests prove known missing-cue pauses, not full semantic accuracy.",
+    "Optional corpus is skipped in ordinary offline runs."
+  ]
+}

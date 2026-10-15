@@ -184,6 +184,51 @@ def test_copied_engine_arguments_forbid_user_profile_cdp_and_uncontrolled_networ
     assert options["dns_over_https"] is False
 
 
+def test_dynamic_and_stealth_share_one_url_attempt_cap(database):
+    ctx = context(database)
+    fixture = FixtureExecutor()
+    for index, stealth in enumerate((False, True, False)):
+
+        class OneRequest(FixtureExecutor):
+            def execute(self, request, *, cancel_check=None):
+                fixture.requests.append(request)
+                return BrowserResult(b"<h1>Retained fixture</h1>", request.url, 200, 1, 0.01)
+
+        DynamicBrowserAdapter(
+            database,
+            executor=OneRequest(),
+            isolation_verified=True,
+            stealth=stealth,
+        ).fetch(
+            ctx,
+            "https://example.com",
+            source="web",
+            readiness_selector="h1",
+            operation_key=f"method-{index}",
+            max_requests=1,
+        )
+    assert fixture.requests[1].engine == "stealth"
+    options = copied_engine_options(fixture.requests[1], lambda page: None)
+    assert options["solve_cloudflare"] and options["retries"] == 1
+    with pytest.raises(FetchUnavailable) as stopped:
+        DynamicBrowserAdapter(
+            database,
+            executor=fixture,
+            isolation_verified=True,
+            stealth=True,
+        ).fetch(
+            ctx,
+            "https://example.com",
+            source="web",
+            readiness_selector="h1",
+            operation_key="fourth",
+            max_requests=1,
+        )
+    assert stopped.value.failure.code == "budget_exhausted"
+    with database.tenant(ctx.actor_id, str(ctx.workspace_id)) as session:
+        assert current_usage(session, str(ctx.job_id))[1]["fetch_attempts"] == 3
+
+
 def test_actual_copied_engine_entry_refuses_developer_host(monkeypatch):
     monkeypatch.delenv("SKRILLER_BROWSER_WORKER", raising=False)
     with pytest.raises(RuntimeError, match="isolated"):

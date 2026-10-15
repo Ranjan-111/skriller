@@ -1,0 +1,12 @@
+{
+  "status": "checkpointed",
+  "source": "official public Python releases RSS",
+  "route": "copied Scrapling session through local GuardedProxy and feedparser",
+  "entries": 10,
+  "omitted_entry_count": 0,
+  "fetch_attempts": 1,
+  "followup_fetches": 0,
+  "model_calls": 0,
+  "lead_fit": "unverified",
+  "currency_cost": 0
+}

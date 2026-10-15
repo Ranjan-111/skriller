@@ -1,0 +1,200 @@
+{
+  "status": "diagnostic_only",
+  "model": "llama3.2:3b",
+  "provider": "local_ollama",
+  "synthetic_only": true,
+  "corpus_size": 5,
+  "calls": 5,
+  "calls_observed": true,
+  "successful_model_calls": 5,
+  "failed_model_calls": 0,
+  "correct_records": 4,
+  "record_accuracy": 0.8,
+  "mean_seconds": 1.606,
+  "median_seconds": 1.608,
+  "token_usage": {
+    "input_tokens": 3067,
+    "output_tokens": 222,
+    "total_tokens": 3289
+  },
+  "token_usage_coverage": {
+    "cases_with_reported_usage": 5,
+    "cases_without_reported_usage": 0,
+    "model_calls_with_reported_usage": 5,
+    "model_calls_without_reported_usage": 0,
+    "status": "complete"
+  },
+  "cost_usd": null,
+  "limitations": [
+    "Five synthetic records are not a release-scale quality estimate.",
+    "Token counts include only usage returned by local model callbacks; missing reports are not estimated.",
+    "This local trial does not select or validate a hosted pilot model."
+  ],
+  "results": [
+    {
+      "id": "ledger",
+      "model": "llama3.2:3b",
+      "provider": "local_ollama",
+      "synthetic_fixture": true,
+      "structured_data_preserved": true,
+      "copied_graph": "third_party/scrapegraph-ai/scrapegraphai/graphs/smart_scraper_graph.py",
+      "answer": {
+        "company": "Aurora Ledger",
+        "founder": "Mira Rao",
+        "city": "Bengaluru",
+        "employees": 25,
+        "private_email": null
+      },
+      "checks": {
+        "company": true,
+        "founder": true,
+        "city": true,
+        "employees": true,
+        "private_email": true
+      },
+      "status": "passed",
+      "elapsed_seconds": 1.891,
+      "model_calls": 1,
+      "successful_model_calls": 1,
+      "failed_model_calls": 0,
+      "usage_reported_calls": 1,
+      "token_usage": {
+        "input_tokens": 630,
+        "output_tokens": 47,
+        "total_tokens": 677
+      }
+    },
+    {
+      "id": "harbor",
+      "model": "llama3.2:3b",
+      "provider": "local_ollama",
+      "synthetic_fixture": true,
+      "structured_data_preserved": true,
+      "copied_graph": "third_party/scrapegraph-ai/scrapegraphai/graphs/smart_scraper_graph.py",
+      "answer": {
+        "company": "Harbor Metrics",
+        "founder": "Dev Shah",
+        "city": null,
+        "employees": 12,
+        "private_email": null
+      },
+      "checks": {
+        "company": true,
+        "founder": true,
+        "city": false,
+        "employees": true,
+        "private_email": true
+      },
+      "status": "quality_failed",
+      "elapsed_seconds": 1.379,
+      "model_calls": 1,
+      "successful_model_calls": 1,
+      "failed_model_calls": 0,
+      "usage_reported_calls": 1,
+      "token_usage": {
+        "input_tokens": 595,
+        "output_tokens": 41,
+        "total_tokens": 636
+      }
+    },
+    {
+      "id": "cedar",
+      "model": "llama3.2:3b",
+      "provider": "local_ollama",
+      "synthetic_fixture": true,
+      "structured_data_preserved": true,
+      "copied_graph": "third_party/scrapegraph-ai/scrapegraphai/graphs/smart_scraper_graph.py",
+      "answer": {
+        "company": "Cedar Fieldworks",
+        "founder": "Anika Sen",
+        "city": "Pune",
+        "employees": 41,
+        "private_email": null
+      },
+      "checks": {
+        "company": true,
+        "founder": true,
+        "city": true,
+        "employees": true,
+        "private_email": true
+      },
+      "status": "passed",
+      "elapsed_seconds": 1.608,
+      "model_calls": 1,
+      "successful_model_calls": 1,
+      "failed_model_calls": 0,
+      "usage_reported_calls": 1,
+      "token_usage": {
+        "input_tokens": 626,
+        "output_tokens": 45,
+        "total_tokens": 671
+      }
+    },
+    {
+      "id": "orbit",
+      "model": "llama3.2:3b",
+      "provider": "local_ollama",
+      "synthetic_fixture": true,
+      "structured_data_preserved": true,
+      "copied_graph": "third_party/scrapegraph-ai/scrapegraphai/graphs/smart_scraper_graph.py",
+      "answer": {
+        "company": "Orbit Grove",
+        "founder": "Rohan Iyer",
+        "city": "Jaipur",
+        "employees": 8,
+        "private_email": null
+      },
+      "checks": {
+        "company": true,
+        "founder": true,
+        "city": true,
+        "employees": true,
+        "private_email": true
+      },
+      "status": "passed",
+      "elapsed_seconds": 1.539,
+      "model_calls": 1,
+      "successful_model_calls": 1,
+      "failed_model_calls": 0,
+      "usage_reported_calls": 1,
+      "token_usage": {
+        "input_tokens": 590,
+        "output_tokens": 45,
+        "total_tokens": 635
+      }
+    },
+    {
+      "id": "mint",
+      "model": "llama3.2:3b",
+      "provider": "local_ollama",
+      "synthetic_fixture": true,
+      "structured_data_preserved": true,
+      "copied_graph": "third_party/scrapegraph-ai/scrapegraphai/graphs/smart_scraper_graph.py",
+      "answer": {
+        "company": "Mint Harbor",
+        "founder": "Leela Das",
+        "city": "Chennai",
+        "employees": 63,
+        "private_email": null
+      },
+      "checks": {
+        "company": true,
+        "founder": true,
+        "city": true,
+        "employees": true,
+        "private_email": true
+      },
+      "status": "passed",
+      "elapsed_seconds": 1.614,
+      "model_calls": 1,
+      "successful_model_calls": 1,
+      "failed_model_calls": 0,
+      "usage_reported_calls": 1,
+      "token_usage": {
+        "input_tokens": 626,
+        "output_tokens": 44,
+        "total_tokens": 670
+      }
+    }
+  ]
+}

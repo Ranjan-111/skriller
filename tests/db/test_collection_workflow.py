@@ -1,6 +1,7 @@
 """Actual copied HTTP/cleanup engines, proxy, blobs and tenant checkpoints."""
 
 from pathlib import Path
+from time import sleep
 from uuid import uuid4
 
 import pytest
@@ -20,6 +21,55 @@ from skriller.storage import EvidenceStorage, LocalBlobBackend
 
 pytestmark = pytest.mark.integration_db
 proxy = test_fetch.proxy
+
+
+def test_resume_collection_uses_saved_candidates_without_requiring_search(
+    database, monkeypatch, proxy, tmp_path
+):
+    endpoint, requests, _ = proxy
+    actor = f"collection-resume-{uuid4()}"
+    client, accepted, _, tasks, provider = discover(
+        database, monkeypatch, actor, endpoint, ["company"]
+    )
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        original = JobRepository.get(session, accepted["job_id"])
+        before = current_usage(session, accepted["job_id"])
+        JobRepository.transition(session, accepted["job_id"], "paused")
+
+    app = client.app
+    app.state.search_provider = None
+    configured = app.state.settings
+    app.state.settings = configured.model_copy(update={"public_collection_proxy_url": None})
+    url = f"/v1/jobs/{accepted['job_id']}/resume"
+    headers = {"Idempotency-Key": "collection-resume"}
+    assert client.post(url, headers=headers).status_code == 503
+    assert requests == []
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        assert JobRepository.get(session, accepted["job_id"])["state"] == "paused"
+
+    app.state.settings = configured
+    response = client.post(url, headers=headers)
+    assert response.status_code == 200, response.text
+    assert response.json()["state"] == "queued"
+    assert client.post(url, headers=headers).json() == response.json()
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        resumed = JobRepository.get(session, accepted["job_id"])
+        assert resumed["plan_id"] == original["plan_id"]
+        assert resumed["created_at"] == original["created_at"]
+        assert current_usage(session, accepted["job_id"]) == before
+
+    storage = EvidenceStorage(LocalBlobBackend(tmp_path))
+    assert (
+        execute_collection(database, tasks[0], endpoint, storage=storage)["status"]
+        == "checkpointed"
+    )
+    assert client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["state"] == "completed"
+    assert provider.calls == 2 and requests == ["/company"]
+    assert (
+        execute_collection(database, tasks[0], endpoint, storage=storage)["status"]
+        == "checkpointed"
+    )
+    assert requests == ["/company"]
 
 
 class Provider:
@@ -136,6 +186,30 @@ def test_collection_failure_retains_reference_and_finishes_only_after_all_attemp
     assert data["state"] == "partial" and len(data["results"]) == 2
     failed = next(row for row in data["results"] if row["url"].endswith("/challenge"))
     assert failed["collection"]["failure_code"] == "challenge_detected"
+    usage = client.get(f"/v1/jobs/{accepted['job_id']}/usage").json()
+    collection_metric = next(
+        item for item in usage["stage_metrics"] if item["stage"] == "collecting"
+    )
+    assert collection_metric["observations"] == 2
+    assert collection_metric["outcomes"] == {"succeeded": 1, "challenge_detected": 1}
+    assert collection_metric["correlated_attempt_observations"] == 2
+    assert collection_metric["queue_wait_samples"] == 2
+    usage = client.get(f"/v1/jobs/{accepted['job_id']}/usage").json()
+    collection_metric = next(
+        item for item in usage["stage_metrics"] if item["stage"] == "collecting"
+    )
+    assert collection_metric["observations"] == 2
+    assert collection_metric["outcomes"] == {"succeeded": 1, "challenge_detected": 1}
+    assert collection_metric["correlated_attempt_observations"] == 2
+    assert collection_metric["queue_wait_samples"] == 2
+    usage = client.get(f"/v1/jobs/{accepted['job_id']}/usage").json()
+    collection_metric = next(
+        item for item in usage["stage_metrics"] if item["stage"] == "collecting"
+    )
+    assert collection_metric["observations"] == 2
+    assert collection_metric["outcomes"] == {"succeeded": 1, "challenge_detected": 1}
+    assert collection_metric["correlated_attempt_observations"] == 2
+    assert collection_metric["queue_wait_samples"] == 2
     assert len(requests) == 2
     with database.tenant(actor, accepted["workspace_id"]) as session:
         assert current_usage(session, accepted["job_id"])[1]["fetch_attempts"] == 2
@@ -195,6 +269,107 @@ def test_collection_rejects_foreign_task_identity_before_io(database, monkeypatc
             storage=EvidenceStorage(LocalBlobBackend(tmp_path)),
         )
     assert not requests
+
+
+def test_public_cache_reuses_original_date_without_fetch_charge_then_expires(
+    database, monkeypatch, proxy, tmp_path
+):
+    endpoint, requests, _ = proxy
+    actor = f"collection-cache-{uuid4()}"
+    storage = EvidenceStorage(LocalBlobBackend(tmp_path))
+
+    def collect():
+        client, accepted, _, tasks, _ = discover(
+            database, monkeypatch, actor, endpoint, ["company"]
+        )
+        assert (
+            execute_collection(database, tasks[0], endpoint, storage=storage, cache_ttl_seconds=1)[
+                "status"
+            ]
+            == "checkpointed"
+        )
+        row = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"][0]
+        with database.tenant(actor, accepted["workspace_id"]) as session:
+            usage = current_usage(session, accepted["job_id"])[1]["fetch_attempts"]
+        return row, usage
+
+    first, first_usage = collect()
+    second, second_usage = collect()
+    assert requests == ["/company"]
+    assert first_usage == 1 and second_usage == 0
+    assert second["collection"]["observed_at"] == first["collection"]["observed_at"]
+    assert second["collection"]["network_seconds"] == 0
+    assert second["qualification"] == "unverified"
+    sleep(1.1)
+    third, third_usage = collect()
+    assert requests == ["/company", "/company"] and third_usage == 1
+    assert third["collection"]["observed_at"] > first["collection"]["observed_at"]
+
+
+def test_public_cache_does_not_share_bodies_between_workspaces(
+    database, monkeypatch, proxy, tmp_path
+):
+    endpoint, requests, _ = proxy
+    storage = EvidenceStorage(LocalBlobBackend(tmp_path))
+    for _ in range(2):
+        actor = f"collection-cache-isolation-{uuid4()}"
+        _, _, _, tasks, _ = discover(database, monkeypatch, actor, endpoint, ["company"])
+        assert (
+            execute_collection(
+                database, tasks[0], endpoint, storage=storage, cache_ttl_seconds=300
+            )["status"]
+            == "checkpointed"
+        )
+    assert requests == ["/company", "/company"]
+
+
+def test_warm_public_cache_obeys_source_read_kill_switch(database, monkeypatch, proxy, tmp_path):
+    from skriller.connectors.switches import set_disabled
+
+    endpoint, requests, _ = proxy
+    actor = f"collection-cache-switch-{uuid4()}"
+    storage = EvidenceStorage(LocalBlobBackend(tmp_path))
+    _, _, _, tasks, _ = discover(database, monkeypatch, actor, endpoint, ["company"])
+    execute_collection(database, tasks[0], endpoint, storage=storage, cache_ttl_seconds=300)
+    client, accepted, _, tasks, _ = discover(database, monkeypatch, actor, endpoint, ["company"])
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        set_disabled(session, "web", "read", True)
+    execute_collection(database, tasks[0], endpoint, storage=storage, cache_ttl_seconds=300)
+    row = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"][0]
+    assert row["collection"]["status"] == "unavailable"
+    assert requests == ["/company"]
+
+
+def test_cancel_during_cache_serialization_does_not_commit_replay_bytes(
+    database, monkeypatch, proxy, tmp_path
+):
+    from scrapling.spiders.cache import ResponseCacheManager
+
+    from skriller.jobs.control import cancel
+
+    endpoint, requests, _ = proxy
+    actor = f"collection-cache-cancel-{uuid4()}"
+    _, accepted, _, tasks, _ = discover(database, monkeypatch, actor, endpoint, ["company"])
+    original = ResponseCacheManager.put
+
+    async def cancel_before_cache_commit(*args, **kwargs):
+        await original(*args, **kwargs)
+        with database.tenant(actor, accepted["workspace_id"]) as session:
+            cancel(session, accepted["job_id"])
+
+    monkeypatch.setattr(ResponseCacheManager, "put", cancel_before_cache_commit)
+    execute_collection(
+        database,
+        tasks[0],
+        endpoint,
+        storage=EvidenceStorage(LocalBlobBackend(tmp_path)),
+        cache_ttl_seconds=300,
+    )
+    assert requests == ["/company"]
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        assert session.execute(sa.select(sa.func.count()).select_from(evidence)).scalar_one() == 0
+        assert JobRepository.get(session, accepted["job_id"])["state"] == "cancelled"
+    assert not list(Path(tmp_path).rglob("evidence/*"))
 
 
 @pytest.mark.parametrize(

@@ -86,6 +86,51 @@ def run(database, actor, accepted, provider, monkeypatch):
     return payload, execute_discovery(database, payload, provider)
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://www.linkedin.com/feed/update/urn:li:activity:123456789/",
+        "https://www.reddit.com/r/software/comments/abc123/anonymous_discussion/",
+    ],
+)
+def test_indexed_discussion_reference_does_not_invent_author_or_named_lead(
+    database, monkeypatch, url
+):
+    actor = f"discussion-reference-{uuid4()}"
+    _, client, accepted = prepare(database, monkeypatch, actor)
+
+    class DiscussionProvider:
+        async def search(self, query, **kwargs):
+            return SearchPage(
+                hits=[
+                    SearchHit(
+                        title="Anonymous discussion",
+                        url=url,
+                        snippet="Founder discusses hiring",
+                        rank=1,
+                    )
+                ],
+                rejected=0,
+                truncated=False,
+            )
+
+    run(database, actor, accepted, DiscussionProvider(), monkeypatch)
+    response = client.get(f"/v1/jobs/{accepted['job_id']}/results")
+    assert response.status_code == 200, response.text
+    record = response.json()["results"][0]
+    assert record["discussion"] == {
+        "resource_kind": "post",
+        "evidence_kind": "indexed_reference",
+        "author_handle": None,
+        "author_identity": "unknown",
+    }
+    assert record["qualification"] == "unverified" and record["fit"]["status"] != "confirmed"
+    assert record["platform_reference"]["resource_kind"] == "post"
+    assert record["platform_reference"]["access"] == "indexed_reference_only"
+    assert record["platform_reference"]["direct_read_status"] == "not_attempted"
+    assert record["platform_reference"]["subject_identity"] == "unknown"
+
+
 def test_submission_checkpoint_results_and_duplicate_delivery(database, monkeypatch):
     actor = f"workflow-{uuid4()}"
     app, client, accepted = prepare(database, monkeypatch, actor)
@@ -332,6 +377,7 @@ def test_runtime_retries_temporary_admission_without_dropping_job(database, monk
         "actor_id": actor,
     }
     monkeypatch.setattr(runtime, "database", database)
+    monkeypatch.setattr(runtime, "dispatch", lambda *args: None)
     payload["attempt_id"] = CheckpointWorker(database, {}).schedule(payload)["attempt_id"]
     monkeypatch.setattr(runtime, "execute_discovery", lambda *args, **kwargs: {"status": status})
 

@@ -57,6 +57,8 @@ class SnapshotValue(BaseModel):
     field: str
     value: str | int | float | bool
     evidence: list[SnapshotEvidence]
+    claim_ids: list[UUID] = Field(default_factory=list, max_length=300)
+    source_entity_ids: list[UUID] = Field(default_factory=list, max_length=100)
 
 
 class SnapshotMember(BaseModel):

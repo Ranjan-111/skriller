@@ -1,0 +1,27 @@
+[
+  {
+    "id": "ledger",
+    "html": "<html><head><script type=\"application/ld+json\">{\"@type\":\"Organization\",\"name\":\"Aurora Ledger\",\"founder\":{\"name\":\"Mira Rao\"},\"address\":{\"addressLocality\":\"Bengaluru\"},\"numberOfEmployees\":25}</script></head><body><h1>Aurora Ledger</h1><p>Founded by Mira Rao in Bengaluru.</p></body></html>",
+    "expected": {"company": "Aurora Ledger", "founder": "Mira Rao", "city": "Bengaluru", "employees": 25, "private_email": null}
+  },
+  {
+    "id": "harbor",
+    "html": "<html><body><main><h1>Harbor Metrics</h1><section><h2>Our team</h2><p>Founder: Dev Shah</p><p>Based in Kochi</p><p>Team size: 12</p></section></main></body></html>",
+    "expected": {"company": "Harbor Metrics", "founder": "Dev Shah", "city": "Kochi", "employees": 12, "private_email": null}
+  },
+  {
+    "id": "cedar",
+    "html": "<html><head><script type=\"application/ld+json\">{\"@type\":\"Organization\",\"name\":\"Cedar Fieldworks\",\"founder\":\"Anika Sen\",\"addressLocality\":\"Pune\",\"numberOfEmployees\":41}</script></head><body><article><h1>Cedar Fieldworks</h1><p>Founder Anika Sen leads our Pune office.</p><p>41 employees</p></article></body></html>",
+    "expected": {"company": "Cedar Fieldworks", "founder": "Anika Sen", "city": "Pune", "employees": 41, "private_email": null}
+  },
+  {
+    "id": "orbit",
+    "html": "<html><body><header><h1>Orbit Grove</h1></header><dl><dt>Founder</dt><dd>Rohan Iyer</dd><dt>Headquarters</dt><dd>Jaipur</dd><dt>Employees</dt><dd>8</dd></dl></body></html>",
+    "expected": {"company": "Orbit Grove", "founder": "Rohan Iyer", "city": "Jaipur", "employees": 8, "private_email": null}
+  },
+  {
+    "id": "mint",
+    "html": "<html><head><script type=\"application/ld+json\">{\"@type\":\"Organization\",\"name\":\"Mint Harbor\",\"founder\":{\"name\":\"Leela Das\"},\"address\":{\"addressLocality\":\"Chennai\"},\"numberOfEmployees\":63}</script></head><body><h1>Mint Harbor</h1><p>Leela Das, founder. Chennai, India.</p></body></html>",
+    "expected": {"company": "Mint Harbor", "founder": "Leela Das", "city": "Chennai", "employees": 63, "private_email": null}
+  }
+]

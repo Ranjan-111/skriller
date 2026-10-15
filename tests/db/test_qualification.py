@@ -95,7 +95,7 @@ def test_reviewed_identity_and_reversal_change_projection_without_rewriting_clai
     actor, workspace, a, b = setup(database)
     with database.tenant(actor, workspace) as session:
         for entity in (a, b):
-            fact(session, entity, "native_id.linkedin", "same")
+            fact(session, entity, "native_id.linkedin", "person:same")
         location = fact(session, b, "location", "India")
         selected = plan(
             workspace, must_have=[Criterion(field="location", operator="eq", value="India")]

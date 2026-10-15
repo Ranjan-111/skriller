@@ -132,5 +132,11 @@ def current_observations(session, entity_id, observations):
             )
         ):
             continue
-        current.append({**item, "status": claim["status"]})
+        current.append(
+            {
+                **item,
+                "status": claim["status"],
+                "evidence_ids": sorted(row["id"] for row in rows),
+            }
+        )
     return current, len(observations) - len(current)

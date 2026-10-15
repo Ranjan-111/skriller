@@ -261,14 +261,19 @@ class ResearchRepository:
             raise ValueError("Observed/inferred claims require evidence")
         if mode == "unavailable" and value is not None:
             raise ValueError("Unavailable claims must preserve null values")
+        from skriller.erasure import privacy_lock
+
         from .schema import entities
 
+        privacy_lock(session)
         entity = session.execute(
-            sa.select(entities.c.id)
+            sa.select(entities.c.attributes)
             .where(entities.c.workspace_id == scope(session), entities.c.id == entity_id)
             .with_for_update()
         ).scalar_one_or_none()
         if entity is None:
+            raise LookupError("Entity unavailable")
+        if entity.get("erased"):
             raise LookupError("Entity unavailable")
         prior = (
             session.execute(

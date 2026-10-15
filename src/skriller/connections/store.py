@@ -22,6 +22,7 @@ from skriller.db.repositories import insert_row, require_owner, scope
 from skriller.jobs.control import permit_call
 
 RUNNERS = {
+    "proxy_route": ("proxy", {"api_key": "SKR_PROXY_CONFIGURATION"}),
     "linkedin_read": (
         "linkedin",
         {"session_cookie": "LINKEDIN_SESSION_COOKIE", "access_token": "LINKEDIN_ACCESS_TOKEN"},
@@ -200,6 +201,12 @@ class ConnectionStore:
         now = datetime.now(UTC)
         if expires_at.tzinfo is None or not now < expires_at <= now + timedelta(days=30):
             raise ValueError("Credential retention must expire within 30 days")
+        if source == "proxy":
+            if auth_kind != "api_key" or set(payload.credentials) != {"api_key"}:
+                raise ValueError("Proxy connection requires encrypted provider configuration")
+            from skriller.connectors.proxies import ProxyConfiguration
+
+            ProxyConfiguration.parse(payload.credentials["api_key"].get_secret_value())
         identifier, secret_id = str(uuid4()), str(uuid4())
         row = insert_row(
             session,
@@ -287,7 +294,7 @@ class ConnectionStore:
             reference.state != "active"
             or reference.source != source
             or "read" not in reference.scopes
-            or source not in plan["interpretation"]["sources"]
+            or (runner != "proxy_route" and source not in plan["interpretation"]["sources"])
         ):
             raise ConnectionUnavailable("source_scope_unavailable")
         row = (

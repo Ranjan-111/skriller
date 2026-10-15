@@ -1,10 +1,11 @@
+from dataclasses import replace
 from decimal import Decimal
 from uuid import uuid4
 
 import pytest
 import sqlalchemy as sa
 
-from skriller.contracts import SearchPlan
+from skriller.contracts import Failure, SearchPlan
 from skriller.db import ConversationRepository, JobRepository, ResearchRepository
 from skriller.db.schema import attempts
 from skriller.jobs.budget import current_usage
@@ -62,7 +63,8 @@ def test_redelivery_after_checkpoint_before_ack_never_duplicates_results(databas
         assert session.execute(sa.text("SELECT count(*) FROM entities")).scalar_one() == 1
         assert current_usage(session, payload["job_id"])[1]["tokens"] == 5
         metrics = [
-            row for row in JobRepository.events_after(session, payload["job_id"])
+            row
+            for row in JobRepository.events_after(session, payload["job_id"])
             if row["kind"] == "stage_observation"
         ]
         assert len(metrics) == 1
@@ -70,6 +72,8 @@ def test_redelivery_after_checkpoint_before_ack_never_duplicates_results(databas
         assert metrics[0]["details"]["attempt_count"] == 1
         assert metrics[0]["details"]["accepted_result_count"] == 1
         assert metrics[0]["details"]["cost_usd"] == "0"
+        assert metrics[0]["details"]["attempt_id"] == payload["attempt_id"]
+        assert metrics[0]["details"]["queue_wait_seconds"] >= 0
 
 
 def test_expired_owner_recovery_fences_old_work_and_accounts_uncertainty(database):
@@ -80,6 +84,7 @@ def test_expired_owner_recovery_fences_old_work_and_accounts_uncertainty(databas
         reservation = reserve(
             session, payload["job_id"], "dead-owner", 0, {"llm_calls": 1, "tokens": 10}
         )
+
         session.execute(
             sa.update(attempts)
             .where(attempts.c.id == payload["attempt_id"])
@@ -104,6 +109,27 @@ def test_expired_owner_recovery_fences_old_work_and_accounts_uncertainty(databas
         )
 
 
+def test_worker_metric_preserves_typed_block_category(database):
+    payload = context(database)
+    work = handler(lambda _: ("blocked", 0, {"search_calls": 1}))
+    work = replace(
+        work,
+        feedback_failure=lambda _result: Failure(
+            code="rate_limited", message="Provider asked us to slow down"
+        ),
+    )
+    worker = CheckpointWorker(database, {"discovering": work})
+    assert worker.execute(payload)["status"] == "checkpointed"
+    with database.tenant(payload["actor_id"], payload["workspace_id"]) as session:
+        event = next(
+            row
+            for row in JobRepository.events_after(session, payload["job_id"])
+            if row["kind"] == "stage_observation"
+        )
+    assert event["details"]["outcome"] == "rate_limited"
+    assert event["details"]["attempt_id"] == payload["attempt_id"]
+
+
 def test_interrupted_external_call_is_estimated_and_not_blindly_repeated(database):
     payload = context(database)
 
@@ -120,7 +146,8 @@ def test_interrupted_external_call_is_estimated_and_not_blindly_repeated(databas
         assert any(row["kind"] == "external_call_uncertain" for row in events)
         metrics = [row for row in events if row["kind"] == "stage_observation"]
         assert len(metrics) == 1
-        assert metrics[0]["details"]["outcome"] == "source_unavailable"
+        assert metrics[0]["details"]["outcome"] == "deadline_exceeded"
+        assert metrics[0]["details"]["attempt_id"] == payload["attempt_id"]
         assert metrics[0]["details"]["accepted_result_count"] == 0
         assert metrics[0]["details"]["cost_status"] == "estimated"
         assert "sensitive source body" not in str(metrics[0]["details"])

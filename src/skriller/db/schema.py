@@ -211,7 +211,7 @@ jobs = scoped(
             "state IN ('planned','queued','running','waiting_for_connection','paused','completed','partial','failed','cancelled')"
         ),
         sa.CheckConstraint("version > 0"),
-        sa.CheckConstraint("purpose IN ('research','planning')"),
+        sa.CheckConstraint("purpose IN ('research','planning','followup')"),
         sa.CheckConstraint(
             "(state IN ('completed','partial','failed','cancelled')) = "
             "(terminal_reason IS NOT NULL)",
@@ -229,8 +229,31 @@ jobs = scoped(
             name="terminal_reason_consistent",
         ),
         sa.CheckConstraint(
-            "stage IS NULL OR stage IN ('planning','discovering','collecting','extracting','resolving','qualifying')"
+            "stage IS NULL OR stage IN ('planning','discovering','collecting','extracting','resolving','qualifying','reporting')"
         ),
+    ),
+)
+followup_reports = scoped(
+    "followup_reports",
+    sa.Column("job_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("source_job_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("entity_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("question", sa.String(500), nullable=False),
+    sa.Column("evidence_ids", sa.JSON, nullable=False),
+    sa.Column("status", sa.String(16), nullable=False, server_default="pending"),
+    sa.Column("citation_hashes", sa.JSON, nullable=False, server_default=sa.text("'{}'::json")),
+    sa.Column("unknowns", sa.JSON, nullable=False, server_default=sa.text("'[]'::json")),
+    sa.Column("created_by", sa.String(128), nullable=False),
+    constraints=(
+        sa.ForeignKeyConstraint(["workspace_id", "job_id"], ["jobs.workspace_id", "jobs.id"]),
+        sa.ForeignKeyConstraint(
+            ["workspace_id", "source_job_id"], ["jobs.workspace_id", "jobs.id"]
+        ),
+        sa.ForeignKeyConstraint(
+            ["workspace_id", "entity_id"], ["entities.workspace_id", "entities.id"]
+        ),
+        sa.UniqueConstraint("workspace_id", "job_id"),
+        sa.CheckConstraint("status IN ('pending','answered','unknown')"),
     ),
 )
 attempts = scoped(
@@ -430,4 +453,38 @@ capacity_cadence = sa.Table(
     sa.Column(
         "next_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("'-infinity'")
     ),
+)
+
+reviewed_template_versions = scoped(
+    "reviewed_template_versions",
+    sa.Column("template_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("template_version", sa.Integer, nullable=False),
+    sa.Column("source_url", sa.String(4096), nullable=False),
+    sa.Column("source_hash", sa.String(64), nullable=False),
+    sa.Column("payload", sa.JSON, nullable=False),
+    sa.Column("created_by", sa.String(128), nullable=False),
+    constraints=(
+        sa.UniqueConstraint("workspace_id", "template_id", "template_version"),
+        sa.CheckConstraint("template_version BETWEEN 1 AND 1000000"),
+    ),
+)
+active_page_templates = scoped(
+    "active_page_templates",
+    sa.Column("version_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("updated_by", sa.String(128), nullable=False),
+    constraints=(
+        sa.ForeignKeyConstraint(
+            ["workspace_id", "version_id"],
+            ["reviewed_template_versions.workspace_id", "reviewed_template_versions.id"],
+        ),
+    ),
+)
+page_template_audit = scoped(
+    "page_template_audit",
+    sa.Column("template_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("previous_version", sa.Integer),
+    sa.Column("selected_version", sa.Integer, nullable=False),
+    sa.Column("action", sa.String(16), nullable=False),
+    sa.Column("created_by", sa.String(128), nullable=False),
+    constraints=(sa.CheckConstraint("action IN ('publish','rollback')"),),
 )

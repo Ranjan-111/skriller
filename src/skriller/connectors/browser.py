@@ -19,6 +19,7 @@ from urllib.parse import urlsplit
 
 import sqlalchemy as sa
 from scrapling.fetchers.chrome import DynamicFetcher
+from scrapling.fetchers.stealth_chrome import StealthyFetcher
 
 from skriller.connectors.classification import PageClassification, classify_page
 from skriller.connectors.fetch import FetchUnavailable, _failure, _public_url
@@ -38,11 +39,17 @@ class BrowserRequest:
     timeout_seconds: float
     max_requests: int
     max_body_bytes: int = 2 * 1024 * 1024
+    engine: str = "dynamic"
+    solve_challenge: bool = False
 
     def __post_init__(self):
         if not isinstance(self.url, str) or not isinstance(self.readiness_selector, str):
             raise TypeError("Typed public URL and readiness selector required")
         _public_url(self.url)
+        if self.engine not in {"dynamic", "stealth"} or not isinstance(self.solve_challenge, bool):
+            raise ValueError("Supported typed browser engine required")
+        if self.solve_challenge and self.engine != "stealth":
+            raise ValueError("Challenge solving requires the copied stealth engine")
         if not self.readiness_selector or len(self.readiness_selector) > 500:
             raise ValueError("Bounded readiness selector required")
         if (
@@ -119,7 +126,7 @@ def copied_engine_options(request: BrowserRequest, page_setup: Callable) -> dict
         "network_idle": False,
         # Copied browser config's retries count includes the initial attempt.
         "retries": 1,
-        "solve_cloudflare": False,
+        "solve_cloudflare": request.solve_challenge,
         "google_search": False,
         "load_dom": True,
         "selector_config": {"adaptive": False},
@@ -163,7 +170,8 @@ def run_copied_browser_in_container(request: BrowserRequest) -> BrowserResult:
     with TemporaryDirectory(prefix="skriller-browser-", dir="/tmp") as profile:
         options = copied_engine_options(request, setup)
         options["user_data_dir"] = profile
-        response = DynamicFetcher.fetch(request.url, **options)
+        engine = StealthyFetcher if request.engine == "stealth" else DynamicFetcher
+        response = engine.fetch(request.url, **options)
     if not response.css(request.readiness_selector):
         raise _failure("source_unavailable", "Rendered page did not meet readiness")
     raw = response.body
@@ -179,9 +187,13 @@ class DynamicBrowserAdapter:
         *,
         executor: IsolatedBrowserExecutor | None = None,
         isolation_verified: bool = False,
+        stealth: bool = False,
     ):
         self.database, self.executor = database, executor
         self.isolation_verified = isolation_verified
+        if not isinstance(stealth, bool):
+            raise TypeError("Trusted stealth flag must be boolean")
+        self.stealth = stealth
 
     def fetch(
         self,
@@ -197,6 +209,16 @@ class DynamicBrowserAdapter:
             raise _failure("unsupported_operation", "Isolated browser execution is not configured")
         if context.connection_ref is not None or context.reservation_id is not None:
             raise ValueError("Dynamic public read requires its own bounded attempt reservation")
+        from skriller.connectors.proxies import require_unconfigured_provider
+        from skriller.security.urls import EgressDenied
+
+        try:
+            require_unconfigured_provider(self.database, context, source=source)
+        except EgressDenied:
+            raise _failure(
+                "unsupported_operation",
+                "Configured provider routes require isolated browser gateway integration",
+            ) from None
         url = _public_url(url)
         if not re.fullmatch(r"[a-zA-Z0-9_.-]{1,64}", operation_key):
             raise ValueError("Bounded browser operation identity required")
@@ -210,7 +232,12 @@ class DynamicBrowserAdapter:
         if remaining <= 0 or context.attempt_budget < 1:
             raise _failure("deadline_exceeded", "Browser dispatch window is closed")
         request = BrowserRequest(
-            url, readiness_selector, remaining, min(max_requests, context.attempt_budget)
+            url,
+            readiness_selector,
+            remaining,
+            min(max_requests, context.attempt_budget),
+            engine="stealth" if self.stealth else "dynamic",
+            solve_challenge=self.stealth,
         )
         with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
             job = locked_job(session, str(context.job_id))
@@ -278,7 +305,14 @@ class DynamicBrowserAdapter:
             timeout = min(request.timeout_seconds, lease.deadline_monotonic - monotonic())
             if timeout <= 0:
                 raise TimeoutError("Browser execution window expired")
-            bounded = BrowserRequest(url, readiness_selector, timeout, request.max_requests)
+            bounded = BrowserRequest(
+                url,
+                readiness_selector,
+                timeout,
+                request.max_requests,
+                engine=request.engine,
+                solve_challenge=request.solve_challenge,
+            )
             candidate = self.executor.execute(bounded, cancel_check=cancelled)
             if (
                 not 0 <= candidate.request_count <= request.max_requests

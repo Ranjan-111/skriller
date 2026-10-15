@@ -38,6 +38,9 @@ def create_export(
     selected_near_ids: tuple[str, ...] = (),
     expiry_seconds: int = 3600,
 ):
+    from skriller.erasure import privacy_lock, suppressed
+
+    privacy_lock(session)
     if len(entity_ids) > 100 or len(set(entity_ids)) != len(entity_ids):
         raise ValueError("Select at most 100 distinct entities")
     if not set(selected_near_ids) <= set(entity_ids):
@@ -55,6 +58,13 @@ def create_export(
     fields = set(plan.requested_fields)
     for entity_id in entity_ids:
         UUID(entity_id)
+        entity = ResearchRepository.get_entity(session, entity_id)
+        if (
+            entity is None
+            or entity["attributes"].get("erased")
+            or suppressed(session, entity_id=entity_id)
+        ):
+            raise BlobUnavailable("Export entity unavailable")
         fit = qualify_entity(session, plan, entity_id)
         if fit.status == "excluded" or (
             fit.status != "confirmed" and entity_id not in selected_near_ids

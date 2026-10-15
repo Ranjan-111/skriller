@@ -577,15 +577,20 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-012.md"
+          "docs/completions/SKR-012.md",
+          "docs/completions/OLLAMA-llama3.2-3b-benchmark.json"
         ],
         "passed_checks": [
-          "Partial checks recorded in report"
+          "uv run python -m pytest -q tests/probes/test_model_benchmark.py tests/probes/test_model_evaluation.py: 7 passed",
+          "Ruff and formatting checks passed for local model benchmark implementation and tests",
+          "Five synthetic records through copied SmartScraperGraph and local llama3.2:3b: 4/5 factual records; 5/5 model calls and token usage observed; 3,289 total tokens; mean 1.606 s, median 1.608 s",
+          "Only localhost Ollama and synthetic fixtures used; no hosted model or external API called"
         ],
         "remaining": [
-          "Broader model quality trials and hosted decision"
+          "Select and validate a hosted-pilot model/provider with explicit token/cost and data-handling evidence",
+          "Run representative release-scale labelled evaluation; five synthetic records are diagnostic only"
         ],
-        "recorded_at": "2026-10-12T09:37:53.876767+00:00"
+        "recorded_at": "2026-10-15T13:47:32.759358+00:00"
       }
     },
     {
@@ -845,12 +850,13 @@
           "docs/completions/SKR-018.md"
         ],
         "passed_checks": [
-          "Partial checks recorded in report"
+          "Partial checks recorded in report",
+          "2026-10-15 storage/runtime/controls integration: 45 passed, 1 skipped; storage/collector/extractor/API regression 56 passed, 2 skipped; final S3 SDK/DB swap configuration 12 passed; Ruff and nine-module MyPy passed"
         ],
         "remaining": [
-          "Live private S3 storage verification"
+          "Live private S3 service/deployment verification remains user-deferred"
         ],
-        "recorded_at": "2026-10-12T09:37:53.885566+00:00"
+        "recorded_at": "2026-10-15T12:25:09.537774+00:00"
       }
     },
     {
@@ -1167,12 +1173,13 @@
           "74 HTTP fetch/connector regressions passed with active cancellation",
           "Actual model cancellation and usage-safe resume API verified",
           "Actual active Chromium cancellation/removal 0.213s; estimated usage and capacity release verified",
-          "17 actual Python 3.12 kernel/runner/cancellation tests passed"
+          "17 actual Python 3.12 kernel/runner/cancellation tests passed",
+          "2026-10-15 storage/runtime/controls integration: 45 passed, 1 skipped; storage/collector/extractor/API regression 56 passed, 2 skipped; final S3 SDK/DB swap configuration 12 passed; Ruff and nine-module MyPy passed"
         ],
         "remaining": [
-          "Connection-aware resume and collecting-stage integration"
+          "Direct account-backed connection rebind/resume and hosted source-operation acceptance remain deferred"
         ],
-        "recorded_at": "2026-10-13T16:41:31.587884+00:00"
+        "recorded_at": "2026-10-15T12:25:09.547182+00:00"
       }
     },
     {
@@ -1565,7 +1572,7 @@
       "title": "Generate bounded search/dork query variants",
       "phase": "P0",
       "epic": "Discovery",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-019",
@@ -1599,14 +1606,12 @@
           "docs/completions/SKR-034.md"
         ],
         "passed_checks": [
-          "12 bounded query tests passed",
-          "20 source/workflow/query checks passed excluding broker, isolated broker diagnostic rerun passed4.84s",
-          "Live CLI discovery through new queries returned two references in4.212s"
+          "45 query/planner/PostgreSQL workflow tests",
+          "Earlier real keyless Exa/RabbitMQ discovery probe",
+          "Capability-aware fallback and omission tests"
         ],
-        "remaining": [
-          "Initial semantic planner and broader provider/operator/source verification remain open"
-        ],
-        "recorded_at": "2026-10-12T19:17:02.793558+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T17:31:49.459453+00:00"
       }
     },
     {
@@ -1614,7 +1619,7 @@
       "title": "Normalise and deduplicate discovered candidates",
       "phase": "P0",
       "epic": "Discovery",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -1651,12 +1656,12 @@
           "docs/completions/SKR-035.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "36 candidate/native identity/discovery/erasure regressions passed",
+          "165 combined backend checks passed; five explicitly opt-in live checks skipped",
+          "Ruff and MyPy --check-untyped-defs passed"
         ],
-        "remaining": [
-          "Platform-native ID extraction and full fetching/egress integration remain open"
-        ],
-        "recorded_at": "2026-10-12T19:03:44.368746+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T12:33:40.514728+00:00"
       }
     },
     {
@@ -1833,7 +1838,7 @@
       "title": "Adapt copied stealth/challenge engine with bounded retries",
       "phase": "P0",
       "epic": "Fetching",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-038"
@@ -1860,14 +1865,28 @@
           "scenario": "Persistent challenge/internal solver hang",
           "expected": "terminates within deadline with typed outcome"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-039.md",
+          "docs/completions/STEALTH-CONTROLLED.json"
+        ],
+        "passed_checks": [
+          "58 solver/browser/collection/cleanup checks; one normal opt-in skip",
+          "Actual network-none copied solver in immutable Chromium image passed; deadline and cleanup measured",
+          "Actual isolated dynamic collecting-stage/private-evidence integration passed",
+          "Ruff, seven-module checked-body MyPy, copied provenance and diff passed"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-14T21:20:55.853741+00:00"
+      }
     },
     {
       "id": "SKR-040",
       "title": "Adapt copied proxy rotation and session continuity",
       "phase": "P0",
       "epic": "Fetching",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-023",
@@ -1897,7 +1916,22 @@
           "scenario": "Sticky multi-page read",
           "expected": "correct continuity and tenant-specific proxy secret"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-040.md"
+        ],
+        "passed_checks": [
+          "66 passed, 2 live cases skipped: GitHub connectors/collection/task-provider HTTPS, proxy routes, HTTP fetching and gateway lifecycle",
+          "Ruff and three-module MyPy passed",
+          "Copied Scrapling provenance and git diff --check passed"
+        ],
+        "remaining": [
+          "Isolated dynamic/stealth browser and hosted provider gateway control plane",
+          "Account-backed provider continuity and live configured provider acceptance remain user-deferred"
+        ],
+        "recorded_at": "2026-10-15T11:58:22.242866+00:00"
+      }
     },
     {
       "id": "SKR-041",
@@ -1940,12 +1974,14 @@
           "docs/completions/SKR-041.md"
         ],
         "passed_checks": [
-          "9 real PostgreSQL copied-cache/private-storage tests passed; Ruff, MyPy and provenance passed."
+          "48 actual DB/cache/collection/fetch/extraction regressions passed; two live opt-in cases skipped",
+          "Ruff and MyPy --check-untyped-defs passed"
         ],
         "remaining": [
-          "Production collection/cache integration, HTTP304 renewal and source-specific retention/deployment policies remain open."
+          "HTTP304 revalidation",
+          "Authenticated-source cache policy/integration and hosted private storage verification"
         ],
-        "recorded_at": "2026-10-13T11:28:24.559409+00:00"
+        "recorded_at": "2026-10-14T09:12:18.251327+00:00"
       }
     },
     {
@@ -2000,7 +2036,7 @@
       "title": "Integrate copied adaptive selector matching with validation",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-036",
@@ -2031,16 +2067,16 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-043.md"
+          "docs/completions/SKR-043.md",
+          "docs/completions/PIPELINE-INTEGRATION.md"
         ],
         "passed_checks": [
-          "22 adaptive tests including seven real PostgreSQL semantic tests passed",
-          "Ruff, mypy and Scrapling provenance passed"
+          "Template registry/API, adaptive, saved-page, collection, resume, storage/retention/API integration:95passed,2skipped",
+          "Actual PostgreSQL owner/member RLS, immutable versions, concurrent publication, audited rollback and saved-page active-version selection passed",
+          "TypeScript/OpenAPI client checks, Ruff, twelve-module check-untyped-defs MyPy, PostgreSQL frozen migration compilation and git diff --check passed"
         ],
-        "remaining": [
-          "Production HTTP fetching stage does not yet call adaptive semantic validation"
-        ],
-        "recorded_at": "2026-10-12T19:03:44.407311+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-15T12:42:47.503642+00:00"
       }
     },
     {
@@ -2048,7 +2084,7 @@
       "title": "Adapt copied HTML cleanup and chunking without evidence loss",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-004",
@@ -2085,19 +2121,13 @@
           "docs/completions/PIPELINE-INTEGRATION.md"
         ],
         "passed_checks": [
-          "164 backend/component/PostgreSQL tests",
-          "real isolated Chromium collecting-stage JS escalation",
-          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
-          "84 web tests",
-          "Ruff and MyPy",
-          "web typecheck, API contracts and production build",
-          "OpenAPI drift and git diff checks",
-          "UI detector: no findings"
+          "20 copied cleanup tests",
+          "2 real cold offline container cases",
+          "verified asset and uv.lock wheel hashes",
+          "actual collected-byte/page-graph integration"
         ],
-        "remaining": [
-          "Provision copied tokenizer assets in isolated collection/extraction deployment and verify offline boot"
-        ],
-        "recorded_at": "2026-10-13T21:07:26.675607+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T06:50:51.562971+00:00"
       }
     },
     {
@@ -2105,7 +2135,7 @@
       "title": "Adapt copied model creation and usage callbacks",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-012",
@@ -2139,17 +2169,18 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-045.md"
+          "docs/completions/SKR-045.md",
+          "docs/completions/PIPELINE-INTEGRATION.md",
+          "docs/completions/LOCAL-PAGE-PIPELINE-LIVE.json"
         ],
         "passed_checks": [
-          "22 actual PostgreSQL/stub model tests passed",
-          "Copied saved extraction wrapper and detached planner use bounded model ledger",
-          "Ruff and mypy passed"
+          "47 model/Groq/copied-graph/persisted-control PostgreSQL regressions passed",
+          "Copied graph page-injection test: synthetic secret only in provider auth, no tools or fallback, one billed call",
+          "Existing real local Llama saved-page trial and copied-graph/workflow integration verified",
+          "Ruff passed"
         ],
-        "remaining": [
-          "Live bounded adapter/model quality and initial prompt/extraction workflow integration remain open"
-        ],
-        "recorded_at": "2026-10-12T19:03:44.414037+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-15T11:58:22.251065+00:00"
       }
     },
     {
@@ -2212,7 +2243,7 @@
       "title": "Validate extraction fields against schema and evidence",
       "phase": "P0",
       "epic": "Extraction",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -2249,12 +2280,17 @@
           "docs/completions/SKR-047.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "146 scoped backend checks passed; one optional local-model live trial skipped",
+          "109 frontend tests passed across ten files",
+          "Real isolated Chromium/PostgreSQL/FastAPI acceptance passed: identity proof, approval/reversal, conflict citations, anonymous discussion and mobile overflow",
+          "Generated OpenAPI contract check, TypeScript and Next production build passed",
+          "Ruff and cache-disabled MyPy passed for changed backend modules",
+          "Impeccable detector returned no findings; desktop/mobile fixture captures reviewed",
+          "Owned local API/worker gracefully restarted; API readiness and website returned HTTP 200",
+          "git diff --check passed"
         ],
-        "remaining": [
-          "Production extraction/qualification integration remain open"
-        ],
-        "recorded_at": "2026-10-12T19:03:44.378097+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T16:47:03.387953+00:00"
       }
     },
     {
@@ -2299,12 +2335,16 @@
           "docs/completions/SKR-048.md"
         ],
         "passed_checks": [
-          "14 new PostgreSQL repair checks plus 14 semantic/graph regressions passed; Ruff/Mypy passed."
+          "14 PostgreSQL repair checks and 14 semantic/graph regressions previously passed",
+          "Two actual bounded local Llama proposal cases passed: promotion/rollback and wrong-neighbor refusal",
+          "Ruff passed",
+          "SKR-043 immutable owner-reviewed active mapping publication/audit/rollback verified"
         ],
         "remaining": [
-          "Production repair orchestration, active template selection/audit and repair quality benchmark remain open."
+          "Bounded repair-worker orchestration and review of proposed mappings",
+          "Representative repair quality benchmark and deployment acceptance"
         ],
-        "recorded_at": "2026-10-13T11:15:58.730034+00:00"
+        "recorded_at": "2026-10-15T12:42:47.512776+00:00"
       }
     },
     {
@@ -2312,7 +2352,7 @@
       "title": "Resolve entity identity with reversible links",
       "phase": "P0",
       "epic": "Qualification",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -2345,12 +2385,17 @@
           "docs/completions/SKR-049.md"
         ],
         "passed_checks": [
-          "Nine real PostgreSQL identity tests passed; Ruff and typed MyPy passed."
+          "146 scoped backend checks passed; one optional local-model live trial skipped",
+          "109 frontend tests passed across ten files",
+          "Real isolated Chromium/PostgreSQL/FastAPI acceptance passed: identity proof, approval/reversal, conflict citations, anonymous discussion and mobile overflow",
+          "Generated OpenAPI contract check, TypeScript and Next production build passed",
+          "Ruff and cache-disabled MyPy passed for changed backend modules",
+          "Impeccable detector returned no findings; desktop/mobile fixture captures reviewed",
+          "Owned local API/worker gracefully restarted; API readiness and website returned HTTP 200",
+          "git diff --check passed"
         ],
-        "remaining": [
-          "Production candidate callers, source-native identity semantics, list integration and owner review API/UI remain open."
-        ],
-        "recorded_at": "2026-10-13T11:21:23.617717+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T16:47:03.395633+00:00"
       }
     },
     {
@@ -2358,7 +2403,7 @@
       "title": "Evaluate essential criteria and preference ranking",
       "phase": "P0",
       "epic": "Qualification",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-019",
@@ -2391,12 +2436,17 @@
           "docs/completions/SKR-050.md"
         ],
         "passed_checks": [
-          "18 criterion unit cases and 10 real PostgreSQL trusted claim/identity adapter cases passed; 37 related checks passed; Ruff/Mypy passed."
+          "146 scoped backend checks passed; one optional local-model live trial skipped",
+          "109 frontend tests passed across ten files",
+          "Real isolated Chromium/PostgreSQL/FastAPI acceptance passed: identity proof, approval/reversal, conflict citations, anonymous discussion and mobile overflow",
+          "Generated OpenAPI contract check, TypeScript and Next production build passed",
+          "Ruff and cache-disabled MyPy passed for changed backend modules",
+          "Impeccable detector returned no findings; desktop/mobile fixture captures reviewed",
+          "Owned local API/worker gracefully restarted; API readiness and website returned HTTP 200",
+          "git diff --check passed"
         ],
-        "remaining": [
-          "Production qualification orchestration and API/UI integration remain open."
-        ],
-        "recorded_at": "2026-10-13T11:28:24.569614+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T16:47:03.400560+00:00"
       }
     },
     {
@@ -2483,18 +2533,19 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-096.md",
-          "docs/completions/PLANNER-DEEPSEEK-LIVE.json"
+          "docs/completions/SKR-096.md"
         ],
         "passed_checks": [
-          "Durable planning bootstrap, immutable successor/outbox and scoped plan-view checks passed",
-          "19 plan/resume/bootstrap tests passed; contracts and frontend typecheck passed"
+          "Source omission and numeric comparison regression tests passed",
+          "PostgreSQL omitted-platform bootstrap pauses with no discovery dispatch and one metered call",
+          "Combined routing/planner/bootstrap/discovery/follow-up regression: 83 passed, 2 optional skips; actual broker and runtime retries separately passed",
+          "Ruff, four-module MyPy, TypeScript and generated contract checks passed"
         ],
         "remaining": [
-          "Grounded local-model semantic quality gate",
-          "Complete user clarification/resubmission workflow"
+          "Representative local-model semantic acceptance remains failing",
+          "Authenticated browser acceptance remains unverified under saved localhost browser restriction"
         ],
-        "recorded_at": "2026-10-13T16:33:22.889034+00:00"
+        "recorded_at": "2026-10-15T13:00:00.577393+00:00"
       }
     },
     {
@@ -2538,19 +2589,16 @@
           "docs/completions/SKR-052.md"
         ],
         "passed_checks": [
-          "78 frontend tests",
-          "apps/web typecheck",
-          "apps/web contracts check",
-          "apps/web production build",
-          "Impeccable detector",
-          "git diff --check"
+          "28 PostgreSQL planner/follow-up/usage tests passed (one optional live-source test skipped)",
+          "Local llama3.2:3b synthetic ambiguous-geography planner test passed",
+          "124 frontend tests passed",
+          "OpenAPI drift, TypeScript, Next production build, Ruff, MyPy and diff checks passed",
+          "Local API and worker readiness passed with planning enabled"
         ],
         "remaining": [
-          "User clarification/refinement round trip and plan refresh",
-          "Ambiguous-geography end-to-end verification",
-          "Planning bootstrap acceptance"
+          "Authenticated end-to-end browser check of clarification and resubmission remains; browser permission blocks localhost access"
         ],
-        "recorded_at": "2026-10-13T18:41:38.690191+00:00"
+        "recorded_at": "2026-10-14T17:48:30.359766+00:00"
       }
     },
     {
@@ -2558,7 +2606,7 @@
       "title": "Build results and evidence detail views",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-016",
@@ -2595,20 +2643,17 @@
           "docs/completions/PIPELINE-INTEGRATION.md"
         ],
         "passed_checks": [
-          "164 backend/component/PostgreSQL tests",
-          "real isolated Chromium collecting-stage JS escalation",
-          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
-          "84 web tests",
-          "Ruff and MyPy",
-          "web typecheck, API contracts and production build",
-          "OpenAPI drift and git diff checks",
-          "UI detector: no findings"
+          "146 scoped backend checks passed; one optional local-model live trial skipped",
+          "109 frontend tests passed across ten files",
+          "Real isolated Chromium/PostgreSQL/FastAPI acceptance passed: identity proof, approval/reversal, conflict citations, anonymous discussion and mobile overflow",
+          "Generated OpenAPI contract check, TypeScript and Next production build passed",
+          "Ruff and cache-disabled MyPy passed for changed backend modules",
+          "Impeccable detector returned no findings; desktop/mobile fixture captures reviewed",
+          "Owned local API/worker gracefully restarted; API readiness and website returned HTTP 200",
+          "git diff --check passed"
         ],
-        "remaining": [
-          "Confirmed/near-match qualification and subject identity views",
-          "Conflicting source and anonymous discussion workflows"
-        ],
-        "recorded_at": "2026-10-13T21:07:26.687851+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T16:47:03.404861+00:00"
       }
     },
     {
@@ -2666,7 +2711,7 @@
       "title": "Implement saved-list snapshots and refresh",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-015",
@@ -2701,15 +2746,14 @@
           "docs/completions/SKR-055.md"
         ],
         "passed_checks": [
-          "75 saved-list/API/contact/identity/qualification tests passed; 18 authenticated list API cases",
-          "Root application registration and generated client typecheck passed"
+          "114 frontend tests passed, including saved-list client/UI coverage",
+          "26 PostgreSQL saved-list/API tests passed, including immutable snapshots, suppression and tenant/owner access",
+          "Generated API contracts check passed",
+          "TypeScript typecheck passed",
+          "Next.js production build passed"
         ],
-        "remaining": [
-          "Saved-list UI",
-          "Durable external refresh scheduling",
-          "Complete suppression/privacy administration and historical erasure/retention"
-        ],
-        "recorded_at": "2026-10-13T16:32:22.786308+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T16:55:24.055638+00:00"
       }
     },
     {
@@ -2717,7 +2761,7 @@
       "title": "Implement evidence-grounded research follow-ups",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-015",
@@ -2753,14 +2797,13 @@
           "docs/completions/SKR-056.md"
         ],
         "passed_checks": [
-          "15 real PostgreSQL extractive-report tests passed; related model/graph regressions passed"
+          "28 PostgreSQL follow-up/report/erasure tests",
+          "120 frontend tests",
+          "OpenAPI drift, TypeScript, Next production build",
+          "Ruff, MyPy, git diff --check"
         ],
-        "remaining": [
-          "Follow-up job allocation, persistence and API/UI",
-          "Answer relevance and coverage benchmark",
-          "Registered-operation research expansion"
-        ],
-        "recorded_at": "2026-10-13T16:32:22.798526+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T17:09:39.727281+00:00"
       }
     },
     {
@@ -2768,7 +2811,7 @@
       "title": "Implement conversational refinement and plan reevaluation",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-034",
@@ -2800,14 +2843,29 @@
           "scenario": "More results requested beyond spend cap",
           "expected": "no automatic spend increase"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-057.md"
+        ],
+        "passed_checks": [
+          "79 related PostgreSQL/workflow checks passed; two opt-in model cases skipped",
+          "Real local llama3.2:3b refinement passed with original caps",
+          "124 frontend tests; contracts, TypeScript, production build",
+          "Ruff and checked-body MyPy passed"
+        ],
+        "remaining": [
+          "Authenticated browser refinement/saved-list acceptance remains blocked by saved localhost browser permission"
+        ],
+        "recorded_at": "2026-10-14T21:05:03.217226+00:00"
+      }
     },
     {
       "id": "SKR-058",
       "title": "Build partial results, reconnect and usage UX",
       "phase": "P0",
       "epic": "Product experience",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-024",
@@ -2845,16 +2903,13 @@
           "docs/completions/SKR-058.md"
         ],
         "passed_checks": [
-          "2 PostgreSQL usage API tests passed: accounting split and cross-workspace denial",
-          "81 frontend tests passed across nine files, including usage UI and validation",
-          "Ruff, MyPy, TypeScript, generated-contract checks, Next production build, Impeccable detector and git diff checks passed"
+          "2 PostgreSQL usage API tests",
+          "124 frontend tests",
+          "OpenAPI drift, TypeScript, Next production build",
+          "Ruff, MyPy, Impeccable detector, git diff --check"
         ],
-        "remaining": [
-          "Source-specific reconnect actions require source credential lifecycle/UI",
-          "Qualified, near-match and missing-field evidence require production qualification/result pipeline",
-          "Hosted authenticated-source e2e cases remain unverified"
-        ],
-        "recorded_at": "2026-10-13T19:08:41.837472+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T17:41:18.152401+00:00"
       }
     },
     {
@@ -2862,7 +2917,7 @@
       "title": "Adapt LinkedIn discovery and candidate routing",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "in_progress",
       "estimate": "M",
       "depends_on": [
         "SKR-009",
@@ -2896,7 +2951,23 @@
           "scenario": "Selected LinkedIn discovery operation",
           "expected": "observed coverage and failure report required before readiness"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-059.md"
+        ],
+        "passed_checks": [
+          "52 source adapter/probe/indexed routing tests passed; 2 credential-dependent live tests skipped",
+          "Pinned copied-source hash and request/filter/source boundary tests passed",
+          "Ruff and four-module checked-body MyPy passed",
+          "Previously verified indexed-reference UX:127 frontend tests, TypeScript/contracts/Impeccable passed"
+        ],
+        "remaining": [
+          "Isolated tenant-owned backend execution with credential rebinding and shared job budget/evidence integration",
+          "User-deferred selected account-backed live discovery/coverage acceptance"
+        ],
+        "recorded_at": "2026-10-15T13:19:26.861802+00:00"
+      }
     },
     {
       "id": "SKR-060",
@@ -2946,7 +3017,7 @@
       "title": "Adapt Reddit discussion discovery",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "in_progress",
       "estimate": "M",
       "depends_on": [
         "SKR-010",
@@ -2980,7 +3051,23 @@
           "scenario": "Fixed community/topic query",
           "expected": "actual relevance, pagination and limits documented"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-061.md"
+        ],
+        "passed_checks": [
+          "52 source adapter/probe/indexed routing tests passed; 2 credential-dependent live tests skipped",
+          "Pinned copied-source hash and request/filter/source boundary tests passed",
+          "Ruff and four-module checked-body MyPy passed",
+          "Previously verified indexed-reference UX:127 frontend tests, TypeScript/contracts/Impeccable passed"
+        ],
+        "remaining": [
+          "Isolated tenant-owned backend execution with credential rebinding and shared job budget/evidence integration",
+          "User-deferred selected account-backed live discovery/coverage acceptance"
+        ],
+        "recorded_at": "2026-10-15T13:19:26.870575+00:00"
+      }
     },
     {
       "id": "SKR-062",
@@ -3027,7 +3114,7 @@
       "title": "Adapt GitHub public research connector",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-028",
@@ -3062,18 +3149,19 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-063.md"
+          "docs/completions/SKR-063.md",
+          "docs/completions/GITHUB-COLLECTION-LIVE-REPOSITORY.json",
+          "docs/completions/GITHUB-COLLECTION-LIVE-PROFILE.json"
         ],
         "passed_checks": [
-          "8 synthetic async connector tests passed for public metadata, read-only allowlist, inaccessible resources, URL scope, rate limits, redirect refusal and response cap",
-          "Two-request live read verified dated public repository and profile responses",
-          "Ruff and MyPy passed for connector and tests"
+          "10 source contracts and 7 durable PostgreSQL integration cases",
+          "2 actual guarded public API jobs: repo and profile",
+          "72 related pipeline/qualification/privacy regressions",
+          "88 web tests and typecheck",
+          "Ruff and MyPy with untyped bodies checked"
         ],
-        "remaining": [
-          "Collection routing, workspace evidence persistence and shared budget integration",
-          "Evidence qualification and production source-operation verification"
-        ],
-        "recorded_at": "2026-10-13T19:12:44.437133+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T07:40:11.676387+00:00"
       }
     },
     {
@@ -3081,7 +3169,7 @@
       "title": "Adapt RSS/Atom feed connector",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-031",
@@ -3115,18 +3203,18 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-064.md"
+          "docs/completions/SKR-064.md",
+          "docs/completions/RSS-COLLECTION-LIVE.json"
         ],
         "passed_checks": [
-          "4 RSS/Atom fixture tests passed; copied URL guard rejects private links",
-          "Ruff and MyPy passed",
-          "Dependency is declared directly and the frozen lockfile is consistent"
+          "6 parser cases; 3 real proxy/database/API cases",
+          "1 actual guarded public RSS job",
+          "101 related regressions (5 separately opt-in cases skipped)",
+          "92 web tests/typecheck/contracts/build; detector clean",
+          "Ruff/MyPy with untyped bodies checked"
         ],
-        "remaining": [
-          "Collection-stage routing, tenant evidence persistence and shared-budget integration",
-          "Source-specific output/result classification"
-        ],
-        "recorded_at": "2026-10-13T17:47:15.761683+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-14T08:30:42.081414+00:00"
       }
     },
     {
@@ -3169,18 +3257,20 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-065.md"
+          "docs/completions/SKR-065.md",
+          "docs/completions/YOUTUBE-WORKER-LOCAL.json"
         ],
         "passed_checks": [
-          "5 synthetic connector tests passed for dated metadata, public counter labels, missing captions, timestamped cited captions, source identity and bounds",
-          "Ruff and MyPy passed for connector and tests"
+          "54 backend YouTube/provisioning/PostgreSQL connector regressions passed; 4 optional source/browser checks skipped",
+          "Installed YouTube worker container fixture passed with --network none and confirmed cleanup",
+          "Full web suite: 134 tests passed",
+          "TypeScript and generated OpenAPI/client contract checks passed",
+          "Impeccable detector reported no findings"
         ],
         "remaining": [
-          "Verify/install reviewed yt-dlp runtime in the digest-pinned isolated worker",
-          "Retrieve provided captions through isolated worker output; never generate missing captions",
-          "Connect tenant persistence, shared budgets, result UI and qualification"
+          "Representative public-video metadata and caption read remains unverified after a backend failure using the final image"
         ],
-        "recorded_at": "2026-10-13T19:15:09.817406+00:00"
+        "recorded_at": "2026-10-15T22:02:14.745256+00:00"
       }
     },
     {
@@ -3188,7 +3278,7 @@
       "title": "Create company/directory extraction presets using copied engine",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-036",
@@ -3224,24 +3314,15 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-066.md",
-          "docs/completions/PIPELINE-INTEGRATION.md"
+          "docs/completions/SKR-066.md"
         ],
         "passed_checks": [
-          "164 backend/component/PostgreSQL tests",
-          "real isolated Chromium collecting-stage JS escalation",
-          "real Llama 3.2 known-fact fixture: 1 call, 1141 tokens, 9.487s",
-          "84 web tests",
-          "Ruff and MyPy",
-          "web typecheck, API contracts and production build",
-          "OpenAPI drift and git diff checks",
-          "UI detector: no findings"
+          "35 passed, 1 skipped: saved-page, preset, reviewed-template, adaptive-template, and selector-repair tests",
+          "Ruff passed",
+          "MyPy passed"
         ],
-        "remaining": [
-          "Connect the other page-specific presets to trusted operation routing",
-          "Production identity/qualification and cross-source corroboration"
-        ],
-        "recorded_at": "2026-10-13T21:07:26.682037+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-15T12:49:42.339219+00:00"
       }
     },
     {
@@ -3415,7 +3496,7 @@
       "title": "Instrument stages, source health and costs",
       "phase": "P0",
       "epic": "Operations",
-      "status": "implemented_pending_verification",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -3452,25 +3533,13 @@
           "docs/completions/SKR-070.md"
         ],
         "passed_checks": [
-          "7 worker database integration tests",
-          "2 usage API database integration tests",
-          "81 web tests",
-          "TypeScript typecheck",
-          "API contract generation check",
-          "production web build",
-          "Ruff",
-          "MyPy",
-          "OpenAPI contract check",
-          "git diff --check",
-          "Impeccable detector"
+          "pytest usage_api, collection_workflow, github_collection, rss_collection: 26 passed, 4 skipped",
+          "pytest usage_api and worker: 11 passed, including zero-result metrics and injected-secret redaction",
+          "Web suite: 124 passed; TypeScript, OpenAPI/client contract generation checks passed",
+          "Ruff, six-module MyPy, Impeccable detector, git diff --check passed"
         ],
-        "remaining": [
-          "Separate parser/network/browser/queue/LLM timings",
-          "Request/trace correlation",
-          "Blocked-response categories and denominators",
-          "Broader integration and security verification"
-        ],
-        "recorded_at": "2026-10-13T19:18:28.746849+00:00"
+        "remaining": [],
+        "recorded_at": "2026-10-15T12:07:21.238842+00:00"
       }
     },
     {
@@ -3530,7 +3599,7 @@
       "title": "Propagate deletion and suppress rediscovery",
       "phase": "P0",
       "epic": "Operations",
-      "status": "planned",
+      "status": "done",
       "estimate": "M",
       "depends_on": [
         "SKR-030",
@@ -3561,14 +3630,29 @@
           "scenario": "Rediscover alternate linked URL/restore backup",
           "expected": "suppression/deletion applied before serving"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-072.md",
+          "docs/completions/LOCAL-BACKUP-RESTORE.json"
+        ],
+        "passed_checks": [
+          "8 real PostgreSQL erasure cases including concurrent export/delete",
+          "actual encrypted source-loss restore with newer journal",
+          "107 broader regressions and 27 final derivative regressions",
+          "88 frontend tests and generated API/type checks",
+          "Ruff/MyPy"
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-14T06:56:10.096657+00:00"
+      }
     },
     {
       "id": "SKR-073",
       "title": "Implement encrypted backups and restore rehearsal",
       "phase": "P0",
       "epic": "Operations",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-017",
@@ -3596,7 +3680,25 @@
           "scenario": "Backup predates deletion",
           "expected": "deletion replay prevents data being served"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-073.md",
+          "docs/completions/LOCAL-BACKUP-RESTORE.json",
+          "docs/RECOVERY_RUNBOOK.md"
+        ],
+        "passed_checks": [
+          "actual encrypted pg_dump/pg_restore and source-loss deletion replay",
+          "wrong key/ciphertext/expiry rejection and physical pruning",
+          "tenant and queued-job consistency",
+          "Ruff/MyPy"
+        ],
+        "remaining": [
+          "Deploy and verify off-host daily archive and current-journal custody",
+          "Verify expiry/key recovery and <=24h RPO / <=4h RTO at actual pilot scale"
+        ],
+        "recorded_at": "2026-10-14T06:36:53.329996+00:00"
+      }
     },
     {
       "id": "SKR-074",
@@ -4467,5 +4569,9 @@
         }
       ]
     }
+  ],
+  "user_deferred_gates": [
+    "Direct account-backed LinkedIn/Reddit reads: keep pending until a required scenario is blocked; indexed search remains available. Session expiration requires reconnection.",
+    "Hosted deployment and private off-host backup custody: keep pending; local implementation and recovery verification continue."
   ]
 }

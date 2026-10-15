@@ -1,6 +1,8 @@
 """Owner-authorized erasure, replay fences and opaque rediscovery suppression."""
 
 import hashlib
+import json
+import re
 from datetime import UTC, datetime
 
 import sqlalchemy as sa
@@ -14,6 +16,7 @@ from skriller.db.schema import (
     claims,
     entities,
     evidence,
+    followup_reports,
     jobs,
     metadata,
 )
@@ -36,6 +39,7 @@ journal = sa.Table(
     sa.Column("entity_id", UUID(as_uuid=False), primary_key=True),
     sa.Column("request_key", sa.String(100), nullable=False),
     sa.Column("url_hashes", sa.JSON, nullable=False),
+    sa.Column("native_hashes", sa.JSON, nullable=False, server_default=sa.text("'[]'::json")),
     sa.Column(
         "created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
     ),
@@ -47,6 +51,21 @@ def url_hash(workspace, url):
     return hashlib.sha256((workspace + "\0" + canonical_url(url)).encode()).hexdigest()
 
 
+def native_hash(workspace, reference):
+    if (
+        not isinstance(reference, dict)
+        or set(reference) != {"namespace", "id"}
+        or not isinstance(reference["namespace"], str)
+        or not re.fullmatch(r"[a-z0-9_]{1,64}", reference["namespace"])
+        or not isinstance(reference["id"], str)
+        or not 1 <= len(reference["id"]) <= 4096
+    ):
+        raise ValueError("Bounded native source identifier required")
+    return hashlib.sha256(
+        json.dumps([workspace, "native_source_v1", reference], sort_keys=True).encode()
+    ).hexdigest()
+
+
 def privacy_lock(session):
     session.execute(
         sa.text("SELECT pg_advisory_xact_lock(hashtextextended(:key,0))"),
@@ -54,17 +73,22 @@ def privacy_lock(session):
     )
 
 
-def suppressed(session, *, entity_id=None, url=None):
+def suppressed(session, *, entity_id=None, url=None, native_id=None):
     rows = (
-        session.execute(sa.select(journal).where(journal.c.workspace_id == scope(session)))
+        session.execute(
+            sa.select(journal).where(journal.c.workspace_id == scope(session)).limit(1001)
+        )
         .mappings()
         .all()
     )
     if len(rows) > 1000:
         raise ValueError("Suppression lookup exceeds pilot bound")
     digest = url_hash(scope(session), url) if url else None
+    native_digest = native_hash(scope(session), native_id) if native_id is not None else None
     return any(
-        row["entity_id"] == entity_id or (digest is not None and digest in row["url_hashes"])
+        row["entity_id"] == entity_id
+        or (digest is not None and digest in row["url_hashes"])
+        or (native_digest is not None and native_digest in row["native_hashes"])
         for row in rows
     )
 
@@ -87,7 +111,7 @@ def erase(session, storage, entity_id, *, request_key):
     entity = ResearchRepository.get_entity(session, entity_id)
     if entity is None:
         raise LookupError("Entity unavailable")
-    members = set(group_members(session, entity_id))
+    members = set(group_members(session, entity_id, current_only=False))
     if len(members) > 100:
         raise ValueError("Erasure identity group exceeds pilot bound")
     # Fence jobs first, preserving the worker's job-before-entity lock order.
@@ -106,6 +130,11 @@ def erase(session, storage, entity_id, *, request_key):
     for job_id in sorted(active):
         cancel(session, job_id)
     privacy_lock(session)
+    # Identity writers share the privacy fence. Reload the group after IO/job
+    # fencing so a link committed while cancellation ran cannot escape erasure.
+    members = set(group_members(session, entity_id, current_only=False))
+    if len(members) > 100:
+        raise ValueError("Erasure identity group exceeds pilot bound")
     rows = (
         session.execute(
             sa.select(entities)
@@ -133,8 +162,11 @@ def erase(session, storage, entity_id, *, request_key):
     )
     bodies = set(linked)
     hashes = set()
+    native_hashes = set()
     for row in rows:
         attrs = row["attributes"]
+        if attrs.get("_source_native_id"):
+            native_hashes.add(native_hash(scope(session), attrs["_source_native_id"]))
         if attrs.get("url"):
             try:
                 hashes.add(url_hash(scope(session), attrs["url"]))
@@ -170,7 +202,12 @@ def erase(session, storage, entity_id, *, request_key):
     )
     for duplicate in duplicates:
         try:
-            if url_hash(scope(session), duplicate["attributes"]["url"]) in hashes:
+            reference = duplicate["attributes"].get("_source_native_id")
+            if (
+                url_hash(scope(session), duplicate["attributes"]["url"]) in hashes
+                or reference is not None
+                and native_hash(scope(session), reference) in native_hashes
+            ):
                 members.add(duplicate["id"])
                 for key in ("_collection_body_evidence_id", "_collection_metadata_evidence_id"):
                     if duplicate["attributes"].get(key):
@@ -201,6 +238,7 @@ def erase(session, storage, entity_id, *, request_key):
                 entity_id=member,
                 request_key=request_key,
                 url_hashes=sorted(hashes),
+                native_hashes=sorted(native_hashes),
                 created_by=session.info["actor_id"],
             )
             .on_conflict_do_nothing(index_elements=["workspace_id", "entity_id"])
@@ -255,9 +293,29 @@ def purge(session, storage, members, bodies):
         session.execute(
             sa.update(evidence)
             .where(evidence.c.workspace_id == workspace, evidence.c.id == row["id"])
-            .values(object_key=None, excerpt=None, expires_at=datetime.now(UTC))
+            .values(
+                object_key=None,
+                excerpt=None,
+                content_hash=None,
+                source_url="https://skriller.invalid/erased",
+                expires_at=datetime.now(UTC),
+            )
         )
     session.execute(sa.delete(list_snapshots).where(list_snapshots.c.workspace_id == workspace))
+    session.execute(
+        sa.update(followup_reports)
+        .where(
+            followup_reports.c.workspace_id == workspace,
+            followup_reports.c.entity_id.in_(members),
+        )
+        .values(
+            question="[erased]",
+            evidence_ids=[],
+            citation_hashes={},
+            unknowns=["entity_erased"],
+            status="unknown",
+        )
+    )
     session.execute(
         sa.update(entities)
         .where(
@@ -354,6 +412,7 @@ def replay_erasures(session, storage):
     )
     markers = {row["entity_id"] for row in rows}
     hashes = {value for row in rows for value in row["url_hashes"]}
+    native_hashes = {value for row in rows for value in row["native_hashes"]}
     if not rows:
         return 0
     candidates = (
@@ -366,6 +425,10 @@ def replay_erasures(session, storage):
     for candidate in candidates:
         attrs = candidate["attributes"]
         match = candidate["id"] in markers
+        if attrs.get("_source_native_id"):
+            match = (
+                match or native_hash(scope(session), attrs["_source_native_id"]) in native_hashes
+            )
         if attrs.get("url"):
             try:
                 match = match or url_hash(scope(session), attrs["url"]) in hashes

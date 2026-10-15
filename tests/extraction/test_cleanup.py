@@ -16,6 +16,16 @@ def prepared(html, **kwargs):
     return result
 
 
+@pytest.mark.parametrize("tampered", [False, True])
+def test_missing_or_tampered_tokenizer_asset_fails_without_network(monkeypatch, tmp_path, tampered):
+    monkeypatch.setenv("TIKTOKEN_CACHE_DIR", str(tmp_path))
+    if tampered:
+        (tmp_path / "fb374d419588a4632f3f557e76b4b70aebbca790").write_bytes(b"not a tokenizer")
+    monkeypatch.setattr(cleanup, "num_tokens_calculus", lambda *_: pytest.fail("No token call"))
+    result = prepare_context("<html><body><p>Fixture</p></body></html>", "https://example.com")
+    assert isinstance(result, Failure) and result.code == "source_unavailable"
+
+
 def test_long_names_roles_head_jsonld_and_original_locators_survive():
     name = "Alexandra Priyadarshini Ranjan Kumar Thompson"
     role = "Co-Founder and Chief Executive Officer of Advanced Robotics Research"

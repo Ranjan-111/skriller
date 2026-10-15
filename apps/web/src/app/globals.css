@@ -902,6 +902,60 @@ footer {
   font-size: 12px !important;
   overflow-wrap: anywhere;
 }
+.platform-reference-notice {
+  margin: 12px 0;
+  padding: 12px 14px;
+  background: var(--panel);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.platform-reference-notice h5 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+.platform-reference-notice p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.youtube-evidence {
+  max-width: 72ch;
+  margin: 14px 0;
+  padding: 12px 14px;
+  background: var(--panel);
+  border-radius: 8px;
+}
+.youtube-evidence h5 {
+  margin: 0 0 6px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.youtube-evidence dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 9px 16px;
+  margin: 12px 0;
+}
+.youtube-evidence dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+.youtube-evidence dd {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+}
+.youtube-captions {
+  padding-left: 22px;
+}
+.youtube-captions blockquote {
+  margin: 6px 0;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
 .candidate-provenance {
   margin-top: 14px;
   max-width: 72ch;
@@ -927,6 +981,117 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+.saved-lists {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.saved-lists h3 {
+  margin: 0 0 6px;
+}
+.saved-lists label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.saved-lists select,
+.saved-lists input:not([type="checkbox"]) {
+  max-width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.saved-list-candidates {
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 10px 0;
+  border-block: 1px solid var(--line);
+}
+.saved-list-candidates label {
+  padding: 6px 2px;
+}
+.saved-list-snapshot {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.saved-list-snapshot ul {
+  padding-left: 20px;
+}
+.followup-panel form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.followup-panel input {
+  flex: 1 1 260px;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.research-expansion form {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0;
+}
+.research-expansion textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.qualification-groups {
+  max-width: 72ch;
+  margin: 18px 0;
+}
+.qualification-groups details,
+.candidate-fit {
+  margin: 10px 0;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+}
+.qualification-groups summary,
+.candidate-fit summary {
+  width: fit-content;
+  cursor: pointer;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+.qualification-groups ul,
+.candidate-fit ul {
+  padding-left: 22px;
+}
+.candidate-fit {
+  max-width: 72ch;
+}
+.candidate-fit h5 {
+  margin: 14px 0 6px;
+  font-size: 14px;
+}
+.candidate-fit li {
+  overflow-wrap: anywhere;
+}
+.criterion-evidence {
+  margin: 6px 0 12px;
+}
+.criterion-evidence blockquote {
+  margin: 8px 0;
+  padding: 0 0 0 14px;
+  border-left: 1px solid var(--line);
+}
+.criterion-evidence blockquote p {
+  overflow-wrap: anywhere;
 }
 .candidate-provenance blockquote {
   margin: 0.5rem 0;

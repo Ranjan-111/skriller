@@ -19,7 +19,7 @@ from skriller.extraction.cleanup import CleanupLimits, prepare_context
 from skriller.jobs.budget import locked_job
 from skriller.jobs.state import TERMINAL_STATES, finish
 from skriller.jobs.worker import CheckpointWorker, StageHandler, TaskIdentity
-from skriller.storage import EvidenceStorage
+from skriller.storage import BlobIntegrityError, BlobUnavailable
 
 
 def schedule_collection(session, job, entity_ids):
@@ -53,7 +53,16 @@ def public_web_url(url):
     )
 
 
-def collection_handler(database, identity, proxy_url, storage, browser=None):
+def collection_handler(
+    database,
+    identity,
+    proxy_url,
+    storage,
+    browser=None,
+    github_reader=None,
+    cache_ttl_seconds=0,
+    youtube_reader=None,
+):
     """Each leased attempt reads one persisted, discovery-owned candidate."""
     with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
         job = locked_job(session, str(identity.job_id))
@@ -90,6 +99,25 @@ def collection_handler(database, identity, proxy_url, storage, browser=None):
         attributes = dict(candidate["attributes"])
         created_at = job["created_at"]
 
+    if attributes["source"] == "youtube":
+        from skriller.research.youtube_collection import youtube_collection_handler
+
+        return youtube_collection_handler(
+            database, identity, attributes, entity_id, storage, youtube_reader
+        )
+    if attributes["source"] == "github":
+        from skriller.research.github_collection import github_collection_handler
+
+        return github_collection_handler(
+            database, identity, attributes, entity_id, proxy_url, storage, github_reader
+        )
+    if attributes["source"] == "rss":
+        from skriller.research.rss_collection import rss_collection_handler
+
+        return rss_collection_handler(
+            database, identity, attributes, entity_id, proxy_url, storage, created_at
+        )
+
     fetcher = HTTPFetcher(database, trusted_proxy_url=proxy_url, max_body_bytes=2 * 1024 * 1024)
 
     def run(plan, timeout_seconds):
@@ -112,15 +140,29 @@ def collection_handler(database, identity, proxy_url, storage, browser=None):
                 attempt_budget=min(3, plan.limits.fetch_attempts),
             )
             try:
+                replay_key = None
+                if cache_ttl_seconds:
+                    from skriller.research.collection_cache import cache_key, read_cached
+
+                    try:
+                        replay_key = cache_key(url, plan.entity_type)
+                    except ValueError:
+                        pass  # Credential-like query URLs cannot enter the cache.
+                    if replay_key is not None:
+                        artifact = read_cached(database, storage, context, replay_key)
                 try:
-                    artifact = fetcher.fetch(
-                        context, url, source="web", operation_key=identity.attempt_id.hex
-                    )
+                    if artifact is None:
+                        artifact = fetcher.fetch(
+                            context, url, source="web", operation_key=identity.attempt_id.hex
+                        )
                 except FetchUnavailable as exc:
                     if (
                         browser is None
                         or exc.classification is None
-                        or exc.classification.next_method != "dynamic"
+                        or (
+                            exc.classification.next_method != "dynamic"
+                            and not (browser.stealth and exc.classification.status == "challenge")
+                        )
                     ):
                         raise
                     result = browser.fetch(
@@ -182,8 +224,17 @@ def collection_handler(database, identity, proxy_url, storage, browser=None):
                             ),
                             None,
                         )
+                    elif replay_key is not None:
+                        from skriller.research.collection_cache import write_cached
+
+                        write_cached(
+                            database, storage, context, replay_key, artifact, cache_ttl_seconds
+                        )
             except FetchUnavailable as exc:
                 failure = exc.failure
+            except (BlobUnavailable, BlobIntegrityError):
+                artifact, prepared = None, None
+                failure = Failure(code="evidence_missing", message="Cached evidence unavailable")
             except UnicodeError:
                 failure = Failure(code="schema_invalid", message="Source is not UTF-8 text")
         return (artifact, prepared, failure), Decimal(0), {"fetch_attempts": 0}
@@ -255,6 +306,9 @@ def collection_handler(database, identity, proxy_url, storage, browser=None):
                 "source": attributes["source"],
                 "status": summary["status"],
                 "failure_code": summary["failure_code"],
+                "network_seconds": summary.get("network_seconds"),
+                "parser_seconds": summary.get("parser_seconds"),
+                "browser_seconds": summary.get("browser_seconds"),
             },
         )
         return [entity_id]
@@ -267,21 +321,57 @@ def collection_handler(database, identity, proxy_url, storage, browser=None):
         lease_seconds=105,
         run_with_deadline=run,
         capacity_source="web",
+        feedback_failure=lambda data: data[2],
     )
 
 
 def execute_collection(
-    database, payload, proxy_url, *, storage=None, enable_extraction=False, browser=None
+    database,
+    payload,
+    proxy_url,
+    *,
+    storage=None,
+    enable_extraction=False,
+    browser=None,
+    github_reader=None,
+    cache_ttl_seconds=0,
+    youtube_reader=None,
 ):
+    if (
+        isinstance(cache_ttl_seconds, bool)
+        or not isinstance(cache_ttl_seconds, int)
+        or not 0 <= cache_ttl_seconds <= 300
+    ):
+        raise ValueError("Public collector cache TTL must be 0–300 seconds")
     identity = TaskIdentity.model_validate(payload)
     if identity.attempt_id is None:
         raise ValueError("Collection attempt required")
     if storage is None:
         from skriller.settings import Settings
-        from skriller.storage import LocalBlobBackend
+        from skriller.storage.configuration import configured_storage
 
-        storage = EvidenceStorage(LocalBlobBackend(Settings().object_directory))
-    handler = collection_handler(database, identity, proxy_url, storage, browser)
+        with configured_storage(Settings()) as owned_storage:
+            return execute_collection(
+                database,
+                payload,
+                proxy_url,
+                storage=owned_storage,
+                enable_extraction=enable_extraction,
+                browser=browser,
+                github_reader=github_reader,
+                cache_ttl_seconds=cache_ttl_seconds,
+                youtube_reader=youtube_reader,
+            )
+    handler = collection_handler(
+        database,
+        identity,
+        proxy_url,
+        storage,
+        browser,
+        github_reader,
+        cache_ttl_seconds,
+        youtube_reader=youtube_reader,
+    )
     outcome = CheckpointWorker(database, {"collecting": handler}).execute(payload)
     if outcome["status"] not in {"checkpointed", "source_unavailable"}:
         return outcome
@@ -354,7 +444,13 @@ def finish_collection_pipeline(session, job):
         .scalars()
         .all()
     )
+    from skriller.research.qualification import checkpoint_qualification
     from skriller.research.service import result_rows
+
+    retained = result_rows(session, job["id"])
+    job = checkpoint_qualification(session, job, retained)
+    if job is None:
+        return
 
     finish(
         session,
@@ -364,6 +460,6 @@ def finish_collection_pipeline(session, job):
         or any(state != "succeeded" for state in rows)
         or any(item["source_failures"] for item in discovery_failed)
         else "source_exhausted",
-        retained_results=len(result_rows(session, job["id"])),
+        retained_results=len(retained),
         expected_version=job["version"],
     )

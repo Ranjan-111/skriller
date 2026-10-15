@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
-from hashlib import sha256
+from hashlib import sha1, sha256
+from pathlib import Path
 from typing import Any
 
 from agent_reach.utils.url import normalize_public_http_url
@@ -16,6 +18,26 @@ from scrapegraphai.utils.tokenizer import num_tokens_calculus
 from scrapling import Selector
 
 from skriller.contracts import Failure
+
+
+def _offline_tokenizer_ready():
+    """Verify the pinned tiktoken asset before copied helpers can request it."""
+    cache = os.environ.setdefault(
+        "TIKTOKEN_CACHE_DIR", str(Path(__file__).resolve().parents[3] / ".runtime/tiktoken-cache")
+    )
+    if not cache:
+        return False
+    url = "https://openaipublic.blob.core.windows.net/encodings/o200k_base.tiktoken"
+    # SHA-1 is tiktoken's cache filename convention; SHA-256 verifies integrity.
+    key = sha1(url.encode(), usedforsecurity=False).hexdigest()
+    try:
+        with (Path(cache) / key).open("rb") as stream:
+            data = stream.read(8 * 1024 * 1024 + 1)
+        return len(data) <= 8 * 1024 * 1024 and sha256(data).hexdigest() == (
+            "446a9538cb6c348e3516120d7c08b09f57c36495e2acfffe59a5bf8b0cfb1a2d"
+        )
+    except OSError:
+        return False
 
 
 @dataclass(frozen=True)
@@ -116,6 +138,10 @@ def prepare_context(
         source_url = normalize_public_http_url(source_url)
     except ValueError:
         return Failure(code="access_denied", message="Cleanup requires a public HTTP(S) source URL")
+    if not _offline_tokenizer_ready():
+        return Failure(
+            code="source_unavailable", message="Verified offline tokenizer assets are unavailable"
+        )
     try:
         raw = html.encode("utf-8")
     except UnicodeError:

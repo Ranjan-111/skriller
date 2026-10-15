@@ -11,6 +11,14 @@ from skriller.db.schema import attempts, external_calls, reservations
 from skriller.jobs.budget import DIMENSIONS, current_usage, locked_job, reconcile
 from skriller.jobs.state import TERMINAL_STATES
 
+RESUME_DIMENSIONS = {
+    "planning": {"llm_calls", "tokens"},
+    "discovering": {"search_calls", "candidates"},
+    "collecting": {"fetch_attempts"},
+    "extracting": {"llm_calls", "tokens"},
+    "reporting": {"llm_calls", "tokens"},
+}
+
 
 def plan_for_job(session, job):
     revision = ConversationRepository.get_plan(session, job["plan_id"])
@@ -123,12 +131,6 @@ def resume(session, job_id, request_key):
         raise ValueError("Original job deadline expired; start a new run")
     plan = plan_for_job(session, job)
     cost, counters = current_usage(session, job_id)
-    if cost > plan.limits.currency_cap or any(
-        counters[name] >= getattr(plan.limits, bound)
-        for name, bound in DIMENSIONS.items()
-        if counters[name] > 0
-    ):
-        raise ValueError("Job budget does not permit resuming")
     unfinished = (
         session.execute(
             sa.select(attempts).where(
@@ -144,6 +146,20 @@ def resume(session, job_id, request_key):
     # Resume must not silently reissue a call whose charge or output is unknown.
     if any(row["state"] in {"failed", "cancelled", "running"} for row in unfinished):
         raise ValueError("Unfinished call requires reconciliation before resume")
+    # Exhausting discovery's search quota must not prevent already-discovered
+    # candidates from using their independent fetch quota. Every actual call
+    # still acquires its own atomic reservation before dispatch.
+    stages = {row["stage"] for row in unfinished} or {
+        job["stage"]
+        or {"planning": "planning", "followup": "reporting"}.get(job["purpose"], "discovering")
+    }
+    required = set().union(*(RESUME_DIMENSIONS.get(stage, set()) for stage in stages))
+    if cost > plan.limits.currency_cap or any(
+        counters[name] >= getattr(plan.limits, DIMENSIONS[name])
+        for name in required
+        if counters[name] > 0
+    ):
+        raise ValueError("Job budget does not permit resuming")
     result = JobRepository.transition(session, job_id, "queued")
     if unfinished:
         for attempt in unfinished:

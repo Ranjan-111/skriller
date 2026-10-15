@@ -51,3 +51,32 @@ connection_audit = scoped(
         sa.CheckConstraint("action IN ('created','loaded','revoked','expired')"),
     ),
 )
+
+# Provider-purpose credentials and routes never share account connection refs.
+proxy_routes = scoped(
+    "task_proxy_routes",
+    sa.Column("job_id", UUID(as_uuid=False), nullable=False),
+    sa.Column("source", sa.String(32), nullable=False),
+    sa.Column("connection_id", UUID(as_uuid=False)),
+    sa.Column("account_connection_id", UUID(as_uuid=False)),
+    sa.Column("configuration_digest", sa.String(64), nullable=False),
+    sa.Column("provider_index", sa.Integer),
+    sa.Column("attempts", sa.Integer, nullable=False, server_default="0"),
+    sa.Column("traffic_bytes", sa.BigInteger, nullable=False, server_default="0"),
+    sa.Column("failed", sa.Boolean, nullable=False, server_default=sa.false()),
+    sa.Column("created_by", sa.String(128), nullable=False),
+    constraints=(
+        sa.ForeignKeyConstraint(["workspace_id", "job_id"], ["jobs.workspace_id", "jobs.id"]),
+        sa.ForeignKeyConstraint(
+            ["workspace_id", "connection_id"],
+            ["source_connections.workspace_id", "source_connections.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["workspace_id", "account_connection_id"],
+            ["source_connections.workspace_id", "source_connections.id"],
+        ),
+        sa.UniqueConstraint("workspace_id", "job_id", "source"),
+        sa.CheckConstraint("attempts >= 0 AND traffic_bytes >= 0"),
+        sa.CheckConstraint("provider_index IS NULL OR provider_index BETWEEN 0 AND 7"),
+    ),
+)

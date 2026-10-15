@@ -3,11 +3,11 @@
 import math
 import re
 from decimal import Decimal
-from typing import TypedDict
+from typing import TypedDict, get_args
 
 import sqlalchemy as sa
 
-from skriller.contracts import SearchPlan
+from skriller.contracts import Failure, SearchPlan
 from skriller.db import ConversationRepository, JobRepository
 from skriller.db.repositories import money, scope
 from skriller.db.schema import jobs, reservations, usage_records
@@ -19,6 +19,17 @@ DIMENSIONS = {
     "llm_calls": "llm_calls",
     "tokens": "token_cap",
 }
+STAGE_OUTCOMES = {"succeeded", *get_args(Failure.model_fields["code"].annotation)}
+
+
+class ComponentTimingTotals(TypedDict):
+    observations: int
+    network_seconds: Decimal | None
+    network_samples: int
+    parser_seconds: Decimal | None
+    parser_samples: int
+    browser_seconds: Decimal | None
+    browser_samples: int
 
 
 class StageTotals(TypedDict):
@@ -32,6 +43,11 @@ class StageTotals(TypedDict):
     confirmed_cost_usd: Decimal
     estimated_cost_usd: Decimal
     unpriced_observations: int
+    outcomes: dict[str, int]
+    correlated_attempt_observations: int
+    queue_wait_seconds: Decimal
+    queue_wait_samples: int
+    collection_timings: ComponentTimingTotals | None
 
 
 class BudgetExhausted(ValueError):
@@ -158,6 +174,7 @@ def stage_observation_report(session, job_id, *, max_events: int = 2000):
     from skriller.db import JobRepository
 
     totals: dict[tuple[str, str], StageTotals] = {}
+    collection_timings: dict[str, ComponentTimingTotals] = {}
     cursor = 0
     read = 0
     invalid = 0
@@ -169,18 +186,87 @@ def stage_observation_report(session, job_id, *, max_events: int = 2000):
         for row in rows:
             cursor = row["sequence"]
             read += 1
+            data = row["details"]
+            if row["kind"] == "collection_summary":
+                try:
+                    source = data["source"]
+                    if (
+                        not isinstance(source, str)
+                        or not re.fullmatch(r"[a-z][a-z0-9_.:-]{0,99}", source)
+                        or data.get("status") not in {"read", "unavailable", "preparation_failed"}
+                    ):
+                        raise ValueError
+                    fields = {}
+                    for component in ("network", "parser", "browser"):
+                        value = data.get(f"{component}_seconds")
+                        if value is not None and (
+                            isinstance(value, bool)
+                            or not isinstance(value, (int, float))
+                            or not math.isfinite(value)
+                            or not 0 <= value <= 180
+                        ):
+                            raise ValueError
+                        fields[component] = Decimal(str(value)) if value is not None else None
+                except (KeyError, TypeError, ValueError, ArithmeticError):
+                    invalid += 1
+                    continue
+                timing_summary = collection_timings.setdefault(
+                    source,
+                    {
+                        "observations": 0,
+                        "network_seconds": None,
+                        "network_samples": 0,
+                        "parser_seconds": None,
+                        "parser_samples": 0,
+                        "browser_seconds": None,
+                        "browser_samples": 0,
+                    },
+                )
+                timing_summary["observations"] += 1
+                for component, value in fields.items():
+                    if value is None:
+                        continue
+                    if component == "network":
+                        timing_summary["network_seconds"] = (
+                            timing_summary["network_seconds"] or Decimal(0)
+                        ) + value
+                        timing_summary["network_samples"] += 1
+                    elif component == "parser":
+                        timing_summary["parser_seconds"] = (
+                            timing_summary["parser_seconds"] or Decimal(0)
+                        ) + value
+                        timing_summary["parser_samples"] += 1
+                    else:
+                        timing_summary["browser_seconds"] = (
+                            timing_summary["browser_seconds"] or Decimal(0)
+                        ) + value
+                        timing_summary["browser_samples"] += 1
+                continue
             if row["kind"] != "stage_observation":
                 continue
-            data = row["details"]
             try:
                 stage, source, outcome = data["stage"], data["source"], data["outcome"]
+                attempt_id = data.get("attempt_id")
                 if (
                     not isinstance(stage, str)
                     or not re.fullmatch(r"[a-z][a-z0-9_]{0,49}", stage)
                     or not isinstance(source, str)
                     or not re.fullmatch(r"[a-z][a-z0-9_.:-]{0,99}", source)
-                    or outcome not in {"succeeded", "source_unavailable"}
+                    or not isinstance(outcome, str)
+                    or outcome not in STAGE_OUTCOMES
+                    or isinstance(data["attempt_count"], bool)
+                    or not isinstance(data["attempt_count"], int)
                     or data["attempt_count"] != 1
+                    or (
+                        attempt_id is not None
+                        and (
+                            not isinstance(attempt_id, str)
+                            or not re.fullmatch(
+                                r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+                                attempt_id,
+                            )
+                        )
+                    )
                     or isinstance(data["accepted_result_count"], bool)
                     or not isinstance(data["accepted_result_count"], int)
                     or not 0 <= data["accepted_result_count"] <= 300
@@ -195,11 +281,19 @@ def stage_observation_report(session, job_id, *, max_events: int = 2000):
                 cost = Decimal(str(amount)) if amount is not None else Decimal(0)
                 if not cost.is_finite() or cost < 0:
                     raise ValueError
+                queue_wait = data.get("queue_wait_seconds")
+                if queue_wait is not None and (
+                    isinstance(queue_wait, bool)
+                    or not isinstance(queue_wait, (int, float))
+                    or not math.isfinite(queue_wait)
+                    or not 0 <= queue_wait <= 3600
+                ):
+                    raise ValueError
             except (KeyError, TypeError, ValueError, ArithmeticError):
                 invalid += 1
                 continue
             key = (stage, source)
-            summary = totals.setdefault(
+            stage_summary = totals.setdefault(
                 key,
                 {
                     "stage": stage,
@@ -212,24 +306,37 @@ def stage_observation_report(session, job_id, *, max_events: int = 2000):
                     "confirmed_cost_usd": Decimal(0),
                     "estimated_cost_usd": Decimal(0),
                     "unpriced_observations": 0,
+                    "outcomes": {name: 0 for name in STAGE_OUTCOMES},
+                    "correlated_attempt_observations": 0,
+                    "queue_wait_seconds": Decimal(0),
+                    "queue_wait_samples": 0,
+                    "collection_timings": None,
                 },
             )
-            summary["observations"] += 1
-            summary["succeeded"] += outcome == "succeeded"
-            summary["failed"] += outcome != "succeeded"
-            summary["accepted_result_count"] += data["accepted_result_count"]
-            summary["stage_io_seconds"] += Decimal(str(data["stage_io_seconds"]))
+            stage_summary["observations"] += 1
+            stage_summary["outcomes"][outcome] += 1
+            stage_summary["correlated_attempt_observations"] += attempt_id is not None
+            if queue_wait is not None:
+                stage_summary["queue_wait_seconds"] += Decimal(str(queue_wait))
+                stage_summary["queue_wait_samples"] += 1
+            stage_summary["succeeded"] += outcome == "succeeded"
+            stage_summary["failed"] += outcome != "succeeded"
+            stage_summary["accepted_result_count"] += data["accepted_result_count"]
+            stage_summary["stage_io_seconds"] += Decimal(str(data["stage_io_seconds"]))
             if amount is None:
-                summary["unpriced_observations"] += 1
+                stage_summary["unpriced_observations"] += 1
             elif data["cost_status"] == "confirmed":
-                summary["confirmed_cost_usd"] += cost
+                stage_summary["confirmed_cost_usd"] += cost
             else:
-                summary["estimated_cost_usd"] += cost
+                stage_summary["estimated_cost_usd"] += cost
         if len(rows) < 100:
             break
         if read >= max_events:
             truncated = True
             break
+    for (stage, source), stage_summary in totals.items():
+        if stage == "collecting" and source in collection_timings:
+            stage_summary["collection_timings"] = collection_timings[source]
     return [totals[key] for key in sorted(totals)], invalid, truncated
 
 

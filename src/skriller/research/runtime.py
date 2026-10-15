@@ -15,6 +15,7 @@ from skriller.jobs.control import permit_call
 from skriller.jobs.worker import CheckpointWorker, TaskIdentity, create_worker_app
 from skriller.research.bootstrap import execute_planning
 from skriller.research.collection import execute_collection
+from skriller.research.followups import execute_followup
 from skriller.research.page_extraction import execute_page_extraction
 from skriller.research.service import dispatch, execute_discovery
 from skriller.settings import Settings
@@ -50,7 +51,13 @@ def execute(self, payload):
                 attempts.c.id == str(identity.attempt_id),
             )
         ).scalar_one()
+    reusing = False
     if stage == "discovering" and settings.search_provider == "disabled":
+        from skriller.research.refinements import refinement_source
+
+        with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+            reusing = refinement_source(session, str(identity.job_id)) is not None
+    if stage == "discovering" and settings.search_provider == "disabled" and not reusing:
         with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
             job = locked_job(session, str(identity.job_id))
             if job["state"] in {"queued", "running"}:
@@ -68,7 +75,9 @@ def execute(self, payload):
                     },
                 )
         return {"status": "source_disabled"}
-    if stage == "planning":
+    if stage == "reporting":
+        outcome = execute_followup(database, payload)
+    elif stage == "planning":
         outcome = execute_planning(database, payload, settings)
     elif stage == "discovering":
         outcome = execute_discovery(
@@ -76,7 +85,12 @@ def execute(self, payload):
         )
     elif stage == "collecting" and settings.public_collection_proxy_url:
         browser = None
-        if settings.enable_dynamic_collection:
+        youtube_reader = None
+        if settings.public_youtube_image:
+            from skriller.connectors.youtube_executor import ConcreteYouTubeExecutor
+
+            youtube_reader = ConcreteYouTubeExecutor(settings.public_youtube_image)
+        if settings.enable_dynamic_collection and settings.public_browser_image:
             from skriller.connectors.browser import DynamicBrowserAdapter
             from skriller.connectors.browser_executor import ConcreteBrowserExecutor
 
@@ -84,6 +98,7 @@ def execute(self, payload):
                 database,
                 executor=ConcreteBrowserExecutor(settings.public_browser_image),
                 isolation_verified=True,
+                stealth=settings.enable_stealth_collection,
             )
         outcome = execute_collection(
             database,
@@ -91,6 +106,8 @@ def execute(self, payload):
             settings.public_collection_proxy_url,
             enable_extraction=settings.enable_page_extraction,
             browser=browser,
+            cache_ttl_seconds=settings.public_response_cache_ttl_seconds,
+            youtube_reader=youtube_reader,
         )
     elif stage == "extracting" and settings.enable_page_extraction:
         outcome = execute_page_extraction(database, payload, settings=settings)

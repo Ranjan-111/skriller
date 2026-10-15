@@ -87,6 +87,15 @@ def test_successor_binding_checkpoint_and_discovery_outbox_are_idempotent(databa
         assert revision["revision"] == 2 and revision["parent_id"]
         assert revision["interpretation"]["limits"]["llm_calls"] == 1
         assert current_usage(session, job["id"])[1]["tokens"] == 80
+        observations = [
+            event["details"]
+            for event in JobRepository.events_after(session, job["id"])
+            if event["kind"] == "stage_observation"
+        ]
+        llm = next(item for item in observations if item["stage"] == "llm")
+        assert llm["source"] == "ollama" and llm["outcome"] == "succeeded"
+        assert llm["attempt_id"] == payload["attempt_id"]
+        assert llm["stage_io_seconds"] >= 0
         assert (
             session.execute(
                 sa.select(sa.func.count())
@@ -167,6 +176,22 @@ def test_clarification_commits_grounded_plan_without_search_dispatch(database):
             ).scalar_one()
             == 0
         )
+
+
+def test_missing_explicit_platform_pauses_without_discovery_or_repeat_model_call(database):
+    payload = setup(database, "Find founders on LinkedIn")
+    fixture = Fixture()
+    assert run(database, payload, fixture)["planning_status"] == "clarification_required"
+    assert run(database, payload, fixture)["status"] == "checkpointed"
+    with database.tenant(payload["actor_id"], payload["workspace_id"]) as session:
+        job = JobRepository.get(session, payload["job_id"])
+        assert job["state"] == "paused" and fixture.calls == 1
+        assert current_usage(session, job["id"])[1]["llm_calls"] == 1
+        assert session.execute(
+            sa.select(sa.func.count()).select_from(attempts).where(
+                attempts.c.job_id == job["id"], attempts.c.stage == "discovering"
+            )
+        ).scalar_one() == 0
 
 
 @pytest.mark.parametrize("control", ["cancel", "deadline", "disabled"])

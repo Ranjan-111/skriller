@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from skriller.db.repositories import JOB_TRANSITIONS, JobRepository
 
-STAGES = {"planning", "discovering", "collecting", "extracting", "resolving", "qualifying"}
+STAGES = {"planning", "discovering", "collecting", "extracting", "resolving", "qualifying", "reporting"}
 TERMINAL_STATES = {"completed", "partial", "failed", "cancelled"}
 REASONS = {
     "completed": {"source_exhausted", "target_met"},

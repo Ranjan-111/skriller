@@ -11,7 +11,7 @@ Keep `reference/` as the original comparison material. Copy source packages, sup
 
 For every imported feature: record source path and snapshot hash; copy/adapt relevant upstream tests; add a regression for every behaviour changed; and add a product-boundary test. Copying code is not evidence that the feature works in the new environment. Do not discard upstream tests to make a patch pass.
 
-Use a provenance manifest for each copied tree plus a modification log. Any missing upstream implementation must be acquired as a separately pinned dependency/source or explicitly scoped as new integration code. Do not claim that a diagnostics module is a scraper. No application source has been copied into runtime directories yet; this document plans that work.
+Use a provenance manifest for each copied tree plus a modification log. Any missing upstream implementation must be acquired as a separately pinned dependency/source or explicitly scoped as new integration code. Do not claim that a diagnostics module is a scraper. Runtime copies and adaptations are recorded in their provenance manifests and ticket completion reports.
 
 ## Available snapshots
 
@@ -50,3 +50,29 @@ None of these three source trees supplies Skriller's full conversational UI, mul
 
 Upstream tests are starting points, not a replacement for product tests. Some tests require network/model keys or old dependency interfaces. Record their baseline outcomes and adapt affected tests transparently. Never label skipped network tests as passing source access.
 
+
+
+## Selected LinkedIn/Reddit discovery subsets — 2026-10-15
+
+The pinned acquired backends now supply runtime-only pure-data subsets under `src/skriller/_vendor/`: Reddit `models.py` and `parser.py` are unchanged; LinkedIn `link_metadata.py` is unchanged and `search_urls.py` adapts one exception import to the exact extracted exception class. The Python package namespace is product-local to prevent accidental imports of upstream authentication/browser startup. Provenance, modification logs and source-hash contract tests preserve traceability. Product wrappers enforce bounds, filters, source references and unknown identity/date semantics. These parsing contracts are used by controlled feasibility probes; production tenant credential/budget/worker integration and live readiness are still separate gates.
+
+## Installed YouTube backend and job adapter — 2026-10-15
+
+The runtime continues to use the copied `third_party/agent-reach/agent_reach/channels/youtube.py`
+for platform routing and actual installed-tool health checks. Reading delegates to
+Agent-Reach's existing external dependency `yt-dlp==2026.8.19`, with the six missing
+`yt-dlp[default]` closure wheels staged from their exact `uv.lock` sizes and hashes.
+No new video extraction engine or audio transcription implementation was written.
+Installed metadata declares yt-dlp `Unlicense`, and yt-dlp-ejs `Unlicense AND MIT AND ISC`.
+The immutable image also reuses the Node binary bundled in the existing pinned
+Playwright installation; it downloads no new runtime at task execution.
+
+`youtube_worker.py` is product glue: fixed single-video operation, existing yt-dlp
+urllib transport with request/redirect metering, selected supplied VTT retrieval,
+output bounds and source validation. It invokes no private account or paid model.
+`youtube_executor.py` reuses the existing guarded process/container runner.
+`youtube_collection.py` follows the existing public collection/checkpoint/storage
+interfaces for tenant ownership, job reservations, cancellation, erasure, scoped
+metadata/caption evidence and identity limits. The installed backend fixture uses
+actual yt-dlp processing with a synthetic InfoExtractor and network disabled;
+public-source readiness is separately recorded as unverified after a backend failure.

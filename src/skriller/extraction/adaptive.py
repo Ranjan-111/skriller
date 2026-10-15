@@ -87,6 +87,7 @@ def validate_field(
     context: ExecutionContext,
     storage_scope: StorageScope,
     rule: FieldRule,
+    learn: bool = True,
 ) -> ValidatedField:
     """Read an already-collected page; quarantine uncertain mappings.
 
@@ -94,6 +95,8 @@ def validate_field(
     Version1 is learned only after semantic validation; a recovered candidate is
     saved in the next explicit namespace version, preserving the previous record.
     This validates a known identity/relationship, not a newly inferred person.
+    With learn=False, fingerprints remain read-only and template_version names
+    the reviewed baseline; recovery publication is a separate review operation.
     """
     raw = html.encode("utf-8")
     digest = sha256(raw).hexdigest()
@@ -143,7 +146,8 @@ def validate_field(
     )
     # Selector.save accepts the element root; its same copied storage algorithm
     # is used without altering similarity scores or rebuilding fingerprints.
-    destination.save(candidate._root, rule.identifier)
+    if learn:
+        destination.save(candidate._root, rule.identifier)
     return ValidatedField(
         "accepted",
         "validated_recovery" if recovered else "validated_direct",
@@ -151,5 +155,5 @@ def validate_field(
         recovered,
         quote,
         candidate.generate_full_xpath_selector,
-        version,
+        version if learn else storage_scope.template_version,
     )

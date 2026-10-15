@@ -151,3 +151,38 @@ def test_globally_disabled_search_is_not_reported_operational(database):
     discovery = [row for row in response.json() if row["capability"]["operation"] == "discover"]
     assert len(discovery) == 9
     assert all(row["setup_state"] == "unavailable" for row in discovery)
+
+
+def test_youtube_configuration_is_reported_without_promoting_sample_to_tenant_verification(
+    database, monkeypatch
+):
+    _, workspace, app, client = setup(database)
+    monkeypatch.setattr(
+        "skriller.connectors.youtube_executor.IsolatedRunner.run",
+        lambda *args, **kwargs: pytest.fail("Diagnostics must not launch source reads"),
+    )
+    url = f"/v1/workspaces/{workspace}/sources"
+
+    def read_status():
+        response = client.get(url)
+        assert response.status_code == 200
+        return next(
+            row
+            for row in response.json()
+            if (row["capability"]["source"], row["capability"]["operation"]) == ("youtube", "read")
+        )
+
+    disabled = read_status()
+    assert disabled["setup_state"] == "unavailable"
+    assert disabled["capability"]["engineering_status"] == "tested"
+    app.state.settings = Settings(
+        public_collection_proxy_url="http://127.0.0.1:18080",
+        public_youtube_image="sha256:" + "a" * 64,
+    )
+    configured = read_status()
+    assert configured["setup_state"] == "experimental"
+    assert configured["capability"]["auth_kind"] == "none"
+    assert configured["evidence_scope"] == "dedicated_adapter"
+    assert "analytics" not in configured["capability"]["allowed_fields"]
+    switched = client.put(url + "/youtube/read", json={"disabled": True})
+    assert switched.status_code == 200 and switched.json()["setup_state"] == "disabled"

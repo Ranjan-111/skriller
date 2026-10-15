@@ -1,0 +1,13 @@
+ARG BROWSER_BASE=skriller-egress-browser@sha256:548ee64f786a3524f7114c76b4b487e16559a7cb330704014035cec747eed918
+FROM ${BROWSER_BASE}
+COPY infra/egress/youtube-requirements.txt /app/youtube-requirements.txt
+COPY --from=youtube_wheels . /tmp/youtube-wheels
+RUN cd /tmp/youtube-wheels && sha256sum -c SHA256SUMS \
+    && pip install --no-index --find-links=/tmp/youtube-wheels --no-deps -r /app/youtube-requirements.txt \
+    && rm -rf /tmp/youtube-wheels
+# Reuse the Node runtime already included in the pinned Playwright wheel.
+RUN ln -s /usr/local/lib/python3.12/site-packages/playwright/driver/node /usr/local/bin/node \
+    && node --version && yt-dlp --version
+COPY src/skriller /app/src/skriller
+ENV SKRILLER_YOUTUBE_WORKER=isolated
+ENTRYPOINT ["/usr/local/bin/guarded-worker"]

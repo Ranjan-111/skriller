@@ -71,7 +71,9 @@ class DirectoryPresetResult(BaseModel):
 _FIELDS: dict[PresetId, tuple[str, ...]] = {
     "company": ("company_name", "description", "headquarters", "employee_count", "industry"),
     "team": ("person_name", "job_title", "team_page_url"),
-    "careers": ("job_title", "location", "employment_type", "careers_url"),
+    # A page may state when a role was posted. This is retained as a literal
+    # source observation; it does not assert that the role is still open.
+    "careers": ("job_title", "location", "employment_type", "careers_url", "job_posted_date"),
     "services": ("service_name", "service_description", "customer_type", "service_area"),
     "contact": ("contact_page_url", "public_work_email", "business_phone"),
     "directory": (

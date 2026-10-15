@@ -139,3 +139,12 @@ def test_clock_and_nonfinite_values_are_rejected():
         qualify(plan(), (), now=datetime(2026, 10, 13))
     criterion = Criterion(field="post", operator="recent", value=1e308)
     assert evaluate(criterion, (fact("post", "post", event_at=NOW),), now=NOW).outcome == "matched"
+
+
+def test_criterion_reference_budget_fails_unknown_without_truncating_support():
+    criterion = Criterion(field="size", operator="gte", value=10)
+    supported = tuple(fact("size", 25) for _ in range(10))
+    assert len(evaluate(criterion, supported, now=NOW).evidence_ids) == 10
+    result = evaluate(criterion, supported + (fact("size", 25),), now=NOW)
+    assert result.outcome == "unknown"
+    assert result.reason == "evidence_reference_budget_exhausted" and result.evidence_ids == ()

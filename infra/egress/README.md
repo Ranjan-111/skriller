@@ -66,3 +66,32 @@ network, and real application-level extraction remain required release gates.
 ## Python 3.12 verification update
 
 The Dockerfile defaults now pin the official Python 3.12 Bookworm index (`sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258`). Both the project proxy and worker base built and executed successfully on native arm64. The real kernel and cancellation gates passed with Python 3.12.15; the earlier 3.13 fixture is historical evidence. Set `SKRILLER_EGRESS_TEST_IMAGE` to the trusted immutable local image ID when testing another administrator-built image. Base-runtime verification does not by itself prove an installed browser or platform adapter.
+
+## Installed public YouTube worker
+
+`Dockerfile.youtube` extends the immutable browser base with Agent-Reach's
+existing yt-dlp backend. Versioned wheels and their bytes come from `uv.lock`;
+build-time provisioning is explicit and the image build itself is offline:
+
+```sh
+uv run python -m scripts.provision_youtube_assets --download
+docker build --network=none --build-context youtube_wheels=.runtime/youtube-build -f infra/egress/Dockerfile.youtube -t skriller-egress-youtube .
+```
+
+Use the immutable local image ID returned by `docker image inspect` when running
+`tests/connectors/test_youtube_container.py` with `SKRILLER_YOUTUBE_TEST_IMAGE`.
+The test uses a supplied extractor fixture with the actual installed backend,
+provided WebVTT and `--network none`; it does not certify public YouTube access.
+The pinned base's existing Playwright Node runtime is reused; no host Node,
+browser session, audio download, remote component or transcription API is used.
+
+The optional `SKRILLER_PUBLIC_YOUTUBE_IMAGE` enables the collection reader only
+when the guarded collection proxy is also configured. It remains unset in the
+current local application. The worker reuses pinned yt-dlp urllib processing,
+meters initial requests and redirects, caps HTTP attempts at 12, and runs within
+the shared job/capacity/cancellation/evidence boundaries. Failed or uncertain
+runs retain estimated accounting. Captions are limited to supplied English VTT;
+other languages/formats and missing captions have explicit states. See
+`docs/completions/SKR-065.md` and `YOUTUBE-WORKER-LOCAL.json` for verification and
+remaining UI/live coverage gates. Publishing or deploying an image remains a
+separate, user-deferred hosted task.

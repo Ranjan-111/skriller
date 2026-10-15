@@ -17,10 +17,15 @@ from skriller.settings import Settings
 for test_option, test_value in {
     "SKRILLER_PUBLIC_COLLECTION_PROXY_URL": "",
     "SKRILLER_PUBLIC_BROWSER_IMAGE": "",
+    "SKRILLER_PUBLIC_YOUTUBE_IMAGE": "",
     "SKRILLER_ENABLE_PAGE_EXTRACTION": "false",
+    "SKRILLER_REVIEWED_PAGE_TEMPLATES_FILE": "",
     "SKRILLER_ENABLE_DYNAMIC_COLLECTION": "false",
+    "SKRILLER_ENABLE_STEALTH_COLLECTION": "false",
     "SKRILLER_ENABLE_AI_PLANNING": "false",
+    "SKRILLER_PUBLIC_RESPONSE_CACHE_TTL_SECONDS": "0",
     "SKRILLER_MODEL_PROVIDER": "ollama",
+    "SKRILLER_OBJECT_BACKEND": "local",
 }.items():
     os.environ[test_option] = test_value
 

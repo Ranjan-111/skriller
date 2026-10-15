@@ -26,7 +26,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from skriller.connections.store import ConnectionStore, ConnectionUnavailable
 from skriller.connectors.fetch import _EngineLogFilter
-from skriller.contracts import Source
+from skriller.contracts import ExecutionContext, Source
 from skriller.db.repositories import scope
 from skriller.db.schema import entities
 from skriller.storage import BlobUnavailable, EvidenceStorage
@@ -174,6 +174,7 @@ class ScopedResponseCache:
         ttl_seconds: int = 3600,
         collected_at: datetime,
         published_at: datetime | None = None,
+        context: ExecutionContext | None = None,
     ):
         now = datetime.now(UTC)
         if (
@@ -227,11 +228,25 @@ class ScopedResponseCache:
             with database.tenant(actor_id, workspace_id) as session:
                 from skriller.erasure import privacy_lock, suppressed
 
-                privacy_lock(session)
+                workspace = self._access(session, key)
+                if context is not None:
+                    from skriller.connectors.switches import is_disabled
+                    from skriller.jobs.control import permit_call
 
+                    if (
+                        str(context.workspace_id) != workspace
+                        or context.actor_id != actor_id
+                        or context.connection_ref != key.connection_ref
+                        or context.deadline <= datetime.now(UTC)
+                        or is_disabled(session, key.source, "read")
+                        or permit_call(session, str(context.job_id)) <= 0
+                    ):
+                        raise BlobUnavailable("Job no longer permits cache writes")
+                # Erasure acquires job locks before the workspace privacy fence.
+                # Keep that order when this write belongs to a collecting job.
+                privacy_lock(session)
                 if suppressed(session, url=key.source_url):
                     raise BlobUnavailable("Suppressed response cannot be cached")
-                workspace = self._access(session, key)
                 metadata = CacheMetadata(
                     evidence_id=UUID(int=0),
                     content_hash=hashlib.sha256(response.body).hexdigest(),
@@ -323,14 +338,23 @@ class ScopedResponseCache:
         # Recheck revocation after staging before returning previously private bytes.
         def check_access():
             with database.tenant(actor_id, workspace_id) as session:
-                self._access(session, key)
+                from skriller.erasure import suppressed
 
-        await asyncio.to_thread(check_access)
+                self._access(session, key)
+                return not suppressed(session, url=key.source_url)
+
+        if not await asyncio.to_thread(check_access):
+            return None
         if metadata.expires_at <= datetime.now(UTC):
             return None
         return CacheHit(response, metadata)
 
     def conditional_headers(self, session, key: CacheKey) -> dict[str, str]:
+        from skriller.erasure import suppressed
+
+        self._access(session, key)
+        if suppressed(session, url=key.source_url):
+            return {}
         metadata = self._latest(session, key)
         if metadata is None or metadata.expires_at <= datetime.now(UTC):
             return {}

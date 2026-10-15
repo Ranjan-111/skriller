@@ -4,29 +4,9 @@ from datetime import UTC, datetime
 
 import httpx
 import pytest
+from github_fixtures import repo_payload
 
 from skriller.connectors.github import GitHubPublicReader, GitHubUnavailable
-
-
-def repo_payload(**overrides):
-    value = {
-        "id": 1,
-        "full_name": "acme/demo",
-        "html_url": "https://github.com/acme/demo",
-        "description": "Public demo",
-        "visibility": "public",
-        "created_at": "2024-01-01T00:00:00Z",
-        "updated_at": "2025-01-01T00:00:00Z",
-        "pushed_at": "2025-01-02T00:00:00Z",
-        "stargazers_count": 4,
-        "forks_count": 1,
-        "open_issues_count": 0,
-        "language": "Python",
-        "owner": {"login": "acme", "type": "Organization"},
-        "private": False,
-    }
-    value.update(overrides)
-    return value
 
 
 @pytest.mark.asyncio
@@ -54,6 +34,7 @@ async def test_repository_returns_dated_public_metadata_and_uses_only_read_api()
 @pytest.mark.asyncio
 async def test_public_profile_preserves_only_explicitly_published_fields():
     payload = {
+        "id": 42,
         "login": "acme",
         "type": "Organization",
         "html_url": "https://github.com/acme",
@@ -173,3 +154,67 @@ async def test_private_visibility_is_never_returned_as_a_public_record():
     with pytest.raises(GitHubUnavailable) as caught:
         await reader.repository("https://github.com/acme/demo")
     assert caught.value.code == "not_found"
+
+
+@pytest.mark.asyncio
+async def test_wrong_profile_subject_and_non_numeric_ids_are_rejected():
+    reader = GitHubPublicReader(
+        transport=httpx.MockTransport(lambda _: httpx.Response(200, json=repo_payload(id=True)))
+    )
+    with pytest.raises(GitHubUnavailable):
+        await reader.repository("https://github.com/acme/demo")
+    profile = {
+        "id": 42,
+        "login": "someoneelse",
+        "type": "User",
+        "html_url": "https://github.com/someoneelse",
+        "public_repos": 1,
+        "followers": 1,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2025-01-01T00:00:00Z",
+    }
+    reader = GitHubPublicReader(
+        transport=httpx.MockTransport(lambda _: httpx.Response(200, json=profile))
+    )
+    with pytest.raises(GitHubUnavailable):
+        await reader.profile("acme")
+
+
+@pytest.mark.asyncio
+async def test_retry_after_from_copied_parser_is_preserved_without_retry():
+    calls = []
+
+    def reply(request):
+        calls.append(request)
+        return httpx.Response(429, headers={"Retry-After": "120"})
+
+    reader = GitHubPublicReader(transport=httpx.MockTransport(reply))
+    with pytest.raises(GitHubUnavailable) as caught:
+        await reader.profile("acme")
+    assert len(calls) == 1 and caught.value.retry_after_seconds == 120
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "http://task:" + "a" * 43 + "@127.0.0.1:18080",
+        "http://task:" + "a" * 43 + "@[::1]:18080",
+    ],
+)
+def test_task_gateway_credentials_are_confined_to_loopback(endpoint):
+    assert GitHubPublicReader(trusted_proxy_url=endpoint)._proxy == endpoint
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "http://user:password@127.0.0.1:18080",
+        "http://task:short@127.0.0.1:18080",
+        "http://task:" + "a" * 43 + "@egress-proxy:8080",
+        "http://task:" + "a" * 43 + "@example.com:8080",
+        "https://task:" + "a" * 43 + "@127.0.0.1:18080",
+    ],
+)
+def test_invalid_or_remote_authenticated_gateway_is_rejected(endpoint):
+    with pytest.raises(ValueError):
+        GitHubPublicReader(trusted_proxy_url=endpoint)

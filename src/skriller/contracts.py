@@ -31,7 +31,7 @@ class Criterion(Contract):
             isinstance(self.value, bool) or not isinstance(self.value, (int, float))
         ):
             raise ValueError("Comparison requires a numeric value")
-        if self.operator == "recent" and self.value < 0:
+        if self.operator == "recent" and isinstance(self.value, (int, float)) and self.value < 0:
             raise ValueError("Recency cannot be negative")
         if self.operator == "eq" and isinstance(self.value, list):
             raise ValueError("Equality requires a scalar value")
@@ -124,6 +124,7 @@ class ExecutionContext(Contract):
     connection_ref: UUID | None = None
     reservation_id: UUID | None = None
     attempt_budget: int = Field(ge=0, le=200)
+    attempt_id: UUID | None = None
 
     @field_validator("deadline")
     @classmethod

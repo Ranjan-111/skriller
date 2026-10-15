@@ -1,0 +1,17 @@
+{
+  "recorded_at": "2026-10-15T22:21:11.191430+00:00",
+  "image": "sha256:63f4ec7c6a1585eb51ddaa853edb426da20395c042328e7130e57df955e1cc21",
+  "status": "checkpointed",
+  "source_url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+  "metadata_live_verified": true,
+  "caption_live_verified": true,
+  "caption_origin": "provided",
+  "caption_language": "en",
+  "retained_caption_cues": 6,
+  "timestamped_scoped_citation_verified": true,
+  "fetch_attempts": 4,
+  "creator_identity": "unknown",
+  "lead_fit": "excluded",
+  "model_calls": 0,
+  "limitation": "One public video verifies this operation, not platform-wide source coverage."
+}

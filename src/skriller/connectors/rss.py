@@ -29,6 +29,7 @@ class FeedEntry:
     published_at: str | None
     summary: str
     summary_truncated: bool
+    updated_at: str | None = None
     source: str = "rss"
 
 
@@ -40,10 +41,13 @@ class FeedParseResult:
     invalid_link_count: int
     truncated_entry_count: int
     malformed: bool
+    omitted_entry_count: int = 0
 
 
-def _published(entry) -> str | None:
-    for key in ("published_parsed", "updated_parsed"):
+def _date(entry, keys) -> str | None:
+    for key in keys:
+        if key not in entry:
+            continue  # Avoid feedparser's compatibility aliases between date kinds.
         parsed = entry.get(key)
         if isinstance(parsed, struct_time):
             try:
@@ -77,7 +81,9 @@ def parse_feed(body: bytes, feed_url: str, *, max_entries: int = MAX_ENTRIES) ->
     seen_ids: set[str] = set()
     seen_urls: set[str] = set()
     duplicate_count = invalid_link_count = truncated_entry_count = 0
+    inspected = 0
     for item in parsed.entries[:MAX_ENTRIES]:
+        inspected += 1
         raw_link = item.get("link")
         if not isinstance(raw_link, str) or not raw_link.strip():
             invalid_link_count += 1
@@ -110,7 +116,8 @@ def parse_feed(body: bytes, feed_url: str, *, max_entries: int = MAX_ENTRIES) ->
                 title=title[:1000],
                 url=link,
                 feed_url=normalized_feed,
-                published_at=_published(item),
+                published_at=_date(item, ("published_parsed",)),
+                updated_at=_date(item, ("updated_parsed",)),
                 summary=summary,
                 summary_truncated=truncated,
             )
@@ -123,5 +130,39 @@ def parse_feed(body: bytes, feed_url: str, *, max_entries: int = MAX_ENTRIES) ->
         duplicate_count=duplicate_count,
         invalid_link_count=invalid_link_count,
         truncated_entry_count=truncated_entry_count,
-        malformed=bool(parsed.get("bozo", False)),
+        malformed=bool(parsed.get("bozo", False)) or not bool(parsed.get("version")),
+        omitted_entry_count=max(0, len(parsed.entries) - inspected),
+    )
+
+
+def public_rss_binding(database=None, proxy_url=None, *, operation_key="rss_read"):
+    from skriller.connectors.fetch import HTTPFetcher
+    from skriller.connectors.registry import AdapterBinding
+    from skriller.contracts import Capability
+
+    def execute(context, url):
+        if database is None or proxy_url is None or context.connection_ref is not None:
+            raise ValueError("Public RSS collecting configuration required")
+        return HTTPFetcher(
+            database, trusted_proxy_url=proxy_url, max_body_bytes=MAX_FEED_BYTES
+        ).fetch(
+            context,
+            url,
+            source="rss",
+            operation_key=operation_key,
+        )
+
+    return AdapterBinding(
+        Capability(
+            source="rss",
+            operation="read",
+            engineering_status="implemented",
+            operational_status="experimental",
+            access_route="Guarded public RSS/Atom bytes; no entry-link following",
+            auth_kind="none",
+            version="feedparser_6.0.14",
+            allowed_fields=["entry_id", "title", "published_at", "updated_at", "summary", "url"],
+        ),
+        "public_rss_feed",
+        execute,
     )

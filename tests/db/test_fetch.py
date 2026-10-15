@@ -40,7 +40,18 @@ def test_disabled_read_never_starts_http_or_charges(database, proxy):
 
 @pytest.fixture
 def proxy(monkeypatch):
+    import skriller.connectors.fetch as fetch_module
     from skriller.settings import Settings
+
+    original_acquire = fetch_module.acquire
+    rss_fixture = uuid4().hex
+
+    def fixture_capacity(session, job_id, **kwargs):
+        if kwargs.get("source") == "rss" and kwargs.get("host") == "example.com":
+            kwargs.update(source="rss-test-" + rss_fixture, host=rss_fixture + ".example.invalid")
+        return original_acquire(session, job_id, **kwargs)
+
+    monkeypatch.setattr(fetch_module, "acquire", fixture_capacity)
 
     owner = sa.create_engine(Settings().database_url)
     with owner.begin() as connection:
@@ -64,6 +75,16 @@ def proxy(monkeypatch):
                 time.sleep(10)
             status = 200
             body, extras = company, {}
+            content_type = "text/html; charset=utf-8"
+            if self.path in {"/rss", "/rss-bad", "/rss-empty"}:
+                content_type = "application/atom+xml; charset=utf-8"
+                body = (
+                    Path(__file__).resolve().parents[1] / "fixtures/research/feed.xml"
+                ).read_bytes()
+                if self.path == "/rss-bad":
+                    body = b"<error>Not a feed</error>"
+                if self.path == "/rss-empty":
+                    body = b'<feed xmlns="http://www.w3.org/2005/Atom"><title>Empty feed</title></feed>'
             if self.path == "/large":
                 body = gzip.compress(b"x" * 100000)
                 extras["Content-Encoding"] = "gzip"
@@ -88,7 +109,7 @@ def proxy(monkeypatch):
                     "/company" if self.path == "/redirect" else "http://127.0.0.1/secret"
                 )
             self.send_response(status)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
             for k, v in extras.items():
                 self.send_header(k, v)

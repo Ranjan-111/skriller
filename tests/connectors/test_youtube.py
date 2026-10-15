@@ -92,3 +92,35 @@ def test_transcript_parser_requires_supplied_vtt_and_bounds_input():
             b"WEBVTT" + b" " * 1_048_576,
             source_url="https://youtube.com/watch?v=fixture123",
         )
+
+
+def test_video_id_mismatch_is_rejected_even_when_page_url_matches():
+    with pytest.raises(YouTubeUnavailable, match="identity"):
+        parse_metadata_output(
+            json.dumps(metadata(id="different")), requested_url="https://youtu.be/fixture123"
+        )
+
+
+def test_fractional_duration_is_preserved_and_boolean_counters_are_rejected():
+    record = parse_metadata_output(
+        json.dumps(metadata(duration=3.5)), requested_url="https://youtu.be/fixture123"
+    )
+    assert record.duration_seconds == 3.5
+    with pytest.raises(YouTubeUnavailable):
+        parse_metadata_output(
+            json.dumps(metadata(view_count=True)), requested_url="https://youtu.be/fixture123"
+        )
+
+
+def test_inline_caption_tags_keep_text_and_note_blocks_do_not_become_evidence():
+    segments = parse_webvtt(
+        "WEBVTT\n\nNOTE comment\n00:00:01.000 --> 00:00:02.000\nNot a cue\n\n"
+        "00:00:02.000 --> 00:00:03.000\n<c>Source caption.</c>\n",
+        source_url="https://youtu.be/fixture123",
+    )
+    assert len(segments) == 1 and segments[0].text == "Source caption."
+    with pytest.raises(YouTubeUnavailable):
+        parse_webvtt(
+            "WEBVTT\n\n00:00:61.000 --> 00:01:03.000\nInvalid",
+            source_url="https://youtu.be/fixture123",
+        )

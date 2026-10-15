@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import base64
+import hmac
 import select
 import threading
 import time
@@ -22,7 +24,16 @@ class GuardedProxy(ThreadingHTTPServer):
         max_connections=32,
         max_bytes=10 * 1024 * 1024,
         max_seconds=60,
+        upstream_route=None,
+        client_token=None,
     ):
+        # Trusted server-created task context; no client routing headers/IDs.
+        self.upstream_route = upstream_route
+        self.client_authorization = (
+            ("Basic " + base64.b64encode(f"task:{client_token}".encode()).decode())
+            if client_token
+            else None
+        )
         self.slots = threading.BoundedSemaphore(max_connections)
         self.max_bytes = max_bytes
         self.max_seconds = max_seconds
@@ -61,6 +72,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
         transferred = 0
         sockets = [self.connection, upstream]
         while time.monotonic() < deadline:
+            if self.server.upstream_route is not None:
+                self.server.upstream_route.check()
             ready, _, _ = select.select(
                 sockets, [], [], min(1, max(0, deadline - time.monotonic()))
             )
@@ -70,17 +83,35 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     return
                 transferred += len(data)
                 if transferred > self.server.max_bytes:
-                    return
+                    raise EgressDenied("Traffic budget exhausted")
                 other = upstream if current is self.connection else self.connection
                 other.sendall(data)
 
+        raise EgressDenied("Tunnel deadline reached")
+
+    def _connect(self, destination):
+        route = self.server.upstream_route
+        return route.connect(destination) if route is not None else connect_pinned(destination)
+
+    def _authenticate(self):
+        expected = self.server.client_authorization
+        if expected is not None and not hmac.compare_digest(
+            self.headers.get("Proxy-Authorization", ""), expected
+        ):
+            self.send_error(407, "Task gateway authorization required")
+            self.close_connection = True
+            return False
+        return True
+
     def do_CONNECT(self):
+        if not self._authenticate():
+            return
         try:
             parsed = urlsplit("https://" + self.path)
             if parsed.path or parsed.query or parsed.fragment or parsed.port != 443:
                 raise EgressDenied("Invalid CONNECT authority")
             destination = resolve_public_destination("https://" + self.path)
-            with connect_pinned(destination) as upstream:
+            with self._connect(destination) as upstream:
                 self.send_response(200, "Connection Established")
                 self.end_headers()
                 self.wfile.flush()
@@ -91,6 +122,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
             self.close_connection = True
 
     def _http(self):
+        if not self._authenticate():
+            return
         try:
             destination = resolve_public_destination(self.path)
             parsed = urlsplit(destination.url)
@@ -130,7 +163,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                         raise EgressDenied("Malformed header")
                     headers.append(f"{name}: {value}")
             request = ("\r\n".join(headers) + "\r\n\r\n").encode("latin-1") + body
-            with connect_pinned(destination) as upstream:
+            with self._connect(destination) as upstream:
                 upstream.sendall(request)
                 self._relay(upstream)
         except (ValueError, OSError, UnicodeError):

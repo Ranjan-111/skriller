@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Public synthetic updates</title>
+  <entry><id>story-1</id><title>Hiring update</title><link href="http://example.com/posts/one"/><published>2026-10-12T11:00:00Z</published><summary>Hiring software engineers.</summary></entry>
+  <entry><id>story-1</id><title>Repeated entry</title><link href="http://example.com/posts/one"/></entry>
+  <entry><id>story-2</id><title>Updated only</title><link href="http://example.com/posts/two"/><updated>2026-10-13T12:00:00Z</updated></entry>
+  <entry><id>private-link</id><title>Internal target</title><link href="http://127.0.0.1/secret"/></entry>
+</feed>
