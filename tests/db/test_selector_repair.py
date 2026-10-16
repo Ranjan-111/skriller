@@ -12,7 +12,12 @@ from test_saved_graph import context_for
 from skriller.adaptive import PostgreSQLStorageSystem, StorageScope
 from skriller.extraction.adaptive import FieldRule, SemanticAnchor, validate_field
 from skriller.extraction.models import LocalStructuredModel
-from skriller.extraction.repair import PreservedPage, repair_mapping, rollback_mapping
+from skriller.extraction.repair import (
+    PreservedPage,
+    _proposal_schema,
+    repair_mapping,
+    rollback_mapping,
+)
 from skriller.jobs.budget import current_usage
 from skriller.jobs.control import cancel
 
@@ -91,6 +96,7 @@ async def test_changed_dom_promotes_once_and_explicit_rollback_keeps_histories(d
         ("javascript:alert(1)", "mapping_invalid"),
         (".missing", "mapping_missing"),
         ("h2", "field_identity_mismatch"),
+        ("strong", "mapping_invalid"),
     ],
 )
 async def test_invalid_or_wrong_mapping_never_replaces_baseline(database, css, reason):
@@ -105,6 +111,22 @@ async def test_invalid_or_wrong_mapping_never_replaces_baseline(database, css, r
     )
 
 
+def test_proposal_vocabulary_uses_only_safe_existing_attributes_and_bounds():
+    schema = _proposal_schema(
+        '<article><h2>Company</h2><div id="identity" class="brand primary" '
+        'data-field="legal-name" onclick="alert(1)"><b>Acme</b></div></article>'
+    ).model_json_schema()
+    assert schema["properties"]["css"]["enum"] == [
+        "#identity",
+        ".brand",
+        ".primary",
+        '[data-field="legal-name"]',
+    ]
+    assert "enum" not in _proposal_schema("<p>Acme</p>").model_json_schema()["properties"]["css"]
+    many = '<p class="' + " ".join(f"name{i}" for i in range(13)) + '">Acme</p>'
+    assert "enum" not in _proposal_schema(many).model_json_schema()["properties"]["css"]
+
+
 async def test_wrong_neighbor_regression_prevents_promotion(database):
     context, scope, rule = setup(database)
     bad = '<article><h2>Investor</h2><span class="old">Mira Rao</span></article>'
@@ -117,6 +139,20 @@ async def test_wrong_neighbor_regression_prevents_promotion(database):
         regressions=(PreservedPage.capture(OLD, URL), PreservedPage.capture(bad, URL)),
     )
     assert result.reason == "semantic_anchor_mismatch" and stub.calls == 1
+    assert (
+        store(database, context, replace(scope, template_version=2)).retrieve(rule.identifier)
+        is None
+    )
+
+
+async def test_attributed_wrapper_cannot_silently_replace_inner_field_target(database):
+    context, scope, rule = setup(database)
+    current = PreservedPage.capture(
+        '<article><h2>Founder</h2><div class="wrapper"><strong class="renamed">Mira Rao</strong></div></article>',
+        URL,
+    )
+    result, _ = await run(database, context, scope, rule, ".wrapper", current=current)
+    assert result.status == "unknown" and result.reason == "nested_target_ambiguous"
     assert (
         store(database, context, replace(scope, template_version=2)).retrieve(rule.identifier)
         is None

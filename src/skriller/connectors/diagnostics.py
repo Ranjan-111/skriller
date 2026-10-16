@@ -9,6 +9,7 @@ exception messages are discarded entirely, rather than merely URL-scrubbed.
 from typing import Literal, get_args
 from uuid import UUID
 
+import sqlalchemy as sa
 from pydantic import BaseModel, ConfigDict
 
 from skriller.connectors.registry import ConnectorRegistry, Operation
@@ -34,7 +35,14 @@ class SourceDiagnostic(BaseModel):
     credential_validation: Literal["not_performed"] = "not_performed"
 
 
-def default_registry(workspace_id: UUID, *, youtube_image: str | None = None) -> ConnectorRegistry:
+def default_registry(
+    workspace_id: UUID,
+    *,
+    youtube_image: str | None = None,
+    x_image: str | None = None,
+    database=None,
+    connection_store=None,
+) -> ConnectorRegistry:
     # The running search service provides public indexed discovery, not logged-in
     # platform access. No synthetic adapter registration or live proof is added.
     from skriller.connectors.github import public_github_binding
@@ -47,6 +55,12 @@ def default_registry(workspace_id: UUID, *, youtube_image: str | None = None) ->
     registry.register_adapter(
         public_youtube_binding(ConcreteYouTubeExecutor(youtube_image) if youtube_image else None)
     )
+    if x_image and database is not None and connection_store is not None:
+        from skriller.connectors.x_executor import ConcreteXExecutor, public_x_binding
+
+        registry.register_adapter(
+            public_x_binding(ConcreteXExecutor(x_image), database=database, store=connection_store)
+        )
     return registry
 
 
@@ -56,12 +70,39 @@ def diagnose(
     *,
     search_enabled: bool = True,
     youtube_image: str | None = None,
+    x_image: str | None = None,
+    database=None,
+    connection_store=None,
 ) -> list[SourceDiagnostic]:
     from skriller.db.repositories import scope
 
-    registry = registry or default_registry(UUID(scope(session)), youtube_image=youtube_image)
+    registry = registry or default_registry(
+        UUID(scope(session)),
+        youtube_image=youtube_image,
+        x_image=x_image,
+        database=database,
+        connection_store=connection_store,
+    )
     if str(registry.workspace_id) != scope(session):
         raise ValueError("Diagnostic registry belongs to another workspace")
+    if x_image and database is not None and connection_store is not None:
+        from skriller.connections.tables import connections
+
+        rows = (
+            session.execute(
+                sa.select(connections.c.scopes).where(
+                    connections.c.workspace_id == scope(session),
+                    connections.c.source == "x",
+                    connections.c.auth_kind == "oauth",
+                    connections.c.state == "active",
+                    connections.c.expires_at > sa.func.clock_timestamp(),
+                )
+            )
+            .scalars()
+            .all()
+        )
+        if any({"read", "discover"} <= set(value) for value in rows):
+            registry.connected_sources = frozenset({"x"})
     disabled = disabled_operations(session)
     results = []
     for source in get_args(Source):

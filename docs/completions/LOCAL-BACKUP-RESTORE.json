@@ -1,24 +1,25 @@
 {
   "fixture": "two synthetic tenants; backup precedes owner deletion; source DB destroyed; independent current encrypted receipt",
   "backup": {
-    "created_at": "2026-10-15T22:21:43.367926+00:00",
-    "expires_at": "2026-10-22T22:21:43.367926+00:00",
+    "created_at": "2026-10-16T21:33:33.939524+00:00",
+    "expires_at": "2026-10-23T21:33:33.939524+00:00",
     "key_version": "v1",
     "objects": 2,
-    "backup_seconds": 0.498
+    "backup_seconds": 0.079
   },
   "restore": {
     "status": "restored_offline",
     "objects": 2,
     "replayed_entities": 1,
     "workspaces": 2,
-    "snapshot_age_seconds": 1.135,
-    "restore_seconds": 0.495,
+    "snapshot_age_seconds": 0.43,
+    "restore_seconds": 0.211,
     "traffic_enabled": false
   },
   "checks": [
     "deleted claims/blob removed",
     "retained evidence hash",
-    "tenant isolation"
+    "tenant isolation",
+    "restored automations disabled and webhook signing ciphertext removed"
   ]
 }

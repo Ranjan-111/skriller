@@ -72,6 +72,8 @@ class FetchArtifact:
     access_route: str = "scrapling_http_guarded_proxy"
     evidence_kind: str = "page_read"
     browser_seconds: float | None = None
+    cache_expires_at: datetime | None = None
+    revalidated_at: datetime | None = None
 
     def persist(self, session, storage):
         """Persist raw bytes plus private JSON metadata referencing their evidence ID."""
@@ -85,6 +87,8 @@ class FetchArtifact:
             raise PermissionError("Artifact workspace differs from persistence scope")
         if permit_call(session, self.job_id) <= 0:
             raise _failure("deadline_exceeded", "Job no longer permits artifact writes")
+        if self.cache_expires_at is not None and self.cache_expires_at <= datetime.now(UTC):
+            raise _failure("evidence_missing", "Conditional source evidence has expired")
         if sha256(self.response.body).hexdigest() != self.content_hash:
             raise ValueError("Artifact bytes changed after collection")
         record = storage.store(
@@ -93,6 +97,7 @@ class FetchArtifact:
             source_url=self.final_url,
             source_platform=self.source,
             collected_at=self.collected_at,
+            expires_at=self.cache_expires_at,
         )
         metadata = {
             "schema_version": 1,
@@ -113,6 +118,7 @@ class FetchArtifact:
             "browser_seconds": self.browser_seconds,
             "parser_seconds": self.parser_seconds,
             "attempts": self.attempts,
+            "revalidated_at": self.revalidated_at.isoformat() if self.revalidated_at else None,
         }
         try:
             metadata_record = storage.store(
@@ -121,6 +127,7 @@ class FetchArtifact:
                 source_url=self.final_url,
                 source_platform=self.source,
                 collected_at=self.collected_at,
+                expires_at=self.cache_expires_at,
             )
         except BaseException:
             storage.backend.delete(self.workspace_id, record["object_key"])
@@ -250,6 +257,7 @@ class HTTPFetcher:
         source: Source,
         operation_key: str,
         minimum_interval: float = 0,
+        revalidation: FetchArtifact | None = None,
     ) -> FetchArtifact:
         """Synchronous callers run the same copied asynchronous fetch boundary."""
         try:
@@ -262,6 +270,7 @@ class HTTPFetcher:
                     source=source,
                     operation_key=operation_key,
                     minimum_interval=minimum_interval,
+                    revalidation=revalidation,
                 )
             )
         raise RuntimeError("Use await HTTPFetcher.afetch inside an active event loop")
@@ -274,6 +283,7 @@ class HTTPFetcher:
         source: Source,
         operation_key: str,
         minimum_interval: float = 0,
+        revalidation: FetchArtifact | None = None,
     ) -> FetchArtifact:
         if source not in get_args(Source):
             raise ValueError("Unsupported source identity")
@@ -293,6 +303,32 @@ class HTTPFetcher:
             raise _failure("access_denied", "Source is outside public HTTP policy") from None
         if context.attempt_budget < 1:
             raise _failure("budget_exhausted", "No fetch attempts remain")
+        validators = {}
+        cache_expiry = revalidation.cache_expires_at if revalidation is not None else None
+        if revalidation is not None:
+            if (
+                source != "web"
+                or revalidation.source != source
+                or revalidation.workspace_id != str(context.workspace_id)
+                or revalidation.job_id != str(context.job_id)
+                or revalidation.requested_url != requested
+                or revalidation.final_url != requested
+                or revalidation.response.url != requested
+                or revalidation.response.status != 200
+                or revalidation.access_route != "tenant_fresh_public_cache"
+                or not revalidation.classification.accepts_content
+                or len(revalidation.response.body) > self.max_body_bytes
+                or sha256(revalidation.response.body).hexdigest() != revalidation.content_hash
+                or revalidation.cache_expires_at is None
+                or revalidation.cache_expires_at.tzinfo is None
+            ):
+                raise ValueError("Revalidation requires matching scoped cache evidence")
+            for name, value in revalidation.response.headers.items():
+                if str(name).lower() in {"etag", "last-modified"}:
+                    value = str(value)
+                    if not value or len(value) > 1024 or any(c in value for c in "\r\n"):
+                        raise ValueError("Invalid conditional response validator")
+                    validators[str(name).lower()] = value
         # Preserve typed job/source refusals before creating a scoped gateway.
         with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
             if is_disabled(session, source, "read"):
@@ -405,6 +441,17 @@ class HTTPFetcher:
                 started = monotonic()
                 succeeded, headers, reply = False, {}, None
                 attempts_used += 1
+                conditional_headers = {}
+                if (
+                    revalidation is not None
+                    and current == requested
+                    and cache_expiry is not None
+                    and cache_expiry > datetime.now(UTC)
+                ):
+                    if validators.get("etag"):
+                        conditional_headers["If-None-Match"] = validators["etag"]
+                    elif validators.get("last-modified"):
+                        conditional_headers["If-Modified-Since"] = validators["last-modified"]
                 try:
                     timeout = min(
                         remaining, self.timeout_seconds, lease.deadline_monotonic - monotonic()
@@ -419,7 +466,10 @@ class HTTPFetcher:
                             retries=0,
                             content_callback=consume,
                             discard_cookies=True,
-                            headers={"Accept": "text/html,application/xhtml+xml,text/plain"},
+                            headers={
+                                "Accept": "text/html,application/xhtml+xml,text/plain",
+                                **conditional_headers,
+                            },
                         )
                     )
                     try:
@@ -521,7 +571,30 @@ class HTTPFetcher:
                     )
                 if reply.status == 404:
                     raise _failure("not_found", "Source page was not found")
-                if not 200 <= reply.status < 300:
+                unchanged = reply.status == 304
+                raw = bytes(buffer)
+                collected_at = datetime.now(UTC)
+                revalidated_at = None
+                if unchanged:
+                    if (
+                        revalidation is None
+                        or not conditional_headers
+                        or current != requested
+                        or cache_expiry is None
+                        or cache_expiry <= datetime.now(UTC)
+                        or (headers.get("etag") and headers["etag"] != validators.get("etag"))
+                    ):
+                        raise _failure(
+                            "evidence_missing", "Conditional source evidence is unavailable"
+                        )
+                    # A 304 is not a new page or permission to extend cached/claim freshness.
+                    headers = {
+                        str(k).lower(): str(v) for k, v in revalidation.response.headers.items()
+                    }
+                    raw = revalidation.response.body
+                    collected_at = revalidation.collected_at
+                    revalidated_at = datetime.now(UTC)
+                elif not 200 <= reply.status < 300:
                     raise _failure("source_unavailable", "Source returned an unavailable response")
                 content_type = headers.get("content-type", "").split(";", 1)[0].lower()
                 allowed_types = {"text/html", "application/xhtml+xml", "text/plain"}
@@ -534,7 +607,6 @@ class HTTPFetcher:
                     }
                 if content_type not in allowed_types:
                     raise _failure("unsupported_operation", "Source content type is not supported")
-                raw = bytes(buffer)
                 with self.database.tenant(context.actor_id, str(context.workspace_id)) as session:
                     if (
                         permit_call(session, str(context.job_id)) <= 0
@@ -547,10 +619,10 @@ class HTTPFetcher:
                 parsed_response = Response(
                     current,
                     raw,
-                    reply.status,
-                    reply.reason,
+                    200 if unchanged else reply.status,
+                    "OK" if unchanged else reply.reason,
                     {},
-                    dict(reply.headers),
+                    headers,
                     {},
                     adaptive=False,
                 )
@@ -558,7 +630,7 @@ class HTTPFetcher:
                     raw,
                     source=source,
                     final_url=current,
-                    status=reply.status,
+                    status=200 if unchanged else reply.status,
                     content_type=content_type,
                     document=parsed_response,
                 )
@@ -593,12 +665,14 @@ class HTTPFetcher:
                         "Source content is not ready for extraction",
                         classification=classification,
                     )
+                if unchanged and cache_expiry is not None and cache_expiry <= datetime.now(UTC):
+                    raise _failure("evidence_missing", "Conditional source evidence has expired")
                 return FetchArtifact(
                     parsed_response,
                     source,
                     requested,
                     current,
-                    datetime.now(UTC),
+                    collected_at,
                     content_type,
                     sha256(raw).hexdigest(),
                     len(raw),
@@ -609,5 +683,10 @@ class HTTPFetcher:
                     str(context.job_id),
                     classification,
                     evidence_kind=classification.evidence_kind,
+                    access_route="scrapling_http_conditional"
+                    if unchanged
+                    else "scrapling_http_guarded_proxy",
+                    cache_expires_at=cache_expiry if unchanged else None,
+                    revalidated_at=revalidated_at,
                 )
         raise _failure("source_unavailable", "Source read did not complete")

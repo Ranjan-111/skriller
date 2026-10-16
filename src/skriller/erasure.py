@@ -301,6 +301,13 @@ def purge(session, storage, members, bodies):
                 expires_at=datetime.now(UTC),
             )
         )
+    from skriller.automation_lifecycle import quarantine
+    from skriller.webhooks.tables import deliveries as webhook_deliveries
+
+    quarantine(session, "data_erasure")
+    session.execute(
+        sa.delete(webhook_deliveries).where(webhook_deliveries.c.workspace_id == workspace)
+    )
     session.execute(sa.delete(list_snapshots).where(list_snapshots.c.workspace_id == workspace))
     session.execute(
         sa.update(followup_reports)

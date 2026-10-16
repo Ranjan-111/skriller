@@ -200,8 +200,15 @@ jobs = scoped(
     sa.Column("completed_at", sa.DateTime(timezone=True)),
     sa.Column("failure_code", sa.String(64)),
     sa.Column("purpose", sa.String(16), nullable=False, server_default="research"),
+    sa.Column("schedule_id", UUID(as_uuid=False)),
     sa.Column("terminal_reason", sa.String(64)),
     constraints=(
+        sa.ForeignKeyConstraint(
+            ["workspace_id", "schedule_id"],
+            ["research_schedules.workspace_id", "research_schedules.id"],
+            name="job_schedule_scope",
+            use_alter=True,
+        ),
         sa.ForeignKeyConstraint(
             ["workspace_id", "conversation_id", "plan_id"],
             ["plans.workspace_id", "plans.conversation_id", "plans.id"],
@@ -211,7 +218,9 @@ jobs = scoped(
             "state IN ('planned','queued','running','waiting_for_connection','paused','completed','partial','failed','cancelled')"
         ),
         sa.CheckConstraint("version > 0"),
-        sa.CheckConstraint("purpose IN ('research','planning','followup')"),
+        sa.CheckConstraint(
+            "purpose IN ('research','planning','followup','template_repair','owner_summary')"
+        ),
         sa.CheckConstraint(
             "(state IN ('completed','partial','failed','cancelled')) = "
             "(terminal_reason IS NOT NULL)",

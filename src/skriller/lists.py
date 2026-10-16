@@ -394,7 +394,7 @@ def refresh_list(session, list_id: str, entity_ids: tuple[str, ...], *, expected
     }
     if len(TypeAdapter(dict).dump_json(payload)) > 1_048_576:
         raise ValueError("Snapshot payload exceeds1MiB bounds")
-    return insert_row(
+    result = insert_row(
         session,
         list_snapshots,
         list_id=list_id,
@@ -403,6 +403,10 @@ def refresh_list(session, list_id: str, entity_ids: tuple[str, ...], *, expected
         payload=payload,
         created_by=session.info["actor_id"],
     )
+    from skriller.webhooks.service import enqueue_snapshot
+
+    enqueue_snapshot(session, result)
+    return result
 
 
 def snapshot(session, list_id: str, revision: int):

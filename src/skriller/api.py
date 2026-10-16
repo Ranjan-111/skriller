@@ -11,22 +11,28 @@ from fastapi.responses import JSONResponse
 from kombu import Connection, Queue
 from sqlalchemy import create_engine, text
 
+from skriller.analytics.router import router as analytics_router
 from skriller.auth import Identity, require_identity
 from skriller.connections.router import router as connections_router
 from skriller.connectors.router import router as connectors_router
 from skriller.connectors.search import ExaKeylessSearch
 from skriller.contracts import Capability, ExecutionContext, Failure, ProgressEvent, SearchPlan
+from skriller.crm.router import router as crm_router
 from skriller.db import Database
 from skriller.entitlements_router import router as entitlements_router
 from skriller.erasure_router import router as erasure_router
 from skriller.exports.router import router as exports_router
 from skriller.lists_router import router as lists_router
 from skriller.progress import router as progress_router
+from skriller.qualification.role_router import router as role_review_router
 from skriller.qualification.router import router as identity_router
 from skriller.research.router import router as research_router
+from skriller.research.template_repair_router import router as template_repair_router
 from skriller.research.template_router import router as template_router
+from skriller.schedules_router import router as schedules_router
 from skriller.settings import Settings
 from skriller.storage.configuration import configured_storage
+from skriller.webhooks.router import router as webhooks_router
 
 
 def database_available(url: str) -> bool:
@@ -90,13 +96,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(progress_router)
     app.include_router(research_router)
     app.include_router(template_router)
+    app.include_router(template_repair_router)
     app.include_router(connections_router)
+    app.include_router(analytics_router)
+    app.include_router(crm_router)
     app.include_router(connectors_router)
     app.include_router(exports_router)
     app.include_router(lists_router)
+    app.include_router(webhooks_router)
+    app.include_router(schedules_router)
     app.include_router(entitlements_router)
     app.include_router(erasure_router)
     app.include_router(identity_router)
+    app.include_router(role_review_router)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=configuration.cors_origins,

@@ -141,8 +141,13 @@ def collection_handler(
             )
             try:
                 replay_key = None
+                revalidation = None
                 if cache_ttl_seconds:
-                    from skriller.research.collection_cache import cache_key, read_cached
+                    from skriller.research.collection_cache import (
+                        cache_key,
+                        needs_revalidation,
+                        read_cached,
+                    )
 
                     try:
                         replay_key = cache_key(url, plan.entity_type)
@@ -150,10 +155,16 @@ def collection_handler(
                         pass  # Credential-like query URLs cannot enter the cache.
                     if replay_key is not None:
                         artifact = read_cached(database, storage, context, replay_key)
+                        if artifact is not None and needs_revalidation(artifact):
+                            revalidation, artifact = artifact, None
                 try:
                     if artifact is None:
                         artifact = fetcher.fetch(
-                            context, url, source="web", operation_key=identity.attempt_id.hex
+                            context,
+                            url,
+                            source="web",
+                            operation_key=identity.attempt_id.hex,
+                            revalidation=revalidation,
                         )
                 except FetchUnavailable as exc:
                     if (

@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "measurement_origin": "Supplied scalar reports; aggregation does not execute or attest model/source calls",
+  "runs": [
+    {
+      "dimension": "field_extraction",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/OLLAMA-llama3.2-3b-benchmark.json",
+      "report_sha256": "5467c56de742551d8920d159eefd1b00b1c1215df56732d40c10bf3821c393cf",
+      "scope": "not_reported",
+      "accuracy_definition": "Report-specific labelled outcome accuracy; see original report",
+      "denominator": 5,
+      "outcomes": {
+        "passed": 4,
+        "quality_failed": 1
+      },
+      "accuracy": 0.8,
+      "model_mode": "local_ollama:llama3.2:3b"
+    },
+    {
+      "dimension": "repair",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/REPAIR-QUALITY-LOCAL-INITIAL.json",
+      "report_sha256": "d578354d262385e2a6976451a22fbfc148e0f103c75cc2bff6321d9951bc2568",
+      "scope": "Development fixture acceptance, not a held-out or representative platform benchmark",
+      "accuracy_definition": "Exact labelled element path and literal value. Equivalent nested elements count as target mismatches under this conservative metric.",
+      "denominator": 24,
+      "positive_denominator": 20,
+      "adversarial_denominator": 4,
+      "outcomes": {
+        "correct": 14,
+        "missing": 4,
+        "rejected": 4,
+        "silent_wrong": 2
+      },
+      "field_accuracy": 0.7,
+      "required_field_accuracy": 0.9,
+      "allowed_silent_target_mismatches": 0,
+      "gate_passed": false,
+      "model_mode": "actual_local_ollama_llama3.2:3b"
+    },
+    {
+      "dimension": "repair",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/REPAIR-QUALITY-LOCAL-STABLE-ATTRIBUTES.json",
+      "report_sha256": "b7a65d1a31ed1d939391783df722a9f49abe9cc91e6515a8ff2bccf67a2297f2",
+      "scope": "Development fixture acceptance, not a held-out or representative platform benchmark",
+      "accuracy_definition": "Exact labelled element path and literal value. Equivalent nested elements count as target mismatches under this conservative metric.",
+      "denominator": 24,
+      "positive_denominator": 20,
+      "adversarial_denominator": 4,
+      "outcomes": {
+        "correct": 14,
+        "missing": 5,
+        "rejected": 4,
+        "silent_wrong": 1
+      },
+      "field_accuracy": 0.7,
+      "required_field_accuracy": 0.9,
+      "allowed_silent_target_mismatches": 0,
+      "gate_passed": false,
+      "model_mode": "actual_local_ollama_llama3.2:3b"
+    },
+    {
+      "dimension": "repair",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/REPAIR-QUALITY-LOCAL-ENUM.json",
+      "report_sha256": "f48fa1e8c04854b11c7dcb4802fad2ecef28f5d859afa34401832a7a2be63cb1",
+      "scope": "Development fixture acceptance, not a held-out or representative platform benchmark",
+      "accuracy_definition": "Exact labelled element path and literal value; equivalent nested elements count as target mismatches under this conservative metric.",
+      "denominator": 24,
+      "positive_denominator": 20,
+      "adversarial_denominator": 4,
+      "outcomes": {
+        "correct": 19,
+        "rejected": 4,
+        "silent_wrong": 1
+      },
+      "field_accuracy": 0.95,
+      "required_field_accuracy": 0.9,
+      "allowed_silent_target_mismatches": 0,
+      "gate_passed": false,
+      "model_mode": "actual_local_ollama_llama3.2:3b"
+    },
+    {
+      "dimension": "repair",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/REPAIR-QUALITY-LOCAL.json",
+      "report_sha256": "55547c86e8a10b484c51a811d0980cd5e7b6fb6ffe6e457ad12458f7bfd7c399",
+      "scope": "Development fixture acceptance, not a held-out or representative platform benchmark",
+      "accuracy_definition": "Exact labelled element path and literal value; equivalent nested elements count as target mismatches under this conservative metric.",
+      "denominator": 24,
+      "positive_denominator": 20,
+      "adversarial_denominator": 4,
+      "outcomes": {
+        "correct": 19,
+        "missing": 1,
+        "rejected": 4
+      },
+      "field_accuracy": 0.95,
+      "required_field_accuracy": 0.9,
+      "allowed_silent_target_mismatches": 0,
+      "gate_passed": true,
+      "model_mode": "actual_local_ollama_llama3.2:3b"
+    },
+    {
+      "dimension": "qualification",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/QUALIFICATION-QUALITY-LOCAL.json",
+      "report_sha256": "f8baaf19f40559413218f84159438d7d215d11c43bac68bb3a909387b7a1fa9d",
+      "scope": "Development fixture acceptance over seeded reviewed facts; no live platform or model execution",
+      "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
+      "denominator": 24,
+      "positive_denominator": 6,
+      "negative_denominator": 18,
+      "accepted_denominator": 6,
+      "true_positive": 6,
+      "precision": 1.0,
+      "outcomes": {
+        "accepted": 6,
+        "rejected": 18
+      },
+      "correct": 24,
+      "incorrect": 0,
+      "accuracy": 1.0,
+      "model_mode": "actual_local_database_no_model"
+    },
+    {
+      "dimension": "identity",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/IDENTITY-QUALITY-FUTURE-FAILURE.json",
+      "report_sha256": "ac8db0dd979374d952e99b754cf5d2777dea496f868fc88db2ff32a63ad96e67",
+      "scope": "Development fixture acceptance over seeded reviewed facts; no live platform or model execution",
+      "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
+      "denominator": 21,
+      "positive_denominator": 6,
+      "negative_denominator": 15,
+      "accepted_denominator": 7,
+      "true_positive": 6,
+      "precision": 0.8571428571428571,
+      "outcomes": {
+        "accepted": 7,
+        "rejected": 14
+      },
+      "correct": 20,
+      "incorrect": 1,
+      "accuracy": 0.9523809523809523,
+      "model_mode": "actual_local_database_no_model"
+    },
+    {
+      "dimension": "identity",
+      "source_group": "synthetic_fixture",
+      "report": "docs/completions/IDENTITY-QUALITY-LOCAL.json",
+      "report_sha256": "b904580ec22a0a998103930eb3de398bb51d49cb880ebeb242ae6ec64f64a4be",
+      "scope": "Development fixture acceptance over seeded reviewed facts; no live platform or model execution",
+      "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
+      "denominator": 21,
+      "positive_denominator": 6,
+      "negative_denominator": 15,
+      "accepted_denominator": 6,
+      "true_positive": 6,
+      "precision": 1.0,
+      "outcomes": {
+        "accepted": 6,
+        "rejected": 15
+      },
+      "correct": 21,
+      "incorrect": 0,
+      "accuracy": 1.0,
+      "model_mode": "actual_local_database_no_model"
+    }
+  ],
+  "dimensions": {
+    "field_extraction": {
+      "status": "measured",
+      "unmeasured_reason": null,
+      "sources": {
+        "synthetic_fixture": {
+          "runs": 1,
+          "run_denominators": [
+            5
+          ],
+          "runs_summary": [
+            {
+              "report": "docs/completions/OLLAMA-llama3.2-3b-benchmark.json",
+              "report_sha256": "5467c56de742551d8920d159eefd1b00b1c1215df56732d40c10bf3821c393cf",
+              "denominator": 5,
+              "outcomes": {
+                "passed": 4,
+                "quality_failed": 1
+              },
+              "accuracy": 0.8,
+              "model_mode": "local_ollama:llama3.2:3b"
+            }
+          ]
+        }
+      }
+    },
+    "qualification": {
+      "status": "measured",
+      "unmeasured_reason": null,
+      "sources": {
+        "synthetic_fixture": {
+          "runs": 1,
+          "run_denominators": [
+            24
+          ],
+          "runs_summary": [
+            {
+              "report": "docs/completions/QUALIFICATION-QUALITY-LOCAL.json",
+              "report_sha256": "f8baaf19f40559413218f84159438d7d215d11c43bac68bb3a909387b7a1fa9d",
+              "denominator": 24,
+              "positive_denominator": 6,
+              "negative_denominator": 18,
+              "accepted_denominator": 6,
+              "true_positive": 6,
+              "precision": 1.0,
+              "outcomes": {
+                "accepted": 6,
+                "rejected": 18
+              },
+              "accuracy": 1.0,
+              "correct": 24,
+              "incorrect": 0,
+              "model_mode": "actual_local_database_no_model"
+            }
+          ]
+        }
+      }
+    },
+    "identity": {
+      "status": "measured",
+      "unmeasured_reason": null,
+      "sources": {
+        "synthetic_fixture": {
+          "runs": 2,
+          "run_denominators": [
+            21,
+            21
+          ],
+          "runs_summary": [
+            {
+              "report": "docs/completions/IDENTITY-QUALITY-FUTURE-FAILURE.json",
+              "report_sha256": "ac8db0dd979374d952e99b754cf5d2777dea496f868fc88db2ff32a63ad96e67",
+              "denominator": 21,
+              "positive_denominator": 6,
+              "negative_denominator": 15,
+              "accepted_denominator": 7,
+              "true_positive": 6,
+              "precision": 0.8571428571428571,
+              "outcomes": {
+                "accepted": 7,
+                "rejected": 14
+              },
+              "accuracy": 0.9523809523809523,
+              "correct": 20,
+              "incorrect": 1,
+              "model_mode": "actual_local_database_no_model"
+            },
+            {
+              "report": "docs/completions/IDENTITY-QUALITY-LOCAL.json",
+              "report_sha256": "b904580ec22a0a998103930eb3de398bb51d49cb880ebeb242ae6ec64f64a4be",
+              "denominator": 21,
+              "positive_denominator": 6,
+              "negative_denominator": 15,
+              "accepted_denominator": 6,
+              "true_positive": 6,
+              "precision": 1.0,
+              "outcomes": {
+                "accepted": 6,
+                "rejected": 15
+              },
+              "accuracy": 1.0,
+              "correct": 21,
+              "incorrect": 0,
+              "model_mode": "actual_local_database_no_model"
+            }
+          ]
+        }
+      }
+    },
+    "repair": {
+      "status": "measured",
+      "unmeasured_reason": null,
+      "sources": {
+        "synthetic_fixture": {
+          "runs": 4,
+          "run_denominators": [
+            24,
+            24,
+            24,
+            24
+          ],
+          "runs_summary": [
+            {
+              "report": "docs/completions/REPAIR-QUALITY-LOCAL-INITIAL.json",
+              "report_sha256": "d578354d262385e2a6976451a22fbfc148e0f103c75cc2bff6321d9951bc2568",
+              "denominator": 24,
+              "positive_denominator": 20,
+              "adversarial_denominator": 4,
+              "outcomes": {
+                "correct": 14,
+                "missing": 4,
+                "rejected": 4,
+                "silent_wrong": 2
+              },
+              "field_accuracy": 0.7,
+              "gate_passed": false,
+              "model_mode": "actual_local_ollama_llama3.2:3b"
+            },
+            {
+              "report": "docs/completions/REPAIR-QUALITY-LOCAL-STABLE-ATTRIBUTES.json",
+              "report_sha256": "b7a65d1a31ed1d939391783df722a9f49abe9cc91e6515a8ff2bccf67a2297f2",
+              "denominator": 24,
+              "positive_denominator": 20,
+              "adversarial_denominator": 4,
+              "outcomes": {
+                "correct": 14,
+                "missing": 5,
+                "rejected": 4,
+                "silent_wrong": 1
+              },
+              "field_accuracy": 0.7,
+              "gate_passed": false,
+              "model_mode": "actual_local_ollama_llama3.2:3b"
+            },
+            {
+              "report": "docs/completions/REPAIR-QUALITY-LOCAL-ENUM.json",
+              "report_sha256": "f48fa1e8c04854b11c7dcb4802fad2ecef28f5d859afa34401832a7a2be63cb1",
+              "denominator": 24,
+              "positive_denominator": 20,
+              "adversarial_denominator": 4,
+              "outcomes": {
+                "correct": 19,
+                "rejected": 4,
+                "silent_wrong": 1
+              },
+              "field_accuracy": 0.95,
+              "gate_passed": false,
+              "model_mode": "actual_local_ollama_llama3.2:3b"
+            },
+            {
+              "report": "docs/completions/REPAIR-QUALITY-LOCAL.json",
+              "report_sha256": "55547c86e8a10b484c51a811d0980cd5e7b6fb6ffe6e457ad12458f7bfd7c399",
+              "denominator": 24,
+              "positive_denominator": 20,
+              "adversarial_denominator": 4,
+              "outcomes": {
+                "correct": 19,
+                "missing": 1,
+                "rejected": 4
+              },
+              "field_accuracy": 0.95,
+              "gate_passed": true,
+              "model_mode": "actual_local_ollama_llama3.2:3b"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

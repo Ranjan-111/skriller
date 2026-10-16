@@ -1,6 +1,7 @@
 """Opt-in short-lived public HTTP replay using the copied scoped cache."""
 
 import asyncio
+from datetime import UTC, datetime
 from hashlib import sha256
 from time import monotonic
 
@@ -65,6 +66,23 @@ def read_cached(database, storage, context, key):
         job_id=str(context.job_id),
         classification=classification,
         access_route="tenant_fresh_public_cache",
+        cache_expires_at=hit.metadata.expires_at,
+    )
+
+
+def needs_revalidation(artifact):
+    """Use validators in the second half of a fresh public entry's original TTL.
+
+    Expired objects are never read for this purpose. A successful 304 retains the
+    original body collection date and expiry; it does not refresh a role claim.
+    """
+    return (
+        artifact.cache_expires_at is not None
+        and datetime.now(UTC)
+        >= artifact.collected_at + (artifact.cache_expires_at - artifact.collected_at) / 2
+        and any(
+            str(name).lower() in {"etag", "last-modified"} for name in artifact.response.headers
+        )
     )
 
 

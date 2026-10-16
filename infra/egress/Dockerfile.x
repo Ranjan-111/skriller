@@ -1,0 +1,9 @@
+ARG BASE_IMAGE=python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+FROM ${BASE_IMAGE}
+RUN apt-get update && apt-get install -y --no-install-recommends iptables util-linux \
+    && rm -rf /var/lib/apt/lists/*
+COPY infra/egress/guarded-worker.sh /usr/local/bin/guarded-worker
+RUN chmod 755 /usr/local/bin/guarded-worker
+COPY src/skriller /app/src/skriller
+ENV PYTHONPATH=/app/src
+ENTRYPOINT ["/usr/local/bin/guarded-worker"]

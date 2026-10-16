@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "provider": "exa_keyless",
+  "status": "measured",
+  "synthetic_or_public_queries_only": true,
+  "query_count": 3,
+  "provider_invocations": 3,
+  "elapsed_ms": 14624,
+  "accepted_hits": 15,
+  "rejected_hits": 0,
+  "truncated_queries": 1,
+  "pagination_supported": false,
+  "pagination_observation": "adapter exposes one bounded result page; no pagination call made",
+  "operator_semantics": "unknown",
+  "domain_filter_semantics": "target-domain matches measured from returned URLs; not provider enforcement",
+  "duplicate_rate": "unavailable_after_adapter_deduplication",
+  "billed_cost": "unknown_no_authenticated_billing_account",
+  "commercial_use_and_storage_rights": "unverified",
+  "raw_queries_or_results_persisted": false,
+  "query_results": [
+    {
+      "id": "linkedin",
+      "status": "measured",
+      "provider_invocations": 1,
+      "elapsed_ms": 6956,
+      "accepted_hits": 5,
+      "rejected_hits": 0,
+      "truncated": false,
+      "target_domain_matches": 5,
+      "expected_url_matches": null,
+      "expected_url_label_count": 0,
+      "pagination_supported": false
+    },
+    {
+      "id": "reddit",
+      "status": "measured",
+      "provider_invocations": 1,
+      "elapsed_ms": 2559,
+      "accepted_hits": 5,
+      "rejected_hits": 0,
+      "truncated": false,
+      "target_domain_matches": 5,
+      "expected_url_matches": null,
+      "expected_url_label_count": 0,
+      "pagination_supported": false
+    },
+    {
+      "id": "company",
+      "status": "measured",
+      "provider_invocations": 1,
+      "elapsed_ms": 5109,
+      "accepted_hits": 5,
+      "rejected_hits": 0,
+      "truncated": true,
+      "target_domain_matches": null,
+      "expected_url_matches": null,
+      "expected_url_label_count": 0,
+      "pagination_supported": false
+    }
+  ],
+  "limitations": [
+    "Exact expected-URL matching is unavailable when a query has no ground-truth URL labels.",
+    "A single bounded public corpus does not establish source completeness or lead quality.",
+    "One logical adapter invocation may use multiple transport requests for MCP setup; network request count is not inferred."
+  ]
+}

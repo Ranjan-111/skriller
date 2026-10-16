@@ -59,6 +59,24 @@ it("preserves evidence-backed fit separately from an unverified indexed referenc
   expect(result.results[0].qualification).toBe("unverified");
 });
 
+it("accepts legacy results without resume readiness but rejects unknown readiness values", async () => {
+  const legacy = fitView();
+  const api = createApi(
+    "http://api",
+    vi.fn().mockResolvedValue(response(legacy)),
+  );
+  expect(await api.results("j1", "w1")).not.toHaveProperty("resume_status");
+
+  const invalid = { ...fitView(), resume_status: "maybe" };
+  const invalidApi = createApi(
+    "http://api",
+    vi.fn().mockResolvedValue(response(invalid)),
+  );
+  await expect(invalidApi.results("j1", "w1")).rejects.toThrow(
+    "unexpected results",
+  );
+});
+
 it("accepts only honest indexed LinkedIn and Reddit access metadata", async () => {
   const valid = fitView();
   const candidate: Record<string, unknown> = valid.results[0];

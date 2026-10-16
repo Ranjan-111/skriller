@@ -19,6 +19,7 @@ import {
 
 import { downloadSources, SOURCE_EXPORT_LIMIT } from "../lib/exports";
 import { SavedListsPanel } from "./saved-lists-panel";
+import { CrmDeliveryPanel } from "./crm-delivery-panel";
 import { FollowupPanel } from "./followup-panel";
 import { ResearchExpansion } from "./research-expansion";
 import { ResearchRefinement } from "./research-refinement";
@@ -932,6 +933,16 @@ export function ResearchResultsPanel({
           candidates={results?.results ?? []}
         />
       )}
+      {job.workspace_id && plan?.plan_id && results?.groups && (
+        <CrmDeliveryPanel
+          api={api}
+          workspaceId={job.workspace_id}
+          planId={plan.plan_id}
+          candidates={results.results}
+          confirmed={results.groups.confirmed}
+          near={results.groups.near_match}
+        />
+      )}
       {job.workspace_id && finished.has(state) && (
         <ResearchExpansion
           api={api}
@@ -1091,32 +1102,51 @@ export function ResearchResultsPanel({
       )}
       {state === "paused" && job.workspace_id && (
         <div className="run-recovery">
-          <p>
-            Saved results are available. You can resume only if the service
-            confirms the checkpoint and remaining run budget are safe.
+          <p role="status">
+            {results?.resume_status === "available"
+              ? "Saved results are available. The service confirmed this run can resume within its remaining limits."
+              : results?.resume_status === "requires_reconciliation"
+                ? "This run needs review before it can resume. Its saved results remain available."
+                : results?.resume_status === "deadline_expired"
+                  ? "The time limit for this run has passed. Its saved results remain available; start a new run to continue."
+                  : results?.resume_status === "budget_exhausted"
+                    ? "This run has reached its budget. Its saved results remain available; start a new run to continue."
+                    : results?.resume_status === "new_prompt_required"
+                      ? "This request needs a corrected prompt before it can continue. Its saved results remain available."
+                      : "Resume availability cannot be confirmed yet. Your saved results remain available; check the run again before continuing."}
           </p>
+          {results?.resume_status === "available" && (
+            <button
+              className="text-button"
+              type="button"
+              disabled={resuming}
+              onClick={async () => {
+                setResuming(true);
+                setError("");
+                try {
+                  await api.resume(job.id, job.workspace_id!);
+                  setRetry((value) => value + 1);
+                } catch (failure) {
+                  setError(
+                    failure instanceof Error
+                      ? failure.message
+                      : "The run could not be resumed. Your saved results remain available.",
+                  );
+                } finally {
+                  setResuming(false);
+                }
+              }}
+            >
+              {resuming ? "Checking checkpoint…" : "Resume research"}
+            </button>
+          )}
           <button
             className="text-button"
             type="button"
             disabled={resuming}
-            onClick={async () => {
-              setResuming(true);
-              setError("");
-              try {
-                await api.resume(job.id, job.workspace_id!);
-                setRetry((value) => value + 1);
-              } catch (failure) {
-                setError(
-                  failure instanceof Error
-                    ? failure.message
-                    : "The run could not be resumed. Your saved results remain available.",
-                );
-              } finally {
-                setResuming(false);
-              }
-            }}
+            onClick={() => setRetry((value) => value + 1)}
           >
-            {resuming ? "Checking checkpoint…" : "Resume research"}
+            Check run again <RefreshCw size={13} aria-hidden="true" />
           </button>
         </div>
       )}

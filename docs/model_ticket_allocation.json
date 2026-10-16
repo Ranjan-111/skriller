@@ -24,26 +24,38 @@
     "SKR-023",
     "SKR-024",
     "SKR-026",
+    "SKR-028",
+    "SKR-029",
     "SKR-031",
     "SKR-032",
+    "SKR-034",
     "SKR-035",
     "SKR-037",
     "SKR-038",
+    "SKR-039",
     "SKR-042",
+    "SKR-043",
     "SKR-044",
+    "SKR-045",
     "SKR-046",
     "SKR-047",
+    "SKR-048",
     "SKR-049",
     "SKR-050",
+    "SKR-051",
     "SKR-053",
     "SKR-054",
     "SKR-055",
+    "SKR-056",
+    "SKR-058",
     "SKR-063",
     "SKR-064",
+    "SKR-065",
+    "SKR-066",
     "SKR-069",
+    "SKR-070",
     "SKR-071",
-    "SKR-072",
-    "SKR-066"
+    "SKR-072"
   ],
   "tickets": [
     {
@@ -174,7 +186,7 @@
         "SKR-027"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-029",
@@ -189,7 +201,7 @@
         "SKR-028"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-030",
@@ -445,7 +457,7 @@
         "SKR-047"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-049",
@@ -490,7 +502,7 @@
         "SKR-049"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-096",
@@ -745,7 +757,7 @@
         "SKR-047"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-066",
@@ -927,7 +939,7 @@
         "SKR-074"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification"
     },
     {
       "ticket_id": "SKR-076",
@@ -950,7 +962,7 @@
         "SKR-068"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "in_progress"
     },
     {
       "ticket_id": "SKR-077",
@@ -971,7 +983,7 @@
         "SKR-074"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification"
     },
     {
       "ticket_id": "SKR-078",
@@ -990,7 +1002,7 @@
         "SKR-074"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification"
     },
     {
       "ticket_id": "SKR-079",
@@ -1011,7 +1023,7 @@
         "SKR-078"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification"
     },
     {
       "ticket_id": "SKR-080",
@@ -1026,7 +1038,7 @@
         "SKR-078"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-081",
@@ -1041,7 +1053,7 @@
         "SKR-080"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "planned"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-082",
@@ -1055,7 +1067,9 @@
         "SKR-065"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification",
+      "next_ui_subtask_model": "gpt-6-luna",
+      "ui_subtask_status": "implemented_locally_verified"
     },
     {
       "ticket_id": "SKR-083",
@@ -1069,7 +1083,9 @@
         "SKR-082"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification",
+      "next_ui_subtask_model": "gpt-6-luna",
+      "ui_subtask_status": "implemented_locally_verified"
     },
     {
       "ticket_id": "SKR-084",
@@ -1086,7 +1102,7 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "in_progress"
     },
     {
       "ticket_id": "SKR-085",
@@ -1136,7 +1152,7 @@
         "SKR-079"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "planned"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-088",
@@ -1151,7 +1167,7 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification"
     },
     {
       "ticket_id": "SKR-089",
@@ -1167,7 +1183,7 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-090",
@@ -1182,7 +1198,7 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "in_progress"
     },
     {
       "ticket_id": "SKR-091",
@@ -1232,7 +1248,7 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "done"
     },
     {
       "ticket_id": "SKR-094",
@@ -1269,22 +1285,25 @@
     }
   ],
   "execution_rules": [
-    "Next Luna SKR-012 is measurement-only: capture actual local copied-graph call/token callbacks in the existing benchmark, keep missing usage null and do not replace copied engines or change production budgets/providers. Sol retains source backend execution/credential/evidence architecture and planner quality.",
-    "Use dependency-ready batches; model groups cannot be completed in two uninterrupted passes because dependencies cross groups.",
+    "Sol grouped041public304,048durable repair orchestration/review and076initial labelled evaluation recorded; shared model/source/hosted quality gates remain explicit.",
+    "Next Luna076reporting support: bounded report/corpus validation and correct denominator aggregation only; Sol retains model/semantic/security ownership.",
+    "Use dependency-ready execution; independent local tooling/documentation may proceed before deferred hosted gates, with those acceptance dependencies explicit.",
     "Preserve existing copied source engines; do not rewrite verified components.",
-    "Only mark done after the whole acceptance scope and required tests pass; retain live/deployment gaps.",
+    "Only mark done after the whole acceptance scope and required checks pass; retain live/deployment gaps.",
     "Luna owns assigned tickets; Sol reviews changes to authorization, evidence truth, model budgets, exported private data or production gates.",
     "No retries of passing suites or broad redesign without a new failure/change.",
     "No new paid services or automatic cloud fallback. Keep Ollama default.",
-    "Escalate Luna work to Sol for an architectural change, security ambiguity or repeated unresolved failure; record the reason."
+    "Escalate architecture or security boundary uncertainty to Sol and record why."
   ],
-  "active_model": "gpt-6-luna",
+  "active_model": "gpt-6.1-sol",
   "active_reasoning_effort": "medium",
-  "execution_note": "Luna completed SKR-065 optional YouTube source selection, runtime validation of the typed youtube result, source-specific metadata/caption UI, timestamped source links, scoped citation loading and expired-evidence hiding. Full web suite 134 passed; TypeScript, generated contract check and Impeccable detector passed. Board remains 47 done/22 pending/25 planned/2 in progress. One final-image public YouTube read returned a backend failure; next switch to Sol for runtime diagnosis and remaining SKR-065 live source acceptance. No API key or browser test is needed for the completed UI.",
-  "unfinished_ticket_count": 49,
-  "next_model": "gpt-6.1-sol",
+  "execution_note": "2026-10-17 Sol: private summary admission/API/reporting worker plus Salesforce owner API/PKCE/automatic refresh/disconnect/expiry/restore implemented and verified offline.088 advances to implemented_pending_verification. Board57done/24pending/5in_progress/10planned. Next allocated frontend batch is Luna, not a claim that all Sol backlog is done.",
+  "unfinished_ticket_count": 39,
+  "next_model": "gpt-6-luna",
   "next_reasoning_effort": "medium",
   "next_batch": [
-    "SKR-065"
-  ]
+    "SKR-083",
+    "SKR-088"
+  ],
+  "next_batch_scope": "Luna UI: add private analytics summary submit/status/cancel to existing analytics panel; implement Salesforce owner connect/callback/destination/qualified-selection/delivery controls using generated real contracts. Read apps/web/AGENTS.md and frontend skill. Keep code/state promptly stripped and tab-bound to initiating uid/workspace/consent; no tokens or private metrics in persistent browser/shared research state. No browser/session inspection under existing restriction. Actual Google/Salesforce account gates stay pending. Sol retains billing090 checkout/customer binding/refund/dispute backend and084 isolated X executor, plus security/live reviews; no provider plan creation or key requests, which remain user-deferred."
 }

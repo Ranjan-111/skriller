@@ -31,6 +31,9 @@ def test_resume_api_preserves_plan_deadline_usage_and_is_idempotent(database, mo
         )
         JobRepository.transition(session, original["id"], "paused")
     endpoint = f"/v1/jobs/{accepted['job_id']}/resume"
+    assert (
+        client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["resume_status"] == "available"
+    )
     response = client.post(endpoint, headers={"Idempotency-Key": "resume-one"})
     assert response.status_code == 200 and response.json()["state"] == "queued"
     assert (
@@ -73,10 +76,58 @@ def test_resume_api_rejects_work_that_requires_new_plan_or_deadline(database, mo
                     .where(jobs.c.id == accepted["job_id"])
                     .values(created_at=datetime.now(UTC) - timedelta(hours=1))
                 )
+    readiness = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["resume_status"]
+    assert (
+        readiness
+        == {
+            "expired": "deadline_expired",
+            "clarification": "new_prompt_required",
+            "unsupported": "new_prompt_required",
+            "cancelled": "not_paused",
+        }[reason]
+    )
     response = client.post(
         f"/v1/jobs/{accepted['job_id']}/resume", headers={"Idempotency-Key": "resume-one"}
     )
     assert response.status_code == 409
+
+
+def test_checkpoint_failure_reports_reconciliation_without_enabling_resume(database, monkeypatch):
+    from dataclasses import replace
+
+    from test_worker import handler
+
+    actor = f"checkpoint-failure-{uuid4()}"
+    _, client, accepted = prepare(database, monkeypatch, actor)
+    payload = {
+        "actor_id": actor,
+        "workspace_id": accepted["workspace_id"],
+        "job_id": accepted["job_id"],
+    }
+    payload["attempt_id"] = CheckpointWorker(database, {}).schedule(payload)["attempt_id"]
+
+    def fail(_session, _data):
+        raise RuntimeError("private source error")
+
+    work = replace(
+        handler(lambda _: ("source fact", 0, {"search_calls": 1})),
+        persist=fail,
+        dimensions={"search_calls": 1},
+    )
+    assert CheckpointWorker(database, {"discovering": work}).execute(payload) == {
+        "status": "checkpoint_failed"
+    }
+    response = client.get(f"/v1/jobs/{accepted['job_id']}/results")
+    assert response.status_code == 200
+    assert response.json()["resume_status"] == "requires_reconciliation"
+    assert any("usage is retained" in item for item in response.json()["limitations"])
+    assert "private source error" not in response.text
+    assert (
+        client.post(
+            f"/v1/jobs/{accepted['job_id']}/resume", headers={"Idempotency-Key": "no-replay"}
+        ).status_code
+        == 409
+    )
 
 
 def test_resume_api_requires_identity_scope_key_and_enabled_provider(database, monkeypatch):

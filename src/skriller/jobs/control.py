@@ -1,6 +1,7 @@
 """Persisted stop and resume controls, shared by workers and HTTP boundaries."""
 
 from datetime import timedelta
+from typing import Literal
 
 import sqlalchemy as sa
 
@@ -116,26 +117,30 @@ def cancel(session, job_id):
     return result
 
 
-def resume(session, job_id, request_key):
-    """Requeue permitted unfinished work without resetting usage or the original deadline."""
-    if not request_key or len(request_key) > 200:
-        raise ValueError("Bounded resume request key required")
-    job = locked_job(session, job_id)
-    if job["state"] not in {"paused", "queued", "running"}:
-        raise ValueError("Only a paused job can be resumed")
+ResumeStatus = Literal[
+    "not_paused",
+    "available",
+    "new_prompt_required",
+    "deadline_expired",
+    "requires_reconciliation",
+    "budget_exhausted",
+]
+
+
+def _resume_context(session, job):
     if job["state"] != "paused":
-        return dict(job)
+        return "not_paused", []
     if job["failure_code"] in {"clarification_required", "unsupported_criteria"}:
-        raise ValueError("This run needs a corrected prompt before more work can be dispatched")
+        return "new_prompt_required", []
     if remaining_seconds(session, job) <= 0:
-        raise ValueError("Original job deadline expired; start a new run")
+        return "deadline_expired", []
     plan = plan_for_job(session, job)
-    cost, counters = current_usage(session, job_id)
+    cost, counters = current_usage(session, job["id"])
     unfinished = (
         session.execute(
             sa.select(attempts).where(
                 attempts.c.workspace_id == scope(session),
-                attempts.c.job_id == job_id,
+                attempts.c.job_id == job["id"],
                 attempts.c.state != "succeeded",
             )
         )
@@ -145,13 +150,18 @@ def resume(session, job_id, request_key):
     # Retrying an uncertain source/model operation needs an explicit reconciliation route.
     # Resume must not silently reissue a call whose charge or output is unknown.
     if any(row["state"] in {"failed", "cancelled", "running"} for row in unfinished):
-        raise ValueError("Unfinished call requires reconciliation before resume")
+        return "requires_reconciliation", unfinished
     # Exhausting discovery's search quota must not prevent already-discovered
     # candidates from using their independent fetch quota. Every actual call
     # still acquires its own atomic reservation before dispatch.
     stages = {row["stage"] for row in unfinished} or {
         job["stage"]
-        or {"planning": "planning", "followup": "reporting"}.get(job["purpose"], "discovering")
+        or {
+            "planning": "planning",
+            "followup": "reporting",
+            "owner_summary": "reporting",
+            "template_repair": "extracting",
+        }.get(job["purpose"], "discovering")
     }
     required = set().union(*(RESUME_DIMENSIONS.get(stage, set()) for stage in stages))
     if cost > plan.limits.currency_cap or any(
@@ -159,7 +169,27 @@ def resume(session, job_id, request_key):
         for name in required
         if counters[name] > 0
     ):
-        raise ValueError("Job budget does not permit resuming")
+        return "budget_exhausted", unfinished
+    return "available", unfinished
+
+
+def resume_readiness(session, job) -> ResumeStatus:
+    """Advisory status only; resume repeats this check while holding the job lock."""
+    return _resume_context(session, job)[0]
+
+
+def resume(session, job_id, request_key):
+    """Requeue permitted unfinished work without resetting usage or the original deadline."""
+    if not request_key or len(request_key) > 200:
+        raise ValueError("Bounded resume request key required")
+    job = locked_job(session, job_id)
+    if job["state"] not in {"paused", "queued", "running"}:
+        raise ValueError("Only a paused job can be resumed")
+    if job["state"] != "paused":
+        return dict(job)
+    readiness, unfinished = _resume_context(session, job)
+    if readiness != "available":
+        raise ValueError("Resume blocked: " + readiness)
     result = JobRepository.transition(session, job_id, "queued")
     if unfinished:
         for attempt in unfinished:

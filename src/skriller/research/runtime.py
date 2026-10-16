@@ -44,6 +44,7 @@ def schedule(payload):
 def execute(self, payload):
     identity = TaskIdentity.model_validate(payload)
     with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+        purpose = locked_job(session, str(identity.job_id))["purpose"]
         stage = session.execute(
             sa.select(attempts.c.stage).where(
                 attempts.c.workspace_id == str(identity.workspace_id),
@@ -75,13 +76,36 @@ def execute(self, payload):
                     },
                 )
         return {"status": "source_disabled"}
-    if stage == "reporting":
+    if stage == "reporting" and purpose == "owner_summary":
+        from skriller.analytics.jobs import execute_summary
+        from skriller.analytics.private_jobs import PrivateSummaryStore
+        from skriller.analytics.service import AnalyticsStore
+        from skriller.connections.keys import Keyring
+
+        outcome = execute_summary(
+            database,
+            payload,
+            PrivateSummaryStore(AnalyticsStore(Keyring.load(settings.source_encryption_key_file))),
+        )
+    elif stage == "reporting":
         outcome = execute_followup(database, payload)
     elif stage == "planning":
         outcome = execute_planning(database, payload, settings)
     elif stage == "discovering":
+        x_reader = None
+        connection_store = None
+        if settings.public_x_image:
+            from skriller.connections.store import ConnectionStore
+            from skriller.connectors.x_executor import ConcreteXExecutor
+
+            x_reader = ConcreteXExecutor(settings.public_x_image)
+            connection_store = ConnectionStore.configured(settings)
         outcome = execute_discovery(
-            database, payload, collection_proxy_url=settings.public_collection_proxy_url
+            database,
+            payload,
+            collection_proxy_url=settings.public_collection_proxy_url,
+            x_reader=x_reader,
+            connection_store=connection_store,
         )
     elif stage == "collecting" and settings.public_collection_proxy_url:
         browser = None
@@ -109,6 +133,12 @@ def execute(self, payload):
             cache_ttl_seconds=settings.public_response_cache_ttl_seconds,
             youtube_reader=youtube_reader,
         )
+    elif stage == "extracting" and purpose == "template_repair" and settings.enable_page_extraction:
+        from skriller.research.template_repair import execute_template_repair
+        from skriller.storage.configuration import configured_storage
+
+        with configured_storage(settings) as storage:
+            outcome = execute_template_repair(database, payload, storage=storage)
     elif stage == "extracting" and settings.enable_page_extraction:
         outcome = execute_page_extraction(database, payload, settings=settings)
     else:

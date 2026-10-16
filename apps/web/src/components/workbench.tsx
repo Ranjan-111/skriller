@@ -24,6 +24,8 @@ import {
 import { IdentityControls, useIdentity } from "./identity";
 import { ResearchResultsPanel } from "./research-results";
 import { WorkspaceAllowancePanel } from "./workspace-allowance";
+import { YouTubeAnalyticsPanel } from "./youtube-analytics";
+import { SalesforcePanel } from "./salesforce-panel";
 const sources = [
   { id: "linkedin", name: "LinkedIn", detail: "Professional discovery" },
   { id: "reddit", name: "Reddit", detail: "Discussions & demand" },
@@ -386,6 +388,12 @@ export function Workbench() {
               refreshKey={job?.id}
             />
           )}
+          <YouTubeAnalyticsPanel
+            api={api}
+            userId={accountId}
+            identityStatus={identity.status}
+          />
+          <SalesforcePanel api={api} userId={identity.user?.uid} identityStatus={identity.status} />
           <section className="examples" aria-labelledby="examples-title">
             <h2 id="examples-title">Start with a question</h2>
             {examples[mode].map((example) => (

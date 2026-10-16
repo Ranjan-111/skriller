@@ -538,5 +538,15 @@
       "copied_sha256": "e94c131ac1c2f78cfd8f7e69da354c0ff58e4e54071697703d56856c036de402"
     }
   ],
-  "patches": []
+  "patches": [
+    {
+      "reason": "SKR-093: optional trusted product tool handlers reuse copied MCP Server/stdio orchestration without host Config/doctor construction; product validates bounded arguments and redacts errors; default doctor behavior preserved.",
+      "files": [
+        {
+          "path": "agent_reach/integrations/mcp_server.py",
+          "sha256": "155438f86dc076055ac628b9eb7cd2f12d766937af0f1fd3156c0e930755bb66"
+        }
+      ]
+    }
+  ]
 }

@@ -28,6 +28,7 @@ role_history = scoped(
     sa.Column("replacement_evidence_id", UUID(as_uuid=False), nullable=False),
     sa.Column("effective_date", sa.Date, nullable=False),
     sa.Column("actor_id", sa.String(128), nullable=False),
+    sa.Column("review_hash", sa.String(64)),
     constraints=(
         sa.CheckConstraint("previous_id<>replacement_id"),
         sa.UniqueConstraint("workspace_id", "previous_id", "replacement_id"),
@@ -80,7 +81,7 @@ def email_domain(value: str) -> str | None:
     return ascii_domain
 
 
-def _observed(session, claim_id: str, evidence_id: str, *, now: datetime):
+def _observed(session, claim_id: str, evidence_id: str, *, now: datetime, reviewed=True):
     row = (
         session.execute(
             sa.select(
@@ -111,7 +112,9 @@ def _observed(session, claim_id: str, evidence_id: str, *, now: datetime):
                 claims.c.workspace_id == scope(session),
                 claims.c.id == claim_id,
                 evidence.c.id == evidence_id,
-                claims.c.status == "accepted",
+                claims.c.status == "accepted"
+                if reviewed
+                else claims.c.status.in_(["accepted", "conflict", "unverified"]),
                 claims.c.mode == "observed",
                 sa.or_(evidence.c.expires_at.is_(None), evidence.c.expires_at > now),
             )
@@ -191,9 +194,13 @@ class DatedRole:
     evidence_id: str
 
 
-def _dated(session, observation: DatedRole, now: datetime):
-    role = _observed(session, observation.role_claim_id, observation.evidence_id, now=now)
-    dating = _observed(session, observation.date_claim_id, observation.evidence_id, now=now)
+def _dated(session, observation: DatedRole, now: datetime, *, reviewed=True):
+    role = _observed(
+        session, observation.role_claim_id, observation.evidence_id, now=now, reviewed=reviewed
+    )
+    dating = _observed(
+        session, observation.date_claim_id, observation.evidence_id, now=now, reviewed=reviewed
+    )
     if (
         role is None
         or dating is None
@@ -211,13 +218,17 @@ def _dated(session, observation: DatedRole, now: datetime):
     return role, effective
 
 
-def record_role_refresh(session, previous: DatedRole, replacement: DatedRole) -> str:
+def record_role_refresh(
+    session, previous: DatedRole, replacement: DatedRole, *, review_hash: str | None = None
+) -> str:
     """Record only a proven chronological change; retain both original claims."""
     session.execute(
         sa.text("SELECT pg_advisory_xact_lock(hashtextextended(:key,0))"),
         {"key": "role-history:" + scope(session)},
     )
     now = datetime.now(UTC)
+    if review_hash is not None and not re.fullmatch(r"[0-9a-f]{64}", review_hash):
+        raise ValueError("Review hash must identify the reviewed source context")
     old, new = _dated(session, previous, now), _dated(session, replacement, now)
     if old is None or new is None:
         return "unknown_dates_or_evidence"
@@ -244,6 +255,7 @@ def record_role_refresh(session, previous: DatedRole, replacement: DatedRole) ->
             replacement_evidence_id=replacement.evidence_id,
             effective_date=new[1],
             actor_id=session.info["actor_id"],
+            review_hash=review_hash,
         )
     return "superseded"
 
@@ -308,7 +320,8 @@ def role_projection(session, entity_id: str) -> list[dict]:
     current_ids = {item["replacement_id"] for item in valid} & {row["id"] for row in active}
     # Different unresolved values mean latest collection date cannot decide.
     if (
-        any(not isinstance(row["value"], str) for row in active)
+        any(row["status"] == "conflict" and row["id"] not in superseded for row in roles)
+        or any(not isinstance(row["value"], str) for row in active)
         or len({(row["field"], row["value"]) for row in active if isinstance(row["value"], str)})
         != 1
     ):

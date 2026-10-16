@@ -48,6 +48,17 @@ def cleanup_expired(session, storage, *, limit=100):
     if not leased:
         return {"status": "leased", "removed": 0}
     now = session.execute(sa.select(sa.func.clock_timestamp())).scalar_one()
+    from skriller.analytics.service import purge_expired
+    from skriller.db import WorkspaceAccessDenied
+    from skriller.db.repositories import require_owner
+
+    try:
+        require_owner(session)
+    except WorkspaceAccessDenied:
+        pass
+    else:
+        purge_expired(session)
+        session.execute(sa.text("SELECT expire_crm_oauth_consents()"))
     rows = (
         session.execute(
             sa.select(evidence)

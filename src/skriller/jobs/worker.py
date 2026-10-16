@@ -81,7 +81,9 @@ class CheckpointWorker:
                 "planning"
                 if job["purpose"] == "planning"
                 else "reporting"
-                if job["purpose"] == "followup"
+                if job["purpose"] in {"followup", "owner_summary"}
+                else "extracting"
+                if job["purpose"] == "template_repair"
                 else "discovering"
             )
             attempt = JobRepository.attempt(session, job["id"], f"{stage}:{plan.revision}", stage)
@@ -310,96 +312,180 @@ class CheckpointWorker:
                         headers=retry_headers,
                         minimum_interval=handler.minimum_interval,
                     )
-        with self.database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
-            job = locked_job(session, str(identity.job_id))
-            row = session.execute(statement.with_for_update()).mappings().one()
-            reconcile(
-                session,
-                job["id"],
-                reservation["id"],
-                status="confirmed",
-                cost=actual_cost,
-                actual_dimensions=actual_dimensions,
-            )
-            now = session.execute(sa.select(sa.func.clock_timestamp())).scalar_one()
-            session.execute(
-                sa.update(external_calls)
-                .where(
-                    external_calls.c.workspace_id == scope(session),
-                    external_calls.c.id == call["id"],
+        try:
+            with self.database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+                job = locked_job(session, str(identity.job_id))
+                row = session.execute(statement.with_for_update()).mappings().one()
+                reconcile(
+                    session,
+                    job["id"],
+                    reservation["id"],
+                    status="confirmed",
+                    cost=actual_cost,
+                    actual_dimensions=actual_dimensions,
                 )
-                .values(state="confirmed", finished_at=now)
-            )
-            if (
-                row["lease_owner"] != token
-                or row["lease_expires_at"] <= now
-                or job["state"] not in {"queued", "running"}
-            ):
-                return {"status": "lease_lost"}
-            if remaining_seconds(session, job) <= 0:
-                JobRepository.transition(session, job["id"], "paused")
+                now = session.execute(sa.select(sa.func.clock_timestamp())).scalar_one()
+                session.execute(
+                    sa.update(external_calls)
+                    .where(
+                        external_calls.c.workspace_id == scope(session),
+                        external_calls.c.id == call["id"],
+                    )
+                    .values(state="confirmed", finished_at=now)
+                )
+                if (
+                    row["lease_owner"] != token
+                    or row["lease_expires_at"] <= now
+                    or job["state"] not in {"queued", "running"}
+                ):
+                    return {"status": "lease_lost"}
+                if remaining_seconds(session, job) <= 0:
+                    JobRepository.transition(session, job["id"], "paused")
+                    session.execute(
+                        sa.update(attempts)
+                        .where(
+                            attempts.c.workspace_id == scope(session), attempts.c.id == row["id"]
+                        )
+                        .values(state="failed", finished_at=now)
+                    )
+                    JobRepository.event(session, job["id"], "deadline:reached", "deadline_reached")
+                    return {"status": "deadline_exceeded"}
+                entity_ids = handler.persist(session, data)
+                if (
+                    not isinstance(entity_ids, list)
+                    or len(entity_ids) > 300
+                    or any(
+                        ResearchRepository.get_entity(session, str(value)) is None
+                        for value in entity_ids
+                    )
+                ):
+                    raise ValueError("Checkpoint must reference bounded tenant-owned entities")
+                entity_ids = [str(UUID(str(value))) for value in entity_ids]
+                insert_row(
+                    session,
+                    stage_checkpoints,
+                    job_id=job["id"],
+                    attempt_id=row["id"],
+                    generation=generation,
+                    stage=row["stage"],
+                    result_refs={"entity_ids": entity_ids},
+                )
                 session.execute(
                     sa.update(attempts)
                     .where(attempts.c.workspace_id == scope(session), attempts.c.id == row["id"])
-                    .values(state="failed", finished_at=now)
+                    .values(state="succeeded", result_entity_ids=entity_ids, finished_at=now)
                 )
-                JobRepository.event(session, job["id"], "deadline:reached", "deadline_reached")
-                return {"status": "deadline_exceeded"}
-            entity_ids = handler.persist(session, data)
-            if (
-                not isinstance(entity_ids, list)
-                or len(entity_ids) > 300
-                or any(
-                    ResearchRepository.get_entity(session, str(value)) is None
-                    for value in entity_ids
+                JobRepository.event(
+                    session,
+                    job["id"],
+                    f"attempt:{row['id']}:completed",
+                    "stage_checkpointed",
+                    {"attempt_id": row["id"], "entity_count": len(entity_ids)},
                 )
-            ):
-                raise ValueError("Checkpoint must reference bounded tenant-owned entities")
-            entity_ids = [str(UUID(str(value))) for value in entity_ids]
-            insert_row(
-                session,
-                stage_checkpoints,
-                job_id=job["id"],
-                attempt_id=row["id"],
-                generation=generation,
-                stage=row["stage"],
-                result_refs={"entity_ids": entity_ids},
-            )
-            session.execute(
-                sa.update(attempts)
-                .where(attempts.c.workspace_id == scope(session), attempts.c.id == row["id"])
-                .values(state="succeeded", result_entity_ids=entity_ids, finished_at=now)
-            )
-            JobRepository.event(
-                session,
-                job["id"],
-                f"attempt:{row['id']}:completed",
-                "stage_checkpointed",
-                {"attempt_id": row["id"], "entity_count": len(entity_ids)},
-            )
-            JobRepository.event(
-                session,
-                job["id"],
-                f"metrics:{row['id']}:{generation}",
-                "stage_observation",
-                {
-                    "stage": row["stage"],
-                    "source": handler.capacity_source,
-                    "outcome": stage_outcome,
-                    "attempt_count": 1,
-                    "attempt_id": row["id"],
-                    "queue_wait_seconds": round(
-                        max(0, (now - attempt["created_at"]).total_seconds()), 6
+                JobRepository.event(
+                    session,
+                    job["id"],
+                    f"metrics:{row['id']}:{generation}",
+                    "stage_observation",
+                    {
+                        "stage": row["stage"],
+                        "source": handler.capacity_source,
+                        "outcome": stage_outcome,
+                        "attempt_count": 1,
+                        "attempt_id": row["id"],
+                        "queue_wait_seconds": round(
+                            max(0, (now - attempt["created_at"]).total_seconds()), 6
+                        )
+                        if generation == 1
+                        else None,
+                        "accepted_result_count": len(entity_ids),
+                        "stage_io_seconds": round(io_elapsed, 6),
+                        "cost_usd": str(actual_cost),
+                        "cost_status": "confirmed",
+                    },
+                )
+                return {"status": "checkpointed", "entity_ids": entity_ids}
+
+        except Exception:  # noqa: BLE001 - source/result errors must not enter diagnostics
+            # Result persistence rolled back, but a completed external call still
+            # consumed resources. Preserve that fact and stop automatic replay.
+            # If commit actually succeeded before a transport error, return its
+            # durable checkpoint rather than changing or charging it again.
+            with self.database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
+                job = locked_job(session, str(identity.job_id))
+                row = session.execute(statement.with_for_update()).mappings().one()
+                if (
+                    row["state"] == "succeeded"
+                    and row["generation"] == generation
+                    and row["lease_owner"] == token
+                ):
+                    return {"status": "checkpointed", "entity_ids": row["result_entity_ids"]}
+                try:
+                    receipt = reconcile(
+                        session,
+                        job["id"],
+                        reservation["id"],
+                        status="confirmed",
+                        cost=actual_cost,
+                        actual_dimensions=actual_dimensions,
                     )
-                    if generation == 1
-                    else None,
-                    "accepted_result_count": len(entity_ids),
-                    "stage_io_seconds": round(io_elapsed, 6),
-                    "cost_usd": str(actual_cost),
-                    "cost_status": "confirmed",
-                },
-            )
-            return {"status": "checkpointed", "entity_ids": entity_ids}
+                except (ValueError, TypeError, ArithmeticError):
+                    # Invalid provider accounting cannot reduce the held ceiling.
+                    receipt = reconcile(session, job["id"], reservation["id"], status="estimated")
+                confirmed = receipt["reconciliation_status"] == "confirmed"
+                session.execute(
+                    sa.update(external_calls)
+                    .where(
+                        external_calls.c.workspace_id == scope(session),
+                        external_calls.c.id == call["id"],
+                    )
+                    .values(
+                        state="confirmed" if confirmed else "uncertain",
+                        finished_at=sa.func.clock_timestamp(),
+                    )
+                )
+                if row["lease_owner"] == token and row["state"] == "running":
+                    session.execute(
+                        sa.update(attempts)
+                        .where(
+                            attempts.c.id == row["id"], attempts.c.workspace_id == scope(session)
+                        )
+                        .values(state="failed", finished_at=sa.func.clock_timestamp())
+                    )
+                    if job["state"] in {"queued", "running"}:
+                        JobRepository.transition(
+                            session, job["id"], "paused", failure_code="checkpoint_failed"
+                        )
+                JobRepository.event(
+                    session,
+                    job["id"],
+                    f"attempt:{token}:checkpoint_failed",
+                    "checkpoint_failed",
+                    {
+                        "attempt_id": row["id"],
+                        "reservation_id": reservation["id"],
+                        "result_status": "not_committed",
+                        "cost_status": "confirmed" if confirmed else "estimated",
+                    },
+                )
+                JobRepository.event(
+                    session,
+                    job["id"],
+                    f"metrics:{identity.attempt_id}:{generation}",
+                    "stage_observation",
+                    {
+                        "stage": row["stage"],
+                        "source": handler.capacity_source,
+                        "outcome": "schema_invalid",
+                        "attempt_count": 1,
+                        "attempt_id": row["id"],
+                        "accepted_result_count": 0,
+                        "stage_io_seconds": round(io_elapsed, 6),
+                        "cost_usd": str(receipt["actual_cost_usd"]) if confirmed else None,
+                        "cost_status": "confirmed" if confirmed else "estimated",
+                    },
+                )
+            return {"status": "checkpoint_failed"}
 
 
 def create_worker_app(database, broker_url, handlers):

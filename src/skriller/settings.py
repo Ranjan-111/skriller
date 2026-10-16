@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     public_response_cache_ttl_seconds: int = Field(default=0, ge=0, le=300)
     public_browser_image: str | None = None
     public_youtube_image: str | None = None
+    public_x_image: str | None = None
     model_provider: Literal["ollama", "groq"] = "ollama"
     ollama_model: Literal["llama3.2:3b", "deepseek-r1:8b"] = "llama3.2:3b"
     groq_api_key: SecretStr | None = Field(
@@ -56,12 +57,20 @@ class Settings(BaseSettings):
         default=None, validation_alias="AWS_SESSION_TOKEN", repr=False
     )
     source_encryption_key_file: str | None = Field(default=None, repr=False)
+    salesforce_oauth_client_id: str | None = Field(default=None, repr=False)
+    salesforce_oauth_client_secret: SecretStr | None = Field(default=None, repr=False)
+    salesforce_oauth_redirect_uri: str | None = None
+    salesforce_oauth_sandbox: bool = False
+    youtube_analytics_oauth_client_id: str | None = Field(default=None, repr=False)
+    youtube_analytics_oauth_client_secret: SecretStr | None = Field(default=None, repr=False)
+    youtube_analytics_oauth_redirect_uri: str | None = None
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     @field_validator(
         "public_collection_proxy_url",
         "public_browser_image",
         "public_youtube_image",
+        "public_x_image",
         "reviewed_page_templates_file",
         "s3_endpoint_url",
         "s3_bucket",
@@ -119,6 +128,10 @@ class Settings(BaseSettings):
             from skriller.connectors.youtube_executor import ConcreteYouTubeExecutor
 
             ConcreteYouTubeExecutor(self.public_youtube_image)
+        if self.public_x_image:
+            from skriller.connectors.x_executor import ConcreteXExecutor
+
+            ConcreteXExecutor(self.public_x_image)
         if self.enable_dynamic_collection:
             if not self.public_collection_proxy_url or not self.public_browser_image:
                 raise ValueError(

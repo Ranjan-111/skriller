@@ -58,7 +58,12 @@ def _facts(session, entity_id, kind):
     now = session.execute(sa.select(sa.func.clock_timestamp())).scalar_one()
     rows = session.execute(
         sa.select(
-            claims.c.id, claims.c.field, claims.c.value, evidence.c.excerpt, evidence.c.expires_at
+            claims.c.id,
+            claims.c.field,
+            claims.c.value,
+            evidence.c.excerpt,
+            evidence.c.expires_at,
+            evidence.c.collected_at,
         )
         .join(
             claim_evidence,
@@ -95,10 +100,14 @@ def _facts(session, entity_id, kind):
     facts: dict[str, set[str]] = {}
     unavailable = {
         identifier
-        for identifier, _, _, excerpt, expires_at in rows
-        if not excerpt or not excerpt.strip() or expires_at is not None and expires_at <= now
+        for identifier, _, _, excerpt, expires_at, collected_at in rows
+        if not excerpt
+        or not excerpt.strip()
+        or expires_at is not None
+        and expires_at <= now
+        or collected_at > now
     }
-    for identifier, field, value, _, _ in rows:
+    for identifier, field, value, _, _, _ in rows:
         if identifier in unavailable:
             continue
         if isinstance(value, str) and 0 < len(value) <= 255:

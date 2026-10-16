@@ -7,12 +7,13 @@ import pytest
 import sqlalchemy as sa
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from test_saved_lists import fact, setup
+from test_saved_lists import fact, role, setup
 
 from skriller.db import ResearchRepository, WorkspaceRepository
-from skriller.db.schema import suppressions
+from skriller.db.schema import claims, suppressions
 from skriller.lists import list_snapshots
 from skriller.lists_router import router
+from skriller.qualification.contacts import record_role_refresh
 
 
 def api(database):
@@ -48,6 +49,7 @@ def test_http_snapshots_freeze_evidence_and_refresh_requires_latest_revision(dat
     path = create(client, workspace, entity, plan)
     before = client.get(path + "/snapshots/1")
     assert before.status_code == 200
+    assert client.get(path + "/snapshots/1/changes").json() == []
     assert before.headers["x-skriller-snapshot-view"] == "frozen"
     assert before.headers["x-skriller-snapshot-revision"] == "1"
     assert before.headers["cache-control"] == "private, no-store"
@@ -67,6 +69,7 @@ def test_http_snapshots_freeze_evidence_and_refresh_requires_latest_revision(dat
     assert refreshed.status_code == 201, refreshed.text
     assert refreshed.json()["revision"] == 2
     assert refreshed.json()["payload"]["refresh_scope"] == "persisted_reviewed_facts_only"
+    assert client.get(path + "/snapshots/2/changes").json() == []
     latest = client.get(path + "/snapshots/latest")
     assert latest.json() == refreshed.json()
     assert latest.headers["x-skriller-snapshot-view"] == "latest"
@@ -77,6 +80,60 @@ def test_http_snapshots_freeze_evidence_and_refresh_requires_latest_revision(dat
     assert client.get(path + "/snapshots/1").json() == before.json()
     with pytest.raises(sa.exc.DBAPIError), database.tenant(owner, workspace) as session:
         session.execute(sa.update(list_snapshots).values(payload={}))
+
+
+def test_http_change_report_is_cited_and_never_claims_independent_verification(database):
+    owner, workspace, entity, plan, client = api(database)
+    with database.tenant(owner, workspace) as session:
+        first = role(session, entity, "Engineer", "2025-01-01")
+        current = role(session, entity, "Director", "2025-06-01")
+        session.execute(
+            sa.update(claims)
+            .where(
+                claims.c.id.in_(
+                    [
+                        first.role_claim_id,
+                        current.role_claim_id,
+                        first.date_claim_id,
+                        current.date_claim_id,
+                    ]
+                )
+            )
+            .values(status="accepted")
+        )
+        assert record_role_refresh(session, first, current) == "superseded"
+    path = create(client, workspace, entity, plan)
+    updated = None
+    with database.tenant(owner, workspace) as session:
+        newer = role(session, entity, "VP", "2026-01-01")
+        session.execute(
+            sa.update(claims)
+            .where(
+                claims.c.id.in_(
+                    [
+                        first.role_claim_id,
+                        current.role_claim_id,
+                        newer.role_claim_id,
+                        first.date_claim_id,
+                        current.date_claim_id,
+                        newer.date_claim_id,
+                    ]
+                )
+            )
+            .values(status="accepted")
+        )
+        assert record_role_refresh(session, current, newer) == "superseded"
+    updated = client.post(path + "/refresh", json={"entity_ids": [entity], "expected_revision": 1})
+    assert updated.status_code == 201, updated.text
+    response = client.get(path + "/snapshots/2/changes")
+    assert response.status_code == 200, response.text
+    report = response.json()
+    assert len(report) == 1
+    assert report[0]["previous_value"] == "Director"
+    assert report[0]["current_value"] == "VP"
+    assert report[0]["qualification"] == "accepted_observation_not_independently_verified"
+    assert report[0]["citations"][0]["quote"] == "VP; effective 2026-01-01"
+    assert report[0]["citations"][0]["source_url"] == "https://example.org/profile"
 
 
 def test_http_members_read_but_owner_is_required_for_mutations(database):

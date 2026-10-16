@@ -95,3 +95,20 @@ other languages/formats and missing captions have explicit states. See
 `docs/completions/SKR-065.md` and `YOUTUBE-WORKER-LOCAL.json` for verification and
 remaining UI/live coverage gates. Publishing or deploying an image remains a
 separate, user-deferred hosted task.
+
+## Official X API worker
+
+Build the fixed OAuth-only recent-search worker from the pinned Python 3.12 base:
+
+```sh
+docker build --network=none -f infra/egress/Dockerfile.x -t skriller-egress-x .
+```
+
+Set `SKRILLER_PUBLIC_X_IMAGE` to the immutable local image ID. The worker joins
+the guarded internal egress network at execution time. A workspace owner can
+store an OAuth access token through the scoped connections API with `read` and
+`discover` scopes. Search requests use the official recent-post endpoint and
+shared job/source capacity accounting; no browser session or cookie reader is
+installed. The API's recent-search window and account quota apply. Image build
+and synthetic request-contract tests do not certify a live X account or hosted
+egress deployment.

@@ -1,7 +1,7 @@
 """Authenticated credential configuration with metadata-only responses/errors."""
 
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -21,6 +21,13 @@ MAX_BODY = 65536
 
 
 class PrivateValidationRoute(APIRoute):
+    max_body = MAX_BODY
+    size_message = "Connection request exceeds size limit"
+    invalid_detail: ClassVar[dict[str, str]] = {
+        "code": "invalid_connection_configuration",
+        "message": "Provide valid source credentials, read-only scopes and a bounded expiry.",
+    }
+
     def get_route_handler(self):
         original = super().get_route_handler()
 
@@ -32,8 +39,8 @@ class PrivateValidationRoute(APIRoute):
                 message = await request.receive()
                 if message["type"] == "http.request":
                     size += len(message.get("body", b""))
-                    if size > MAX_BODY:
-                        raise HTTPException(413, "Connection request exceeds size limit")
+                    if size > self.max_body:
+                        raise HTTPException(413, self.size_message)
                 return message
 
             private_request = Request(request.scope, receive=bounded_receive)
@@ -43,12 +50,7 @@ class PrivateValidationRoute(APIRoute):
                 # FastAPI's ordinary validation response contains input and ctx,
                 # including malformed secrets. No input/errors are serialized here.
                 return JSONResponse(
-                    {
-                        "detail": {
-                            "code": "invalid_connection_configuration",
-                            "message": "Provide valid source credentials, read-only scopes and a bounded expiry.",
-                        }
-                    },
+                    {"detail": self.invalid_detail},
                     status_code=422,
                 )
 

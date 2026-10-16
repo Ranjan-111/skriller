@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-10-16T12:00:45.700115+00:00",
+  "scope": "Synthetic saved public-web evidence; actual local Ollama and tenant database",
+  "model": "llama3.2:3b",
+  "worker_status": "checkpointed",
+  "proposal_reviewed": true,
+  "active_before_review": 1,
+  "active_after_review": 2,
+  "active_after_rollback": 1,
+  "metered_model_calls": 1,
+  "metered_tokens": 398,
+  "source_calls": 0
+}

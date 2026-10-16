@@ -76,6 +76,19 @@ def proxy(monkeypatch):
             status = 200
             body, extras = company, {}
             content_type = "text/html; charset=utf-8"
+            if self.path.startswith("/conditional"):
+                extras["ETag"] = '"fixture-v1"'
+                if self.headers.get("If-None-Match") == '"fixture-v1"':
+                    status, body = 304, b""
+                    if self.path == "/conditional-mismatch":
+                        extras["ETag"] = '"other-representation"'
+                    if self.path == "/conditional-late":
+                        time.sleep(0.3)
+                    if self.path == "/conditional-changed":
+                        status, body = 200, company + b"<!-- new representation -->"
+                        extras["ETag"] = '"fixture-v2"'
+            if self.path == "/unsolicited304":
+                status, body = 304, b""
             if self.path in {"/rss", "/rss-bad", "/rss-empty"}:
                 content_type = "application/atom+xml; charset=utf-8"
                 body = (

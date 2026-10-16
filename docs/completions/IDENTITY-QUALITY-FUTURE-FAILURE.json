@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "dimension": "identity",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_local_database_no_model",
+  "scope": "Synthetic reviewed-fact inputs to actual tenant database qualification and identity services; no source access or extraction/model quality implied",
+  "evaluation_scope": "Development fixture acceptance over seeded reviewed facts; no live platform or model execution",
+  "corpus_sha256": "2fbd90b3f1f60a6eb7fdd80a79e69decfb826bef11093c02342688e4cd35a0e7",
+  "recorded_at": "2026-10-16T11:57:13.296805+00:00",
+  "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
+  "exact_label_denominator": 21,
+  "exact_label_correct": 20,
+  "exact_label_accuracy": 0.9523809523809523,
+  "accepted_denominator": 7,
+  "true_positive": 6,
+  "precision": 0.8571428571428571,
+  "cases": [
+    {
+      "id": "linkedin-native",
+      "expected": "accept",
+      "outcome": "accepted",
+      "observed_reason": "same_native_id",
+      "exact_label_correct": true
+    },
+    {
+      "id": "reddit-native",
+      "expected": "accept",
+      "outcome": "accepted",
+      "observed_reason": "same_native_id",
+      "exact_label_correct": true
+    },
+    {
+      "id": "github-native",
+      "expected": "accept",
+      "outcome": "accepted",
+      "observed_reason": "same_native_id",
+      "exact_label_correct": true
+    },
+    {
+      "id": "youtube-native",
+      "expected": "accept",
+      "outcome": "accepted",
+      "observed_reason": "same_native_id",
+      "exact_label_correct": true
+    },
+    {
+      "id": "post-is-not-person",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "case-sensitive-native",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "native_id_conflict",
+      "exact_label_correct": true
+    },
+    {
+      "id": "conflicting-platform",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "native_id_conflict",
+      "exact_label_correct": true
+    },
+    {
+      "id": "name-only",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "domain-only",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "corroborated-company",
+      "expected": "accept",
+      "outcome": "accepted",
+      "observed_reason": "domain_corroborated",
+      "exact_label_correct": true
+    },
+    {
+      "id": "different-company-domain",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "domain_conflict",
+      "exact_label_correct": true
+    },
+    {
+      "id": "different-legal-name",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "different-country",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "expired-native",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "unverified-native",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "company-native",
+      "expected": "accept",
+      "outcome": "accepted",
+      "observed_reason": "same_native_id",
+      "exact_label_correct": true
+    },
+    {
+      "id": "kind-conflict",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "kind_conflict",
+      "exact_label_correct": true
+    },
+    {
+      "id": "url-not-native",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "web-not-native",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "missing-one-native",
+      "expected": "reject",
+      "outcome": "rejected",
+      "observed_reason": "insufficient_identity",
+      "exact_label_correct": true
+    },
+    {
+      "id": "future-native",
+      "expected": "reject",
+      "outcome": "accepted",
+      "observed_reason": "same_native_id",
+      "exact_label_correct": false
+    }
+  ],
+  "model_calls": 0,
+  "source_calls": 0
+}

@@ -17,6 +17,7 @@ const result = {
   job_id: "j1",
   workspace_id: "w1",
   state: "completed",
+  resume_status: "available" as const,
   limitations: ["No qualification performed."],
   results: [
     {
@@ -774,6 +775,64 @@ describe("actual research results", () => {
     ).toBeVisible();
     expect(api.resume).toHaveBeenCalledWith("j1", "w1");
   });
+  it("keeps saved sources visible and offers a retry after the resume preflight changes", async () => {
+    const api = client();
+    api.job.mockResolvedValueOnce({ ...run, state: "paused" });
+    api.resume = vi.fn().mockRejectedValue(new Error("cannot safely resume"));
+    render(
+      <ResearchResultsPanel
+        api={api}
+        job={{ id: "j1", status: "accepted", workspace_id: "w1" }}
+      />,
+    );
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Resume research" }),
+    );
+    expect(await screen.findByText("cannot safely resume")).toBeVisible();
+    expect(
+      await screen.findByRole("link", { name: /Acme source/ }),
+    ).toBeVisible();
+    expect(
+      screen.getAllByRole("button", { name: /Check run again/ }).length,
+    ).toBeGreaterThan(0);
+  });
+  it.each([
+    ["requires_reconciliation", /needs review before it can resume/],
+    ["deadline_expired", /time limit for this run has passed/],
+    ["budget_exhausted", /reached its budget/],
+    ["new_prompt_required", /needs a corrected prompt/],
+    [undefined, /availability cannot be confirmed yet/],
+  ] as const)(
+    "keeps paused results visible without offering resume when readiness is %s",
+    async (resumeStatus, message) => {
+      const api = client();
+      api.resume = vi.fn();
+      api.job.mockResolvedValueOnce({ ...run, state: "paused" });
+      api.results.mockResolvedValueOnce({
+        ...result,
+        ...(resumeStatus
+          ? { resume_status: resumeStatus }
+          : { resume_status: undefined }),
+      });
+      render(
+        <ResearchResultsPanel
+          api={api}
+          job={{ id: "j1", status: "accepted", workspace_id: "w1" }}
+        />,
+      );
+      expect(await screen.findByText(message)).toBeVisible();
+      expect(
+        screen.queryByRole("button", { name: "Resume research" }),
+      ).toBeNull();
+      expect(
+        screen.getByRole("button", { name: /Check run again/ }),
+      ).toBeVisible();
+      expect(
+        await screen.findByRole("link", { name: /Acme source/ }),
+      ).toBeVisible();
+      expect(api.resume).not.toHaveBeenCalled();
+    },
+  );
   it("shows truthful source access scope without claiming credential validation", async () => {
     const api = client();
     api.sourceDiagnostics = vi.fn().mockResolvedValue([

@@ -1,0 +1,242 @@
+{
+  "recorded_at": "2026-10-16T11:52:52.413177+00:00",
+  "repair_code_sha256": "e26067be8ae0ab5de2f4e64ad78fe38094ecfe4e71fd5c48ffc08790c6901edc",
+  "scope": "Synthetic public company-name selector changes; not a representative platform corpus",
+  "corpus_sha256": "851b0314e6640a9a7a10a35d63ac4d1388748d557fbe3ff4bceb9ad11925bf96",
+  "model_mode": "actual_local_ollama_llama3.2:3b",
+  "accuracy_definition": "Exact labelled element path and literal value; equivalent nested elements count as target mismatches under this conservative metric.",
+  "required_field_accuracy": 0.9,
+  "allowed_silent_target_mismatches": 0,
+  "evaluation_scope": "Development fixture acceptance, not a held-out or representative platform benchmark",
+  "prompt_revision": "source_attribute_enum",
+  "changed_page_denominator": 20,
+  "correct_fields": 19,
+  "field_accuracy": 0.95,
+  "silent_wrong_matches": 1,
+  "missing_fields": 0,
+  "not_executed": 0,
+  "adversarial_denominator": 4,
+  "adversarial_rejected": 4,
+  "actual_metered_calls": 24,
+  "metered_tokens": 9770,
+  "elapsed_seconds": 30.673,
+  "cases": [
+    {
+      "id": "tag-change",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 399
+    },
+    {
+      "id": "id-selector",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 399
+    },
+    {
+      "id": "nested-wrapper",
+      "label": "correct",
+      "outcome": "silent_wrong",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 415
+    },
+    {
+      "id": "attribute-selector",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 412
+    },
+    {
+      "id": "multiple-classes",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 410
+    },
+    {
+      "id": "nested-emphasis",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 397
+    },
+    {
+      "id": "section-wrapper",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 409
+    },
+    {
+      "id": "link-text",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 405
+    },
+    {
+      "id": "heading-target",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 408
+    },
+    {
+      "id": "deep-wrapper",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 408
+    },
+    {
+      "id": "changed-neighbors",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 416
+    },
+    {
+      "id": "list-layout",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 408
+    },
+    {
+      "id": "definition-layout",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 416
+    },
+    {
+      "id": "reordered-content",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 411
+    },
+    {
+      "id": "nested-literal",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 405
+    },
+    {
+      "id": "unicode-text",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 405
+    },
+    {
+      "id": "hyphenated-text",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 398
+    },
+    {
+      "id": "attribute-no-class",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 414
+    },
+    {
+      "id": "aside-wrapper",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 403
+    },
+    {
+      "id": "same-name-other-container",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 436
+    },
+    {
+      "id": "ambiguous-duplicate",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "mapping_ambiguous",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 404
+    },
+    {
+      "id": "wrong-neighbor",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "semantic_anchor_mismatch",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 393
+    },
+    {
+      "id": "wrong-literal",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "field_identity_mismatch",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 395
+    },
+    {
+      "id": "cross-container",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "semantic_anchor_mismatch",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 404
+    }
+  ],
+  "gate_passed": false
+}

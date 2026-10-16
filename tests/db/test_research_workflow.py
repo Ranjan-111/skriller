@@ -1,16 +1,22 @@
 """Actual tenant PostgreSQL workflow with controlled source IO, no fake live claims."""
 
 from dataclasses import replace
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
+import sqlalchemy as sa
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from fastapi.testclient import TestClient
 
 from skriller.api import create_app
 from skriller.auth import Identity, require_identity
+from skriller.connections.keys import Keyring
+from skriller.connections.store import ConnectionStore, SecretPayload
 from skriller.connectors.search import SearchHit, SearchPage, SearchUnavailable
 from skriller.contracts import Failure
 from skriller.db import JobRepository
+from skriller.db.schema import entities
 from skriller.jobs.worker import CheckpointWorker
 from skriller.research import service
 from skriller.research.service import execute_discovery, personal_workspace
@@ -40,7 +46,7 @@ class Provider:
         )
 
 
-def prepare(database, monkeypatch, actor, *, settings=None):
+def prepare(database, monkeypatch, actor, *, settings=None, sources=None):
     app = create_app(settings or Settings())
     app.state.database = database
     app.dependency_overrides[require_identity] = lambda: Identity(actor)
@@ -52,7 +58,7 @@ def prepare(database, monkeypatch, actor, *, settings=None):
         f"/v1/conversations/{conversation.json()['id']}/messages",
         json={
             "content": "Find software companies",
-            "options": {"mode": "leads", "sources": ["linkedin", "web"], "result_limit": 10},
+            "options": {"mode": "leads", "sources": sources or ["linkedin", "web"], "result_limit": 10},
         },
     )
     assert response.status_code == 202, response.text
@@ -62,8 +68,8 @@ def prepare(database, monkeypatch, actor, *, settings=None):
 def isolate_capacity(monkeypatch, job_id):
     original_handler = service.discovery_handler
 
-    def isolated_handler(database, actor_id, job_id, provider=None):
-        handler = original_handler(database, actor_id, job_id, provider)
+    def isolated_handler(database, actor_id, job_id, provider=None, **kwargs):
+        handler = original_handler(database, actor_id, job_id, provider, **kwargs)
         identity = job_id.replace("-", "")
         return replace(
             handler,
@@ -156,6 +162,65 @@ def test_submission_checkpoint_results_and_duplicate_delivery(database, monkeypa
         ).status_code
         == 404
     )
+
+
+def test_connected_x_posts_enter_durable_discovery_with_post_provenance(database, monkeypatch):
+    actor = f"x-discovery-{uuid4()}"
+    _, client, accepted = prepare(database, monkeypatch, actor, sources=["x"])
+    store = ConnectionStore(Keyring("v1", {"v1": AESGCM.generate_key(bit_length=256)}))
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        reference = store.create(
+            session,
+            "x",
+            "oauth",
+            SecretPayload(credentials={"access_token": "synthetic-x-oauth-token"}),
+            expires_at=datetime.now(UTC) + timedelta(days=1),
+            scopes=("read", "discover"),
+        )
+
+    class XReader:
+        def search_page(self, query, **kwargs):
+            assert kwargs["context"].connection_ref == reference.id
+            return SearchPage(
+                hits=[
+                    SearchHit(
+                        title="@founder",
+                        url="https://x.com/founder/status/123456",
+                        snippet="We are hiring a product engineer",
+                        provider="x_api_v2",
+                        evidence_kind="public_post",
+                        rank=1,
+                    )
+                ],
+                rejected=0,
+                truncated=False,
+                query=query,
+            )
+
+    isolate_capacity(monkeypatch, accepted["job_id"])
+    payload = {
+        "workspace_id": accepted["workspace_id"],
+        "job_id": accepted["job_id"],
+        "actor_id": actor,
+    }
+    scheduled = CheckpointWorker(database, {}).schedule(payload)
+    payload["attempt_id"] = scheduled["attempt_id"]
+    outcome = execute_discovery(
+        database,
+        payload,
+        Provider(),
+        x_reader=XReader(),
+        connection_store=store,
+    )
+    assert outcome["status"] == "checkpointed"
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        row = session.execute(sa.select(entities).where(entities.c.id == outcome["entity_ids"][0])).mappings().one()
+        assert row["attributes"]["provider"] == "x_api_v2"
+        assert row["attributes"]["evidence_kind"] == "public_post"
+        assert row["attributes"]["_source_native_id"] == {"namespace": "x_post", "id": "123456"}
+    result = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"][0]
+    assert result["evidence_kind"] == "public_post"
+    assert result["qualification"] == "unverified"
 
 
 def test_partial_source_failure_retains_unverified_results(database, monkeypatch):

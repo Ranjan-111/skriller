@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "dimension": "qualification",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_local_database_no_model",
+  "scope": "Synthetic reviewed-fact inputs to actual tenant database qualification and identity services; no source access or extraction/model quality implied",
+  "evaluation_scope": "Development fixture acceptance over seeded reviewed facts; no live platform or model execution",
+  "corpus_sha256": "2fbd90b3f1f60a6eb7fdd80a79e69decfb826bef11093c02342688e4cd35a0e7",
+  "implementation_sha256": {
+    "src/skriller/qualification/identity.py": "e454b2d7c3d698f6792c4778d1560615e2d47f35f7d4b4febebab647ee9bb8e9",
+    "src/skriller/qualification/service.py": "51d2aafa851685207e26cf5c4d4ed10a2f43a8e199ba1e0549d9d896132c21aa",
+    "src/skriller/qualification/criteria.py": "058cdbe058ced654d93f646ed0c801d73373b1b6bcb28e02eadba58a813979ce",
+    "src/skriller/qualification/contacts.py": "39a20fbd5a399e8ba165c382fa42319758122cf4e94353defd2515a4c33c326a"
+  },
+  "recorded_at": "2026-10-16T11:59:11.123474+00:00",
+  "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
+  "exact_label_denominator": 24,
+  "exact_label_correct": 24,
+  "exact_label_accuracy": 1.0,
+  "accepted_denominator": 6,
+  "true_positive": 6,
+  "precision": 1.0,
+  "cases": [
+    {
+      "id": "location-match",
+      "expected": "accept",
+      "outcome": "accepted",
+      "expected_status": "confirmed",
+      "observed_status": "confirmed",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "location-mismatch",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "location-unknown",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "size-above",
+      "expected": "accept",
+      "outcome": "accepted",
+      "expected_status": "confirmed",
+      "observed_status": "confirmed",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "size-boundary",
+      "expected": "accept",
+      "outcome": "accepted",
+      "expected_status": "confirmed",
+      "observed_status": "confirmed",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "size-below",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "size-unknown",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "size-boolean",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "size-text",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "stale-evidence",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "expired-evidence",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "future-evidence",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "unverified-evidence",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "exclusion-matched",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "excluded",
+      "observed_status": "excluded",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "exclusion-unknown",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "exclusion-contradicted",
+      "expected": "accept",
+      "outcome": "accepted",
+      "expected_status": "confirmed",
+      "observed_status": "confirmed",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "conflicting-evidence",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "preference-only",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "undated-current-role",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "near_match",
+      "observed_status": "near_match",
+      "unknown_criteria": 1,
+      "exact_label_correct": true
+    },
+    {
+      "id": "wrong-kind",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "excluded",
+      "observed_status": "excluded",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "video-is-not-person",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "excluded",
+      "observed_status": "excluded",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "repository-is-not-person",
+      "expected": "reject",
+      "outcome": "rejected",
+      "expected_status": "excluded",
+      "observed_status": "excluded",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "zero-headcount",
+      "expected": "accept",
+      "outcome": "accepted",
+      "expected_status": "confirmed",
+      "observed_status": "confirmed",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    },
+    {
+      "id": "company-query",
+      "expected": "accept",
+      "outcome": "accepted",
+      "expected_status": "confirmed",
+      "observed_status": "confirmed",
+      "unknown_criteria": 0,
+      "exact_label_correct": true
+    }
+  ],
+  "model_calls": 0,
+  "source_calls": 0
+}

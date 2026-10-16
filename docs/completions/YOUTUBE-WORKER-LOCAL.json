@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-10-15T17:20:13.881140+00:00",
+  "recorded_at": "2026-10-15T22:27:15.556849+00:00",
   "image": "sha256:63f4ec7c6a1585eb51ddaa853edb426da20395c042328e7130e57df955e1cc21",
   "backend_version": "2026.8.19",
   "node_version": "v24.21.0",
@@ -8,18 +8,22 @@
   "copied_agent_reach_runtime_status": "warn",
   "runtime_warning": "Upstream doctor looks for a user config file; this worker supplies its pinned Node runtime explicitly through API options.",
   "public_source_attempted": true,
-  "source_live_verified": false,
-  "captions_live_verified": false,
-  "job_execution_configured": false,
+  "source_live_verified": true,
+  "captions_live_verified": true,
+  "job_execution_configured": true,
   "local_job_integration_verified": true,
-  "runner_status": "failed",
-  "status": "public_source_unavailable",
-  "failure_category": "backend",
-  "elapsed_seconds": 6.044,
+  "runner_status": "completed",
+  "status": "verified_public_operation",
   "limitations": [
-    "One public video is not a representative source coverage test.",
-    "Shared request accounting counts HTTP attempts including redirects, not TLS/DNS operations.",
-    "Metadata and captions do not verify the creator identity or qualify a person/company lead.",
-    "UI and representative live source verification remain pending."
-  ]
+    "One public video verifies the read operation, not platform-wide coverage or hosted deployment.",
+    "Shared accounting counts HTTP attempts including redirects, not TLS/DNS operations.",
+    "Metadata/captions do not verify creator identity or qualify a person/company lead."
+  ],
+  "live_job_report": "docs/completions/YOUTUBE-COLLECTION-LIVE.json",
+  "initial_sample_diagnosis": {
+    "video_id": "BaW_jenozKc",
+    "reason": "video_unavailable",
+    "failure_category": "backend",
+    "elapsed_seconds": 6.044
+  }
 }

@@ -3,11 +3,22 @@
 import sqlalchemy as sa
 from alembic import context
 
+import skriller.analytics.tables
+import skriller.billing.access
+import skriller.billing.catalog
+import skriller.billing.inbox
+import skriller.billing.provisioning
+import skriller.billing.reconcile
 import skriller.connections.tables
 import skriller.connectors.switches
+import skriller.crm.consents
+import skriller.crm.queue
+import skriller.crm.store
 import skriller.lists
 import skriller.qualification.contacts
-import skriller.qualification.identity  # noqa: F401 - register reversible identity links
+import skriller.qualification.identity
+import skriller.scheduling
+import skriller.webhooks.tables  # noqa: F401 - register schema
 from skriller.db.schema import metadata
 from skriller.settings import Settings
 

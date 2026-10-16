@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/public-clis/twitter-cli",
+  "commit": "7c634e0d396b1e7af9f63315b414925fe4f29ae7",
+  "license": "Apache-2.0",
+  "modifications": "None; product-local namespace only. No auth, HTTP client, CLI or write operations imported.",
+  "files": {
+    "models.py": {
+      "source": "twitter_cli/models.py",
+      "sha256": "1bd68903d39822911aa771f5fb26d65f45b88c819f63dc1260c778ca11de9812"
+    },
+    "parser.py": {
+      "source": "twitter_cli/parser.py",
+      "sha256": "255a3399b51a70c2940bd98636fb3e3273b13a9cd0e71a49e2b6b748b7b594e7"
+    }
+  }
+}

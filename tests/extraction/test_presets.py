@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -67,6 +68,9 @@ def test_preset_registry_is_bounded_and_page_specific():
     assert "employee_count" in preset_fields("company")
     assert "job_title" in preset_fields("careers")
     assert "business_phone" in preset_fields("contact")
+    assert {"price", "currency", "billing_period"} <= set(preset_fields("pricing"))
+    assert {"job_posted_date", "job_listing_status"} <= set(preset_fields("jobs"))
+    assert "industry" in preset_fields("industry_directory")
     with pytest.raises(ValueError, match="Unsupported"):
         preset_fields("unknown")
 
@@ -100,6 +104,69 @@ def test_results_keep_source_specific_status_and_reject_unsupported_or_ungrounde
     assert claims[0].evidence_ids == ("fact-1",)
 
 
+@pytest.mark.parametrize(
+    ("amount", "currency", "period"),
+    [
+        ("$19", "USD", "monthly"),
+        ("$190", "USD", "annual"),
+        ("1.299,00 €", "€", "jährlich"),
+    ],
+)
+def test_pricing_preset_preserves_localized_amount_currency_and_period(amount, currency, period):
+    prepared = prepared_page()
+    quote = f"Plan costs {amount} {currency} billed {period}."
+    prepared = replace(
+        prepared,
+        evidence=(EvidenceNode("fact-1", "/html/body/p", quote, "text"),),
+        chunks=(ContextChunk("chunk-1", quote, 1),),
+    )
+    drafts = [
+        {"field": "price", "value": amount, "quote": quote},
+        {"field": "currency", "value": currency, "quote": quote},
+        {"field": "billing_period", "value": period, "quote": quote},
+    ]
+    claims, rejected = _verified_claims(prepared, "pricing", extraction(drafts))
+    assert rejected == 0
+    assert {claim.field: claim.value for claim in claims} == {
+        "price": amount,
+        "currency": currency,
+        "billing_period": period,
+    }
+    assert all(claim.status == "source_specific_unverified" for claim in claims)
+
+
+def test_expired_job_cannot_be_returned_as_current_or_open():
+    prepared = replace(
+        prepared_page(),
+        evidence=(
+            EvidenceNode(
+                "fact-1", "/html/body/p", "Senior Engineer — Open listing expired.", "text"
+            ),
+        ),
+        chunks=(ContextChunk("chunk-1", "Senior Engineer — Open listing expired.", 1),),
+    )
+    claims, rejected = _verified_claims(
+        prepared,
+        "jobs",
+        extraction(
+            [
+                {
+                    "field": "job_title",
+                    "value": "Senior Engineer",
+                    "quote": "Senior Engineer — Open listing expired.",
+                },
+                {
+                    "field": "job_listing_status",
+                    "value": "open",
+                    "quote": "Open listing expired",
+                },
+            ]
+        ),
+    )
+    assert [claim.field for claim in claims] == ["job_title"]
+    assert rejected == 1
+
+
 @pytest.mark.asyncio
 async def test_preset_calls_shared_saved_content_graph_and_returns_unverified_results(monkeypatch):
     from skriller.extraction import presets
@@ -124,5 +191,6 @@ async def test_preset_calls_shared_saved_content_graph_and_returns_unverified_re
     )
     assert called["schema"] is DirectoryAnswer
     assert "careers_url" in called["prompt"] and called["kwargs"]["operation_key"] == "preset-test"
+    assert "do not convert currencies" in called["prompt"]
     assert result.claims == () and result.rejected_claims == 1
     assert result.coverage_complete and result.failure_code is None

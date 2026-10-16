@@ -324,6 +324,38 @@ def restore_backup(
             for row in latest:
                 row["created_at"] = datetime.fromisoformat(row["created_at"])
         with target.begin() as connection:
+            # Archived paid-access leases cannot establish current provider truth.
+            # Preserve authority bindings, but require fresh reconciliation.
+            connection.execute(
+                sa.text(
+                    "UPDATE billing_bindings SET enabled=false,valid_until=NULL,updated_at=clock_timestamp()"
+                )
+            )
+            connection.execute(
+                sa.text(
+                    "UPDATE crm_destinations SET enabled=false,ciphertext=''::bytea,generation=generation+1"
+                )
+            )
+            connection.execute(
+                sa.text(
+                    "UPDATE crm_deliveries SET state='cancelled',last_code='restored',lease_token=NULL,"
+                    "lease_expires_at=NULL WHERE state IN ('pending','delivering')"
+                )
+            )
+            # OAuth consent cannot be revived from an old archive, including
+            # grants belonging to other owners of the same workspace.
+            connection.execute(
+                sa.text(
+                    "UPDATE youtube_analytics_grants SET state='revoked',state_hash=NULL,"
+                    "ciphertext=''::bytea,version=version+1"
+                )
+            )
+            connection.execute(
+                sa.text(
+                    "UPDATE crm_oauth_consents SET state='revoked',state_hash=NULL,"
+                    "ciphertext=''::bytea,version=version+1"
+                )
+            )
             restored_workspaces = {
                 str(value)
                 for value in connection.execute(sa.text("SELECT id FROM workspaces")).scalars()
@@ -364,6 +396,9 @@ def restore_backup(
                     )
                     for job in active:
                         cancel(session, str(job))
+                    from skriller.automation_lifecycle import quarantine
+
+                    quarantine(session, "restore_requires_opt_in")
                     replayed += replay_erasures(session, storage)
             # Verify every remaining private pointer and claim FK in the restored database.
             with target.connect() as connection:

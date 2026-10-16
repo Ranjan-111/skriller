@@ -50,6 +50,10 @@ def native_reference(url: str) -> dict[str, str] | None:
             }
     if host == "redd.it" and re.fullmatch(r"/[a-z0-9]{3,13}/?", path):
         return {"namespace": "reddit_post", "id": path.strip("/")}
+    if host in {"x.com", "www.x.com", "twitter.com", "www.twitter.com"}:
+        match = re.fullmatch(r"/([A-Za-z0-9_]{1,15})/status/([0-9]{1,25})/?", path)
+        if match:
+            return {"namespace": "x_post", "id": match[2]}
     if host in {"linkedin.com", "www.linkedin.com"}:
         match = re.fullmatch(r"/feed/update/urn:li:(activity|ugcPost):([0-9]{1,30})/?", path)
         if match:

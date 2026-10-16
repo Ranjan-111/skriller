@@ -294,6 +294,18 @@ class LocalStructuredModel:
                                 request.cancel()
                             await asyncio.gather(request, return_exceptions=True)
                 invoked = True
+                # This boundary accepts data only. Even a syntactically valid
+                # answer cannot authorize a model-requested tool or function.
+                extra = getattr(message, "additional_kwargs", {})
+                if (
+                    getattr(message, "tool_calls", None)
+                    or getattr(message, "invalid_tool_calls", None)
+                    or (
+                        isinstance(extra, dict)
+                        and (extra.get("tool_calls") or extra.get("function_call"))
+                    )
+                ):
+                    raise ValueError("Tool requests are not structured source facts")
                 text = message.content
                 if not isinstance(text, str) or len(text.encode()) > 65536:
                     raise ValueError("Invalid bounded model response")
@@ -326,10 +338,6 @@ class LocalStructuredModel:
                         known_tokens,
                     )
                 )
-                if invoked:
-                    raise ModelUnavailable(
-                        "schema_invalid", "Model did not return a valid result."
-                    ) from None
                 if invoked:
                     raise ModelUnavailable(
                         "schema_invalid", "Model did not return a valid result."

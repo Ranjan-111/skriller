@@ -802,7 +802,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-028"></a>
 #### SKR-028 — Adapt subprocess helpers into isolated backend runner
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-003](#skr-003), [SKR-005](#skr-005), [SKR-027](#skr-027)
 
@@ -825,7 +825,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-029"></a>
 #### SKR-029 — Store source credentials with tenant-scoped access
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-014](#skr-014), [SKR-018](#skr-018), [SKR-028](#skr-028)
 
@@ -1268,7 +1268,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-048"></a>
 #### SKR-048 — Adapt bounded LLM selector repair and template promotion
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-025](#skr-025), [SKR-043](#skr-043), [SKR-045](#skr-045), [SKR-047](#skr-047)
 
@@ -1339,7 +1339,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-051"></a>
 #### SKR-051 — Validate contacts and per-claim freshness
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-041](#skr-041), [SKR-047](#skr-047), [SKR-049](#skr-049)
 
@@ -1688,7 +1688,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-065"></a>
 #### SKR-065 — Adapt public YouTube metadata and available transcripts
 
-**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+**Phase:** P0 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-035](#skr-035), [SKR-047](#skr-047)
 
@@ -1924,7 +1924,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-075"></a>
 #### SKR-075 — Benchmark parser, full-job latency and resource use
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-038](#skr-038), [SKR-039](#skr-039), [SKR-040](#skr-040), [SKR-067](#skr-067), [SKR-070](#skr-070), [SKR-074](#skr-074)
 
@@ -1947,7 +1947,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-076"></a>
 #### SKR-076 — Evaluate field, qualification and identity quality
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** in_progress
 
 **Dependencies:** [SKR-048](#skr-048), [SKR-049](#skr-049), [SKR-050](#skr-050), [SKR-051](#skr-051), [SKR-060](#skr-060), [SKR-062](#skr-062), [SKR-063](#skr-063), [SKR-064](#skr-064), [SKR-065](#skr-065), [SKR-066](#skr-066), [SKR-068](#skr-068)
 
@@ -1970,7 +1970,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-077"></a>
 #### SKR-077 — Verify tenant boundaries and prompt-injection resistance
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-027](#skr-027), [SKR-028](#skr-028), [SKR-029](#skr-029), [SKR-030](#skr-030), [SKR-047](#skr-047), [SKR-056](#skr-056), [SKR-058](#skr-058), [SKR-072](#skr-072), [SKR-074](#skr-074)
 
@@ -1993,7 +1993,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-078"></a>
 #### SKR-078 — Verify recovery, rate limits and budget races
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-022](#skr-022), [SKR-023](#skr-023), [SKR-024](#skr-024), [SKR-025](#skr-025), [SKR-039](#skr-039), [SKR-068](#skr-068), [SKR-074](#skr-074)
 
@@ -2016,7 +2016,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-079"></a>
 #### SKR-079 — Prepare runbook and execute small customer pilot
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-009](#skr-009), [SKR-010](#skr-010), [SKR-011](#skr-011), [SKR-012](#skr-012), [SKR-068](#skr-068), [SKR-075](#skr-075), [SKR-076](#skr-076), [SKR-077](#skr-077), [SKR-078](#skr-078)
 
@@ -2041,7 +2041,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-080"></a>
 #### SKR-080 — Schedule idempotent saved-research refreshes
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-055](#skr-055), [SKR-071](#skr-071), [SKR-078](#skr-078)
 
@@ -2064,7 +2064,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-081"></a>
 #### SKR-081 — Report meaningful changes and optional notifications
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-056](#skr-056), [SKR-072](#skr-072), [SKR-080](#skr-080)
 
@@ -2087,7 +2087,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-082"></a>
 #### SKR-082 — Connect owner-authorised YouTube Analytics OAuth
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-030](#skr-030), [SKR-065](#skr-065)
 
@@ -2110,7 +2110,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-083"></a>
 #### SKR-083 — Retrieve and summarise owner analytics reports
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-056](#skr-056), [SKR-082](#skr-082)
 
@@ -2133,7 +2133,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-084"></a>
 #### SKR-084 — Adapt X discussion/professional connector
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** in_progress
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-047](#skr-047), [SKR-079](#skr-079)
 
@@ -2202,7 +2202,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-087"></a>
 #### SKR-087 — Add job/pricing/industry research presets
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-048](#skr-048), [SKR-056](#skr-056), [SKR-066](#skr-066), [SKR-079](#skr-079)
 
@@ -2225,7 +2225,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-088"></a>
 #### SKR-088 — Export qualified records into selected CRM
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-054](#skr-054), [SKR-072](#skr-072), [SKR-079](#skr-079)
 
@@ -2248,7 +2248,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-089"></a>
 #### SKR-089 — Deliver signed idempotent webhooks
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-027](#skr-027), [SKR-054](#skr-054), [SKR-072](#skr-072), [SKR-079](#skr-079)
 
@@ -2271,7 +2271,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-090"></a>
 #### SKR-090 — Automate billing and entitlements
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** in_progress
 
 **Dependencies:** [SKR-024](#skr-024), [SKR-069](#skr-069), [SKR-079](#skr-079)
 
@@ -2342,7 +2342,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-093"></a>
 #### SKR-093 — Expose read-only MCP research interface
 
-**Phase:** P2 · **Size:** M · **Status:** planned
+**Phase:** P2 · **Size:** M · **Status:** done
 
 **Dependencies:** [SKR-019](#skr-019), [SKR-056](#skr-056), [SKR-069](#skr-069), [SKR-077](#skr-077), [SKR-079](#skr-079)
 

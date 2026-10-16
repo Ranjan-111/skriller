@@ -28,8 +28,8 @@ class SearchHit(BaseModel):
     title: str = Field(min_length=1, max_length=300)
     url: str = Field(max_length=4096)
     snippet: str = Field(max_length=4096)
-    provider: Literal["exa_keyless"] = "exa_keyless"
-    evidence_kind: Literal["search_snippet"] = "search_snippet"
+    provider: Literal["exa_keyless", "x_api_v2"] = "exa_keyless"
+    evidence_kind: Literal["search_snippet", "public_post"] = "search_snippet"
     rank: int = Field(ge=1)
 
 

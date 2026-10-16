@@ -65,14 +65,17 @@ def policy_for(session, *, lock=False):
             .on_conflict_do_nothing(index_elements=["workspace_id"])
         )
     statement = sa.select(policies).where(policies.c.workspace_id == workspace)
-    return dict(session.execute(statement).mappings().one())
+    policy = dict(session.execute(statement).mappings().one())
+    billing_allowed = session.execute(
+        sa.text("SELECT billing_access_allowed(:workspace)"), {"workspace": workspace}
+    ).scalar_one()
+    policy["enabled"] = policy["enabled"] and billing_allowed
+    return policy
 
 
 def used_runs(session):
     return session.execute(
-        sa.select(sa.func.count())
-        .select_from(admissions)
-        .where(admissions.c.workspace_id == scope(session))
+        sa.text("SELECT entitlement_used_runs(:workspace)"), {"workspace": scope(session)}
     ).scalar_one()
 
 
@@ -143,6 +146,19 @@ def execution_allowed(session, job_id):
     if remaining_seconds(session, job) <= 0:
         JobRepository.transition(session, job_id, "paused", failure_code="deadline_exceeded")
         JobRepository.event(session, job_id, "deadline:reached", "deadline_reached")
+        return False
+    from skriller.scheduling import scheduled_execution_denial
+
+    schedule_denial = scheduled_execution_denial(session, job)
+    if schedule_denial:
+        JobRepository.transition(session, job_id, "paused", failure_code=schedule_denial)
+        JobRepository.event(
+            session,
+            job_id,
+            f"schedule:{schedule_denial}",
+            "scheduled_execution_blocked",
+            {"code": schedule_denial},
+        )
         return False
     reason = admit(session, job_id)
     if reason:

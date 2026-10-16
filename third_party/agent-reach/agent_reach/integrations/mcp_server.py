@@ -26,7 +26,7 @@ except ImportError:
     HAS_MCP = False
 
 
-def create_server():
+def create_server(*, tool_handlers=None):
     if not HAS_MCP:
         print(
             "MCP not installed. Install: python -m pip install "
@@ -36,21 +36,28 @@ def create_server():
         )
         sys.exit(1)
 
-    server = Server("agent-reach")
-    config = Config(read_only=True)
-    eyes = AgentReach(config)
+    server = Server("skriller" if tool_handlers is not None else "agent-reach")
+    # Product adapters supply a fixed trusted tool surface. They must not read
+    # host-wide source configuration or run the upstream diagnostic tools.
+    if tool_handlers is None:
+        config = Config(read_only=True)
+        eyes = AgentReach(config)
 
     @server.list_tools()
     async def list_tools():
+        if tool_handlers is not None:
+            return await tool_handlers[0]()
         return [
             Tool(name="get_status",
                  description="Get Agent Reach status: which channels are installed and active.",
                  inputSchema={"type": "object", "properties": {}}),
         ]
 
-    @server.call_tool()
+    @server.call_tool(validate_input=False) if tool_handlers is not None else server.call_tool()
     async def call_tool(name: str, arguments: dict):
         try:
+            if tool_handlers is not None:
+                return await tool_handlers[1](name, arguments)
             if name == "get_status":
                 result = eyes.doctor_report()
             else:
@@ -59,6 +66,8 @@ def create_server():
             text = json.dumps(result, ensure_ascii=False, indent=2) if isinstance(result, (dict, list)) else str(result)
             return [TextContent(type="text", text=text)]
         except Exception as e:
+            if tool_handlers is not None:
+                return [TextContent(type="text", text="Product tool is unavailable")]
             return [
                 TextContent(
                     type="text",

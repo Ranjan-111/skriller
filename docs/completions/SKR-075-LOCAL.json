@@ -1,0 +1,440 @@
+{
+  "schema_version": 1,
+  "status": "diagnostic_only",
+  "synthetic_fixture_only": true,
+  "network_calls": 0,
+  "model_calls": 0,
+  "browser_calls": 0,
+  "hardware": {
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.11"
+  },
+  "repetitions": 5,
+  "warmup_samples_excluded": 1,
+  "fixture_count": 5,
+  "sample_count": 25,
+  "stage_timings": {
+    "classification": {
+      "count": 25,
+      "p50_ms": 0.187,
+      "p95_ms": 0.273
+    },
+    "cleanup": {
+      "count": 10,
+      "p50_ms": 4.653,
+      "p95_ms": 7.435
+    },
+    "job": {
+      "count": 25,
+      "p50_ms": 0.328,
+      "p95_ms": 7.145
+    }
+  },
+  "job_elapsed_ms": 57.68,
+  "fixture_bytes_read": 7870,
+  "classification_outcomes": {
+    "readable": 10,
+    "empty": 5,
+    "challenge": 5,
+    "js_shell": 5
+  },
+  "resource_observations": {
+    "python_traced_peak_bytes": 8566578,
+    "process_peak_rss_before": {
+      "peak_rss_value": 159514624,
+      "peak_rss_unit": "bytes"
+    },
+    "process_peak_rss_after": {
+      "peak_rss_value": 196427776,
+      "peak_rss_unit": "bytes"
+    },
+    "rss_delta_not_attributable": true
+  },
+  "cache_state": "fixture files read for each sample; OS page cache is uncontrolled; no application cache used",
+  "failures": [
+    {
+      "fixture": "discussion",
+      "stage": "classification",
+      "outcome": "empty"
+    },
+    {
+      "fixture": "challenge",
+      "stage": "classification",
+      "outcome": "challenge"
+    },
+    {
+      "fixture": "dynamic",
+      "stage": "classification",
+      "outcome": "js_shell"
+    },
+    {
+      "fixture": "discussion",
+      "stage": "classification",
+      "outcome": "empty"
+    },
+    {
+      "fixture": "challenge",
+      "stage": "classification",
+      "outcome": "challenge"
+    },
+    {
+      "fixture": "dynamic",
+      "stage": "classification",
+      "outcome": "js_shell"
+    },
+    {
+      "fixture": "discussion",
+      "stage": "classification",
+      "outcome": "empty"
+    },
+    {
+      "fixture": "challenge",
+      "stage": "classification",
+      "outcome": "challenge"
+    },
+    {
+      "fixture": "dynamic",
+      "stage": "classification",
+      "outcome": "js_shell"
+    },
+    {
+      "fixture": "discussion",
+      "stage": "classification",
+      "outcome": "empty"
+    },
+    {
+      "fixture": "challenge",
+      "stage": "classification",
+      "outcome": "challenge"
+    },
+    {
+      "fixture": "dynamic",
+      "stage": "classification",
+      "outcome": "js_shell"
+    },
+    {
+      "fixture": "discussion",
+      "stage": "classification",
+      "outcome": "empty"
+    },
+    {
+      "fixture": "challenge",
+      "stage": "classification",
+      "outcome": "challenge"
+    },
+    {
+      "fixture": "dynamic",
+      "stage": "classification",
+      "outcome": "js_shell"
+    }
+  ],
+  "cases": [
+    {
+      "id": "company",
+      "repetition": 1,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.325,
+      "cleanup_ms": 4.97,
+      "fixture_bytes": 624,
+      "prepared_chunks": 1,
+      "elapsed_ms": 5.515,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "changed",
+      "repetition": 1,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.238,
+      "cleanup_ms": 3.864,
+      "fixture_bytes": 273,
+      "prepared_chunks": 1,
+      "elapsed_ms": 4.41,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "discussion",
+      "repetition": 1,
+      "status": "empty",
+      "static_processing_skipped": true,
+      "classification_ms": 0.198,
+      "cleanup_ms": null,
+      "fixture_bytes": 313,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.51,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "challenge",
+      "repetition": 1,
+      "status": "challenge",
+      "static_processing_skipped": true,
+      "classification_ms": 0.122,
+      "cleanup_ms": null,
+      "fixture_bytes": 158,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.328,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "dynamic",
+      "repetition": 1,
+      "status": "js_shell",
+      "static_processing_skipped": true,
+      "classification_ms": 0.151,
+      "cleanup_ms": null,
+      "fixture_bytes": 206,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.484,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "company",
+      "repetition": 2,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.253,
+      "cleanup_ms": 7.435,
+      "fixture_bytes": 624,
+      "prepared_chunks": 1,
+      "elapsed_ms": 7.791,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "changed",
+      "repetition": 2,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.251,
+      "cleanup_ms": 3.989,
+      "fixture_bytes": 273,
+      "prepared_chunks": 1,
+      "elapsed_ms": 4.357,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "discussion",
+      "repetition": 2,
+      "status": "empty",
+      "static_processing_skipped": true,
+      "classification_ms": 0.184,
+      "cleanup_ms": null,
+      "fixture_bytes": 313,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.323,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "challenge",
+      "repetition": 2,
+      "status": "challenge",
+      "static_processing_skipped": true,
+      "classification_ms": 0.118,
+      "cleanup_ms": null,
+      "fixture_bytes": 158,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.211,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "dynamic",
+      "repetition": 2,
+      "status": "js_shell",
+      "static_processing_skipped": true,
+      "classification_ms": 0.14,
+      "cleanup_ms": null,
+      "fixture_bytes": 206,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.223,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "company",
+      "repetition": 3,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.273,
+      "cleanup_ms": 4.51,
+      "fixture_bytes": 624,
+      "prepared_chunks": 1,
+      "elapsed_ms": 4.878,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "changed",
+      "repetition": 3,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.24,
+      "cleanup_ms": 3.673,
+      "fixture_bytes": 273,
+      "prepared_chunks": 1,
+      "elapsed_ms": 4.011,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "discussion",
+      "repetition": 3,
+      "status": "empty",
+      "static_processing_skipped": true,
+      "classification_ms": 0.19,
+      "cleanup_ms": null,
+      "fixture_bytes": 313,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.289,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "challenge",
+      "repetition": 3,
+      "status": "challenge",
+      "static_processing_skipped": true,
+      "classification_ms": 0.122,
+      "cleanup_ms": null,
+      "fixture_bytes": 158,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.219,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "dynamic",
+      "repetition": 3,
+      "status": "js_shell",
+      "static_processing_skipped": true,
+      "classification_ms": 0.145,
+      "cleanup_ms": null,
+      "fixture_bytes": 206,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.223,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "company",
+      "repetition": 4,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.267,
+      "cleanup_ms": 4.685,
+      "fixture_bytes": 624,
+      "prepared_chunks": 1,
+      "elapsed_ms": 5.043,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "changed",
+      "repetition": 4,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.243,
+      "cleanup_ms": 4.653,
+      "fixture_bytes": 273,
+      "prepared_chunks": 1,
+      "elapsed_ms": 5.045,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "discussion",
+      "repetition": 4,
+      "status": "empty",
+      "static_processing_skipped": true,
+      "classification_ms": 0.182,
+      "cleanup_ms": null,
+      "fixture_bytes": 313,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.309,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "challenge",
+      "repetition": 4,
+      "status": "challenge",
+      "static_processing_skipped": true,
+      "classification_ms": 0.125,
+      "cleanup_ms": null,
+      "fixture_bytes": 158,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.219,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "dynamic",
+      "repetition": 4,
+      "status": "js_shell",
+      "static_processing_skipped": true,
+      "classification_ms": 0.138,
+      "cleanup_ms": null,
+      "fixture_bytes": 206,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.217,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "company",
+      "repetition": 5,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.261,
+      "cleanup_ms": 4.475,
+      "fixture_bytes": 624,
+      "prepared_chunks": 1,
+      "elapsed_ms": 4.821,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "changed",
+      "repetition": 5,
+      "status": "readable",
+      "static_processing_skipped": false,
+      "classification_ms": 0.239,
+      "cleanup_ms": 6.801,
+      "fixture_bytes": 273,
+      "prepared_chunks": 1,
+      "elapsed_ms": 7.145,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "discussion",
+      "repetition": 5,
+      "status": "empty",
+      "static_processing_skipped": true,
+      "classification_ms": 0.187,
+      "cleanup_ms": null,
+      "fixture_bytes": 313,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.327,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "challenge",
+      "repetition": 5,
+      "status": "challenge",
+      "static_processing_skipped": true,
+      "classification_ms": 0.119,
+      "cleanup_ms": null,
+      "fixture_bytes": 158,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.211,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    },
+    {
+      "id": "dynamic",
+      "repetition": 5,
+      "status": "js_shell",
+      "static_processing_skipped": true,
+      "classification_ms": 0.148,
+      "cleanup_ms": null,
+      "fixture_bytes": 206,
+      "prepared_chunks": null,
+      "elapsed_ms": 0.229,
+      "cache_state": "filesystem_read_each_iteration; OS cache uncontrolled"
+    }
+  ],
+  "limitations": [
+    "Fixture classification outcomes do not measure real source availability or network latency.",
+    "Job timing is local file read, copied classification, and cleanup only; it is not end-to-end product latency.",
+    "Process peak RSS is cumulative for this process and cannot be attributed to this run; Python allocation peak is reported separately.",
+    "Small fixture percentiles are diagnostic and are not product targets or an SLA.",
+    "No concurrency, browser capacity, host responsiveness, or multi-workspace behavior is measured."
+  ]
+}

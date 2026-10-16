@@ -17,6 +17,7 @@ from skriller.db.schema import suppressions
 from skriller.lists import create_list, list_snapshots, refresh_list, saved_lists, snapshot
 from skriller.qualification.contacts import email_domain
 from skriller.qualification.criteria import Fit
+from skriller.research.changes import meaningful_changes
 
 router = APIRouter(prefix="/v1/workspaces/{workspace_id}/lists")
 
@@ -104,6 +105,24 @@ class SuppressionOutput(BaseModel):
     kind: Literal["entity", "profile", "email", "domain"]
     applies_to: Literal["future_list_refresh"]
     historical_snapshot_action: Literal["unchanged"]
+
+
+class ChangeCitation(BaseModel):
+    source_url: str
+    source_platform: str
+    collected_at: datetime
+    quote: str
+    excerpt_sha256: str
+
+
+class ChangeReport(BaseModel):
+    entity_id: UUID
+    display_name: str | None
+    field: Literal["current_role"]
+    previous_value: str | int | float | bool
+    current_value: str | int | float | bool
+    qualification: Literal["accepted_observation_not_independently_verified"]
+    citations: list[ChangeCitation]
 
 
 def fail(exc):
@@ -233,6 +252,28 @@ def historical_snapshot(
             result = snapshot(session, str(list_id), revision)
         headers(response, result, "frozen")
         return result
+    except (WorkspaceAccessDenied, LookupError):
+        raise HTTPException(404, "Saved snapshot unavailable") from None
+
+
+@router.get("/{list_id}/snapshots/{revision}/changes", response_model=list[ChangeReport])
+def snapshot_changes(
+    workspace_id: UUID,
+    list_id: UUID,
+    revision: int,
+    request: Request,
+    identity: Annotated[Identity, Depends(require_identity)],
+):
+    """Return cited, deterministic supported changes from the previous revision."""
+    if revision < 1:
+        raise HTTPException(422, "Positive snapshot revision required")
+    try:
+        with request.app.state.database.tenant(identity.uid, str(workspace_id)) as session:
+            current = snapshot(session, str(list_id), revision)
+            previous = snapshot(session, str(list_id), revision - 1) if revision > 1 else None
+        if previous is None:
+            return []
+        return meaningful_changes(previous["payload"], current["payload"])
     except (WorkspaceAccessDenied, LookupError):
         raise HTTPException(404, "Saved snapshot unavailable") from None
 

@@ -1,0 +1,242 @@
+{
+  "scope": "Synthetic public company-name selector changes; not a representative platform corpus",
+  "corpus_sha256": "851b0314e6640a9a7a10a35d63ac4d1388748d557fbe3ff4bceb9ad11925bf96",
+  "model_mode": "actual_local_ollama_llama3.2:3b",
+  "changed_page_denominator": 20,
+  "correct_fields": 14,
+  "field_accuracy": 0.7,
+  "silent_wrong_matches": 1,
+  "missing_fields": 5,
+  "not_executed": 0,
+  "adversarial_denominator": 4,
+  "adversarial_rejected": 4,
+  "actual_metered_calls": 24,
+  "metered_tokens": 9559,
+  "elapsed_seconds": 27.589,
+  "cases": [
+    {
+      "id": "tag-change",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 392
+    },
+    {
+      "id": "id-selector",
+      "label": "correct",
+      "outcome": "missing",
+      "reason": "mapping_missing",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 391
+    },
+    {
+      "id": "nested-wrapper",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 405
+    },
+    {
+      "id": "attribute-selector",
+      "label": "correct",
+      "outcome": "missing",
+      "reason": "mapping_missing",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 398
+    },
+    {
+      "id": "multiple-classes",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 396
+    },
+    {
+      "id": "nested-emphasis",
+      "label": "correct",
+      "outcome": "silent_wrong",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 391
+    },
+    {
+      "id": "section-wrapper",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 402
+    },
+    {
+      "id": "link-text",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 398
+    },
+    {
+      "id": "heading-target",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 401
+    },
+    {
+      "id": "deep-wrapper",
+      "label": "correct",
+      "outcome": "missing",
+      "reason": "mapping_missing",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 401
+    },
+    {
+      "id": "changed-neighbors",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 409
+    },
+    {
+      "id": "list-layout",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 400
+    },
+    {
+      "id": "definition-layout",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 408
+    },
+    {
+      "id": "reordered-content",
+      "label": "correct",
+      "outcome": "missing",
+      "reason": "mapping_missing",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 395
+    },
+    {
+      "id": "nested-literal",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 398
+    },
+    {
+      "id": "unicode-text",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 397
+    },
+    {
+      "id": "hyphenated-text",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 390
+    },
+    {
+      "id": "attribute-no-class",
+      "label": "correct",
+      "outcome": "missing",
+      "reason": "mapping_missing",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 398
+    },
+    {
+      "id": "aside-wrapper",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 396
+    },
+    {
+      "id": "same-name-other-container",
+      "label": "correct",
+      "outcome": "correct",
+      "reason": "regressions_validated",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 423
+    },
+    {
+      "id": "ambiguous-duplicate",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "mapping_missing",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 398
+    },
+    {
+      "id": "wrong-neighbor",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "semantic_anchor_mismatch",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 386
+    },
+    {
+      "id": "wrong-literal",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "mapping_missing",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 389
+    },
+    {
+      "id": "cross-container",
+      "label": "reject",
+      "outcome": "rejected",
+      "reason": "semantic_anchor_mismatch",
+      "worker_status": "checkpointed",
+      "calls": 1,
+      "tokens": 397
+    }
+  ],
+  "accuracy_definition": "Exact labelled element path and literal value. Equivalent nested elements count as target mismatches under this conservative metric.",
+  "gate_passed": false,
+  "required_field_accuracy": 0.9,
+  "allowed_silent_target_mismatches": 0,
+  "evaluation_scope": "Development fixture acceptance, not a held-out or representative platform benchmark",
+  "prompt_revision": "stable_attribute_guidance",
+  "recorded_at": "2026-10-16T11:02:22.741883+00:00",
+  "repair_code_sha256": "4ba198c1d98b05d416f9cb0aa680e988efde5599831784a202f476b51f432871"
+}

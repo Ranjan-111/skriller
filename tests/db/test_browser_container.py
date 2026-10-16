@@ -124,7 +124,7 @@ def test_actual_chromium_container_persisted_cancel_removes_worker(database, mon
                 env=env,
                 check=False,
             )
-            assert inspect.returncode != 0 and "No such" in inspect.stderr
+            assert inspect.returncode != 0 and "no such" in inspect.stderr.casefold()
             with database.tenant(ctx.actor_id, str(ctx.workspace_id)) as session:
                 rows = session.execute(sa.select(reservations)).mappings().all()
                 assert len(rows) == 1 and rows[0]["reconciliation_status"] == "estimated"

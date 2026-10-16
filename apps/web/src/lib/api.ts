@@ -1,5 +1,7 @@
 import type { components, paths } from "../generated/api";
 import { decodeProgress, type ProgressUpdate } from "./progress";
+import { createAnalyticsClient } from "./youtube-analytics";
+import { createCrmClient } from "./crm";
 
 export type SearchPlan = components["schemas"]["SearchPlan"];
 export type Capability = components["schemas"]["Capability"];
@@ -72,6 +74,13 @@ export type ResearchResults = {
   state: string;
   results: ResearchCandidate[];
   limitations: string[];
+  resume_status?:
+    | "not_paused"
+    | "available"
+    | "new_prompt_required"
+    | "deadline_expired"
+    | "requires_reconciliation"
+    | "budget_exhausted";
   groups?: components["schemas"]["QualificationGroups"] | null;
 };
 export type SavedList = components["schemas"]["ListMetadata"];
@@ -612,6 +621,48 @@ export function createApi(
       );
   }
   const client = {
+    ...createCrmClient(async (path, init) => {
+      let response: Response;
+      try { response = await request(path, init, true); } catch (reason) {
+        throw new ApiError(reason instanceof ApiError && reason.status === 401 ? "Sign in again before managing Salesforce." : "The Salesforce service could not be reached. Try again.", reason instanceof ApiError ? reason.status : undefined);
+      }
+      if (!response.ok) throw new ApiError(response.status === 503 ? "Salesforce needs server configuration. Ask the operator to configure the connected app." : response.status === 403 ? "Only the workspace owner can manage Salesforce." : response.status === 401 ? "Sign in again before managing Salesforce." : "Salesforce could not be loaded. Try again.", response.status);
+      try { return await response.json(); } catch { throw new ApiError("Unexpected Salesforce response. Try again."); }
+    }),
+    ...createAnalyticsClient(async (path, init) => {
+      let response: Response;
+      try {
+        response = await request(path, init, true);
+      } catch (reason) {
+        const status = reason instanceof ApiError ? reason.status : undefined;
+        throw new ApiError(
+          status === 401
+            ? "Sign in again before accessing owner analytics."
+            : "The analytics service could not be reached. Try again.",
+          status,
+        );
+      }
+      if (!response.ok)
+        throw new ApiError(
+          response.status === 503
+            ? "Owner analytics needs server configuration. Ask the workspace operator to configure Google Analytics OAuth."
+            : response.status === 403
+              ? "Only the connecting workspace owner can access these analytics."
+              : response.status === 401
+                ? "Sign in again before accessing owner analytics."
+                : response.status === 409
+                  ? "This analytics connection or report is unavailable. Refresh access or reconnect and try again."
+            : response.status === 422
+                    ? "Choose a valid historical date range of at most 31 days."
+                    : "Analytics could not be loaded. Try again.",
+          response.status,
+        );
+      try {
+        return await response.json();
+      } catch {
+        throw new ApiError("Unexpected analytics response. Try again.");
+      }
+    }),
     async allowance(): Promise<WorkspaceAllowance> {
       const data = await jsonRequest("/v1/workspace/entitlements");
       if (!validAllowance(data))
@@ -1629,6 +1680,15 @@ export function createApi(
         !("limitations" in data) ||
         !Array.isArray(data.limitations) ||
         !data.limitations.every((item: unknown) => typeof item === "string") ||
+        ("resume_status" in data &&
+          ![
+            "not_paused",
+            "available",
+            "new_prompt_required",
+            "deadline_expired",
+            "requires_reconciliation",
+            "budget_exhausted",
+          ].includes(String(data.resume_status))) ||
         !data.results.every((item: unknown) => {
           if (!item || typeof item !== "object") return false;
           const candidate = item as Record<string, unknown>;

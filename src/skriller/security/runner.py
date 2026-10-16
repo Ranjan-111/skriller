@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import selectors
@@ -11,8 +12,13 @@ import tempfile
 import time
 import uuid
 from collections.abc import Callable
+from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from skriller.connections.store import RunnerSecrets
 
 from agent_reach.utils.paths import make_private_dir
 from agent_reach.utils.process import utf8_subprocess_env
@@ -126,6 +132,16 @@ def bounded_process(
 
 
 def reviewed_command(operation: str, target: str) -> list[str]:
+    if operation == "x_read":
+        # The worker accepts only a serialized, bounded search request. It
+        # chooses the one fixed official endpoint; callers cannot supply URLs.
+        from skriller.connectors.x_discovery import XSearch
+
+        try:
+            request = XSearch.model_validate_json(target)
+        except Exception as exc:
+            raise ValueError("X read requires a bounded search request") from exc
+        return ["python", "-m", "skriller.connectors.x_worker", request.model_dump_json()]
     if operation in {"youtube_metadata", "youtube_read"}:
         from agent_reach.utils.url import host_matches
 
@@ -171,10 +187,22 @@ class IsolatedRunner:
         timeout: float = 60,
         max_output: int = 1024 * 1024,
         cancel_check: Callable[[], bool] | None = None,
+        credential_material: RunnerSecrets | None = None,
     ) -> RunResult:
         if not 0 < timeout <= 180 or not 0 < max_output <= 10 * 1024 * 1024:
             raise ValueError("Backend budget exceeds the execution boundary")
         command = reviewed_command(operation, target)
+        if credential_material is not None:
+            from skriller.connections.store import RUNNERS, RunnerSecrets
+
+            if (
+                not isinstance(credential_material, RunnerSecrets)
+                or credential_material.runner != operation
+                or operation not in RUNNERS
+                or not credential_material.environment
+                or not set(credential_material.environment) <= set(RUNNERS[operation][1].values())
+            ):
+                raise ValueError("Credential material must match its fixed source operation")
         started = time.monotonic()
         stopped = _control_status(cancel_check)
         if stopped:
@@ -184,10 +212,42 @@ class IsolatedRunner:
         # back to os.environ. No host token, proxy or credential variables leak.
         env = utf8_subprocess_env({"PATH": "/usr/local/bin:/usr/bin:/bin"})
         # Resolve the trusted OS temp root first (macOS /var is a symlink).
-        with tempfile.TemporaryDirectory(
-            prefix="skriller-backend-", dir=Path(tempfile.gettempdir()).resolve()
-        ) as directory:
+        with ExitStack() as resources:
+            directory = resources.enter_context(
+                tempfile.TemporaryDirectory(
+                    prefix="skriller-backend-", dir=Path(tempfile.gettempdir()).resolve()
+                )
+            )
             workspace = make_private_dir(directory)
+            credential_options: list[str] = []
+            if credential_material is not None:
+                secret_directory = resources.enter_context(
+                    tempfile.TemporaryDirectory(
+                        prefix="skriller-credential-", dir=Path(tempfile.gettempdir()).resolve()
+                    )
+                )
+                path = make_private_dir(secret_directory) / "credentials.json"
+                content = json.dumps(
+                    {
+                        "schema_version": 1,
+                        "runner": operation,
+                        "connection_ref": str(credential_material.connection_ref),
+                        "environment": credential_material.injection(),
+                    }
+                ).encode()
+                if len(content) > 65536:
+                    raise ValueError("Credential delivery exceeds its byte bound")
+                descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+                with os.fdopen(descriptor, "wb") as stream:
+                    stream.write(content)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                credential_options = [
+                    "--log-driver",
+                    "none",
+                    "--mount",
+                    f"type=bind,source={path},target=/run/skriller-credentials.json,readonly",
+                ]
             argv = [
                 str(self.docker),
                 "run",
@@ -235,12 +295,14 @@ class IsolatedRunner:
                 f"SKRILLER_RUN_GID={os.getgid() or 65532}",
                 "--env",
                 f"SKRILLER_PROXY_IP={self.proxy_ip}",
+                *(["--env", "SKRILLER_X_WORKER=isolated"] if operation == "x_read" else []),
                 "--env",
                 f"HTTPS_PROXY=http://{self.proxy_ip}:8080",
                 "--env",
                 f"HTTP_PROXY=http://{self.proxy_ip}:8080",
                 "--entrypoint",
                 "/usr/local/bin/guarded-worker",
+                *credential_options,
                 self.image,
                 *command,
             ]
@@ -262,6 +324,17 @@ class IsolatedRunner:
                     env=env,
                     timeout=10,
                     max_output=8192,
+                )
+            if credential_material is not None:
+                from skriller.connections.store import redact_output
+
+                result = RunResult(
+                    result.status,
+                    result.returncode,
+                    redact_output(result.stdout, credential_material),
+                    # Raw backend error logs do not belong in a credential-bearing result.
+                    "" if result.status == "completed" else "Source worker did not complete",
+                    result.elapsed_ms,
                 )
             if cleanup.status != "completed" and "No such container" not in cleanup.stderr:
                 return RunResult(

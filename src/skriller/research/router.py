@@ -36,7 +36,7 @@ from skriller.db.schema import (
     stage_checkpoints,
 )
 from skriller.jobs.budget import stage_observation_report, usage_report
-from skriller.jobs.control import cancel, resume
+from skriller.jobs.control import ResumeStatus, cancel, resume, resume_readiness
 from skriller.jobs.outbox import submit
 from skriller.qualification.criteria import Fit
 from skriller.research.bootstrap import create_clarification_job
@@ -69,6 +69,11 @@ class MessageInput(Contract):
 class ConversationOutput(Contract):
     id: UUID
     workspace_id: UUID
+
+
+class ConversationListOutput(ConversationOutput):
+    title: str
+    created_at: datetime
 
 
 class SubmissionOutput(Contract):
@@ -193,9 +198,9 @@ class QueryProvenance(Contract):
     original_url: str = Field(max_length=4096)
     query: str = Field(max_length=2000)
     rank: int = Field(ge=1)
-    provider: Literal["exa_keyless"]
+    provider: Literal["exa_keyless", "x_api_v2"]
     observed_at: datetime
-    evidence_kind: Literal["search_snippet"]
+    evidence_kind: Literal["search_snippet", "public_post"]
 
 
 class CollectionView(Contract):
@@ -284,8 +289,8 @@ class ResearchCandidate(Contract):
     url: str = Field(max_length=4096)
     snippet: str = Field(max_length=4096)
     source: Source
-    provider: Literal["exa_keyless"]
-    evidence_kind: Literal["search_snippet"]
+    provider: Literal["exa_keyless", "x_api_v2"]
+    evidence_kind: Literal["search_snippet", "public_post"]
     qualification: Literal["unverified"]
     fit: Fit | None = None
     observed_at: datetime
@@ -312,6 +317,7 @@ class ResearchResults(Contract):
     results: list[ResearchCandidate] = Field(max_length=100)
     limitations: list[str]
     groups: QualificationGroups | None = None
+    resume_status: ResumeStatus = "not_paused"
 
 
 class EvidenceCitation(Contract):
@@ -561,6 +567,7 @@ def message(
     background: BackgroundTasks,
     identity: Annotated[Identity, Depends(require_identity)],
     idempotency_key: Annotated[str | None, Header(max_length=200)] = None,
+    workspace_id: UUID | None = None,
 ):
     if request.app.state.search_provider is None:
         raise HTTPException(503, "Search discovery is disabled")
@@ -568,7 +575,9 @@ def message(
         raise HTTPException(422, "A search objective is required")
     database = request.app.state.database
     try:
-        workspace, _ = locate(database, identity.uid, ConversationRepository, conversation_id)
+        workspace, _ = locate(
+            database, identity.uid, ConversationRepository, conversation_id, workspace_id
+        )
     except (LookupError, WorkspaceAccessDenied) as exc:
         raise HTTPException(404, "Conversation unavailable") from exc
     with database.tenant(identity.uid, workspace) as session:
@@ -730,6 +739,35 @@ def message(
         "workspace_id": workspace,
         "limitations": LIMITATIONS,
     }
+
+
+@router.get("/workspaces/{workspace_id}/conversations", response_model=list[ConversationListOutput])
+def list_conversations(
+    workspace_id: UUID,
+    request: Request,
+    response: Response,
+    identity: Annotated[Identity, Depends(require_identity)],
+):
+    response.headers["Cache-Control"] = "private, no-store"
+    try:
+        with request.app.state.database.tenant(identity.uid, str(workspace_id)) as session:
+            return (
+                session.execute(
+                    sa.select(
+                        conversations.c.id,
+                        conversations.c.workspace_id,
+                        conversations.c.title,
+                        conversations.c.created_at,
+                    )
+                    .where(conversations.c.workspace_id == str(workspace_id))
+                    .order_by(conversations.c.created_at.desc())
+                    .limit(100)
+                )
+                .mappings()
+                .all()
+            )
+    except WorkspaceAccessDenied:
+        raise HTTPException(404, "Workspace unavailable") from None
 
 
 def read_job(request, identity, job_id, workspace_id):
@@ -912,6 +950,7 @@ def results(
             if event["kind"] == "planning_summary"
         ]
         plan = ConversationRepository.get_plan(session, job["plan_id"])["interpretation"]
+        resume_status = resume_readiness(session, job)
         from skriller.research.refinements import refinement_source
 
         if refinement_source(session, str(job_id)) is not None:
@@ -923,6 +962,11 @@ def results(
             limitations.append("Planning stopped: " + event["status"].replace("_", " ") + ".")
     if plan.get("clarification"):
         limitations.append("Clarification required: " + plan["clarification"])
+    if job["failure_code"] == "checkpoint_failed":
+        limitations.append(
+            "Research paused because a result could not be saved. Previously saved results remain "
+            "available; call usage is retained. This run requires reconciliation before resuming."
+        )
     for summary in summaries:
         for failure in summary.get("source_failures", []):
             limitations.append(
@@ -937,6 +981,7 @@ def results(
         "job_id": str(job_id),
         "workspace_id": workspace,
         "state": job["state"],
+        "resume_status": resume_status,
         "results": rows,
         "groups": {
             status: [
@@ -1036,9 +1081,11 @@ def resume_job(
     workspace_id: UUID | None = None,
 ):
     workspace, _job = read_job(request, identity, job_id, workspace_id)
-    stage = _job["stage"] or {"planning": "planning", "followup": "reporting"}.get(
-        _job["purpose"], "discovering"
-    )
+    stage = _job["stage"] or {
+        "planning": "planning",
+        "followup": "reporting",
+        "template_repair": "extracting",
+    }.get(_job["purpose"], "discovering")
     if stage == "discovering" and request.app.state.search_provider is None:
         raise HTTPException(503, "Search discovery is disabled")
     if stage == "collecting" and not request.app.state.settings.public_collection_proxy_url:

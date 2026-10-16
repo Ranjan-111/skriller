@@ -50,6 +50,14 @@ None of these three source trees supplies Skriller's full conversational UI, mul
 
 Upstream tests are starting points, not a replacement for product tests. Some tests require network/model keys or old dependency interfaces. Record their baseline outcomes and adapt affected tests transparently. Never label skipped network tests as passing source access.
 
+## Added bounded integrations — 16 October 2026
+
+Owner YouTube Analytics is original product/provider glue; the supplied trees have no owner OAuth implementation. Encryption and safe private-key loading reuse the existing Agent-Reach-derived keyring/store patterns. The optional private report summary directly reuses the installed copied ScrapeGraph answer node, structured parser, existing product graph/ledger and report citation types. It creates no new extraction engine or workspace-shared private evidence.
+
+SKR-084 retains a separately pinned full `public-clis/twitter-cli` source at commit `7c634e0d396b1e7af9f63315b414925fe4f29ae7`. Its unchanged pure models/parser are copied into `src/skriller/_vendor/twitter` with byte-hash provenance and license. No upstream auth/client/CLI/write path is imported into product execution; isolated source access remains in progress.
+
+SKR-093 adapts the existing copied Agent-Reach `integrations/mcp_server.py` with optional trusted product handlers, preserving its default diagnostic behavior. The product reuses that server/stdio scaffolding and calls the existing authenticated research/list/evidence APIs, rather than adding another research engine or bypassing the job ledger. The modification and hash are recorded in the Agent-Reach copy's provenance manifest.
+
 
 
 ## Selected LinkedIn/Reddit discovery subsets — 2026-10-15
@@ -76,3 +84,12 @@ interfaces for tenant ownership, job reservations, cancellation, erasure, scoped
 metadata/caption evidence and identity limits. The installed backend fixture uses
 actual yt-dlp processing with a synthetic InfoExtractor and network disabled;
 public-source readiness is separately recorded as unverified after a backend failure.
+
+2026-10-17 analytics/CRM integration follow-through: `analytics/jobs.py` adapts the
+existing follow-up admission/reporting lease/outbox orchestration and retains
+`analytics.summaries` -> copied ScrapeGraph answer-node/parser/model ledger.
+`crm/router.py` delegates selection to the existing copied-export/qualification
+queue. `crm/oauth.py` reuses the existing OAuth redirect validation and bounded
+native transport pattern; `crm/consents.py` adapts the existing owner OAuth AES-GCM,
+single-use consent and generation fences. No source engine was rewritten, and no
+new third-party source snapshot was imported by this batch.

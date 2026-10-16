@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, StrictBool
 
 from skriller.auth import Identity, require_identity
+from skriller.connections.store import ConnectionStore
 from skriller.connectors.diagnostics import SourceDiagnostic, diagnose
 from skriller.connectors.registry import Operation
 from skriller.connectors.switches import set_disabled
@@ -31,6 +32,9 @@ def source_status(
                 session,
                 search_enabled=request.app.state.settings.search_provider != "disabled",
                 youtube_image=request.app.state.settings.public_youtube_image,
+                x_image=request.app.state.settings.public_x_image,
+                database=request.app.state.database,
+                connection_store=ConnectionStore.configured(request.app.state.settings),
             )
     except WorkspaceAccessDenied:
         raise HTTPException(404, "Workspace unavailable") from None
@@ -54,6 +58,9 @@ def source_switch(
                     session,
                     search_enabled=request.app.state.settings.search_provider != "disabled",
                     youtube_image=request.app.state.settings.public_youtube_image,
+                    x_image=request.app.state.settings.public_x_image,
+                    database=request.app.state.database,
+                    connection_store=ConnectionStore.configured(request.app.state.settings),
                 )
                 if row.capability.source == source and row.capability.operation == operation
             )

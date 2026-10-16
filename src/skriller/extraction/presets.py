@@ -5,6 +5,7 @@ identity and qualification pipeline independently reviews it.
 """
 
 import math
+import re
 from datetime import UTC, datetime
 from typing import Literal
 
@@ -17,7 +18,10 @@ from skriller.extraction.models import LocalStructuredModel
 from skriller.extraction.validation import literal_value
 from skriller.settings import Settings
 
-PresetId = Literal["company", "team", "careers", "services", "contact", "directory"]
+PresetId = Literal[
+    "company", "team", "careers", "jobs", "pricing", "services", "contact", "directory",
+    "industry_directory",
+]
 
 
 class ClaimDraft(BaseModel):
@@ -73,7 +77,21 @@ _FIELDS: dict[PresetId, tuple[str, ...]] = {
     "team": ("person_name", "job_title", "team_page_url"),
     # A page may state when a role was posted. This is retained as a literal
     # source observation; it does not assert that the role is still open.
-    "careers": ("job_title", "location", "employment_type", "careers_url", "job_posted_date"),
+    "careers": (
+        "job_title", "location", "employment_type", "careers_url", "job_posted_date",
+        "job_listing_status",
+    ),
+    "jobs": (
+        "job_title", "location", "employment_type", "careers_url", "job_posted_date",
+        "job_listing_status",
+    ),
+    # Keep the site's literal amount, currency, period, effective date and
+    # availability as separate observations. In particular, do not parse
+    # localized punctuation or convert currencies in this extraction layer.
+    "pricing": (
+        "product_name", "price", "currency", "billing_period", "price_effective_date",
+        "price_availability",
+    ),
     "services": ("service_name", "service_description", "customer_type", "service_area"),
     "contact": ("contact_page_url", "public_work_email", "business_phone"),
     "directory": (
@@ -84,7 +102,17 @@ _FIELDS: dict[PresetId, tuple[str, ...]] = {
         "industry",
         "service_name",
     ),
+    "industry_directory": (
+        "company_name", "description", "headquarters", "employee_count", "industry",
+        "service_name",
+    ),
 }
+
+_CLOSED_JOB_RE = re.compile(
+    r"\b(expired|closed|position\s+filled|no\s+longer\s+accepting\s+applications)\b",
+    re.IGNORECASE,
+)
+_CURRENT_JOB_STATUSES = {"open", "active", "current", "hiring", "accepting applications"}
 
 
 def preset_fields(preset: PresetId) -> tuple[str, ...]:
@@ -102,6 +130,9 @@ def _verified_claims(
     claims = []
     rejected = 0
     observed_at = datetime.now(UTC)
+    source_indicates_closed_job = preset in {"careers", "jobs"} and any(
+        _CLOSED_JOB_RE.search(node.quote) for node in prepared.evidence
+    )
     for answer in extraction.answers:
         nodes = [evidence_by_id[key] for key in answer.evidence_ids if key in evidence_by_id]
         for raw in answer.data.get("claims", []):
@@ -115,6 +146,12 @@ def _verified_claims(
                 draft.field not in allowed
                 or not supports
                 or not literal_value(draft.value, draft.quote)
+                or (
+                    source_indicates_closed_job
+                    and draft.field == "job_listing_status"
+                    and isinstance(draft.value, str)
+                    and draft.value.strip().casefold() in _CURRENT_JOB_STATUSES
+                )
             ):
                 rejected += 1
                 continue
@@ -150,6 +187,9 @@ async def extract_directory_page(
     instruction = (
         f"Extract only these fields when explicitly stated: {', '.join(fields)}. "
         "For each fact return its field, exact value, and a verbatim supporting quote. "
+        "Preserve source spelling, punctuation, currency, billing period, dates, and availability exactly; "
+        "do not convert currencies, normalize localized amounts/dates, or infer current availability. "
+        "For job listings, an expired, closed, filled, or no-longer-accepting source must never be described as current, open, active, or hiring. "
         "Return a claims array of objects with exactly field, value, quote keys. "
         "Do not infer contacts or merge claims from other pages. Unknowns are omitted from the array; never return null claim values."
     )

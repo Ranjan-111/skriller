@@ -1,6 +1,136 @@
 {
   "components": {
     "schemas": {
+      "AnalyticsReport": {
+        "properties": {
+          "availability": {
+            "const": "provider_returned_days_only",
+            "default": "provider_returned_days_only",
+            "title": "Availability",
+            "type": "string"
+          },
+          "channel_id": {
+            "title": "Channel Id",
+            "type": "string"
+          },
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "coverage_complete": {
+            "const": false,
+            "default": false,
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "null"
+          },
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "grant_id": {
+            "format": "uuid",
+            "title": "Grant Id",
+            "type": "string"
+          },
+          "response_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response Sha256"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/MetricRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "source_platform": {
+            "const": "youtube_analytics",
+            "default": "youtube_analytics",
+            "title": "Source Platform",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "partial",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Summary",
+            "type": "array"
+          },
+          "summary_status": {
+            "const": "literal_metrics_only",
+            "default": "literal_metrics_only",
+            "title": "Summary Status",
+            "type": "string"
+          },
+          "timezone": {
+            "const": "America/Los_Angeles",
+            "default": "America/Los_Angeles",
+            "title": "Timezone",
+            "type": "string"
+          },
+          "unavailable_metrics": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Unavailable Metrics",
+            "type": "object"
+          },
+          "units": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Units",
+            "type": "object"
+          }
+        },
+        "required": [
+          "status",
+          "grant_id",
+          "channel_id",
+          "start_date",
+          "end_date",
+          "rows",
+          "units",
+          "unavailable_metrics",
+          "source_url",
+          "collected_at",
+          "response_sha256",
+          "summary"
+        ],
+        "title": "AnalyticsReport",
+        "type": "object"
+      },
       "Anchor": {
         "additionalProperties": false,
         "properties": {
@@ -111,6 +241,122 @@
           "version"
         ],
         "title": "Capability",
+        "type": "object"
+      },
+      "ChangeCitation": {
+        "properties": {
+          "collected_at": {
+            "format": "date-time",
+            "title": "Collected At",
+            "type": "string"
+          },
+          "excerpt_sha256": {
+            "title": "Excerpt Sha256",
+            "type": "string"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "source_platform": {
+            "title": "Source Platform",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_url",
+          "source_platform",
+          "collected_at",
+          "quote",
+          "excerpt_sha256"
+        ],
+        "title": "ChangeCitation",
+        "type": "object"
+      },
+      "ChangeReport": {
+        "properties": {
+          "citations": {
+            "items": {
+              "$ref": "#/components/schemas/ChangeCitation"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "current_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ],
+            "title": "Current Value"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "field": {
+            "const": "current_role",
+            "title": "Field",
+            "type": "string"
+          },
+          "previous_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ],
+            "title": "Previous Value"
+          },
+          "qualification": {
+            "const": "accepted_observation_not_independently_verified",
+            "title": "Qualification",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity_id",
+          "display_name",
+          "field",
+          "previous_value",
+          "current_value",
+          "qualification",
+          "citations"
+        ],
+        "title": "ChangeReport",
         "type": "object"
       },
       "ClarificationInput": {
@@ -247,6 +493,39 @@
           "failure_code"
         ],
         "title": "CollectionView",
+        "type": "object"
+      },
+      "CompletionInput": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "format": "password",
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string",
+            "writeOnly": true
+          },
+          "grant_id": {
+            "format": "uuid",
+            "title": "Grant Id",
+            "type": "string"
+          },
+          "state": {
+            "format": "password",
+            "maxLength": 128,
+            "minLength": 32,
+            "title": "State",
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "grant_id",
+          "state",
+          "code"
+        ],
+        "title": "CompletionInput",
         "type": "object"
       },
       "ComponentTimings": {
@@ -475,6 +754,45 @@
         "title": "ConnectionMetadata",
         "type": "object"
       },
+      "ConsentInput": {
+        "additionalProperties": false,
+        "properties": {
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "opt_in"
+        ],
+        "title": "ConsentInput",
+        "type": "object"
+      },
+      "ConsentOutput": {
+        "properties": {
+          "authorization_url": {
+            "title": "Authorization Url",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "grant_id": {
+            "format": "uuid",
+            "title": "Grant Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "grant_id",
+          "authorization_url",
+          "expires_at"
+        ],
+        "title": "ConsentOutput",
+        "type": "object"
+      },
       "ConversationInput": {
         "additionalProperties": false,
         "properties": {
@@ -487,6 +805,38 @@
           }
         },
         "title": "ConversationInput",
+        "type": "object"
+      },
+      "ConversationListOutput": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "workspace_id",
+          "title",
+          "created_at"
+        ],
+        "title": "ConversationListOutput",
         "type": "object"
       },
       "ConversationOutput": {
@@ -600,6 +950,41 @@
         "title": "CriterionResult",
         "type": "object"
       },
+      "DestinationOutput": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "generation": {
+            "title": "Generation",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instance_url": {
+            "title": "Instance Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "instance_url",
+          "enabled",
+          "expires_at",
+          "generation"
+        ],
+        "title": "DestinationOutput",
+        "type": "object"
+      },
       "DiscussionView": {
         "additionalProperties": false,
         "properties": {
@@ -632,6 +1017,110 @@
           "evidence_kind"
         ],
         "title": "DiscussionView",
+        "type": "object"
+      },
+      "EndpointCreated": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "list_id": {
+            "format": "uuid",
+            "title": "List Id",
+            "type": "string"
+          },
+          "signing_secret": {
+            "title": "Signing Secret",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "list_id",
+          "url",
+          "enabled",
+          "created_at",
+          "signing_secret"
+        ],
+        "title": "EndpointCreated",
+        "type": "object"
+      },
+      "EndpointInput": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "format": "uuid",
+            "title": "List Id",
+            "type": "string"
+          },
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          },
+          "url": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "list_id",
+          "url",
+          "opt_in"
+        ],
+        "title": "EndpointInput",
+        "type": "object"
+      },
+      "EndpointOutput": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "list_id": {
+            "format": "uuid",
+            "title": "List Id",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "list_id",
+          "url",
+          "enabled",
+          "created_at"
+        ],
+        "title": "EndpointOutput",
         "type": "object"
       },
       "EntitlementSettings": {
@@ -1515,6 +2004,88 @@
         "title": "FollowupView",
         "type": "object"
       },
+      "GrantOutput": {
+        "properties": {
+          "access_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires At"
+          },
+          "channel_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel Id"
+          },
+          "created_by": {
+            "title": "Created By",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "remote_revocation": {
+            "const": "not_performed",
+            "title": "Remote Revocation",
+            "type": "string"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Scopes",
+            "type": "array"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "exchanging",
+              "active",
+              "expired",
+              "revoked"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "workspace_id",
+          "created_by",
+          "state",
+          "channel_id",
+          "scopes",
+          "expires_at",
+          "access_expires_at",
+          "remote_revocation"
+        ],
+        "title": "GrantOutput",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2130,6 +2701,107 @@
         "title": "MessageInput",
         "type": "object"
       },
+      "MetricRow": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "metrics": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "title": "Metrics",
+            "type": "object"
+          }
+        },
+        "required": [
+          "day",
+          "metrics"
+        ],
+        "title": "MetricRow",
+        "type": "object"
+      },
+      "OAuthCompletionInput": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "format": "password",
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string",
+            "writeOnly": true
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "state": {
+            "format": "password",
+            "maxLength": 128,
+            "minLength": 32,
+            "title": "State",
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "consent_id",
+          "state",
+          "code"
+        ],
+        "title": "OAuthCompletionInput",
+        "type": "object"
+      },
+      "OAuthConsentInput": {
+        "additionalProperties": false,
+        "properties": {
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "opt_in"
+        ],
+        "title": "OAuthConsentInput",
+        "type": "object"
+      },
+      "OAuthConsentOutput": {
+        "properties": {
+          "authorization_url": {
+            "title": "Authorization Url",
+            "type": "string"
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "consent_id",
+          "authorization_url",
+          "expires_at"
+        ],
+        "title": "OAuthConsentOutput",
+        "type": "object"
+      },
       "PageObservation": {
         "additionalProperties": false,
         "properties": {
@@ -2361,7 +3033,10 @@
         "additionalProperties": false,
         "properties": {
           "evidence_kind": {
-            "const": "search_snippet",
+            "enum": [
+              "search_snippet",
+              "public_post"
+            ],
             "title": "Evidence Kind",
             "type": "string"
           },
@@ -2376,7 +3051,10 @@
             "type": "string"
           },
           "provider": {
-            "const": "exa_keyless",
+            "enum": [
+              "exa_keyless",
+              "x_api_v2"
+            ],
             "title": "Provider",
             "type": "string"
           },
@@ -2515,6 +3193,219 @@
         "title": "RefreshInput",
         "type": "object"
       },
+      "RepairApproval": {
+        "additionalProperties": false,
+        "properties": {
+          "confirm_review": {
+            "title": "Confirm Review",
+            "type": "boolean"
+          },
+          "expected_version": {
+            "maximum": 999999.0,
+            "minimum": 1.0,
+            "title": "Expected Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "expected_version",
+          "confirm_review"
+        ],
+        "title": "RepairApproval",
+        "type": "object"
+      },
+      "RepairInput": {
+        "additionalProperties": false,
+        "properties": {
+          "current_evidence_id": {
+            "format": "uuid",
+            "title": "Current Evidence Id",
+            "type": "string"
+          },
+          "expected_version": {
+            "maximum": 999999.0,
+            "minimum": 1.0,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "field_identifier": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Field Identifier",
+            "type": "string"
+          },
+          "regression_evidence_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Regression Evidence Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "expected_version",
+          "field_identifier",
+          "current_evidence_id",
+          "regression_evidence_ids"
+        ],
+        "title": "RepairInput",
+        "type": "object"
+      },
+      "RepairView": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "proposal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewedTemplate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "ready_for_review",
+              "unknown",
+              "approved"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "template_id": {
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "workspace_id",
+          "template_id",
+          "status",
+          "reason",
+          "proposal"
+        ],
+        "title": "RepairView",
+        "type": "object"
+      },
+      "ReportObservation": {
+        "properties": {
+          "collected_at": {
+            "title": "Collected At",
+            "type": "string"
+          },
+          "content_hash_status": {
+            "default": "stored_metadata_not_revalidated",
+            "title": "Content Hash Status",
+            "type": "string"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "excerpt_sha256": {
+            "title": "Excerpt Sha256",
+            "type": "string"
+          },
+          "qualification": {
+            "default": "source_statement_not_independently_verified",
+            "title": "Qualification",
+            "type": "string"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "source_platform": {
+            "title": "Source Platform",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "stored_content_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stored Content Sha256"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "quote",
+          "source_url",
+          "source_platform",
+          "collected_at",
+          "excerpt_sha256",
+          "stored_content_sha256"
+        ],
+        "title": "ReportObservation",
+        "type": "object"
+      },
+      "ReportRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "metrics": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Metrics",
+            "type": "array"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_date",
+          "end_date",
+          "metrics"
+        ],
+        "title": "ReportRequest",
+        "type": "object"
+      },
       "ResearchCandidate": {
         "additionalProperties": false,
         "properties": {
@@ -2539,7 +3430,10 @@
             ]
           },
           "evidence_kind": {
-            "const": "search_snippet",
+            "enum": [
+              "search_snippet",
+              "public_post"
+            ],
             "title": "Evidence Kind",
             "type": "string"
           },
@@ -2602,7 +3496,10 @@
             "type": "array"
           },
           "provider": {
-            "const": "exa_keyless",
+            "enum": [
+              "exa_keyless",
+              "x_api_v2"
+            ],
             "title": "Provider",
             "type": "string"
           },
@@ -2710,6 +3607,66 @@
         "title": "ResearchOptions",
         "type": "object"
       },
+      "ResearchReport": {
+        "properties": {
+          "coverage_complete": {
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "expansion_status": {
+            "default": "unavailable",
+            "title": "Expansion Status",
+            "type": "string"
+          },
+          "inference_status": {
+            "default": "unavailable",
+            "title": "Inference Status",
+            "type": "string"
+          },
+          "inferences": {
+            "default": [],
+            "items": {},
+            "title": "Inferences",
+            "type": "array"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/ReportObservation"
+            },
+            "title": "Observations",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "supplied_evidence_count": {
+            "title": "Supplied Evidence Count",
+            "type": "integer"
+          },
+          "unknowns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unknowns",
+            "type": "array"
+          },
+          "used_evidence_count": {
+            "title": "Used Evidence Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "observations",
+          "unknowns",
+          "coverage_complete",
+          "supplied_evidence_count",
+          "used_evidence_count"
+        ],
+        "title": "ResearchReport",
+        "type": "object"
+      },
       "ResearchResults": {
         "additionalProperties": false,
         "properties": {
@@ -2742,6 +3699,19 @@
             "maxItems": 100,
             "title": "Results",
             "type": "array"
+          },
+          "resume_status": {
+            "default": "not_paused",
+            "enum": [
+              "not_paused",
+              "available",
+              "new_prompt_required",
+              "deadline_expired",
+              "requires_reconciliation",
+              "budget_exhausted"
+            ],
+            "title": "Resume Status",
+            "type": "string"
           },
           "state": {
             "enum": [
@@ -2847,6 +3817,20 @@
         "title": "ResearchSnapshot",
         "type": "object"
       },
+      "ResumeInput": {
+        "additionalProperties": false,
+        "properties": {
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "opt_in"
+        ],
+        "title": "ResumeInput",
+        "type": "object"
+      },
       "ReviewedField": {
         "additionalProperties": false,
         "properties": {
@@ -2949,6 +3933,434 @@
           "fields"
         ],
         "title": "ReviewedTemplate",
+        "type": "object"
+      },
+      "RoleApproval": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "expected_review_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Expected Review Hash",
+            "type": "string"
+          },
+          "previous": {
+            "$ref": "#/components/schemas/RoleReference"
+          },
+          "replacement": {
+            "$ref": "#/components/schemas/RoleReference"
+          },
+          "same_subject_confirmed": {
+            "title": "Same Subject Confirmed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "entity_id",
+          "previous",
+          "replacement",
+          "same_subject_confirmed",
+          "expected_review_hash"
+        ],
+        "title": "RoleApproval",
+        "type": "object"
+      },
+      "RoleDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "outcome": {
+            "const": "superseded",
+            "title": "Outcome",
+            "type": "string"
+          },
+          "review_origin": {
+            "const": "workspace_owner",
+            "title": "Review Origin",
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/RoleProjection"
+            },
+            "maxItems": 100,
+            "title": "Roles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "entity_id",
+          "outcome",
+          "review_origin",
+          "roles"
+        ],
+        "title": "RoleDecision",
+        "type": "object"
+      },
+      "RoleProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "event_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event At"
+          },
+          "freshness": {
+            "enum": [
+              "current",
+              "historical",
+              "unknown"
+            ],
+            "title": "Freshness",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "claim_id",
+          "value",
+          "freshness",
+          "event_at"
+        ],
+        "title": "RoleProjection",
+        "type": "object"
+      },
+      "RoleReference": {
+        "additionalProperties": false,
+        "properties": {
+          "date_claim_id": {
+            "format": "uuid",
+            "title": "Date Claim Id",
+            "type": "string"
+          },
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "role_claim_id": {
+            "format": "uuid",
+            "title": "Role Claim Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role_claim_id",
+          "date_claim_id",
+          "evidence_id"
+        ],
+        "title": "RoleReference",
+        "type": "object"
+      },
+      "RoleReviewInput": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "previous": {
+            "$ref": "#/components/schemas/RoleReference"
+          },
+          "replacement": {
+            "$ref": "#/components/schemas/RoleReference"
+          }
+        },
+        "required": [
+          "entity_id",
+          "previous",
+          "replacement"
+        ],
+        "title": "RoleReviewInput",
+        "type": "object"
+      },
+      "RoleReviewView": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "previous": {
+            "$ref": "#/components/schemas/RoleSource"
+          },
+          "replacement": {
+            "$ref": "#/components/schemas/RoleSource"
+          },
+          "requires_same_subject_confirmation": {
+            "const": true,
+            "title": "Requires Same Subject Confirmation",
+            "type": "boolean"
+          },
+          "review_hash": {
+            "title": "Review Hash",
+            "type": "string"
+          },
+          "review_origin": {
+            "const": "workspace_owner",
+            "title": "Review Origin",
+            "type": "string"
+          },
+          "subject_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject Name"
+          }
+        },
+        "required": [
+          "entity_id",
+          "subject_name",
+          "previous",
+          "replacement",
+          "review_origin",
+          "requires_same_subject_confirmation",
+          "review_hash"
+        ],
+        "title": "RoleReviewView",
+        "type": "object"
+      },
+      "RoleSource": {
+        "additionalProperties": false,
+        "properties": {
+          "date_claim_id": {
+            "format": "uuid",
+            "title": "Date Claim Id",
+            "type": "string"
+          },
+          "effective_date": {
+            "format": "date",
+            "title": "Effective Date",
+            "type": "string"
+          },
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "excerpt": {
+            "maxLength": 4096,
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "role": {
+            "maxLength": 512,
+            "title": "Role",
+            "type": "string"
+          },
+          "role_claim_id": {
+            "format": "uuid",
+            "title": "Role Claim Id",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 4096,
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role_claim_id",
+          "date_claim_id",
+          "evidence_id",
+          "role",
+          "effective_date",
+          "excerpt",
+          "source_url"
+        ],
+        "title": "RoleSource",
+        "type": "object"
+      },
+      "RunOutput": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "schedule_id": {
+            "format": "uuid",
+            "title": "Schedule Id",
+            "type": "string"
+          },
+          "scheduled_for": {
+            "format": "date-time",
+            "title": "Scheduled For",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "schedule_id",
+          "scheduled_for",
+          "job_id"
+        ],
+        "title": "RunOutput",
+        "type": "object"
+      },
+      "ScheduleInput": {
+        "additionalProperties": false,
+        "properties": {
+          "cadence_hours": {
+            "maximum": 720.0,
+            "minimum": 1.0,
+            "title": "Cadence Hours",
+            "type": "integer"
+          },
+          "list_id": {
+            "format": "uuid",
+            "title": "List Id",
+            "type": "string"
+          },
+          "max_runs": {
+            "maximum": 25.0,
+            "minimum": 1.0,
+            "title": "Max Runs",
+            "type": "integer"
+          },
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          },
+          "required_connection_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 9,
+            "title": "Required Connection Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "list_id",
+          "opt_in",
+          "cadence_hours",
+          "max_runs"
+        ],
+        "title": "ScheduleInput",
+        "type": "object"
+      },
+      "ScheduleOutput": {
+        "properties": {
+          "cadence_hours": {
+            "title": "Cadence Hours",
+            "type": "integer"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_job_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Job Id"
+          },
+          "last_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Reason"
+          },
+          "list_id": {
+            "format": "uuid",
+            "title": "List Id",
+            "type": "string"
+          },
+          "max_runs": {
+            "title": "Max Runs",
+            "type": "integer"
+          },
+          "next_due_at": {
+            "format": "date-time",
+            "title": "Next Due At",
+            "type": "string"
+          },
+          "required_connection_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Required Connection Ids",
+            "type": "array"
+          },
+          "run_count": {
+            "title": "Run Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "list_id",
+          "enabled",
+          "cadence_hours",
+          "max_runs",
+          "run_count",
+          "next_due_at",
+          "last_job_id",
+          "last_reason",
+          "required_connection_ids"
+        ],
+        "title": "ScheduleOutput",
         "type": "object"
       },
       "SearchPlan": {
@@ -3101,6 +4513,60 @@
           "credentials"
         ],
         "title": "SecretPayload",
+        "type": "object"
+      },
+      "SelectionInput": {
+        "additionalProperties": false,
+        "properties": {
+          "destination_id": {
+            "format": "uuid",
+            "title": "Destination Id",
+            "type": "string"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "field_map": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "maxProperties": 8,
+            "minProperties": 1,
+            "title": "Field Map",
+            "type": "object"
+          },
+          "idempotency_key": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          },
+          "plan_id": {
+            "format": "uuid",
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "selected_near": {
+            "default": false,
+            "title": "Selected Near",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "destination_id",
+          "plan_id",
+          "entity_id",
+          "field_map",
+          "opt_in",
+          "idempotency_key"
+        ],
+        "title": "SelectionInput",
         "type": "object"
       },
       "SnapshotEvidence": {
@@ -3546,6 +5012,59 @@
           "limitations"
         ],
         "title": "SubmissionOutput",
+        "type": "object"
+      },
+      "SummaryInput": {
+        "additionalProperties": false,
+        "properties": {
+          "grant_id": {
+            "format": "uuid",
+            "title": "Grant Id",
+            "type": "string"
+          },
+          "report": {
+            "$ref": "#/components/schemas/ReportRequest"
+          }
+        },
+        "required": [
+          "grant_id",
+          "report"
+        ],
+        "title": "SummaryInput",
+        "type": "object"
+      },
+      "SummaryOutput": {
+        "properties": {
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResearchReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "summary_state": {
+            "title": "Summary State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "state",
+          "summary_state"
+        ],
+        "title": "SummaryOutput",
         "type": "object"
       },
       "SuppressionInput": {
@@ -4004,6 +5523,123 @@
         ],
         "title": "YouTubeView",
         "type": "object"
+      },
+      "skriller__crm__router__DeliveryOutput": {
+        "properties": {
+          "attempts": {
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "destination_id": {
+            "format": "uuid",
+            "title": "Destination Id",
+            "type": "string"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Code"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "delivering",
+              "succeeded",
+              "failed",
+              "suppressed",
+              "cancelled"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "destination_id",
+          "entity_id",
+          "state",
+          "attempts",
+          "last_code"
+        ],
+        "title": "DeliveryOutput",
+        "type": "object"
+      },
+      "skriller__webhooks__router__DeliveryOutput": {
+        "properties": {
+          "attempts": {
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "delivered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivered At"
+          },
+          "endpoint_id": {
+            "format": "uuid",
+            "title": "Endpoint Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Code"
+          },
+          "snapshot_id": {
+            "format": "uuid",
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "endpoint_id",
+          "snapshot_id",
+          "state",
+          "attempts",
+          "last_code",
+          "delivered_at"
+        ],
+        "title": "DeliveryOutput",
+        "type": "object"
       }
     }
   },
@@ -4095,6 +5731,23 @@
               "format": "uuid",
               "title": "Conversation Id",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
             }
           },
           {
@@ -5237,6 +6890,436 @@
         "summary": "Revoke Source"
       }
     },
+    "/v1/workspaces/{workspace_id}/conversations": {
+      "get": {
+        "operationId": "list_conversations_v1_workspaces__workspace_id__conversations_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationListOutput"
+                  },
+                  "title": "Response List Conversations V1 Workspaces  Workspace Id  Conversations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Conversations"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/crm/deliveries": {
+      "get": {
+        "operationId": "list_deliveries_v1_workspaces__workspace_id__crm_deliveries_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/skriller__crm__router__DeliveryOutput"
+                  },
+                  "title": "Response List Deliveries V1 Workspaces  Workspace Id  Crm Deliveries Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Deliveries"
+      },
+      "post": {
+        "operationId": "select_delivery_v1_workspaces__workspace_id__crm_deliveries_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SelectionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/skriller__crm__router__DeliveryOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Select Delivery"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/crm/deliveries/{delivery_id}/cancel": {
+      "post": {
+        "operationId": "cancel_delivery_v1_workspaces__workspace_id__crm_deliveries__delivery_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "delivery_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Delivery Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/skriller__crm__router__DeliveryOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Delivery"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/crm/destinations": {
+      "get": {
+        "operationId": "list_destinations_v1_workspaces__workspace_id__crm_destinations_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DestinationOutput"
+                  },
+                  "title": "Response List Destinations V1 Workspaces  Workspace Id  Crm Destinations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Destinations"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/crm/destinations/{destination_id}/refresh": {
+      "post": {
+        "operationId": "refresh_oauth_v1_workspaces__workspace_id__crm_destinations__destination_id__refresh_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "destination_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Destination Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh Oauth"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/crm/destinations/{destination_id}/revoke": {
+      "post": {
+        "operationId": "revoke_destination_v1_workspaces__workspace_id__crm_destinations__destination_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "destination_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Destination Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke Destination"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/crm/oauth/complete": {
+      "post": {
+        "operationId": "complete_oauth_v1_workspaces__workspace_id__crm_oauth_complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthCompletionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete Oauth"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/crm/oauth/start": {
+      "post": {
+        "operationId": "start_oauth_v1_workspaces__workspace_id__crm_oauth_start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthConsentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthConsentOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Oauth"
+      }
+    },
     "/v1/workspaces/{workspace_id}/entities/{entity_id}": {
       "delete": {
         "operationId": "delete_v1_workspaces__workspace_id__entities__entity_id__delete",
@@ -6116,6 +8199,70 @@
         "summary": "Historical Snapshot"
       }
     },
+    "/v1/workspaces/{workspace_id}/lists/{list_id}/snapshots/{revision}/changes": {
+      "get": {
+        "description": "Return cited, deterministic supported changes from the previous revision.",
+        "operationId": "snapshot_changes_v1_workspaces__workspace_id__lists__list_id__snapshots__revision__changes_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "list_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "List Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "revision",
+            "required": true,
+            "schema": {
+              "title": "Revision",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ChangeReport"
+                  },
+                  "title": "Response Snapshot Changes V1 Workspaces  Workspace Id  Lists  List Id  Snapshots  Revision  Changes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Snapshot Changes"
+      }
+    },
     "/v1/workspaces/{workspace_id}/page-templates": {
       "get": {
         "operationId": "active_templates_v1_workspaces__workspace_id__page_templates_get",
@@ -6208,6 +8355,187 @@
         "summary": "Publish"
       }
     },
+    "/v1/workspaces/{workspace_id}/page-templates/repairs/{job_id}": {
+      "get": {
+        "operationId": "view_repair_v1_workspaces__workspace_id__page_templates_repairs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "View Repair"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/page-templates/repairs/{job_id}/approve": {
+      "post": {
+        "operationId": "review_repair_v1_workspaces__workspace_id__page_templates_repairs__job_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairApproval"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Repair"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/page-templates/{template_id}/repairs": {
+      "post": {
+        "operationId": "request_repair_v1_workspaces__workspace_id__page_templates__template_id__repairs_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 160,
+              "minLength": 1,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Repair"
+      }
+    },
     "/v1/workspaces/{workspace_id}/page-templates/{template_id}/rollback": {
       "post": {
         "operationId": "rollback_v1_workspaces__workspace_id__page_templates__template_id__rollback_post",
@@ -6266,6 +8594,355 @@
           }
         },
         "summary": "Rollback"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/research-schedules": {
+      "get": {
+        "operationId": "listing_v1_workspaces__workspace_id__research_schedules_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleOutput"
+                  },
+                  "title": "Response Listing V1 Workspaces  Workspace Id  Research Schedules Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listing"
+      },
+      "post": {
+        "operationId": "create_v1_workspaces__workspace_id__research_schedules_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/research-schedules/{schedule_id}": {
+      "delete": {
+        "operationId": "disable_v1_workspaces__workspace_id__research_schedules__schedule_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Schedule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disable"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/research-schedules/{schedule_id}/resume": {
+      "post": {
+        "operationId": "resume_v1_workspaces__workspace_id__research_schedules__schedule_id__resume_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Schedule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResumeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resume"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/research-schedules/{schedule_id}/runs": {
+      "get": {
+        "operationId": "history_v1_workspaces__workspace_id__research_schedules__schedule_id__runs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Schedule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RunOutput"
+                  },
+                  "title": "Response History V1 Workspaces  Workspace Id  Research Schedules  Schedule Id  Runs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "History"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/role-refreshes": {
+      "post": {
+        "operationId": "approve_v1_workspaces__workspace_id__role_refreshes_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleApproval"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDecision"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/role-refreshes/preview": {
+      "post": {
+        "operationId": "preview_v1_workspaces__workspace_id__role_refreshes_preview_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleReviewInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleReviewView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview"
       }
     },
     "/v1/workspaces/{workspace_id}/sources": {
@@ -6394,6 +9071,660 @@
           }
         },
         "summary": "Source Switch"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/webhooks": {
+      "get": {
+        "operationId": "listing_v1_workspaces__workspace_id__webhooks_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EndpointOutput"
+                  },
+                  "title": "Response Listing V1 Workspaces  Workspace Id  Webhooks Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listing"
+      },
+      "post": {
+        "operationId": "create_v1_workspaces__workspace_id__webhooks_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/webhooks/{endpoint_id}": {
+      "delete": {
+        "operationId": "disable_v1_workspaces__workspace_id__webhooks__endpoint_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "endpoint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Endpoint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disable"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/webhooks/{endpoint_id}/deliveries": {
+      "get": {
+        "operationId": "history_v1_workspaces__workspace_id__webhooks__endpoint_id__deliveries_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "endpoint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Endpoint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/skriller__webhooks__router__DeliveryOutput"
+                  },
+                  "title": "Response History V1 Workspaces  Workspace Id  Webhooks  Endpoint Id  Deliveries Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "History"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/grants": {
+      "get": {
+        "operationId": "list_grants_v1_workspaces__workspace_id__youtube_analytics_grants_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GrantOutput"
+                  },
+                  "title": "Response List Grants V1 Workspaces  Workspace Id  Youtube Analytics Grants Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Grants"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/grants/{grant_id}/refresh": {
+      "post": {
+        "operationId": "refresh_v1_workspaces__workspace_id__youtube_analytics_grants__grant_id__refresh_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "grant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Grant Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/grants/{grant_id}/reports": {
+      "post": {
+        "operationId": "report_v1_workspaces__workspace_id__youtube_analytics_grants__grant_id__reports_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "grant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Grant Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Report"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/grants/{grant_id}/revoke": {
+      "post": {
+        "operationId": "revoke_v1_workspaces__workspace_id__youtube_analytics_grants__grant_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "grant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Grant Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/oauth/complete": {
+      "post": {
+        "operationId": "complete_v1_workspaces__workspace_id__youtube_analytics_oauth_complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompletionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/oauth/start": {
+      "post": {
+        "operationId": "start_v1_workspaces__workspace_id__youtube_analytics_oauth_start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/summary-jobs": {
+      "post": {
+        "operationId": "submit_summary_v1_workspaces__workspace_id__youtube_analytics_summary_jobs_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 170,
+              "minLength": 1,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummaryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Summary"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/summary-jobs/{job_id}": {
+      "get": {
+        "operationId": "get_summary_v1_workspaces__workspace_id__youtube_analytics_summary_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Summary"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/youtube-analytics/summary-jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "stop_summary_v1_workspaces__workspace_id__youtube_analytics_summary_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stop Summary"
       }
     }
   }

@@ -5,7 +5,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
-from typing import Literal
+from typing import Literal, cast
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict, SecretStr, model_validator
 
 from skriller.connections.keys import Keyring, KeyUnavailable
 from skriller.connections.tables import connection_audit, connections, secrets
-from skriller.contracts import ExecutionContext
+from skriller.contracts import ExecutionContext, Source
 from skriller.db import ConversationRepository, JobRepository, WorkspaceAccessDenied
 from skriller.db.repositories import insert_row, require_owner, scope
 from skriller.jobs.control import permit_call
@@ -27,10 +27,15 @@ RUNNERS = {
         "linkedin",
         {"session_cookie": "LINKEDIN_SESSION_COOKIE", "access_token": "LINKEDIN_ACCESS_TOKEN"},
     ),
-    "reddit_read": ("reddit", {"access_token": "REDDIT_ACCESS_TOKEN"}),
+    "reddit_read": (
+        "reddit",
+        {"access_token": "REDDIT_ACCESS_TOKEN", "session_cookie": "REDDIT_SESSION_COOKIE"},
+    ),
     "github_read": ("github", {"access_token": "GITHUB_TOKEN"}),
     "youtube_read": ("youtube", {"api_key": "YOUTUBE_API_KEY"}),
-    "x_read": ("x", {"session_cookie": "X_SESSION_COOKIE", "access_token": "X_ACCESS_TOKEN"}),
+    # X reads use the documented OAuth API. Session cookies are not accepted by
+    # this runner, which deliberately has no browser/session transport.
+    "x_read": ("x", {"access_token": "X_ACCESS_TOKEN"}),
     "instagram_read": ("instagram", {"session_cookie": "INSTAGRAM_SESSION_COOKIE"}),
     "facebook_read": (
         "facebook",
@@ -92,6 +97,7 @@ class RunnerSecrets:
     connection_ref: UUID
     runner: str
     environment: dict[str, SecretStr] = field(repr=False)
+    credential_ref: UUID | None = None
 
     def injection(self) -> dict[str, str]:
         """Only the fixed runner launch boundary may consume this environment."""
@@ -190,6 +196,10 @@ class ConnectionStore:
             or not set(payload.credentials) <= allowed_fields[auth_kind]
         ):
             raise ValueError("Credential fields do not match authentication kind")
+        if source == "x" and (auth_kind != "oauth" or set(payload.credentials) != {"access_token"}):
+            raise ValueError(
+                "X reads require an OAuth access token; session cookies are unsupported"
+            )
         if auth_kind == "oauth" and "access_token" not in payload.credentials:
             raise ValueError("OAuth connection needs an access token")
         if (
@@ -284,17 +294,23 @@ class ConnectionStore:
         if (
             plan["revision"] != context.plan_revision
             or datetime.now(UTC) >= context.deadline
+            or context.attempt_budget < 1
             or not permit_call(session, str(context.job_id))
         ):
             raise ConnectionUnavailable("execution_expired")
         _lock(session, context.connection_ref)
         reference = self.metadata(session, context.connection_ref)
         source, bindings = RUNNERS[runner]
+        source = cast(Source, source)
+        from skriller.connectors.switches import is_disabled
+
         if (
             reference.state != "active"
             or reference.source != source
             or "read" not in reference.scopes
+            or (source == "x" and "discover" not in reference.scopes)
             or (runner != "proxy_route" and source not in plan["interpretation"]["sources"])
+            or (runner != "proxy_route" and is_disabled(session, source, "read"))
         ):
             raise ConnectionUnavailable("source_scope_unavailable")
         row = (
@@ -331,7 +347,63 @@ class ConnectionStore:
             action="loaded",
             runner=runner,
         )
-        return RunnerSecrets(reference.id, runner, environment)
+        return RunnerSecrets(reference.id, runner, environment, UUID(row["id"]))
+
+    def runner_current(self, session, context: ExecutionContext, material: RunnerSecrets) -> bool:
+        """Check a loaded generation without decrypting it or repeating load audit rows."""
+        from skriller.connectors.switches import is_disabled
+
+        if (
+            material.runner not in RUNNERS
+            or material.credential_ref is None
+            or context.connection_ref != material.connection_ref
+            or str(context.workspace_id) != scope(session)
+            or context.actor_id != session.info["actor_id"]
+            or context.deadline <= datetime.now(UTC)
+            or context.attempt_budget < 1
+        ):
+            return False
+        job = JobRepository.get(session, str(context.job_id))
+        if (
+            job is None
+            or job["created_by"] != context.actor_id
+            or not permit_call(session, job["id"])
+        ):
+            return False
+        plan = ConversationRepository.get_plan(session, job["plan_id"])
+        source, _ = RUNNERS[material.runner]
+        source = cast(Source, source)
+        if (
+            plan is None
+            or plan["revision"] != context.plan_revision
+            or source != "proxy"
+            and source not in plan["interpretation"]["sources"]
+            or source != "proxy"
+            and is_disabled(session, source, "read")
+        ):
+            return False
+        _lock(session, material.connection_ref)
+        try:
+            reference = self.metadata(session, material.connection_ref)
+        except ConnectionUnavailable:
+            return False
+        if (
+            reference.source != source
+            or reference.state != "active"
+            or "read" not in reference.scopes
+            or (source == "x" and "discover" not in reference.scopes)
+        ):
+            return False
+        return (
+            session.execute(
+                sa.select(secrets.c.id).where(
+                    secrets.c.workspace_id == scope(session),
+                    secrets.c.connection_id == str(reference.id),
+                    secrets.c.id == str(material.credential_ref),
+                )
+            ).scalar_one_or_none()
+            is not None
+        )
 
     def revoke(self, session, connection_id: UUID):
         require_owner(session)

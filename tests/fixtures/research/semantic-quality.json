@@ -1,0 +1,869 @@
+{
+  "version": 1,
+  "scope": "Synthetic reviewed-fact inputs to actual tenant database qualification and identity services; no source access or extraction/model quality implied",
+  "qualification": [
+    {
+      "id": "location-match",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "expected": "confirmed"
+    },
+    {
+      "id": "location-mismatch",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "France"
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "location-unknown",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [],
+      "expected": "near_match"
+    },
+    {
+      "id": "size-above",
+      "criteria": [
+        [
+          "company_size",
+          "gte",
+          20
+        ]
+      ],
+      "facts": [
+        [
+          "company_size",
+          40
+        ]
+      ],
+      "expected": "confirmed"
+    },
+    {
+      "id": "size-boundary",
+      "criteria": [
+        [
+          "company_size",
+          "gte",
+          20
+        ]
+      ],
+      "facts": [
+        [
+          "company_size",
+          20
+        ]
+      ],
+      "expected": "confirmed"
+    },
+    {
+      "id": "size-below",
+      "criteria": [
+        [
+          "company_size",
+          "gte",
+          20
+        ]
+      ],
+      "facts": [
+        [
+          "company_size",
+          19
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "size-unknown",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ],
+        [
+          "company_size",
+          "gte",
+          20
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "size-boolean",
+      "criteria": [
+        [
+          "company_size",
+          "gte",
+          20
+        ]
+      ],
+      "facts": [
+        [
+          "company_size",
+          true
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "size-text",
+      "criteria": [
+        [
+          "company_size",
+          "gte",
+          20
+        ]
+      ],
+      "facts": [
+        [
+          "company_size",
+          "40"
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "stale-evidence",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "age_days": 40,
+      "freshness_days": 30,
+      "expected": "near_match"
+    },
+    {
+      "id": "expired-evidence",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "expired": true,
+      "expected": "near_match"
+    },
+    {
+      "id": "future-evidence",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "age_days": -1,
+      "expected": "near_match"
+    },
+    {
+      "id": "unverified-evidence",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "claim_status": "unverified",
+      "expected": "near_match"
+    },
+    {
+      "id": "exclusion-matched",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "exclusions": [
+        [
+          "industry",
+          "eq",
+          "Recruiting"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ],
+        [
+          "industry",
+          "Recruiting"
+        ]
+      ],
+      "expected": "excluded"
+    },
+    {
+      "id": "exclusion-unknown",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "exclusions": [
+        [
+          "industry",
+          "eq",
+          "Recruiting"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "exclusion-contradicted",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "exclusions": [
+        [
+          "industry",
+          "eq",
+          "Recruiting"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ],
+        [
+          "industry",
+          "Software"
+        ]
+      ],
+      "expected": "confirmed"
+    },
+    {
+      "id": "conflicting-evidence",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ],
+        [
+          "location",
+          "France"
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "preference-only",
+      "criteria": [],
+      "preferences": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "undated-current-role",
+      "criteria": [
+        [
+          "current_role",
+          "eq",
+          "Founder"
+        ]
+      ],
+      "facts": [
+        [
+          "current_role",
+          "Founder"
+        ]
+      ],
+      "expected": "near_match"
+    },
+    {
+      "id": "wrong-kind",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "kind": "company",
+      "expected": "excluded"
+    },
+    {
+      "id": "video-is-not-person",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "kind": "video",
+      "resource": "youtube_video",
+      "expected": "excluded"
+    },
+    {
+      "id": "repository-is-not-person",
+      "criteria": [
+        [
+          "location",
+          "eq",
+          "India"
+        ]
+      ],
+      "facts": [
+        [
+          "location",
+          "India"
+        ]
+      ],
+      "kind": "other",
+      "resource": "github_repository",
+      "expected": "excluded"
+    },
+    {
+      "id": "zero-headcount",
+      "criteria": [
+        [
+          "company_size",
+          "lte",
+          10
+        ]
+      ],
+      "facts": [
+        [
+          "company_size",
+          0
+        ]
+      ],
+      "expected": "confirmed"
+    },
+    {
+      "id": "company-query",
+      "entity_type": "company",
+      "kind": "company",
+      "criteria": [
+        [
+          "industry",
+          "in",
+          [
+            "Software",
+            "Research"
+          ]
+        ]
+      ],
+      "facts": [
+        [
+          "industry",
+          "Research"
+        ]
+      ],
+      "expected": "confirmed"
+    }
+  ],
+  "identity": [
+    {
+      "id": "linkedin-native",
+      "left": [
+        [
+          "native_id.linkedin",
+          "person:Shared"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "person:Shared"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "id": "reddit-native",
+      "left": [
+        [
+          "native_id.reddit",
+          "person:t2_shared"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.reddit",
+          "person:t2_shared"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "id": "github-native",
+      "left": [
+        [
+          "native_id.github",
+          "person:42"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.github",
+          "person:42"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "id": "youtube-native",
+      "left": [
+        [
+          "native_id.youtube",
+          "person:UC_shared"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.youtube",
+          "person:UC_shared"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "id": "post-is-not-person",
+      "left": [
+        [
+          "native_id.linkedin",
+          "post:42"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "post:42"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "case-sensitive-native",
+      "left": [
+        [
+          "native_id.linkedin",
+          "person:ID"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "person:id"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "conflicting-platform",
+      "left": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ],
+        [
+          "native_id.github",
+          "person:1"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ],
+        [
+          "native_id.github",
+          "person:2"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "name-only",
+      "left": [],
+      "right": [],
+      "expected": false
+    },
+    {
+      "id": "domain-only",
+      "kind": "company",
+      "left": [
+        [
+          "domain",
+          "example.org"
+        ]
+      ],
+      "right": [
+        [
+          "domain",
+          "example.org"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "corroborated-company",
+      "kind": "company",
+      "left": [
+        [
+          "domain",
+          "https://www.example.org/"
+        ],
+        [
+          "legal_name",
+          "Example Inc"
+        ],
+        [
+          "country",
+          "India"
+        ]
+      ],
+      "right": [
+        [
+          "domain",
+          "example.org"
+        ],
+        [
+          "legal_name",
+          "Example Inc"
+        ],
+        [
+          "country",
+          "India"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "id": "different-company-domain",
+      "kind": "company",
+      "left": [
+        [
+          "domain",
+          "first.example.org"
+        ],
+        [
+          "legal_name",
+          "Same Inc"
+        ],
+        [
+          "country",
+          "India"
+        ]
+      ],
+      "right": [
+        [
+          "domain",
+          "second.example.org"
+        ],
+        [
+          "legal_name",
+          "Same Inc"
+        ],
+        [
+          "country",
+          "India"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "different-legal-name",
+      "kind": "company",
+      "left": [
+        [
+          "domain",
+          "example.org"
+        ],
+        [
+          "legal_name",
+          "First Inc"
+        ],
+        [
+          "country",
+          "India"
+        ]
+      ],
+      "right": [
+        [
+          "domain",
+          "example.org"
+        ],
+        [
+          "legal_name",
+          "Second Inc"
+        ],
+        [
+          "country",
+          "India"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "different-country",
+      "kind": "company",
+      "left": [
+        [
+          "domain",
+          "example.org"
+        ],
+        [
+          "legal_name",
+          "Example Inc"
+        ],
+        [
+          "country",
+          "India"
+        ]
+      ],
+      "right": [
+        [
+          "domain",
+          "example.org"
+        ],
+        [
+          "legal_name",
+          "Example Inc"
+        ],
+        [
+          "country",
+          "France"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "expired-native",
+      "left": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ]
+      ],
+      "expired": true,
+      "expected": false
+    },
+    {
+      "id": "unverified-native",
+      "left": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ]
+      ],
+      "claim_status": "unverified",
+      "expected": false
+    },
+    {
+      "id": "company-native",
+      "kind": "company",
+      "left": [
+        [
+          "native_id.linkedin",
+          "company:42"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "company:42"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "id": "kind-conflict",
+      "kind": "company",
+      "right_kind": "person",
+      "left": [
+        [
+          "native_id.linkedin",
+          "company:42"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "person:42"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "url-not-native",
+      "left": [
+        [
+          "native_id.linkedin",
+          "https://linkedin.com/in/same"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "https://linkedin.com/in/same"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "web-not-native",
+      "left": [
+        [
+          "native_id.web",
+          "person:42"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.web",
+          "person:42"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "id": "missing-one-native",
+      "left": [
+        [
+          "native_id.linkedin",
+          "person:42"
+        ]
+      ],
+      "right": [],
+      "expected": false
+    },
+    {
+      "id": "future-native",
+      "left": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ]
+      ],
+      "right": [
+        [
+          "native_id.linkedin",
+          "person:A"
+        ]
+      ],
+      "age_days": -1,
+      "expected": false
+    }
+  ]
+}

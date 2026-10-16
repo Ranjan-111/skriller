@@ -98,6 +98,28 @@ def test_encrypted_roundtrip_opaque_metadata_audit_and_redaction(database, store
         assert "REDACTED" in output
 
 
+def test_x_connection_requires_oauth_access_token_not_session_cookie(database, store):
+    actor, workspace, _ = setup(database)
+    with database.tenant(actor, workspace) as session:
+        with pytest.raises(ValueError, match="X reads require an OAuth access token"):
+            store.create(
+                session,
+                "x",
+                "session",
+                SecretPayload(credentials={"session_cookie": "synthetic-cookie"}),
+                expires_at=datetime.now(UTC) + timedelta(days=1),
+            )
+        reference = store.create(
+            session,
+            "x",
+            "oauth",
+            SecretPayload(credentials={"access_token": "synthetic-oauth-token"}),
+            expires_at=datetime.now(UTC) + timedelta(days=1),
+            scopes=("read", "discover"),
+        )
+        assert reference.source == "x" and reference.auth_kind == "oauth"
+
+
 def test_cross_workspace_wrong_runner_and_actor_denied(database, store):
     actor, workspace, context = setup(database)
     foreign_actor, foreign_workspace, foreign_context = setup(database)

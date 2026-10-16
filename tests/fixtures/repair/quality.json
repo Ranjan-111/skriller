@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "scope": "Synthetic public company-name selector changes; not a representative platform corpus",
+  "cases": [
+    {
+      "id": "tag-change",
+      "expected": "correct",
+      "value": "Synthetica 1",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 1</span></article>",
+      "current": "<article><h2>Company</h2><strong class=\"brand\">Synthetica 1</strong></article>",
+      "gold_css": ".brand"
+    },
+    {
+      "id": "id-selector",
+      "expected": "correct",
+      "value": "Synthetica 2",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 2</span></article>",
+      "current": "<article><h2>Company</h2><b id=\"company-name\">Synthetica 2</b></article>",
+      "gold_css": "#company-name"
+    },
+    {
+      "id": "nested-wrapper",
+      "expected": "correct",
+      "value": "Synthetica 3",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 3</span></article>",
+      "current": "<article><h2>Company</h2><div class=\"wrapper\"><span class=\"legal-name\">Synthetica 3</span></div></article>",
+      "gold_css": ".legal-name"
+    },
+    {
+      "id": "attribute-selector",
+      "expected": "correct",
+      "value": "Synthetica 4",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 4</span></article>",
+      "current": "<article><h2>Company</h2><p data-field=\"company\">Synthetica 4</p></article>",
+      "gold_css": "[data-field=\"company\"]"
+    },
+    {
+      "id": "multiple-classes",
+      "expected": "correct",
+      "value": "Synthetica 5",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 5</span></article>",
+      "current": "<article><h2>Company</h2><span class=\"new company-name primary\">Synthetica 5</span></article>",
+      "gold_css": ".company-name"
+    },
+    {
+      "id": "nested-emphasis",
+      "expected": "correct",
+      "value": "Synthetica 6",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 6</span></article>",
+      "current": "<article><h2>Company</h2><div class=\"brand\"><em>Synthetica 6</em></div></article>",
+      "gold_css": ".brand"
+    },
+    {
+      "id": "section-wrapper",
+      "expected": "correct",
+      "value": "Synthetica 7",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 7</span></article>",
+      "current": "<article><h2>Company</h2><section><p class=\"identity\">Synthetica 7</p></section></article>",
+      "gold_css": ".identity"
+    },
+    {
+      "id": "link-text",
+      "expected": "correct",
+      "value": "Synthetica 8",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 8</span></article>",
+      "current": "<article><h2>Company</h2><a class=\"organization\" href=\"/about\">Synthetica 8</a></article>",
+      "gold_css": ".organization"
+    },
+    {
+      "id": "heading-target",
+      "expected": "correct",
+      "value": "Synthetica 9",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 9</span></article>",
+      "current": "<article><h2>Company</h2><h3 class=\"legal\">Synthetica 9</h3></article>",
+      "gold_css": ".legal"
+    },
+    {
+      "id": "deep-wrapper",
+      "expected": "correct",
+      "value": "Synthetica 10",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 10</span></article>",
+      "current": "<article><h2>Company</h2><div><section><span id=\"identity\">Synthetica 10</span></section></div></article>",
+      "gold_css": "#identity"
+    },
+    {
+      "id": "changed-neighbors",
+      "expected": "correct",
+      "value": "Synthetica 11",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 11</span></article>",
+      "current": "<article><h2>Company</h2><p>Founded 2020</p><b class=\"registered\">Synthetica 11</b><p>Technology</p></article>",
+      "gold_css": ".registered"
+    },
+    {
+      "id": "list-layout",
+      "expected": "correct",
+      "value": "Synthetica 12",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 12</span></article>",
+      "current": "<article><h2>Company</h2><ul><li class=\"business-name\">Synthetica 12</li></ul></article>",
+      "gold_css": ".business-name"
+    },
+    {
+      "id": "definition-layout",
+      "expected": "correct",
+      "value": "Synthetica 13",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 13</span></article>",
+      "current": "<article><h2>Company</h2><dl><dt>Legal name</dt><dd class=\"legal-value\">Synthetica 13</dd></dl></article>",
+      "gold_css": ".legal-value"
+    },
+    {
+      "id": "reordered-content",
+      "expected": "correct",
+      "value": "Synthetica 14",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 14</span></article>",
+      "current": "<article><h2>Company</h2><footer>Public listing</footer><span data-role=\"legal-name\">Synthetica 14</span></article>",
+      "gold_css": "[data-role=\"legal-name\"]"
+    },
+    {
+      "id": "nested-literal",
+      "expected": "correct",
+      "value": "Synthetica 15",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 15</span></article>",
+      "current": "<article><h2>Company</h2><span class=\"brand\"><b>Synthetica 15</b></span></article>",
+      "gold_css": ".brand"
+    },
+    {
+      "id": "unicode-text",
+      "expected": "correct",
+      "value": "Café Aurora",
+      "old": "<article><h2>Company</h2><span class=\"old\">Café Aurora</span></article>",
+      "current": "<article><h2>Company</h2><strong class=\"unicode-name\">Café Aurora</strong></article>",
+      "gold_css": ".unicode-name"
+    },
+    {
+      "id": "hyphenated-text",
+      "expected": "correct",
+      "value": "North-Star Research",
+      "old": "<article><h2>Company</h2><span class=\"old\">North-Star Research</span></article>",
+      "current": "<article><h2>Company</h2><label class=\"company-title\">North-Star Research</label></article>",
+      "gold_css": ".company-title"
+    },
+    {
+      "id": "attribute-no-class",
+      "expected": "correct",
+      "value": "Synthetica 18",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 18</span></article>",
+      "current": "<article><h2>Company</h2><div data-company-name=\"true\">Synthetica 18</div></article>",
+      "gold_css": "[data-company-name=\"true\"]"
+    },
+    {
+      "id": "aside-wrapper",
+      "expected": "correct",
+      "value": "Synthetica 19",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 19</span></article>",
+      "current": "<article><h2>Company</h2><aside><strong class=\"business\">Synthetica 19</strong></aside></article>",
+      "gold_css": ".business"
+    },
+    {
+      "id": "same-name-other-container",
+      "expected": "correct",
+      "value": "Synthetica 20",
+      "old": "<article><h2>Company</h2><span class=\"old\">Synthetica 20</span></article>",
+      "current": "<article><h2>Company</h2><span class=\"primary-name\">Synthetica 20</span></article><article><h2>Investor</h2><span class=\"investor-name\">Synthetica 20</span></article>",
+      "gold_css": ".primary-name"
+    },
+    {
+      "id": "ambiguous-duplicate",
+      "expected": "reject",
+      "value": "Acme",
+      "old": "<article><h2>Company</h2><span class=\"old\">Acme</span></article>",
+      "current": "<article><h2>Company</h2><strong class=\"new\">Acme</strong><strong class=\"new\">Acme</strong></article>",
+      "gold_css": ".new"
+    },
+    {
+      "id": "wrong-neighbor",
+      "expected": "reject",
+      "value": "Acme",
+      "old": "<article><h2>Company</h2><span class=\"old\">Acme</span></article>",
+      "current": "<article><h2>Investor</h2><strong class=\"new\">Acme</strong></article>",
+      "gold_css": ".new"
+    },
+    {
+      "id": "wrong-literal",
+      "expected": "reject",
+      "value": "Acme",
+      "old": "<article><h2>Company</h2><span class=\"old\">Acme</span></article>",
+      "current": "<article><h2>Company</h2><strong class=\"new\">Different entity</strong></article>",
+      "gold_css": ".new"
+    },
+    {
+      "id": "cross-container",
+      "expected": "reject",
+      "value": "Acme",
+      "old": "<article><h2>Company</h2><span class=\"old\">Acme</span></article>",
+      "current": "<article><h2>Company</h2></article><article><h2>Investor</h2><strong class=\"new\">Acme</strong></article>",
+      "gold_css": ".new"
+    }
+  ]
+}

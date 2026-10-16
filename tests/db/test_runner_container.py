@@ -98,7 +98,7 @@ def test_actual_container_parent_and_descendant_are_removed_after_persisted_canc
                 env=env,
                 check=False,
             )
-            assert inspect.returncode != 0 and "No such" in inspect.stderr
+            assert inspect.returncode != 0 and "no such" in inspect.stderr.casefold()
         finally:
             if containers:
                 cleanup = subprocess.run(

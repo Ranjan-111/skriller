@@ -5,20 +5,29 @@ semantic qualification, page extraction, contact verification or a full planner.
 """
 
 import asyncio
+import contextlib
 from dataclasses import replace
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from math import ceil
+from uuid import UUID
 
 import sqlalchemy as sa
 from pydantic import TypeAdapter
 from sqlalchemy.orm import Session
 
+from skriller.connections.store import ConnectionStore
+from skriller.connections.tables import connections
 from skriller.connectors.candidates import deduplicate
 from skriller.connectors.platform_references import indexed_platform_reference
 from skriller.connectors.search import ExaKeylessSearch, SearchUnavailable
 from skriller.connectors.switches import is_disabled
+from skriller.connectors.x_executor import ConcreteXExecutor, XUnavailable
+from skriller.contracts import ExecutionContext
 from skriller.db import ConversationRepository, JobRepository, ResearchRepository
 from skriller.db.repositories import scope
 from skriller.db.schema import attempts, entities, messages, stage_checkpoints
+from skriller.jobs.capacity import CapacityUnavailable, acquire, release
 from skriller.jobs.control import permit_call
 from skriller.jobs.outbox import CeleryPublisher, DispatchScope, OutboxDispatcher
 from skriller.jobs.state import TERMINAL_STATES, finish
@@ -239,7 +248,15 @@ def workspace_id_for_job(database, actor, job_id):
     return locate(database, actor, JobRepository, job_id)[0]
 
 
-def discovery_handler(database, actor, job_id, provider=None):
+def discovery_handler(
+    database,
+    actor,
+    job_id,
+    provider=None,
+    *,
+    x_reader: ConcreteXExecutor | None = None,
+    connection_store: ConnectionStore | None = None,
+):
     provider = provider or ExaKeylessSearch()
     with database.tenant(actor, workspace_id_for_job(database, actor, job_id)) as session:
         job = JobRepository.get(session, job_id)
@@ -250,16 +267,20 @@ def discovery_handler(database, actor, job_id, provider=None):
     # All source input is loaded with the task's authenticated tenant scope.
     def run(plan, timeout_seconds=110):
         with database.tenant(actor, str(plan.workspace_id)) as session:
-            prompt = session.execute(
-                sa.select(messages.c.content)
-                .where(
-                    messages.c.workspace_id == scope(session),
-                    messages.c.conversation_id == str(plan.conversation_id),
-                    messages.c.role == "user",
-                )
-                .order_by(messages.c.sequence.desc())
-                .limit(1)
-            ).scalar_one()
+            from skriller.scheduling import pinned_prompt
+
+            prompt = pinned_prompt(session, JobRepository.get(session, job_id), plan)
+            if prompt is None:
+                prompt = session.execute(
+                    sa.select(messages.c.content)
+                    .where(
+                        messages.c.workspace_id == scope(session),
+                        messages.c.conversation_id == str(plan.conversation_id),
+                        messages.c.role == "user",
+                    )
+                    .order_by(messages.c.sequence.desc())
+                    .limit(1)
+                ).scalar_one()
 
         batch = build_queries(plan, prompt)
         if batch.stop_reason:
@@ -315,6 +336,115 @@ def discovery_handler(database, actor, job_id, provider=None):
                 calls += 1
                 try:
                     async with asyncio.timeout(time_left):
+                        if source == "x" and x_reader is not None and connection_store is not None:
+                            with database.tenant(actor, str(plan.workspace_id)) as session:
+                                connection_rows = (
+                                    session.execute(
+                                        sa.select(connections.c.id, connections.c.scopes)
+                                        .where(
+                                            connections.c.workspace_id == scope(session),
+                                            connections.c.source == "x",
+                                            connections.c.auth_kind == "oauth",
+                                            connections.c.state == "active",
+                                            connections.c.expires_at > sa.func.clock_timestamp(),
+                                        )
+                                        .order_by(connections.c.created_at.desc())
+                                        .limit(20)
+                                    )
+                                    .mappings()
+                                    .all()
+                                )
+                            account_rows = [
+                                row["id"]
+                                for row in connection_rows
+                                if {"read", "discover"} <= set(row["scopes"])
+                            ][:2]
+                            if len(account_rows) > 1:
+                                entry["error"] = "ambiguous_connection"
+                                data.append(entry)
+                                continue
+                            if account_rows:
+                                if len(variant.query) > 500:
+                                    entry["error"] = "query_bound_exceeded"
+                                    data.append(entry)
+                                    continue
+                                connection_ref = UUID(str(account_rows[0]))
+                                context = ExecutionContext(
+                                    workspace_id=plan.workspace_id,
+                                    job_id=UUID(job_id),
+                                    actor_id=actor,
+                                    plan_revision=plan.revision,
+                                    deadline=datetime.now(UTC)
+                                    + timedelta(seconds=min(time_left, timeout_seconds)),
+                                    connection_ref=connection_ref,
+                                    attempt_budget=max(1, plan.limits.search_calls),
+                                )
+                                lease = None
+                                started = asyncio.get_running_loop().time()
+                                retry_headers = None
+                                try:
+                                    with database.tenant(actor, str(plan.workspace_id)) as session:
+                                        lease = acquire(
+                                            session,
+                                            job_id,
+                                            kind="http",
+                                            source="x",
+                                            host="api.x.com",
+                                            ttl_seconds=min(60, max(1, ceil(time_left))),
+                                        )
+                                    request = asyncio.create_task(
+                                        asyncio.to_thread(
+                                            x_reader.search_page,
+                                            variant.query,
+                                            limit=min(plan.limits.result_limit, 10),
+                                            database=database,
+                                            store=connection_store,
+                                            context=context,
+                                        )
+                                    )
+                                    try:
+                                        entry["page"] = await request
+                                    except asyncio.CancelledError:
+                                        # Keep the capacity lease until the bounded
+                                        # container call has stopped and cleaned up.
+                                        with contextlib.suppress(Exception):
+                                            await asyncio.shield(request)
+                                        raise
+                                    finally:
+                                        if not request.done():
+                                            request.cancel()
+                                        await asyncio.gather(request, return_exceptions=True)
+                                    entry["provider"] = "x_api_v2"
+                                except CapacityUnavailable:
+                                    entry["error"] = "capacity_exhausted"
+                                except XUnavailable as exc:
+                                    entry["error"] = exc.code
+                                    if exc.code == "rate_limited":
+                                        stop_reason = "rate_limited"
+                                        if exc.retry_after_seconds is not None:
+                                            retry_headers = {
+                                                "Retry-After": str(exc.retry_after_seconds)
+                                            }
+                                except (ValueError, TypeError):
+                                    entry["error"] = "source_unavailable"
+                                finally:
+                                    if lease is not None:
+                                        elapsed = asyncio.get_running_loop().time() - started
+                                        with (
+                                            contextlib.suppress(Exception),
+                                            database.tenant(
+                                                actor, str(plan.workspace_id)
+                                            ) as session,
+                                        ):
+                                            release(
+                                                session,
+                                                lease,
+                                                latency=elapsed,
+                                                ok=entry["page"] is not None,
+                                                headers=retry_headers,
+                                            )
+                                data.append(entry)
+                                continue
                         request = asyncio.create_task(
                             provider.search(
                                 variant.query,
@@ -422,7 +552,15 @@ def discovery_handler(database, actor, job_id, provider=None):
     )
 
 
-def execute_discovery(database, payload, provider=None, *, collection_proxy_url=None):
+def execute_discovery(
+    database,
+    payload,
+    provider=None,
+    *,
+    collection_proxy_url=None,
+    x_reader: ConcreteXExecutor | None = None,
+    connection_store: ConnectionStore | None = None,
+):
     identity = TaskIdentity.model_validate(payload)
     from skriller.research.refinements import refinement_source, reuse_handler
 
@@ -436,7 +574,14 @@ def execute_discovery(database, payload, provider=None, *, collection_proxy_url=
             database, identity.actor_id, str(identity.workspace_id), str(identity.job_id)
         )
     else:
-        handler = discovery_handler(database, identity.actor_id, str(identity.job_id), provider)
+        handler = discovery_handler(
+            database,
+            identity.actor_id,
+            str(identity.job_id),
+            provider,
+            x_reader=x_reader,
+            connection_store=connection_store,
+        )
         handler = replace(handler, dimensions={"search_calls": len(sources)})
     outcome = CheckpointWorker(database, {"discovering": handler}).execute(payload)
     if outcome["status"] not in {"checkpointed", "source_unavailable"}:
