@@ -328,6 +328,44 @@ it("accepts only honest indexed LinkedIn and Reddit access metadata", async () =
   );
 });
 
+it.each([
+  ["linkedin", "https://in.linkedin.com/in/synthetic-founder"],
+  ["reddit", "https://www.reddit.com/r/synthetic/comments/abc123/topic/"],
+  ["reddit", "https://redd.it/abc123"],
+])(
+  "accepts a %s reference found through general web discovery",
+  async (source, url) => {
+    const view = fitView();
+    const candidate = view.results[0] as Record<string, unknown>;
+    candidate.url = url;
+    candidate.platform_reference = {
+      source,
+      resource_kind: source === "linkedin" ? "profile" : "post",
+      discovery_backend: "exa_keyless",
+      access: "indexed_reference_only",
+      direct_read_status: "not_attempted",
+      subject_identity: "unknown",
+    };
+    const fetcher = vi.fn().mockResolvedValue(response(view));
+    const result = await createApi("http://api", fetcher).results("j1", "w1");
+    expect(result.results).toHaveLength(1);
+    expect(result.results[0].source).toBe("web");
+    expect(result.results[0].platform_reference?.source).toBe(source);
+
+    for (const invalidUrl of [
+      "https://linkedin.com.example.org/in/fake",
+      "javascript:alert(1)",
+      "https://www.example.org/",
+    ]) {
+      candidate.url = invalidUrl;
+      fetcher.mockResolvedValue(response(view));
+      await expect(
+        createApi("http://api", fetcher).results("j1", "w1"),
+      ).rejects.toThrow("unexpected results");
+    }
+  },
+);
+
 it("accepts connected LinkedIn search references only with matching provenance", async () => {
   const valid = fitView();
   const candidate = valid.results[0] as Record<string, unknown>;

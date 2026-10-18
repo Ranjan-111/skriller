@@ -1028,13 +1028,21 @@ footer {
   }
 }
 .candidate-list {
+  display: grid;
+  gap: 20px;
   list-style: none;
   padding: 0;
   margin: 24px 0 0;
 }
-.candidate-list li {
-  padding: 20px 0;
-  border-top: 1px solid var(--line);
+.candidate-list > li {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  min-width: 0;
+}
+.candidate-list > li > * + * {
+  margin-top: 14px;
 }
 .candidate-list a {
   color: var(--ink);
@@ -1050,7 +1058,6 @@ footer {
   vertical-align: middle;
 }
 .candidate-snippet {
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .candidate-url {
@@ -1308,4 +1315,155 @@ footer {
 .source-exports p {
   flex-basis: 100%;
   margin: 0;
+}
+
+/* Workspace utilities stay beside the profile, outside the research flow. */
+.settings-button,
+.dialog-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.settings-button:hover,
+.dialog-close:hover {
+  background: var(--hover);
+}
+.workspace-dialog {
+  width: min(540px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+  overflow-y: auto;
+}
+.workspace-dialog::backdrop {
+  background: rgb(18 30 23 / 45%);
+}
+.settings-drawer {
+  width: min(720px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 0 0 auto;
+  border-radius: 0;
+  padding: 28px;
+}
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+.dialog-header h2 {
+  font-size: 24px;
+  line-height: 1.3;
+}
+.workspace-dialog p {
+  font-size: 14px;
+  line-height: 1.65;
+  margin-block: 12px;
+}
+.settings-description {
+  color: var(--muted);
+}
+.settings-drawer .workspace-allowance {
+  max-width: none;
+  margin-top: 0;
+  padding-block: 20px;
+}
+.settings-drawer summary {
+  min-height: 28px;
+}
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+.mode-description {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+  max-width: 72ch;
+}
+.research-activity {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-block: 16px;
+  padding: 16px;
+  background: var(--panel);
+  border-radius: 12px;
+  font-size: 14px;
+}
+.research-activity svg {
+  margin-top: 2px;
+  color: var(--accent);
+}
+.research-activity p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 4px;
+}
+.source-markdown {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.source-markdown > * + * {
+  margin-top: 12px;
+}
+.source-markdown :is(h4, h5, h6) {
+  font-size: 18px;
+  margin-block: 20px 8px;
+}
+.source-markdown :is(ul, ol) {
+  padding-left: 22px;
+}
+.source-markdown li {
+  margin-block: 6px;
+}
+.source-markdown blockquote {
+  margin-inline: 0;
+  padding-left: 16px;
+  border-left: 1px solid var(--line);
+  color: var(--muted);
+}
+.source-markdown pre {
+  padding: 12px;
+  overflow-x: auto;
+  background: var(--panel);
+  border-radius: 8px;
+}
+.markdown-table {
+  overflow-x: auto;
+}
+.markdown-table table {
+  border-collapse: collapse;
+}
+.markdown-table :is(th, td) {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  text-align: left;
+}
+@media (max-width: 760px) {
+  .candidate-list > li {
+    padding: 16px;
+  }
+  .settings-drawer {
+    padding: 20px;
+  }
+  .settings-button {
+    font-size: 12px;
+  }
 }

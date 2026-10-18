@@ -26,6 +26,7 @@ import {
   type RoleReviewView,
 } from "../lib/api";
 
+import { SourceMarkdown } from "./source-markdown";
 import { downloadSources, SOURCE_EXPORT_LIMIT } from "../lib/exports";
 import { QualifiedExportPanel } from "./qualified-export-panel";
 import { SavedListsPanel } from "./saved-lists-panel";
@@ -516,6 +517,16 @@ const labels: Record<string, string> = {
   cancelled: "Research cancelled",
   paused: "Research paused",
   waiting_for_connection: "A source connection is needed",
+};
+
+const stageDescriptions: Record<string, string> = {
+  planning: "Understanding your prompt and preparing the search.",
+  discovering: "Searching your selected sources for matching references.",
+  collecting: "Reading available source content.",
+  extracting: "Organising the information found in sources.",
+  qualifying: "Checking available evidence against your criteria.",
+  ranking: "Ordering results by the evidence available.",
+  reporting: "Preparing the research report from saved evidence.",
 };
 
 const fitLabels = {
@@ -1665,8 +1676,23 @@ export function ResearchResultsPanel({
     <section className="research-results" aria-labelledby="run-title">
       <div className="run-summary" role="status" aria-live="polite">
         <h2 id="run-title">{labels[state] ?? "Checking research status"}</h2>
-        {run?.stage && !finished.has(state) && (
-          <p>Current stage: {run.stage.replaceAll("_", " ")}</p>
+        {!finished.has(state) && (
+          <div className="research-activity">
+            <RefreshCw size={18} className="checking" aria-hidden="true" />
+            <div>
+              <strong>
+                {run?.stage
+                  ? `Current stage: ${run.stage.replaceAll("_", " ")}`
+                  : "Waiting for the research worker"}
+              </strong>
+              <p>
+                {run?.stage
+                  ? (stageDescriptions[run.stage] ??
+                    "Research is running. Results appear here as they become available.")
+                  : "Your request is saved. Research will begin when a worker picks it up."}
+              </p>
+            </div>
+          </div>
         )}
         <p className="run-reference">Run {job.id}</p>
         {!finished.has(state) && (
@@ -2151,7 +2177,7 @@ export function ResearchResultsPanel({
             retained; your prompt is kept above.
           </p>
         )}
-      {results && (
+      {results && (!error || results.results.length > 0) && (
         <>
           <h3>Discovered sources ({results.results.length})</h3>
           {results.results.length > 0 && (
@@ -2244,9 +2270,13 @@ export function ResearchResultsPanel({
           )}
           {results.results.length === 0 ? (
             <p>
-              {finished.has(state)
+              {state === "completed"
                 ? "No matching sources were returned. Try a more specific prompt or different sources."
-                : "Searching for matching sources…"}
+                : finished.has(state)
+                  ? run?.terminal_reason === "source_interrupted"
+                    ? "Source search was interrupted before any results could be saved. Try again later or check source readiness. This does not mean your prompt had no matches."
+                    : "This run stopped before any sources were returned. Review the run status and source readiness before starting a new run."
+                  : "Searching for matching sources…"}
             </p>
           ) : (
             <ol className="candidate-list">
@@ -2310,9 +2340,11 @@ export function ResearchResultsPanel({
                         {candidate.observed_at}
                       </time>
                     </p>
-                    <p className="candidate-snippet">
-                      {candidate.snippet || "No source excerpt was provided."}
-                    </p>
+                    <div className="candidate-snippet">
+                      <SourceMarkdown>
+                        {candidate.snippet || "No source excerpt was provided."}
+                      </SourceMarkdown>
+                    </div>
                     {candidate.platform_reference && (
                       <section
                         className="platform-reference-notice"

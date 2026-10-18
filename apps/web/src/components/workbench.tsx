@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Search,
   Sparkles,
+  Settings,
 } from "lucide-react";
 import {
   ApiError,
@@ -21,6 +22,7 @@ import {
   type Source,
 } from "../lib/api";
 
+import { WorkspaceDialog } from "./workspace-dialog";
 import { IdentityControls, useIdentity } from "./identity";
 import { ResearchResultsPanel } from "./research-results";
 import { WorkspaceAllowancePanel } from "./workspace-allowance";
@@ -77,6 +79,9 @@ export function Workbench() {
       createApi(undefined, undefined, (force) => tokenProvider.current(force)),
     [],
   );
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [connectionPrompt, setConnectionPrompt] = useState(false);
+  const xSettings = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<"leads" | "research">("leads");
   const [prompt, setPrompt] = useState("");
   const [selected, setSelected] = useState<Source[]>([
@@ -130,6 +135,7 @@ export function Workbench() {
 
   useEffect(() => {
     setJob(null);
+    setError("");
   }, [identity.status, accountId]);
 
   async function submit(event: React.FormEvent) {
@@ -234,6 +240,93 @@ export function Workbench() {
           </div>
         </div>
       </aside>
+      <WorkspaceDialog
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        title="Workspace settings"
+        id="workspace-settings"
+        wide
+      >
+        <p className="settings-description">
+          Manage your allowance, billing and connected accounts.
+        </p>
+        {identity.status === "signed_in" && accountId && (
+          <WorkspaceAllowancePanel
+            key={`allowance:${accountId}`}
+            api={api}
+            refreshKey={job?.id}
+          />
+        )}
+        <BillingPanel
+          key={`billing:${accountId || "signed-out"}`}
+          api={api}
+          userId={accountId}
+          identityStatus={identity.status}
+          getToken={billingToken}
+        />
+        <YouTubeAnalyticsPanel
+          api={api}
+          userId={accountId}
+          identityStatus={identity.status}
+        />
+        <SalesforcePanel
+          api={api}
+          userId={identity.user?.uid}
+          identityStatus={identity.status}
+        />
+        <div ref={xSettings}>
+          <XConnectionPanel
+            api={api}
+            userId={identity.user?.uid}
+            identityStatus={identity.status}
+            onConnectedChange={reportXConnection}
+          />
+        </div>
+        <RedditConnectionPanel
+          api={api}
+          userId={identity.user?.uid}
+          identityStatus={identity.status}
+          refreshKey={redditRefreshKey}
+        />
+      </WorkspaceDialog>
+      <WorkspaceDialog
+        open={connectionPrompt}
+        onClose={() => setConnectionPrompt(false)}
+        title="Connect X to include posts"
+        id="source-connection"
+      >
+        <p>
+          X post search needs an active workspace owner connection. Public
+          indexed Instagram, Facebook and YouTube searches do not need a
+          platform login.
+        </p>
+        <p>
+          Connect X in workspace settings, then select X again. Only the
+          workspace owner can connect an account; availability depends on the
+          configured X service.
+        </p>
+        <div className="dialog-actions">
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => setConnectionPrompt(false)}
+          >
+            Keep current sources
+          </button>
+          <button
+            type="button"
+            className="primary"
+            onClick={() => {
+              setConnectionPrompt(false);
+              const detail = xSettings.current?.querySelector("details");
+              if (detail) detail.open = true;
+              setSettingsOpen(true);
+            }}
+          >
+            Open X connection settings
+          </button>
+        </div>
+      </WorkspaceDialog>
       <div className="workspace">
         <header className="topbar">
           <span>
@@ -241,6 +334,14 @@ export function Workbench() {
           </span>
           <div className="topbar-controls">
             <IdentityControls disabled={busy} />
+            <button
+              className="settings-button"
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              aria-haspopup="dialog"
+            >
+              <Settings size={17} aria-hidden="true" /> Workspace settings
+            </button>
             <button
               className="service-state"
               onClick={() => void checkHealth()}
@@ -270,6 +371,12 @@ export function Workbench() {
                 : "Explore companies, conversations, and markets. Build a clear answer from source evidence."}
             </p>
           </div>
+          <p className="mode-description" id="mode-description">
+            {mode === "leads"
+              ? "Lead discovery looks for people and potential customers who match your criteria."
+              : "Research assistant explores discussions, companies and topics to help you review the evidence."}{" "}
+            Both search the sources you choose.
+          </p>
           <form
             className="composer"
             onSubmit={submit}
@@ -336,25 +443,54 @@ export function Workbench() {
                   <label key={source.id}>
                     <input
                       type="checkbox"
+                      aria-label={source.name}
+                      aria-describedby={`source-${source.id}-detail`}
                       checked={selected.includes(source.id)}
-                      disabled={busy || (source.id === "x" && !xConnected)}
-                      onChange={(e) =>
+                      disabled={busy}
+                      onChange={(e) => {
+                        if (
+                          source.id === "x" &&
+                          e.target.checked &&
+                          !xConnected
+                        ) {
+                          setConnectionPrompt(true);
+                          return;
+                        }
                         setSelected(
                           e.target.checked
                             ? [...selected, source.id]
                             : selected.filter((s) => s !== source.id),
-                        )
-                      }
+                        );
+                      }}
                     />
                     <span>
                       {source.name}
-                      <small>{source.detail}</small>
+                      <small id={`source-${source.id}-detail`}>
+                        {source.detail}
+                      </small>
                     </span>
                   </label>
                 ))}
               </fieldset>
             )}
           </form>
+          <section className="examples" aria-labelledby="examples-title">
+            <h2 id="examples-title">Start with a question</h2>
+            {examples[mode].map((example) => (
+              <button
+                key={example}
+                disabled={busy}
+                onClick={() => {
+                  setPrompt(example);
+                  setError("");
+                  composer.current?.focus();
+                }}
+              >
+                <span>{example}</span>
+                <ArrowRight size={16} aria-hidden="true" />
+              </button>
+            ))}
+          </section>
           <div className="composer-help">
             <span id="prompt-help">
               Every result should lead back to its source.
@@ -371,6 +507,15 @@ export function Workbench() {
               </a>
             </span>
           </div>
+          {busy && (
+            <div className="research-activity" role="status" aria-live="polite">
+              <RefreshCw size={18} className="checking" aria-hidden="true" />
+              <div>
+                <strong>Starting your research</strong>
+                <p>Submitting your prompt and checking workspace limits…</p>
+              </div>
+            </div>
+          )}
           {error && (
             <div id="request-error" className="notice error" role="alert">
               {error}
@@ -417,59 +562,6 @@ export function Workbench() {
                 }}
               />
             )}
-          {identity.status === "signed_in" && accountId && (
-            <WorkspaceAllowancePanel
-              key={`allowance:${accountId}`}
-              api={api}
-              refreshKey={job?.id}
-            />
-          )}
-          <BillingPanel
-            key={`billing:${accountId || "signed-out"}`}
-            api={api}
-            userId={accountId}
-            identityStatus={identity.status}
-            getToken={billingToken}
-          />
-          <YouTubeAnalyticsPanel
-            api={api}
-            userId={accountId}
-            identityStatus={identity.status}
-          />
-          <SalesforcePanel
-            api={api}
-            userId={identity.user?.uid}
-            identityStatus={identity.status}
-          />
-          <XConnectionPanel
-            api={api}
-            userId={identity.user?.uid}
-            identityStatus={identity.status}
-            onConnectedChange={reportXConnection}
-          />
-          <RedditConnectionPanel
-            api={api}
-            userId={identity.user?.uid}
-            identityStatus={identity.status}
-            refreshKey={redditRefreshKey}
-          />
-          <section className="examples" aria-labelledby="examples-title">
-            <h2 id="examples-title">Start with a question</h2>
-            {examples[mode].map((example) => (
-              <button
-                key={example}
-                disabled={busy}
-                onClick={() => {
-                  setPrompt(example);
-                  setError("");
-                  composer.current?.focus();
-                }}
-              >
-                <span>{example}</span>
-                <ArrowRight size={16} aria-hidden="true" />
-              </button>
-            ))}
-          </section>
           {!job && (
             <section className="results-empty" aria-labelledby="results-title">
               <div className="empty-symbol">

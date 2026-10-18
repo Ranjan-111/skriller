@@ -5,6 +5,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Workbench } from "../src/components/workbench";
@@ -70,6 +71,146 @@ beforeEach(() => {
   mock.identityReviews.mockResolvedValue([]);
 });
 describe("research workbench", () => {
+  it("keeps utilities in the profile settings drawer and closes it with Escape", async () => {
+    render(<Workbench />);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Workspace settings" }));
+    const settings = await screen.findByRole("dialog", {
+      name: "Workspace settings",
+    });
+    for (const title of [
+      "Workspace allowance",
+      "Plans and billing",
+      "YouTube owner analytics",
+      "Salesforce CRM",
+      "X connection",
+      "Reddit direct access",
+    ]) {
+      expect(within(settings).getByText(new RegExp(title))).toBeInTheDocument();
+    }
+    expect(settings.closest("main")).toBeNull();
+    fireEvent(
+      settings,
+      new Event("cancel", { bubbles: false, cancelable: true }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+  });
+  it("places examples immediately after the prompt form and explains both modes", async () => {
+    render(<Workbench />);
+    const form = screen.getByRole("form", { name: "Research request" });
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Start research" }),
+      ).toBeEnabled(),
+    );
+    expect(form.nextElementSibling).toHaveClass("examples");
+    expect(screen.getByText(/Lead discovery looks for people/)).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Research assistant" }));
+    expect(
+      screen.getByText(/Research assistant explores discussions/),
+    ).toHaveTextContent("Both search the sources you choose");
+  });
+  it("clears the sign-in alert after authentication while preserving the prompt", async () => {
+    mock.authStatus = "signed_out";
+    const view = render(<Workbench />);
+    const start = screen.getByRole("button", { name: "Start research" });
+    await waitFor(() => expect(start).toBeEnabled());
+    fireEvent.change(screen.getByRole("textbox", { name: "Research prompt" }), {
+      target: { value: "Find fintech founders" },
+    });
+    fireEvent.click(start);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Sign in to your app account",
+    );
+    mock.authStatus = "signed_in";
+    view.rerender(<Workbench />);
+    await waitFor(() =>
+      expect(
+        screen.queryByText(/Sign in to your app account to start research/),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("textbox", { name: "Research prompt" }),
+    ).toHaveValue("Find fintech founders");
+  });
+  it("shows submission feedback, then the real research stage", async () => {
+    let accept!: (value: unknown) => void;
+    mock.submit.mockReturnValue(
+      new Promise((resolve) => {
+        accept = resolve;
+      }),
+    );
+    mock.job.mockResolvedValue({
+      id: "run-stage",
+      state: "running",
+      stage: "discovering",
+      result_count: 0,
+    });
+    mock.results.mockResolvedValue({
+      job_id: "run-stage",
+      state: "running",
+      results: [],
+      limitations: [],
+    });
+    render(<Workbench />);
+    const start = screen.getByRole("button", { name: "Start research" });
+    await waitFor(() => expect(start).toBeEnabled());
+    fireEvent.change(screen.getByRole("textbox", { name: "Research prompt" }), {
+      target: { value: "Find founders" },
+    });
+    fireEvent.click(start);
+    expect(await screen.findByText("Starting your research")).toBeVisible();
+    expect(screen.getByRole("button", { name: /Starting/ })).toBeDisabled();
+    await act(async () => accept({ id: "run-stage", status: "accepted" }));
+    expect(await screen.findByText("Current stage: discovering")).toBeVisible();
+    expect(
+      screen.getByText(
+        "Searching your selected sources for matching references.",
+      ),
+    ).toBeVisible();
+    expect(
+      screen.queryByText("Starting your research"),
+    ).not.toBeInTheDocument();
+  });
+  it("prompts for unconnected X only and preserves public indexed source choices", async () => {
+    render(<Workbench />);
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Start research" }),
+      ).toBeEnabled(),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "3 sources" }));
+    for (const name of [/Instagram/, /Facebook/, /YouTube/]) {
+      const source = screen.getByRole("checkbox", { name });
+      fireEvent.click(source);
+      expect(source).toBeChecked();
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    }
+    const x = screen.getByRole("checkbox", { name: "X" });
+    fireEvent.click(x);
+    expect(x).not.toBeChecked();
+    const prompt = await screen.findByRole("dialog", {
+      name: "Connect X to include posts",
+    });
+    fireEvent.click(
+      within(prompt).getByRole("button", { name: "Keep current sources" }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+    fireEvent.click(x);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open X connection settings" }),
+    );
+    const settings = await screen.findByRole("dialog", {
+      name: "Workspace settings",
+    });
+    expect(
+      within(settings).getByText("X connection").closest("details"),
+    ).toHaveAttribute("open");
+  });
   it("keeps account panels distinct when submitting the reported founder prompt", async () => {
     const errors = vi.spyOn(console, "error").mockImplementation(() => {});
     mock.submit.mockResolvedValue({
@@ -190,7 +331,7 @@ describe("research workbench", () => {
     render(<Workbench />);
     await waitFor(() => expect(mock.xConsents).toHaveBeenCalled());
     fireEvent.click(screen.getByRole("button", { name: "3 sources" }));
-    const x = screen.getByLabelText(/X/);
+    const x = screen.getByRole("checkbox", { name: "X" });
     expect(x).toBeEnabled();
     fireEvent.click(x);
     expect(x).toBeChecked();

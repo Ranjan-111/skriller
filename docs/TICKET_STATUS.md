@@ -4,7 +4,7 @@ Only tickets with completed scope and verified required checks are marked **done
 
 A passing unit suite does not close a required database, browser, container, or live-source gate.
 
-Current counts: 57 done, 33 implemented_pending_verification, 2 in_progress, 4 planned.
+Current counts: 61 done, 36 implemented_pending_verification, 2 in_progress, 4 planned.
 
 User-deferred verification gates:
 
@@ -70,7 +70,7 @@ User-deferred verification gates:
 | SKR-050 | done | [report](completions/SKR-050.md) | None |
 | SKR-051 | done | [report](completions/SKR-051.md) | None |
 | SKR-096 | implemented_pending_verification | [report](completions/SKR-096.md), [report](completions/PRIORITY-LAUNCH-LOCAL.md), [report](completions/PLANNER-QUALITY-GROQ.json), [report](completions/PLANNER-QUALITY-GROQ-120B.json), [report](completions/PLANNER-QUALITY-GROQ-120B-GUIDANCE-FAILURE.json), [report](completions/LOCAL-RELEASE-CHECK.md) | Representative local-model semantic acceptance remains failing; Authenticated browser acceptance remains unverified under saved localhost browser restriction; Authorized Groq 20B and 120B five-case baseline diagnostics each score 2/5; rejected guidance variants retained; final remote experiment hit HTTP 429 and stopped; representative quality remains open |
-| SKR-052 | implemented_pending_verification | [report](completions/SKR-052.md), [report](PLANNING_FAILURE_RUNBOOK.md), [report](completions/WORKBENCH-KEY-REGRESSION.md) | Authenticated localhost browser acceptance of clarification and resubmission remains pending; saved browser permission blocks localhost access |
+| SKR-052 | implemented_pending_verification | [report](completions/SKR-052.md), [report](PLANNING_FAILURE_RUNBOOK.md), [report](completions/WORKBENCH-KEY-REGRESSION.md), [report](completions/INDEXED-PLATFORM-RESULTS-REGRESSION.md) | Authenticated localhost browser acceptance of clarification and resubmission remains pending; saved browser permission blocks localhost access |
 | SKR-053 | done | [report](completions/SKR-053.md), [report](completions/PIPELINE-INTEGRATION.md) | None |
 | SKR-054 | done | [report](completions/SKR-054.md) | None |
 | SKR-055 | done | [report](completions/SKR-055.md) | None |
@@ -85,7 +85,7 @@ User-deferred verification gates:
 | SKR-064 | done | [report](completions/SKR-064.md), [report](completions/RSS-COLLECTION-LIVE.json) | None |
 | SKR-065 | done | [report](completions/SKR-065.md), [report](completions/YOUTUBE-WORKER-LOCAL.json), [report](completions/YOUTUBE-COLLECTION-LIVE.json) | None |
 | SKR-066 | done | [report](completions/SKR-066.md) | None |
-| SKR-067 | implemented_pending_verification | [report](completions/SKR-067.md), [report](QUALIFIED_EXPORT_RUNBOOK.md), [report](completions/PRIORITY-LAUNCH-LOCAL.md), [report](completions/LOCAL-RELEASE-CHECK.md), [report](completions/LOCAL-RELEASE-WORKFLOW.json), [report](completions/LOCAL-RELEASE-READINESS.json), [report](completions/WORKBENCH-KEY-REGRESSION.md) | Full actual-model prompt-to-evidenced-qualified-export gate remains open; reviewed fixture facts do not establish semantic quality; Authenticated browser export acceptance remains unverified under the saved localhost browser restriction |
+| SKR-067 | implemented_pending_verification | [report](completions/SKR-067.md), [report](QUALIFIED_EXPORT_RUNBOOK.md), [report](completions/PRIORITY-LAUNCH-LOCAL.md), [report](completions/LOCAL-RELEASE-CHECK.md), [report](completions/LOCAL-RELEASE-WORKFLOW.json), [report](completions/LOCAL-RELEASE-READINESS.json), [report](completions/WORKBENCH-KEY-REGRESSION.md), [report](completions/INDEXED-PLATFORM-RESULTS-REGRESSION.md), [report](completions/LOCAL-SEARCH-RECOVERY.md) | Full actual-model prompt-to-evidenced-qualified-export gate remains open; reviewed fixture facts do not establish semantic quality; Authenticated browser export acceptance remains unverified under the saved localhost browser restriction |
 | SKR-068 | implemented_pending_verification | [report](completions/SKR-068.md), [report](OWNER_ROLE_REVIEW_RUNBOOK.md) | Representative release semantic/extraction quality remains open under SKR-076; Account-backed advertised LinkedIn/Reddit and hosted pilot acceptance remain user-deferred; Provider commercial-use rights and production operation limits remain unverified |
 | SKR-069 | done | [report](completions/SKR-069.md) | None |
 | SKR-070 | done | [report](completions/SKR-070.md) | None |
@@ -114,3 +114,10 @@ User-deferred verification gates:
 | SKR-093 | done | [report](completions/SKR-093.md), [report](MCP_RUNBOOK.md) | None |
 | SKR-094 | planned | — | Not started |
 | SKR-095 | planned | — | Not started |
+| SKR-097 | implemented_pending_verification | [report](completions/LAUNCH-UX-ISSUES.md) | Desktop/mobile drawer inspection and native browser keyboard/focus verification unavailable: saved localhost browser permission denies access. |
+| SKR-098 | done | [report](completions/LAUNCH-UX-ISSUES.md) | None |
+| SKR-099 | done | [report](completions/LAUNCH-UX-ISSUES.md) | None |
+| SKR-100 | done | [report](completions/LAUNCH-UX-ISSUES.md) | None |
+| SKR-101 | done | [report](completions/LAUNCH-UX-ISSUES.md), [report](completions/LOCAL-SEARCH-RECOVERY.md) | None |
+| SKR-102 | implemented_pending_verification | [report](completions/LAUNCH-UX-ISSUES.md) | Desktop/mobile visual inspection of result tiles and long Markdown remains pending: saved localhost browser permission denies access. |
+| SKR-103 | implemented_pending_verification | [report](completions/LAUNCH-UX-ISSUES.md) | Native browser dialog focus confinement, Escape and restoration verification remains pending: saved localhost browser permission denies access. |

@@ -2,7 +2,7 @@
 
 Version: 0.1 · 12 October 2026 · Implementation is in progress; [verified execution status](TICKET_STATUS.md) is authoritative.
 
-96 tickets: 80 P0, 12 P1, 4 P2. All include verification scenarios; actual results are recorded per ticket in the execution status.
+103 tickets: 87 P0, 12 P1, 4 P2. All include verification scenarios; actual results are recorded per ticket in the execution status.
 
 Related: [PRD](PRD.md), [stack](TECH_STACK.md), [source reuse map](REUSE_MAP.md), [machine-readable tickets](tickets.json), [reference hashes](REFERENCE_INVENTORY.json).
 
@@ -2435,3 +2435,66 @@ Source readiness (fixture-only or actual validated operation):
 Evidence, quality/cost observations, and limitations:
 Follow-up tickets / dependency status:
 ```
+
+<a id="skr-097"></a>
+#### SKR-097 — Workspace settings beside profile
+
+**Phase:** P0 · **Size:** S · **Status:** implemented_pending_verification
+
+**Scope:** Move allowance, billing and source/CRM connections out of the research output into a keyboard-accessible settings drawer beside the profile.
+
+**Acceptance:** Settings control exposes every panel without crowding research; connection callbacks remain mounted.
+
+<a id="skr-098"></a>
+#### SKR-098 — Examples immediately below composer
+
+**Phase:** P0 · **Size:** S · **Status:** done
+
+**Scope:** Place Start with a question directly after the prompt form, before notices and results.
+
+**Acceptance:** Examples precede prompt help, execution state and account panels in DOM order.
+
+<a id="skr-099"></a>
+#### SKR-099 — Explain research modes accurately
+
+**Phase:** P0 · **Size:** S · **Status:** done
+
+**Scope:** Explain that both modes share research infrastructure, with people-focused versus discussion-focused starting criteria.
+
+**Acceptance:** Mode help updates on selection and requests retain the selected backend mode.
+
+<a id="skr-100"></a>
+#### SKR-100 — Clear sign-in-required alert after authentication
+
+**Phase:** P0 · **Size:** S · **Status:** done
+
+**Scope:** Clear the obsolete sign-in warning when account status changes without discarding the prompt.
+
+**Acceptance:** Signed-out submit then successful sign-in clears the warning and preserves text.
+
+<a id="skr-101"></a>
+#### SKR-101 — Visible research progress and stage feedback
+
+**Phase:** P0 · **Size:** S · **Status:** done
+
+**Scope:** Show immediate submission feedback and persistent activity with actual backend stage labels; distinguish waiting for user action.
+
+**Acceptance:** Submission, queued, running, complete and paused states have accurate accessible feedback; no fabricated progress.
+
+<a id="skr-102"></a>
+#### SKR-102 — Readable result tiles and safe Markdown
+
+**Phase:** P0 · **Size:** S · **Status:** implemented_pending_verification
+
+**Scope:** Outline individual results, improve spacing and render source Markdown safely with useful links and no raw HTML execution.
+
+**Acceptance:** Result excerpts support Markdown; unsafe URLs and HTML remain inert; result cards and export controls work.
+
+<a id="skr-103"></a>
+#### SKR-103 — Conditional platform connection prompt
+
+**Phase:** P0 · **Size:** S · **Status:** implemented_pending_verification
+
+**Scope:** Show a connection dialog only when the selected source route requires an account; keep public indexed Instagram/Facebook/YouTube selection ungated.
+
+**Acceptance:** Unconnected X selection opens a keyboard-accessible connection prompt and remains unchecked; connected X and public indexed sources work normally.

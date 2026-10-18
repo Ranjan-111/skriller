@@ -223,10 +223,25 @@ function validPlatformReference(
     reference.discovery_backend === "exa_keyless" &&
     reference.access === "indexed_reference_only" &&
     ["linkedin", "reddit"].includes(String(reference.source)) &&
-    candidate.source === reference.source &&
     candidate.evidence_kind === "search_snippet"
-  )
-    return candidate.provider === "exa_keyless";
+  ) {
+    if (candidate.provider !== "exa_keyless") return false;
+    if (candidate.source === reference.source) return true;
+    // Discovery channel and linked platform are distinct: general web search
+    // can return a platform URL. Keep this exception bound to that URL's host.
+    if (candidate.source !== "web" || typeof candidate.url !== "string")
+      return false;
+    const target = safeSourceUrl(candidate.url);
+    if (!target) return false;
+    const host = new URL(target).hostname;
+    const domains =
+      reference.source === "linkedin"
+        ? ["linkedin.com"]
+        : ["reddit.com", "redd.it"];
+    return domains.some(
+      (domain) => host === domain || host.endsWith(`.${domain}`),
+    );
+  }
   if (["instagram", "facebook"].includes(String(reference.source)))
     return (
       reference.discovery_backend === `opencli_${reference.source}` &&

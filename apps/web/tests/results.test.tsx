@@ -1189,6 +1189,28 @@ describe("actual research results", () => {
     );
     expect(signal.aborted).toBe(true);
   });
+  it("does not present a provider outage as a successful empty search", async () => {
+    const api = client();
+    api.job.mockResolvedValue({
+      ...run,
+      state: "failed",
+      terminal_reason: "source_interrupted",
+      result_count: 0,
+    });
+    api.results.mockResolvedValue({ ...result, state: "failed", results: [] });
+    render(
+      <ResearchResultsPanel api={api} job={{ id: "j1", status: "accepted" }} />,
+    );
+    expect(
+      await screen.findByText(
+        /Source search was interrupted before any results could be saved/,
+      ),
+    ).toBeVisible();
+    expect(
+      screen.queryByText(/No matching sources were returned/),
+    ).not.toBeInTheDocument();
+    expect(document.querySelector(".research-activity")).toBeNull();
+  });
   it("never links script addresses or credential-bearing URLs", async () => {
     const api = client();
     api.results.mockResolvedValue({
@@ -1257,6 +1279,40 @@ describe("actual research results", () => {
     expect(
       await screen.findByRole("link", { name: /Acme source/ }),
     ).toBeVisible();
+  });
+  it("does not present a stale empty page as no matches when completed results fail to load", async () => {
+    vi.useFakeTimers();
+    const api = client();
+    api.job.mockResolvedValueOnce({ ...run, state: "queued", result_count: 0 });
+    api.results
+      .mockResolvedValueOnce({ ...result, state: "queued", results: [] })
+      .mockRejectedValueOnce(
+        new ApiError(
+          "The service returned unexpected results. Try checking the run again.",
+        ),
+      );
+    render(
+      <ResearchResultsPanel api={api} job={{ id: "j1", status: "accepted" }} />,
+    );
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(screen.getByText("Searching for matching sources…")).toBeVisible();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(screen.getByRole("alert")).toHaveTextContent("unexpected results");
+    expect(
+      screen.queryByText(/No matching sources were returned/),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Discovered sources (0)"),
+    ).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Check run again" }));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(screen.getByRole("link", { name: /Acme source/ })).toBeVisible();
   });
   it("aborts outstanding polling when the run view is dismissed", async () => {
     const api = client();

@@ -2628,7 +2628,8 @@
         "reports": [
           "docs/completions/SKR-052.md",
           "docs/PLANNING_FAILURE_RUNBOOK.md",
-          "docs/completions/WORKBENCH-KEY-REGRESSION.md"
+          "docs/completions/WORKBENCH-KEY-REGRESSION.md",
+          "docs/completions/INDEXED-PLATFORM-RESULTS-REGRESSION.md"
         ],
         "passed_checks": [
           "50 apps/web/tests/results.test.tsx tests passed, including four sanitized planning-failure categories, explicit prompt editing, no automatic submission, hidden unvalidated criteria and legacy metadata absence",
@@ -2637,12 +2638,13 @@
           "Impeccable detector completed on both changed components without findings",
           "Backend rejected-plan metadata, authorization and strict transport checks were verified in the preceding Sol batch",
           "Delayed plan-state refresh and saved-result recovery pass component fixtures",
-          "Fixed reproduced allowance/billing React key collision; workspace-backed submission regression verifies completed results and CSV/JSON controls; 74 related web tests and typecheck pass"
+          "Fixed reproduced allowance/billing React key collision; workspace-backed submission regression verifies completed results and CSV/JSON controls; 74 related web tests and typecheck pass",
+          "Indexed platform result parsing and stale empty-state regression: 158 frontend tests passed; actual 18-record response replay passed."
         ],
         "remaining": [
           "Authenticated localhost browser acceptance of clarification and resubmission remains pending; saved browser permission blocks localhost access"
         ],
-        "recorded_at": "2026-10-18T01:58:52.143798+00:00"
+        "recorded_at": "2026-10-18T04:26:00.501653+00:00"
       }
     },
     {
@@ -3481,7 +3483,9 @@
           "docs/completions/LOCAL-RELEASE-CHECK.md",
           "docs/completions/LOCAL-RELEASE-WORKFLOW.json",
           "docs/completions/LOCAL-RELEASE-READINESS.json",
-          "docs/completions/WORKBENCH-KEY-REGRESSION.md"
+          "docs/completions/WORKBENCH-KEY-REGRESSION.md",
+          "docs/completions/INDEXED-PLATFORM-RESULTS-REGRESSION.md",
+          "docs/completions/LOCAL-SEARCH-RECOVERY.md"
         ],
         "passed_checks": [
           "Recorded focused checks and combined 99-check component suite; see report",
@@ -3490,13 +3494,15 @@
           "Combined copied-extraction/owner-review/private JSON export journey: 3 variants passed; export/resume selection: 20 passed; unconfirmed discussion export rejected",
           "Actual native PostgreSQL/RabbitMQ/running-worker/free-search probe completed with 2 unverified results in 7.884s; no Firebase browser or confirmed semantic export claim",
           "Final selected frontend API/workbench/results/source and qualified-export checks: 176 passed; build/typecheck/client-contract pass; reviewed copied-source private export included in backend selection",
-          "Fixed reproduced allowance/billing React key collision; workspace-backed submission regression verifies completed results and CSV/JSON controls; 74 related web tests and typecheck pass"
+          "Fixed reproduced allowance/billing React key collision; workspace-backed submission regression verifies completed results and CSV/JSON controls; 74 related web tests and typecheck pass",
+          "Indexed platform result parsing and stale empty-state regression: 158 frontend tests passed; actual 18-record response replay passed.",
+          "Local frontend restarted; original source queries returned references; real worker probe completed with 2 sources; 72 frontend regressions and TypeScript passed."
         ],
         "remaining": [
           "Full actual-model prompt-to-evidenced-qualified-export gate remains open; reviewed fixture facts do not establish semantic quality",
           "Authenticated browser export acceptance remains unverified under the saved localhost browser restriction"
         ],
-        "recorded_at": "2026-10-18T01:58:52.153964+00:00"
+        "recorded_at": "2026-10-18T06:07:10.064779+00:00"
       }
     },
     {
@@ -5046,6 +5052,303 @@
           "expected": "only paired workspace can invoke allowed reads"
         }
       ]
+    },
+    {
+      "id": "SKR-097",
+      "title": "Workspace settings beside profile",
+      "phase": "P0",
+      "epic": "Launch UX fixes",
+      "status": "implemented_pending_verification",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Move allowance, billing and source/CRM connections out of the research output into a keyboard-accessible settings drawer beside the profile.",
+      "acceptance_criteria": [
+        "A keyboard-accessible workspace settings control beside the profile opens and dismisses a drawer without covering the research composer.",
+        "The drawer exposes allowance, billing, YouTube analytics, Salesforce, X and Reddit panels while keeping connection callback/readiness components mounted."
+      ],
+      "test_cases": [
+        {
+          "kind": "frontend",
+          "scenario": "Open the workspace settings drawer and inspect its available panels.",
+          "expected": "The adjacent control opens a labelled drawer with allowance, billing, YouTube analytics, Salesforce, X and Reddit sections."
+        },
+        {
+          "kind": "frontend",
+          "scenario": "Dismiss the settings drawer and exercise source connection callbacks.",
+          "expected": "Dismissal restores the research view and mounted connection components continue to handle callback/readiness state."
+        }
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/LAUNCH-UX-ISSUES.md"
+        ],
+        "passed_checks": [
+          "Settings panel placement, drawer opening and cancellation component tests passed; panels remain mounted.",
+          "Complete frontend suite: 283 tests passed; TypeScript passed."
+        ],
+        "remaining": [
+          "Desktop/mobile drawer inspection and native browser keyboard/focus verification unavailable: saved localhost browser permission denies access."
+        ],
+        "recorded_at": "2026-10-18T05:06:23.893010+00:00"
+      }
+    },
+    {
+      "id": "SKR-098",
+      "title": "Examples immediately below composer",
+      "phase": "P0",
+      "epic": "Launch UX fixes",
+      "status": "done",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-01"
+      ],
+      "reuse_ids": [],
+      "scope": "Place Start with a question directly after the prompt form, before notices and results.",
+      "acceptance_criteria": [
+        "The Start with a question examples appear immediately after the prompt form and before help, notices, execution state or result panels.",
+        "Choosing an example fills the composer with its prompt without bypassing normal source and mode selection."
+      ],
+      "test_cases": [
+        {
+          "kind": "frontend",
+          "scenario": "Inspect composer, examples, help and result DOM order.",
+          "expected": "The examples directly follow the form and precede prompt help, notices and results."
+        },
+        {
+          "kind": "frontend",
+          "scenario": "Select an example while choosing a research mode and sources.",
+          "expected": "The example populates the prompt; subsequent submission preserves the selected mode and sources."
+        }
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/LAUNCH-UX-ISSUES.md"
+        ],
+        "passed_checks": [
+          "Composer DOM-order and example-to-request regression tests passed.",
+          "Complete frontend suite: 283 tests passed; TypeScript passed."
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-18T05:06:23.903891+00:00"
+      }
+    },
+    {
+      "id": "SKR-099",
+      "title": "Explain research modes accurately",
+      "phase": "P0",
+      "epic": "Launch UX fixes",
+      "status": "done",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-01"
+      ],
+      "reuse_ids": [],
+      "scope": "Explain that both modes share research infrastructure, with people-focused versus discussion-focused starting criteria.",
+      "acceptance_criteria": [
+        "Mode-specific help accurately describes people-focused leads versus discussion-focused research while explaining that both use the same research pipeline.",
+        "Changing modes submits the corresponding backend mode and seeds the appropriate initial entity focus."
+      ],
+      "test_cases": [
+        {
+          "kind": "frontend",
+          "scenario": "Switch between leads and research modes.",
+          "expected": "Mode help changes to the matching people or discussion focus without implying separate pipelines."
+        },
+        {
+          "kind": "integration",
+          "scenario": "Submit one request in each mode.",
+          "expected": "Requests retain their selected mode and the backend starts from the corresponding person or discussion focus."
+        }
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/LAUNCH-UX-ISSUES.md"
+        ],
+        "passed_checks": [
+          "Mode help switching and submitted backend mode tests passed; backend entity seed mapping inspected.",
+          "Complete frontend suite: 283 tests passed; TypeScript passed."
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-18T05:06:23.909705+00:00"
+      }
+    },
+    {
+      "id": "SKR-100",
+      "title": "Clear sign-in-required alert after authentication",
+      "phase": "P0",
+      "epic": "Launch UX fixes",
+      "status": "done",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-15"
+      ],
+      "reuse_ids": [],
+      "scope": "Clear the obsolete sign-in warning when account status changes without discarding the prompt.",
+      "acceptance_criteria": [
+        "A successful authentication state change clears the obsolete sign-in-required alert.",
+        "Clearing the alert preserves the user's prompt; a still-signed-out state does not incorrectly clear it."
+      ],
+      "test_cases": [
+        {
+          "kind": "frontend",
+          "scenario": "Submit while signed out, then transition to an authenticated account.",
+          "expected": "The sign-in-required alert disappears and the original prompt text remains in the composer."
+        },
+        {
+          "kind": "frontend",
+          "scenario": "Re-render after an account update that remains signed out.",
+          "expected": "The warning remains visible until authentication succeeds."
+        }
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/LAUNCH-UX-ISSUES.md"
+        ],
+        "passed_checks": [
+          "Post-authentication stale sign-in warning clears while prompt remains: regression passed.",
+          "Complete frontend suite: 283 tests passed; TypeScript passed."
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-18T05:06:23.915508+00:00"
+      }
+    },
+    {
+      "id": "SKR-101",
+      "title": "Visible research progress and stage feedback",
+      "phase": "P0",
+      "epic": "Launch UX fixes",
+      "status": "done",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-14"
+      ],
+      "reuse_ids": [],
+      "scope": "Show immediate submission feedback and persistent activity with actual backend stage labels; distinguish waiting for user action.",
+      "acceptance_criteria": [
+        "Submission and active jobs show immediate accessible activity and only real backend stage information.",
+        "Paused, connection-required and terminal jobs stop active feedback and never display fabricated completion percentages."
+      ],
+      "test_cases": [
+        {
+          "kind": "frontend",
+          "scenario": "Submit a request and poll it through queued and running stages.",
+          "expected": "Immediate activity is visible and the displayed stage matches the backend response without invented progress percentages."
+        },
+        {
+          "kind": "frontend",
+          "scenario": "Transition a running job to paused, connection-required and terminal states.",
+          "expected": "Active feedback stops and the UI explains the actual waiting or terminal state."
+        }
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/LAUNCH-UX-ISSUES.md",
+          "docs/completions/LOCAL-SEARCH-RECOVERY.md"
+        ],
+        "passed_checks": [
+          "Pending submission and backend discovering-stage feedback tests passed; existing polling/terminal-state suite passed.",
+          "Complete frontend suite: 283 tests passed; TypeScript passed.",
+          "Local frontend restarted; original source queries returned references; real worker probe completed with 2 sources; 72 frontend regressions and TypeScript passed."
+        ],
+        "remaining": [],
+        "recorded_at": "2026-10-18T06:07:10.073508+00:00"
+      }
+    },
+    {
+      "id": "SKR-102",
+      "title": "Readable result tiles and safe Markdown",
+      "phase": "P0",
+      "epic": "Launch UX fixes",
+      "status": "implemented_pending_verification",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-09",
+        "FR-13"
+      ],
+      "reuse_ids": [],
+      "scope": "Outline individual results, improve spacing and render source Markdown safely with useful links and no raw HTML execution.",
+      "acceptance_criteria": [
+        "Result excerpts render supported Markdown structure and safe links while raw HTML, unsafe URL schemes and remote images remain inert.",
+        "Result cards remain visually separated and existing result actions and exports continue to work."
+      ],
+      "test_cases": [
+        {
+          "kind": "frontend",
+          "scenario": "Render Markdown excerpts containing headings, lists, tables, links, raw HTML and unsafe URL schemes.",
+          "expected": "Markdown structure and safe links render; script/HTML payloads and unsafe links do not execute or navigate."
+        },
+        {
+          "kind": "frontend",
+          "scenario": "Render source images and use result actions and export controls.",
+          "expected": "Remote images are not loaded, result tiles remain distinct, and result/export actions retain their existing behavior."
+        }
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/LAUNCH-UX-ISSUES.md"
+        ],
+        "passed_checks": [
+          "Markdown semantic rendering, unsafe URL/HTML and remote-image safety tests passed; existing results and exports passed.",
+          "Complete frontend suite: 283 tests passed; TypeScript passed."
+        ],
+        "remaining": [
+          "Desktop/mobile visual inspection of result tiles and long Markdown remains pending: saved localhost browser permission denies access."
+        ],
+        "recorded_at": "2026-10-18T05:06:23.926551+00:00"
+      }
+    },
+    {
+      "id": "SKR-103",
+      "title": "Conditional platform connection prompt",
+      "phase": "P0",
+      "epic": "Launch UX fixes",
+      "status": "implemented_pending_verification",
+      "estimate": "S",
+      "depends_on": [],
+      "requirements": [
+        "FR-03",
+        "FR-08"
+      ],
+      "reuse_ids": [],
+      "scope": "Show a connection dialog only when the selected source route requires an account; keep public indexed Instagram/Facebook/YouTube selection ungated.",
+      "acceptance_criteria": [
+        "Selecting an unconnected X source opens an accessible connection prompt and does not select X until the user connects or explicitly chooses another path.",
+        "Connected X selects normally, while public indexed Instagram, Facebook and YouTube sources remain available without an unnecessary account prompt."
+      ],
+      "test_cases": [
+        {
+          "kind": "frontend",
+          "scenario": "Select X with no active workspace connection, then cancel or open settings.",
+          "expected": "A labelled connection dialog appears, X remains unselected, and cancel/settings actions behave correctly."
+        },
+        {
+          "kind": "frontend",
+          "scenario": "Select X while connected and select public indexed Instagram, Facebook and YouTube sources.",
+          "expected": "Connected X can be selected and public indexed sources do not trigger an account-required dialog."
+        }
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/LAUNCH-UX-ISSUES.md"
+        ],
+        "passed_checks": [
+          "Public indexed source selection, unconnected X prompt/cancel/settings and connected X selection tests passed.",
+          "Complete frontend suite: 283 tests passed; TypeScript passed."
+        ],
+        "remaining": [
+          "Native browser dialog focus confinement, Escape and restoration verification remains pending: saved localhost browser permission denies access."
+        ],
+        "recorded_at": "2026-10-18T05:06:23.932257+00:00"
+      }
     }
   ],
   "user_deferred_gates": [
