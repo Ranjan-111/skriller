@@ -1,7 +1,10 @@
 import type { components, paths } from "../generated/api";
 import { decodeProgress, type ProgressUpdate } from "./progress";
 import { createAnalyticsClient } from "./youtube-analytics";
+import { createQualifiedExportClient } from "./qualified-exports";
 import { createCrmClient } from "./crm";
+import { createRedditClient } from "./reddit-oauth";
+import { createXClient } from "./x-oauth";
 
 export type SearchPlan = components["schemas"]["SearchPlan"];
 export type Capability = components["schemas"]["Capability"];
@@ -30,6 +33,16 @@ export type ProgressOptions = {
 };
 export type Source = NonNullable<SearchPlan["sources"]>[number];
 export type YouTubeView = components["schemas"]["YouTubeView"];
+export type RedditThreadView = components["schemas"]["RedditThreadView"];
+export type SocialReadView = components["schemas"]["SocialReadView"];
+export type LinkedInReadView = components["schemas"]["LinkedInReadView"];
+export type RebindOptions = components["schemas"]["RebindOptionsView"];
+export type RebindSelection = components["schemas"]["RebindResumeInput"];
+export type ConnectionMetadata = components["schemas"]["ConnectionMetadata"];
+export type RoleReviewInput = components["schemas"]["RoleReviewInput"];
+export type RoleReviewView = components["schemas"]["RoleReviewView"];
+export type RoleApproval = components["schemas"]["RoleApproval"];
+export type RoleDecision = components["schemas"]["RoleDecision"];
 
 export type Health = { live: boolean; ready: boolean };
 export type ResearchRequest = {
@@ -55,8 +68,8 @@ export type ResearchCandidate = {
   url: string;
   snippet: string;
   source: string;
-  provider: "exa_keyless";
-  evidence_kind: "search_snippet";
+  provider: components["schemas"]["ResearchCandidate"]["provider"];
+  evidence_kind: components["schemas"]["ResearchCandidate"]["evidence_kind"];
   qualification: "unverified";
   fit?: components["schemas"]["Fit"] | null;
   observed_at: string;
@@ -67,6 +80,9 @@ export type ResearchCandidate = {
   discussion?: components["schemas"]["DiscussionView"] | null;
   platform_reference?: components["schemas"]["PlatformReference"] | null;
   youtube?: YouTubeView | null;
+  reddit_thread?: RedditThreadView | null;
+  linkedin_read?: LinkedInReadView | null;
+  social_read?: SocialReadView | null;
 };
 export type ResearchResults = {
   job_id: string;
@@ -84,6 +100,68 @@ export type ResearchResults = {
   groups?: components["schemas"]["QualificationGroups"] | null;
 };
 export type SavedList = components["schemas"]["ListMetadata"];
+
+function validRebindUuid(id: unknown): boolean {
+  return (
+    typeof id === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      id,
+    )
+  );
+}
+
+const validRoleUuid = (value: unknown): value is string =>
+  typeof value === "string" &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value,
+  );
+
+function validRoleReference(
+  value: unknown,
+): value is RoleReviewInput["previous"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  return (
+    validRoleUuid(row.role_claim_id) &&
+    validRoleUuid(row.date_claim_id) &&
+    validRoleUuid(row.evidence_id)
+  );
+}
+
+function validRoleSource(value: unknown): boolean {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  return (
+    validRoleUuid(row.role_claim_id) &&
+    validRoleUuid(row.date_claim_id) &&
+    validRoleUuid(row.evidence_id) &&
+    typeof row.role === "string" &&
+    row.role.length > 0 &&
+    row.role.length <= 255 &&
+    typeof row.effective_date === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(row.effective_date) &&
+    Number.isFinite(Date.parse(`${row.effective_date}T00:00:00Z`)) &&
+    typeof row.excerpt === "string" &&
+    row.excerpt.length > 0 &&
+    row.excerpt.length <= 4096 &&
+    typeof row.source_url === "string" &&
+    Boolean(safeSourceUrl(row.source_url))
+  );
+}
+
+function validRebindOption(value: unknown): boolean {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  return (
+    ["linkedin", "reddit"].includes(String(row.source)) &&
+    validRebindUuid(row.previous_connection_ref) &&
+    Array.isArray(row.entity_ids) &&
+    row.entity_ids.length > 0 &&
+    row.entity_ids.length <= 100 &&
+    new Set(row.entity_ids).size === row.entity_ids.length &&
+    row.entity_ids.every(validRebindUuid)
+  );
+}
 export type SavedListSnapshot = components["schemas"]["SnapshotOutput"];
 export type FollowupSubmission = components["schemas"]["FollowupSubmission"];
 export type FollowupView = components["schemas"]["FollowupView"];
@@ -100,6 +178,450 @@ export function safeSourceUrl(value: string): string | null {
   } catch {
     return null;
   }
+}
+function validDiscoveryEvidence(row: Record<string, unknown>) {
+  return (
+    (row.provider === "exa_keyless" &&
+      row.evidence_kind === "search_snippet") ||
+    (row.provider === "x_api_v2" &&
+      row.source === "x" &&
+      row.evidence_kind === "public_post") ||
+    (row.provider === "reddit_oauth" &&
+      row.source === "reddit" &&
+      row.evidence_kind === "public_post") ||
+    (["opencli_instagram", "opencli_facebook"].includes(String(row.provider)) &&
+      row.provider === `opencli_${row.source}` &&
+      row.evidence_kind === "search_reference") ||
+    (row.provider === "linkedin_mcp" &&
+      row.source === "linkedin" &&
+      row.evidence_kind === "search_reference")
+  );
+}
+function validPlatformReference(
+  value: unknown,
+  candidate: Record<string, unknown>,
+): boolean {
+  if (value == null) return true;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const reference = value as Record<string, unknown>;
+  const resourceKinds = [
+    "profile",
+    "company",
+    "post",
+    "comment",
+    "community",
+    "page",
+    "unknown",
+  ];
+  if (
+    !resourceKinds.includes(String(reference.resource_kind)) ||
+    reference.direct_read_status !== "not_attempted" ||
+    reference.subject_identity !== "unknown"
+  )
+    return false;
+  if (
+    reference.discovery_backend === "exa_keyless" &&
+    reference.access === "indexed_reference_only" &&
+    ["linkedin", "reddit"].includes(String(reference.source)) &&
+    candidate.source === reference.source &&
+    candidate.evidence_kind === "search_snippet"
+  )
+    return candidate.provider === "exa_keyless";
+  if (["instagram", "facebook"].includes(String(reference.source)))
+    return (
+      reference.discovery_backend === `opencli_${reference.source}` &&
+      reference.access === "connected_search_reference_only" &&
+      candidate.provider === reference.discovery_backend &&
+      candidate.source === reference.source &&
+      candidate.evidence_kind === "search_reference"
+    );
+  return (
+    reference.source === "linkedin" &&
+    reference.discovery_backend === "linkedin_mcp" &&
+    reference.access === "connected_search_reference_only" &&
+    candidate.provider === "linkedin_mcp" &&
+    candidate.source === "linkedin" &&
+    candidate.evidence_kind === "search_reference"
+  );
+}
+
+function validSocialRead(
+  value: unknown,
+  candidate: Record<string, unknown>,
+): boolean {
+  if (value == null) return true;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const view = value as Record<string, unknown>;
+  const resource = view.resource as Record<string, unknown> | null;
+  const boundedInt = (n: unknown, max: number): boolean =>
+    typeof n === "number" && Number.isInteger(n) && n >= 0 && n <= max;
+  const text = (v: unknown, max: number): boolean =>
+    typeof v === "string" && v.length <= max;
+  if (
+    !validRebindUuid(view.evidence_id) ||
+    !resource ||
+    typeof resource !== "object" ||
+    Array.isArray(resource) ||
+    !["instagram", "facebook"].includes(String(candidate.source)) ||
+    resource.source !== candidate.source ||
+    candidate.provider !== `opencli_${candidate.source}` ||
+    candidate.evidence_kind !== "search_reference" ||
+    resource.source_url !== candidate.url ||
+    resource.subject_identity !== "unknown" ||
+    resource.coverage_complete !== false ||
+    !text(resource.name, 500) ||
+    typeof resource.observed_at !== "string" ||
+    !validDateOrNull(resource.observed_at) ||
+    !/(?:Z|[+-]\d{2}:\d{2})$/i.test(resource.observed_at) ||
+    !boundedInt(view.api_requests, 3) ||
+    !boundedInt(view.network_requests_seen, 80) ||
+    (view.api_requests as number) > (view.network_requests_seen as number) ||
+    typeof resource.username !== "string"
+  )
+    return false;
+  const sourceUrl = safeSourceUrl(String(resource.source_url));
+  if (!sourceUrl) return false;
+  const url = new URL(sourceUrl);
+  if (url.protocol !== "https:" || url.search || url.hash || url.port)
+    return false;
+  if (resource.source === "instagram")
+    return (
+      url.hostname === "www.instagram.com" &&
+      /^[A-Za-z0-9_](?:[A-Za-z0-9._]{0,28}[A-Za-z0-9_])?$/.test(
+        resource.username,
+      ) &&
+      ![
+        "accounts",
+        "api",
+        "direct",
+        "explore",
+        "reels",
+        "stories",
+        "challenge",
+      ].includes(resource.username.toLowerCase()) &&
+      url.pathname === `/${resource.username}/` &&
+      resource.visibility === "public" &&
+      resource.resource_kind === "profile" &&
+      resource.account_kind === "unknown" &&
+      resource.owner_analytics === "unavailable" &&
+      (resource.verified === null || typeof resource.verified === "boolean") &&
+      text(resource.bio_excerpt, 120) &&
+      [resource.followers, resource.following, resource.posts].every(
+        (n) => n === null || boundedInt(n, 1_000_000_000_000),
+      ) &&
+      (view.api_requests as number) >= 1
+    );
+  return (
+    url.hostname === "www.facebook.com" &&
+    /^[A-Za-z0-9][A-Za-z0-9.-]{0,99}$/.test(resource.username) &&
+    url.pathname === `/${resource.username}` &&
+    ![
+      "logout",
+      "logout.php",
+      "login.php",
+      "signup",
+      "register",
+      "reg",
+      "recover",
+      "ajax",
+      "api",
+      "graphql",
+      "dialog",
+      "plugins",
+      "connect",
+      "home.php",
+      "groups",
+      "login",
+      "checkpoint",
+      "settings",
+      "me",
+      "profile.php",
+      "search",
+      "friends",
+      "privacy",
+      "policies",
+      "help",
+      "messages",
+      "notifications",
+      "marketplace",
+      "gaming",
+    ].includes(resource.username.toLowerCase()) &&
+    resource.name !== "" &&
+    resource.visibility === "unknown" &&
+    resource.company_identity === "unknown" &&
+    resource.group_access === "unavailable" &&
+    [resource.followers_display, resource.friends_display].every(
+      (n) => n === null || text(n, 100),
+    ) &&
+    view.api_requests === 0
+  );
+}
+
+function validDateOrNull(value: unknown): value is string | null {
+  return (
+    value === null ||
+    (typeof value === "string" &&
+      Number.isFinite(Date.parse(value)) &&
+      value.length <= 40)
+  );
+}
+
+function validRedditUrl(value: unknown): value is string {
+  if (typeof value !== "string" || value.length > 4096) return false;
+  try {
+    const url = new URL(value);
+    return (
+      url.protocol === "https:" &&
+      !url.username &&
+      !url.password &&
+      (url.hostname === "reddit.com" || url.hostname.endsWith(".reddit.com"))
+    );
+  } catch {
+    return false;
+  }
+}
+
+function canonicalLinkedInReadUrl(value: unknown): string | null {
+  if (typeof value !== "string" || value.length > 4096) return null;
+  try {
+    const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      url.hostname !== "www.linkedin.com" ||
+      url.port ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash
+    )
+      return null;
+    const profile = url.pathname.match(/^\/in\/([A-Za-z0-9_-]{1,200})\/?$/);
+    if (profile && !["me", "self"].includes(profile[1].toLowerCase()))
+      return `https://www.linkedin.com/in/${profile[1]}/`;
+    const company = url.pathname.match(
+      /^\/company\/([A-Za-z0-9_-]{1,200})(?:\/(about))?\/?$/,
+    );
+    if (company) return `https://www.linkedin.com/company/${company[1]}/about/`;
+    const post = url.pathname.match(
+      /^\/feed\/update\/urn:li:(activity|ugcPost):([0-9]{1,30})\/?$/,
+    );
+    if (post)
+      return `https://www.linkedin.com/feed/update/urn:li:${post[1]}:${post[2]}/`;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function validLinkedInRead(
+  value: unknown,
+  candidate: Record<string, unknown>,
+): boolean {
+  if (value == null) return true;
+  if (
+    candidate.source !== "linkedin" ||
+    candidate.provider !== "linkedin_mcp" ||
+    candidate.evidence_kind !== "search_reference" ||
+    !value ||
+    typeof value !== "object" ||
+    Array.isArray(value)
+  )
+    return false;
+  const view = value as Record<string, unknown>;
+  const resource = view.resource as Record<string, unknown> | null;
+  if (
+    typeof view.evidence_id !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      view.evidence_id,
+    ) ||
+    !resource ||
+    typeof resource !== "object"
+  )
+    return false;
+  const expectedUrl = canonicalLinkedInReadUrl(candidate.url);
+  const resourceUrl = canonicalLinkedInReadUrl(resource.source_url);
+  const urlKind = resourceUrl?.includes("/in/")
+    ? "profile"
+    : resourceUrl?.includes("/company/")
+      ? "company"
+      : "post";
+  const kindSection: Record<string, string> = {
+    profile: "main_profile",
+    company: "about",
+    post: "post",
+  };
+  return Boolean(
+    expectedUrl &&
+    resourceUrl === expectedUrl &&
+    resource.source_url === resourceUrl &&
+    resource.resource_kind === urlKind &&
+    resource.source === "linkedin" &&
+    resource.evidence_kind === "resource_section_read" &&
+    ["profile", "company", "post"].includes(String(resource.resource_kind)) &&
+    resource.section === kindSection[String(resource.resource_kind)] &&
+    typeof resource.text === "string" &&
+    resource.text.length > 0 &&
+    resource.text.length <= 16384 &&
+    typeof resource.text_truncated === "boolean" &&
+    validDateOrNull(resource.observed_at) &&
+    typeof resource.observed_at === "string" &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/i.test(
+      resource.observed_at,
+    ) &&
+    resource.coverage_complete === false &&
+    resource.subject_identity === "unknown" &&
+    resource.contact_details === "unavailable" &&
+    resource.buying_intent === "not_inferred",
+  );
+}
+
+function validRedditThread(
+  value: unknown,
+  candidate: Record<string, unknown>,
+): boolean {
+  if (value == null) return true;
+  if (
+    candidate.source !== "reddit" ||
+    candidate.provider !== "reddit_oauth" ||
+    candidate.evidence_kind !== "public_post" ||
+    !value ||
+    typeof value !== "object" ||
+    Array.isArray(value)
+  )
+    return false;
+  const view = value as Record<string, unknown>;
+  const thread = view.thread as Record<string, unknown> | null;
+  if (
+    typeof view.evidence_id !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      view.evidence_id,
+    ) ||
+    !thread ||
+    typeof thread !== "object" ||
+    thread.source !== "reddit" ||
+    thread.evidence_kind !== "post_comment_read" ||
+    thread.buying_intent !== "not_inferred" ||
+    thread.subject_identity !== "unknown" ||
+    !validDateOrNull(thread.observed_at) ||
+    typeof thread.observed_at !== "string" ||
+    !Array.isArray(thread.comments) ||
+    thread.comments.length > 100 ||
+    typeof thread.coverage_complete !== "boolean" ||
+    !Number.isSafeInteger(thread.unexpanded_nodes) ||
+    Number(thread.unexpanded_nodes) < 0 ||
+    Number(thread.unexpanded_nodes) > 100 ||
+    !Number.isSafeInteger(thread.omitted_comments) ||
+    Number(thread.omitted_comments) < 0 ||
+    Number(thread.omitted_comments) > 100
+  )
+    return false;
+
+  const post = thread.post as Record<string, unknown> | null;
+  if (
+    !post ||
+    typeof post !== "object" ||
+    typeof post.native_id !== "string" ||
+    !/^t3_[a-z0-9]{3,13}$/.test(post.native_id) ||
+    typeof post.subreddit !== "string" ||
+    !/^[A-Za-z0-9_]{1,32}$/.test(post.subreddit) ||
+    typeof post.title !== "string" ||
+    post.title.length > 500 ||
+    typeof post.excerpt !== "string" ||
+    post.excerpt.length > 4096 ||
+    typeof post.content_unavailable !== "boolean" ||
+    typeof post.truncated !== "boolean" ||
+    (post.content_unavailable && post.excerpt !== "") ||
+    post.author_identity !== "unknown" ||
+    !(
+      post.author_handle === null ||
+      (typeof post.author_handle === "string" &&
+        post.author_handle.length <= 100)
+    ) ||
+    !validDateOrNull(post.published_at) ||
+    !validRedditUrl(post.source_url) ||
+    candidate.url !== post.source_url ||
+    !new URL(post.source_url).pathname.includes(
+      `/r/${post.subreddit}/comments/${post.native_id.slice(3)}/`,
+    )
+  )
+    return false;
+
+  const resources = new Map<
+    string,
+    { text: string; url: string; publishedAt: string | null }
+  >([
+    [
+      post.native_id,
+      {
+        text: post.excerpt,
+        url: post.source_url,
+        publishedAt: post.published_at as string | null,
+      },
+    ],
+  ]);
+  for (const item of thread.comments) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+    const comment = item as Record<string, unknown>;
+    if (
+      typeof comment.native_id !== "string" ||
+      !/^t1_[a-z0-9]{3,13}$/.test(comment.native_id) ||
+      resources.has(comment.native_id) ||
+      typeof comment.parent_id !== "string" ||
+      !resources.has(comment.parent_id) ||
+      typeof comment.text !== "string" ||
+      comment.text.length > 4096 ||
+      (comment.content_unavailable === true && comment.text !== "") ||
+      typeof comment.content_unavailable !== "boolean" ||
+      typeof comment.truncated !== "boolean" ||
+      comment.author_identity !== "unknown" ||
+      !(
+        comment.author_handle === null ||
+        (typeof comment.author_handle === "string" &&
+          comment.author_handle.length <= 100)
+      ) ||
+      !validDateOrNull(comment.published_at) ||
+      !validRedditUrl(comment.source_url) ||
+      comment.source_url !==
+        `${post.source_url.replace(/\/$/, "")}/${comment.native_id.slice(3)}/`
+    )
+      return false;
+    resources.set(comment.native_id, {
+      text: comment.text,
+      url: comment.source_url,
+      publishedAt: comment.published_at as string | null,
+    });
+  }
+
+  const signals = view.signals ?? [];
+  if (
+    !Array.isArray(signals) ||
+    signals.length > 10 ||
+    !Number.isSafeInteger(view.rejected_signals) ||
+    Number(view.rejected_signals) < 0 ||
+    typeof view.signal_coverage_complete !== "boolean" ||
+    !(
+      view.signal_failure_code == null ||
+      (typeof view.signal_failure_code === "string" &&
+        view.signal_failure_code.length <= 100)
+    )
+  )
+    return false;
+  return signals.every((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+    const signal = item as Record<string, unknown>;
+    const resource = resources.get(String(signal.resource_id));
+    return Boolean(
+      resource &&
+      typeof signal.quote === "string" &&
+      signal.quote.length > 0 &&
+      signal.quote.length <= 512 &&
+      resource.text.includes(signal.quote) &&
+      signal.source_url === resource.url &&
+      signal.published_at === resource.publishedAt &&
+      signal.status === "source_specific_unverified" &&
+      signal.buying_intent === "not_inferred",
+    );
+  });
 }
 export class ApiError extends Error {
   constructor(
@@ -518,7 +1040,8 @@ function validAllowance(
 }
 
 export function createApi(
-  baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+  baseUrl = process.env.NEXT_PUBLIC_API_URL ??
+    (process.env.NODE_ENV === "production" ? "" : "http://localhost:8000"),
   fetcher: typeof fetch = fetch,
   getToken?: (forceRefresh?: boolean) => Promise<string | null>,
 ) {
@@ -543,6 +1066,8 @@ export function createApi(
           );
         }
       }
+      if (init.signal?.aborted)
+        throw new DOMException("Request aborted", "AbortError");
       const fetchRequest = () =>
         fetcher(`${baseUrl.replace(/\/$/, "")}${path}`, {
           ...init,
@@ -564,6 +1089,8 @@ export function createApi(
             401,
           );
         }
+        if (init.signal?.aborted)
+          throw new DOMException("Request aborted", "AbortError");
         return await fetchRequest();
       }
       return response;
@@ -621,13 +1148,101 @@ export function createApi(
       );
   }
   const client = {
+    ...createQualifiedExportClient((path, init) => request(path, init, true)),
     ...createCrmClient(async (path, init) => {
       let response: Response;
-      try { response = await request(path, init, true); } catch (reason) {
-        throw new ApiError(reason instanceof ApiError && reason.status === 401 ? "Sign in again before managing Salesforce." : "The Salesforce service could not be reached. Try again.", reason instanceof ApiError ? reason.status : undefined);
+      try {
+        response = await request(path, init, true);
+      } catch (reason) {
+        throw new ApiError(
+          reason instanceof ApiError && reason.status === 401
+            ? "Sign in again before managing Salesforce."
+            : "The Salesforce service could not be reached. Try again.",
+          reason instanceof ApiError ? reason.status : undefined,
+        );
       }
-      if (!response.ok) throw new ApiError(response.status === 503 ? "Salesforce needs server configuration. Ask the operator to configure the connected app." : response.status === 403 ? "Only the workspace owner can manage Salesforce." : response.status === 401 ? "Sign in again before managing Salesforce." : "Salesforce could not be loaded. Try again.", response.status);
-      try { return await response.json(); } catch { throw new ApiError("Unexpected Salesforce response. Try again."); }
+      if (!response.ok)
+        throw new ApiError(
+          response.status === 503
+            ? "Salesforce needs server configuration. Ask the operator to configure the connected app."
+            : response.status === 403
+              ? "Only the workspace owner can manage Salesforce."
+              : response.status === 401
+                ? "Sign in again before managing Salesforce."
+                : "Salesforce could not be loaded. Try again.",
+          response.status,
+        );
+      try {
+        return await response.json();
+      } catch {
+        throw new ApiError("Unexpected Salesforce response. Try again.");
+      }
+    }),
+    ...createXClient(async (path, init) => {
+      let response: Response;
+      try {
+        response = await request(path, init, true);
+      } catch (reason) {
+        if (init?.signal?.aborted) throw reason;
+        throw new ApiError(
+          reason instanceof ApiError && reason.status === 401
+            ? "Sign in again before managing X connections."
+            : "The X connection service could not be reached. Try again.",
+          reason instanceof ApiError ? reason.status : undefined,
+        );
+      }
+      if (!response.ok)
+        throw new ApiError(
+          response.status === 503
+            ? "X authorization needs server configuration. Ask the operator to configure the X app."
+            : response.status === 403
+              ? "Only the workspace owner can manage X connections."
+              : response.status === 401
+                ? "Sign in again before managing X connections."
+                : response.status === 409
+                  ? "X authorization expired or is unavailable. Reconnect and try again."
+                  : "X connections could not be loaded. Try again.",
+          response.status,
+        );
+      if (response.status === 204) return null;
+      try {
+        return await response.json();
+      } catch {
+        throw new ApiError("Unexpected X connection response. Try again.");
+      }
+    }),
+    ...createRedditClient(async (path, init) => {
+      let response: Response;
+      try {
+        response = await request(path, init, true);
+      } catch (reason) {
+        if (init?.signal?.aborted) throw reason;
+        throw new ApiError(
+          reason instanceof ApiError && reason.status === 401
+            ? "Sign in again before managing Reddit connections."
+            : "The Reddit connection service could not be reached. Try again.",
+          reason instanceof ApiError ? reason.status : undefined,
+        );
+      }
+      if (!response.ok)
+        throw new ApiError(
+          response.status === 503
+            ? "Reddit authorization needs server configuration. Ask the operator to configure the Reddit app."
+            : response.status === 403
+              ? "Only the workspace owner can manage Reddit connections."
+              : response.status === 401
+                ? "Sign in again before managing Reddit connections."
+                : response.status === 409
+                  ? "Reddit authorization expired or is unavailable. Reconnect and try again."
+                  : "Reddit connections could not be loaded. Try again.",
+          response.status,
+        );
+      if (response.status === 204) return null;
+      try {
+        return await response.json();
+      } catch {
+        throw new ApiError("Unexpected Reddit connection response. Try again.");
+      }
     }),
     ...createAnalyticsClient(async (path, init) => {
       let response: Response;
@@ -652,7 +1267,7 @@ export function createApi(
                 ? "Sign in again before accessing owner analytics."
                 : response.status === 409
                   ? "This analytics connection or report is unavailable. Refresh access or reconnect and try again."
-            : response.status === 422
+                  : response.status === 422
                     ? "Choose a valid historical date range of at most 31 days."
                     : "Analytics could not be loaded. Try again.",
           response.status,
@@ -907,6 +1522,141 @@ export function createApi(
       )
         throw new ApiError("The service did not confirm that the run resumed.");
     },
+    async rebindOptions(
+      id: string,
+      workspaceId: string,
+      signal?: AbortSignal,
+    ): Promise<RebindOptions> {
+      const response = await request(
+        `/v1/jobs/${encodeURIComponent(id)}/rebind-options?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { signal },
+        true,
+      );
+      if (response.status === 403)
+        throw new ApiError(
+          "Only the initiating workspace owner can inspect saved connection choices.",
+          403,
+        );
+      requireSuccess(response);
+      let data: unknown;
+      try {
+        data = await response.json();
+      } catch {
+        throw new ApiError(
+          "The saved connection choices could not be verified. Refresh the run.",
+        );
+      }
+      const row = data as Partial<RebindOptions> | null;
+      if (
+        !row ||
+        row.job_id !== id ||
+        row.confirmation_required !== true ||
+        !Number.isSafeInteger(row.job_version) ||
+        Number(row.job_version) < 1 ||
+        ![
+          "not_paused",
+          "available",
+          "new_prompt_required",
+          "deadline_expired",
+          "requires_reconciliation",
+          "budget_exhausted",
+        ].includes(String(row.resume_status)) ||
+        !Array.isArray(row.options) ||
+        row.options.length > 2 ||
+        !row.options.every(validRebindOption) ||
+        new Set(row.options.map((item) => item.source)).size !==
+          row.options.length ||
+        (row.resume_status !== "available" && row.options.length > 0)
+      )
+        throw new ApiError(
+          "The saved connection choices could not be verified. Refresh the run.",
+        );
+      return row as RebindOptions;
+    },
+    async rebindAndResume(
+      id: string,
+      workspaceId: string,
+      selection: RebindSelection,
+      requestKey: string,
+      signal?: AbortSignal,
+    ): Promise<JobSnapshot> {
+      if (
+        !validRebindOption(selection) ||
+        !validRebindUuid(selection.replacement_connection_ref) ||
+        !Number.isSafeInteger(selection.expected_job_version) ||
+        selection.expected_job_version < 1 ||
+        !requestKey ||
+        requestKey.length > 200
+      )
+        throw new ApiError(
+          "Choose the replacement connection and refresh the saved checkpoint before resuming.",
+        );
+      const response = await request(
+        `/v1/jobs/${encodeURIComponent(id)}/rebind-and-resume?workspace_id=${encodeURIComponent(workspaceId)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Idempotency-Key": requestKey,
+          },
+          body: JSON.stringify(selection),
+          signal,
+        },
+        true,
+      );
+      if (response.status === 409)
+        throw new ApiError(
+          "The checkpoint or replacement access changed. Refresh the run before trying again.",
+          409,
+        );
+      if (response.status === 403)
+        throw new ApiError(
+          "Only the initiating workspace owner can replace saved source access.",
+          403,
+        );
+      if (response.status === 503)
+        throw new ApiError(
+          "Connected source collection is disabled. Saved results remain available.",
+          503,
+        );
+      requireSuccess(response);
+      let data: unknown;
+      try {
+        data = await response.json();
+      } catch {
+        throw new ApiError(
+          "Replacement and resume were not confirmed. Refresh the run.",
+        );
+      }
+      const row = data as Partial<JobSnapshot> | null;
+      if (
+        !row ||
+        row.id !== id ||
+        row.workspace_id !== workspaceId ||
+        ![
+          "planned",
+          "queued",
+          "running",
+          "waiting_for_connection",
+          "paused",
+          "completed",
+          "partial",
+          "failed",
+          "cancelled",
+        ].includes(String(row.state)) ||
+        !Number.isSafeInteger(row.version) ||
+        Number(row.version) < 1 ||
+        !(row.stage === null || typeof row.stage === "string") ||
+        !(
+          row.terminal_reason === null ||
+          typeof row.terminal_reason === "string"
+        )
+      )
+        throw new ApiError(
+          "Replacement and resume were not confirmed. Refresh the run.",
+        );
+      return row as JobSnapshot;
+    },
     async answerClarification(
       id: string,
       workspaceId: string,
@@ -997,6 +1747,67 @@ export function createApi(
         );
       return data as SourceDiagnostic[];
     },
+    async connections(
+      workspaceId: string,
+      signal?: AbortSignal,
+    ): Promise<ConnectionMetadata[]> {
+      const data = await jsonRequest(
+        `/v1/workspaces/${encodeURIComponent(workspaceId)}/connections`,
+        { signal },
+      );
+      if (
+        !Array.isArray(data) ||
+        data.length > 100 ||
+        !data.every((item: unknown) => {
+          if (!item || typeof item !== "object" || Array.isArray(item))
+            return false;
+          const row = item as Record<string, unknown>;
+          return (
+            Object.keys(row).every((key) =>
+              [
+                "id",
+                "workspace_id",
+                "source",
+                "auth_kind",
+                "scopes",
+                "state",
+                "expires_at",
+                "access_validation",
+                "remote_revocation",
+              ].includes(key),
+            ) &&
+            validRebindUuid(row.id) &&
+            row.workspace_id === workspaceId &&
+            [
+              "linkedin",
+              "reddit",
+              "web",
+              "github",
+              "rss",
+              "youtube",
+              "x",
+              "instagram",
+              "facebook",
+              "proxy",
+            ].includes(String(row.source)) &&
+            ["session", "oauth", "api_key"].includes(String(row.auth_kind)) &&
+            Array.isArray(row.scopes) &&
+            row.scopes.every((scope) =>
+              ["read", "discover"].includes(String(scope)),
+            ) &&
+            ["active", "expired", "revoked"].includes(String(row.state)) &&
+            typeof row.expires_at === "string" &&
+            Number.isFinite(Date.parse(row.expires_at)) &&
+            row.access_validation === "not_performed" &&
+            row.remote_revocation === "not_performed"
+          );
+        })
+      )
+        throw new ApiError(
+          "The service returned unexpected connection metadata.",
+        );
+      return data as ConnectionMetadata[];
+    },
     async plan(
       id: string,
       workspaceId: string,
@@ -1018,6 +1829,41 @@ export function createApi(
         typeof data.status !== "string"
       )
         throw new ApiError("The service returned unexpected plan details.");
+      const row = data as Record<string, unknown>;
+      const failure = row.planning_failure;
+      if (failure != null) {
+        if (!failure || typeof failure !== "object" || Array.isArray(failure))
+          throw new ApiError(
+            "The service returned unexpected planning failure details.",
+          );
+        const detail = failure as Record<string, unknown>;
+        const recoveries: Record<string, string> = {
+          invalid_interpretation: "revise_prompt",
+          model_unavailable: "check_service",
+          budget_exhausted: "check_limits",
+          execution_interrupted: "review_run",
+        };
+        if (
+          row.status !== "rejected" ||
+          typeof detail.reason !== "string" ||
+          !Object.hasOwn(recoveries, detail.reason) ||
+          detail.recovery !== recoveries[detail.reason] ||
+          detail.automatic_retry_allowed !== false ||
+          detail.source_search_started !== false ||
+          Object.keys(detail).some(
+            (key) =>
+              ![
+                "reason",
+                "recovery",
+                "automatic_retry_allowed",
+                "source_search_started",
+              ].includes(key),
+          )
+        )
+          throw new ApiError(
+            "The service returned unexpected planning failure details.",
+          );
+      }
       return data as PlanView;
     },
     async usage(
@@ -1192,6 +2038,187 @@ export function createApi(
       )
         throw new ApiError("The service returned unexpected source evidence.");
       return data as components["schemas"]["EvidenceCitation"];
+    },
+    async previewRoleReview(
+      workspaceId: string,
+      input: RoleReviewInput,
+      expectedSourceUrl: string,
+      signal?: AbortSignal,
+    ): Promise<RoleReviewView> {
+      if (
+        !validRoleUuid(input.entity_id) ||
+        !validRoleReference(input.previous) ||
+        !validRoleReference(input.replacement) ||
+        input.previous.role_claim_id === input.replacement.role_claim_id ||
+        input.previous.date_claim_id === input.replacement.date_claim_id ||
+        input.previous.evidence_id !== input.replacement.evidence_id ||
+        canonicalLinkedInReadUrl(expectedSourceUrl) !== expectedSourceUrl
+      )
+        throw new ApiError(
+          "Choose two distinct role and date observations from the same saved source.",
+        );
+      const response = await request(
+        `/v1/workspaces/${encodeURIComponent(workspaceId)}/role-refreshes/preview`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(input),
+          signal,
+        },
+        true,
+      );
+      if (response.status === 403)
+        throw new ApiError(
+          "Only a workspace owner can preview a role review.",
+          403,
+        );
+      if (response.status === 409)
+        throw new ApiError(
+          "The saved role evidence changed. Refresh results and preview the review again.",
+          409,
+        );
+      requireSuccess(response);
+      let data: unknown;
+      try {
+        data = await response.json();
+      } catch {
+        throw new ApiError("The role review preview could not be verified.");
+      }
+      if (!data || typeof data !== "object" || Array.isArray(data))
+        throw new ApiError("The role review preview could not be verified.");
+      const row = data as Record<string, unknown>;
+      if (
+        row.entity_id !== input.entity_id ||
+        row.requires_same_subject_confirmation !== true ||
+        typeof row.requires_person_confirmation !== "boolean" ||
+        typeof row.review_hash !== "string" ||
+        !/^[0-9a-f]{64}$/.test(row.review_hash) ||
+        !(
+          row.subject_name === null ||
+          (typeof row.subject_name === "string" &&
+            row.subject_name.length <= 200)
+        ) ||
+        row.review_origin !== "workspace_owner" ||
+        !validRoleSource(row.previous) ||
+        !validRoleSource(row.replacement)
+      )
+        throw new ApiError(
+          "The role review preview did not match the selected candidate and source evidence.",
+        );
+      const previous = row.previous as Record<string, unknown>;
+      const replacement = row.replacement as Record<string, unknown>;
+      if (
+        previous.role_claim_id !== input.previous.role_claim_id ||
+        previous.date_claim_id !== input.previous.date_claim_id ||
+        previous.evidence_id !== input.previous.evidence_id ||
+        replacement.role_claim_id !== input.replacement.role_claim_id ||
+        replacement.date_claim_id !== input.replacement.date_claim_id ||
+        replacement.evidence_id !== input.replacement.evidence_id ||
+        canonicalLinkedInReadUrl(String(previous.source_url)) !==
+          expectedSourceUrl ||
+        canonicalLinkedInReadUrl(String(replacement.source_url)) !==
+          expectedSourceUrl
+      )
+        throw new ApiError(
+          "The role review preview changed the selected evidence. Refresh results before continuing.",
+        );
+      return data as RoleReviewView;
+    },
+    async approveRoleReview(
+      workspaceId: string,
+      input: RoleApproval,
+      signal?: AbortSignal,
+    ): Promise<RoleDecision> {
+      if (
+        !validRoleUuid(input.entity_id) ||
+        !validRoleReference(input.previous) ||
+        !validRoleReference(input.replacement) ||
+        input.previous.role_claim_id === input.replacement.role_claim_id ||
+        input.previous.date_claim_id === input.replacement.date_claim_id ||
+        input.previous.evidence_id !== input.replacement.evidence_id ||
+        !/^[0-9a-f]{64}$/.test(input.expected_review_hash) ||
+        input.same_subject_confirmed !== true ||
+        typeof input.person_subject_confirmed !== "boolean"
+      )
+        throw new ApiError(
+          "Review the exact preview and confirm the same subject before applying this role change.",
+        );
+      const response = await request(
+        `/v1/workspaces/${encodeURIComponent(workspaceId)}/role-refreshes`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(input),
+          signal,
+        },
+        true,
+      );
+      if (response.status === 403)
+        throw new ApiError(
+          "Only a workspace owner can approve a role review.",
+          403,
+        );
+      if (response.status === 409)
+        throw new ApiError(
+          "The evidence or preview changed. Refresh results and review the updated evidence before confirming again.",
+          409,
+        );
+      requireSuccess(response);
+      let data: unknown;
+      try {
+        data = await response.json();
+      } catch {
+        throw new ApiError(
+          "The response was unclear. Check the run and preview current evidence before trying again.",
+        );
+      }
+      if (!data || typeof data !== "object" || Array.isArray(data))
+        throw new ApiError(
+          "The response was unclear. Check the run and preview current evidence before trying again.",
+        );
+      const row = data as Record<string, unknown>;
+      if (
+        row.entity_id !== input.entity_id ||
+        row.outcome !== "superseded" ||
+        row.review_origin !== "workspace_owner" ||
+        !Array.isArray(row.roles) ||
+        row.roles.length < 2 ||
+        row.roles.length > 100 ||
+        !row.roles.every((role: unknown) => {
+          if (!role || typeof role !== "object" || Array.isArray(role))
+            return false;
+          const item = role as Record<string, unknown>;
+          return (
+            validRoleUuid(item.claim_id) &&
+            (item.event_at === null ||
+              (typeof item.event_at === "string" &&
+                Number.isFinite(Date.parse(item.event_at)))) &&
+            ["current", "historical", "unknown"].includes(
+              String(item.freshness),
+            ) &&
+            (item.value === null ||
+              (typeof item.value === "string" && item.value.length <= 255))
+          );
+        })
+      )
+        throw new ApiError(
+          "The response was unclear. Check the run and preview current evidence before trying again.",
+        );
+      const decision = data as RoleDecision;
+      if (
+        new Set(decision.roles.map((role) => role.claim_id)).size !==
+          decision.roles.length ||
+        !decision.roles.some(
+          (role) => role.claim_id === input.previous.role_claim_id,
+        ) ||
+        !decision.roles.some(
+          (role) => role.claim_id === input.replacement.role_claim_id,
+        )
+      )
+        throw new ApiError(
+          "The response was unclear. Check the run and preview current evidence before trying again.",
+        );
+      return decision;
     },
     async identityReviews(
       workspaceId: string,
@@ -1696,14 +2723,16 @@ export function createApi(
             ["id", "title", "url", "snippet", "source", "observed_at"].every(
               (key) => typeof candidate[key] === "string",
             ) &&
-            candidate.provider === "exa_keyless" &&
-            candidate.evidence_kind === "search_snippet" &&
+            validDiscoveryEvidence(candidate) &&
             candidate.qualification === "unverified" &&
             validFit(candidate.fit) &&
             validCollection(candidate.collection) &&
             validExtraction(candidate.extraction) &&
             validFeed(candidate.feed) &&
             validYouTube(candidate.youtube) &&
+            validRedditThread(candidate.reddit_thread, candidate) &&
+            validLinkedInRead(candidate.linkedin_read, candidate) &&
+            validSocialRead(candidate.social_read, candidate) &&
             (candidate.discussion == null ||
               (typeof candidate.discussion === "object" &&
                 ["post", "comment"].includes(
@@ -1718,35 +2747,7 @@ export function createApi(
                   .author_handle === null &&
                 (candidate.discussion as Record<string, unknown>)
                   .author_identity === "unknown")) &&
-            (candidate.platform_reference == null ||
-              (typeof candidate.platform_reference === "object" &&
-                ["linkedin", "reddit"].includes(
-                  String(
-                    (candidate.platform_reference as Record<string, unknown>)
-                      .source,
-                  ),
-                ) &&
-                [
-                  "profile",
-                  "company",
-                  "post",
-                  "comment",
-                  "community",
-                  "unknown",
-                ].includes(
-                  String(
-                    (candidate.platform_reference as Record<string, unknown>)
-                      .resource_kind,
-                  ),
-                ) &&
-                (candidate.platform_reference as Record<string, unknown>)
-                  .discovery_backend === "exa_keyless" &&
-                (candidate.platform_reference as Record<string, unknown>)
-                  .access === "indexed_reference_only" &&
-                (candidate.platform_reference as Record<string, unknown>)
-                  .direct_read_status === "not_attempted" &&
-                (candidate.platform_reference as Record<string, unknown>)
-                  .subject_identity === "unknown")) &&
+            validPlatformReference(candidate.platform_reference, candidate) &&
             Array.isArray(candidate.provenance) &&
             candidate.provenance.length <= 200 &&
             candidate.provenance.every((item: unknown) => {
@@ -1761,8 +2762,7 @@ export function createApi(
                 Number.isInteger(provenance.rank) &&
                 provenance.rank > 0 &&
                 typeof provenance.observed_at === "string" &&
-                provenance.provider === "exa_keyless" &&
-                provenance.evidence_kind === "search_snippet"
+                validDiscoveryEvidence(provenance)
               );
             })
           );

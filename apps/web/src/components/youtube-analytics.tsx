@@ -40,7 +40,9 @@ export function YouTubeAnalyticsPanel({
   const [grants, setGrants] = useState<AnalyticsGrant[]>([]);
   const [selected, setSelected] = useState("");
   const [report, setReport] = useState<AnalyticsReport | null>(null);
-  const [privateSummary, setPrivateSummary] = useState<import("../lib/youtube-analytics").AnalyticsSummary | null>(null);
+  const [privateSummary, setPrivateSummary] = useState<
+    import("../lib/youtube-analytics").AnalyticsSummary | null
+  >(null);
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [error, setError] = useState("");
@@ -56,7 +58,14 @@ export function YouTubeAnalyticsPanel({
   useEffect(() => {
     if (captured.current) return;
     captured.current = true;
-    if (window.location.pathname === "/connections/salesforce/callback") return;
+    if (
+      [
+        "/connections/salesforce/callback",
+        "/connections/x/callback",
+        "/connections/reddit/callback",
+      ].includes(window.location.pathname)
+    )
+      return;
     const result = captureCallback(window.location.href);
     if (result) {
       callback.current = result.callback;
@@ -473,49 +482,160 @@ export function YouTubeAnalyticsPanel({
                 <button
                   type="button"
                   className="text-button"
-                  disabled={busy || !chosen || chosen.state !== "active" || Boolean(privateSummary && ["queued", "running"].includes(privateSummary.state))}
-                  onClick={() => void action(async () => {
-                    if (!chosen) return;
-                    const generation = epoch.current;
-                    const query = { start_date: report.start_date, end_date: report.end_date, metrics };
-                    const signature = `${current.uid}:${current.workspace}:${chosen.id}:${JSON.stringify(query)}`;
-                    if (!summaryKey.current || summaryKey.current.signature !== signature) summaryKey.current = { signature, key: globalThis.crypto.randomUUID() };
-                    cancelledSummary.current = null;
-                    let result = privateSummary && ["queued", "running"].includes(privateSummary.state)
-                      ? await api.analyticsSummaryGet(current.workspace, privateSummary.job_id)
-                      : await api.analyticsSummaryStart(current.workspace, chosen, query, summaryKey.current.key);
-                    if (generation !== epoch.current) return;
-                    setPrivateSummary(result);
-                    const deadline = Date.now() + 120_000;
-                    while (["queued", "running"].includes(result.state) && Date.now() < deadline && cancelledSummary.current !== result.job_id) {
-                      await new Promise((resolve) => setTimeout(resolve, 1500));
+                  disabled={
+                    busy ||
+                    !chosen ||
+                    chosen.state !== "active" ||
+                    Boolean(
+                      privateSummary &&
+                      ["queued", "running"].includes(privateSummary.state),
+                    )
+                  }
+                  onClick={() =>
+                    void action(async () => {
+                      if (!chosen) return;
+                      const generation = epoch.current;
+                      const query = {
+                        start_date: report.start_date,
+                        end_date: report.end_date,
+                        metrics,
+                      };
+                      const signature = `${current.uid}:${current.workspace}:${chosen.id}:${JSON.stringify(query)}`;
+                      if (
+                        !summaryKey.current ||
+                        summaryKey.current.signature !== signature
+                      )
+                        summaryKey.current = {
+                          signature,
+                          key: globalThis.crypto.randomUUID(),
+                        };
+                      cancelledSummary.current = null;
+                      let result =
+                        privateSummary &&
+                        ["queued", "running"].includes(privateSummary.state)
+                          ? await api.analyticsSummaryGet(
+                              current.workspace,
+                              privateSummary.job_id,
+                            )
+                          : await api.analyticsSummaryStart(
+                              current.workspace,
+                              chosen,
+                              query,
+                              summaryKey.current.key,
+                            );
                       if (generation !== epoch.current) return;
-                      result = await api.analyticsSummaryGet(current.workspace, result.job_id);
-                      if (generation === epoch.current && cancelledSummary.current !== result.job_id) setPrivateSummary(result);
-                    }
-                  })}
+                      setPrivateSummary(result);
+                      const deadline = Date.now() + 120_000;
+                      while (
+                        ["queued", "running"].includes(result.state) &&
+                        Date.now() < deadline &&
+                        cancelledSummary.current !== result.job_id
+                      ) {
+                        await new Promise((resolve) =>
+                          setTimeout(resolve, 1500),
+                        );
+                        if (generation !== epoch.current) return;
+                        result = await api.analyticsSummaryGet(
+                          current.workspace,
+                          result.job_id,
+                        );
+                        if (
+                          generation === epoch.current &&
+                          cancelledSummary.current !== result.job_id
+                        )
+                          setPrivateSummary(result);
+                      }
+                    })
+                  }
                 >
-                  {privateSummary && ["queued", "running"].includes(privateSummary.state) ? "Check summary status" : "Generate private model summary"}
+                  {privateSummary &&
+                  ["queued", "running"].includes(privateSummary.state)
+                    ? "Check summary status"
+                    : "Generate private model summary"}
                 </button>
-                {privateSummary && ["queued", "running"].includes(privateSummary.state) && (
-                  <button type="button" className="text-button" onClick={() => {
-                    const jobId = privateSummary.job_id;
-                    const generation = epoch.current;
-                    cancelledSummary.current = jobId;
-                    void api.analyticsSummaryCancel(current.workspace, jobId).then((result) => { if (generation === epoch.current) setPrivateSummary(result); }).catch((reason) => { if (generation === epoch.current) { cancelledSummary.current = null; setError(reason instanceof Error ? reason.message : "Summary could not be cancelled."); } });
-                  }}>Cancel summary</button>
-                )}
+                {privateSummary &&
+                  ["queued", "running"].includes(privateSummary.state) && (
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={() => {
+                        const jobId = privateSummary.job_id;
+                        const generation = epoch.current;
+                        cancelledSummary.current = jobId;
+                        void api
+                          .analyticsSummaryCancel(current.workspace, jobId)
+                          .then((result) => {
+                            if (generation === epoch.current)
+                              setPrivateSummary(result);
+                          })
+                          .catch((reason) => {
+                            if (generation === epoch.current) {
+                              cancelledSummary.current = null;
+                              setError(
+                                reason instanceof Error
+                                  ? reason.message
+                                  : "Summary could not be cancelled.",
+                              );
+                            }
+                          });
+                      }}
+                    >
+                      Cancel summary
+                    </button>
+                  )}
               </div>
-              {privateSummary && <section aria-label="Private channel summary" aria-live="polite">
-                <h3>Private model summary · {privateSummary.state}</h3>
-                {privateSummary.state === "queued" || privateSummary.state === "running" ? <p>Summary is being prepared from the selected owner report. It stays private to your account.</p> : null}
-                {privateSummary.result && <>
-                  <p>{privateSummary.result.status}. This summary uses {privateSummary.result.used_evidence_count} of {privateSummary.result.supplied_evidence_count} supplied observations; it is not shared with lead research.</p>
-                  {privateSummary.result.observations.map((item) => <blockquote key={item.evidence_id}><p>{item.quote}</p><a href={item.source_url} target="_blank" rel="noopener noreferrer">{item.source_platform} source</a><p>Observed {item.collected_at} · {item.qualification.replaceAll("_", " ")}</p></blockquote>)}
-                  {privateSummary.result.unknowns.map((item, index) => <p key={index}>Unknown: {item}</p>)}
-                </>}
-                {["failed", "cancelled", "paused"].includes(privateSummary.state) && <p role="status">Summary {privateSummary.state}. Your literal report remains available; retry when ready.</p>}
-              </section>}
+              {privateSummary && (
+                <section
+                  aria-label="Private channel summary"
+                  aria-live="polite"
+                >
+                  <h3>Private model summary · {privateSummary.state}</h3>
+                  {privateSummary.state === "queued" ||
+                  privateSummary.state === "running" ? (
+                    <p>
+                      Summary is being prepared from the selected owner report.
+                      It stays private to your account.
+                    </p>
+                  ) : null}
+                  {privateSummary.result && (
+                    <>
+                      <p>
+                        {privateSummary.result.status}. This summary uses{" "}
+                        {privateSummary.result.used_evidence_count} of{" "}
+                        {privateSummary.result.supplied_evidence_count} supplied
+                        observations; it is not shared with lead research.
+                      </p>
+                      {privateSummary.result.observations.map((item) => (
+                        <blockquote key={item.evidence_id}>
+                          <p>{item.quote}</p>
+                          <a
+                            href={item.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {item.source_platform} source
+                          </a>
+                          <p>
+                            Observed {item.collected_at} ·{" "}
+                            {item.qualification.replaceAll("_", " ")}
+                          </p>
+                        </blockquote>
+                      ))}
+                      {privateSummary.result.unknowns.map((item, index) => (
+                        <p key={index}>Unknown: {item}</p>
+                      ))}
+                    </>
+                  )}
+                  {["failed", "cancelled", "paused"].includes(
+                    privateSummary.state,
+                  ) && (
+                    <p role="status">
+                      Summary {privateSummary.state}. Your literal report
+                      remains available; retry when ready.
+                    </p>
+                  )}
+                </section>
+              )}
             </section>
           )}
         </>

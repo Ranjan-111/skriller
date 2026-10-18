@@ -104,6 +104,19 @@ def test_empty_section_never_claims_successful_zero_results():
         )
 
 
+def test_acquired_relative_references_become_absolute_public_urls():
+    request = LinkedInSearch(operation="search_people", keywords="founder")
+    payload = response(request)
+    payload["references"]["search_results"][0]["url"] = "/in/synthetic/"
+    payload["references"]["search_results"].append(
+        {"kind": "person", "url": "//evil.example/in/fake"}
+    )
+    page = parse_search_response(payload, request, observed_at=NOW)
+    assert page.references[0].url == "https://www.linkedin.com/in/synthetic/"
+    assert all(item.url.startswith("https://www.linkedin.com/") for item in page.references)
+    assert page.rejected_count == 1
+
+
 @pytest.mark.parametrize(
     "arguments",
     [

@@ -6,6 +6,7 @@ semantic qualification, page extraction, contact verification or a full planner.
 
 import asyncio
 import contextlib
+from collections.abc import Callable
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -19,8 +20,15 @@ from sqlalchemy.orm import Session
 from skriller.connections.store import ConnectionStore
 from skriller.connections.tables import connections
 from skriller.connectors.candidates import deduplicate
-from skriller.connectors.platform_references import indexed_platform_reference
-from skriller.connectors.search import ExaKeylessSearch, SearchUnavailable
+from skriller.connectors.linkedin_executor import ConcreteLinkedInExecutor, LinkedInUnavailable
+from skriller.connectors.platform_references import (
+    connected_linkedin_reference,
+    connected_social_reference,
+    indexed_platform_reference,
+)
+from skriller.connectors.reddit_executor import ConcreteRedditExecutor, RedditUnavailable
+from skriller.connectors.search import ExaKeylessSearch, SearchPage, SearchUnavailable
+from skriller.connectors.social_executor import ConcreteSocialExecutor, SocialUnavailable
 from skriller.connectors.switches import is_disabled
 from skriller.connectors.x_executor import ConcreteXExecutor, XUnavailable
 from skriller.contracts import ExecutionContext
@@ -32,7 +40,9 @@ from skriller.jobs.control import permit_call
 from skriller.jobs.outbox import CeleryPublisher, DispatchScope, OutboxDispatcher
 from skriller.jobs.state import TERMINAL_STATES, finish
 from skriller.jobs.worker import CheckpointWorker, StageHandler, TaskIdentity
-from skriller.research.queries import build_queries
+from skriller.research.queries import QueryVariant, build_queries
+
+SESSION_DISCOVERY_SOURCES = {"linkedin", "instagram", "facebook"}
 
 DOMAINS = {
     "linkedin": ("linkedin.com",),
@@ -46,9 +56,9 @@ DOMAINS = {
     "rss": (),
 }
 LIMITATIONS = [
-    "Search snippets only: matching criteria, identities and contacts are unverified.",
+    "Source excerpts and indexed references: matching criteria, identities and contacts are unverified.",
     "Public indexed results do not grant access to private or authenticated platform content.",
-    "The free provider returns at most 10 results per source; pagination is unavailable.",
+    "Indexed search returns at most 10 results per request without pagination; connected reads have separate bounded call and result limits.",
     "Fit uses reviewed evidence only; prompt interpretation and subject identity may still require clarification or review.",
 ]
 
@@ -125,9 +135,26 @@ def result_rows(session, job_id):
 
     for identifier, row in list(by_id.items()):
         attributes = dict(row["attributes"])
-        reference = indexed_platform_reference(attributes.get("url", ""))
+        reference = (
+            indexed_platform_reference(attributes.get("url", ""))
+            if attributes.get("provider") == "exa_keyless"
+            else connected_linkedin_reference(attributes.get("url", ""))
+            if attributes.get("provider") == "linkedin_mcp"
+            else connected_social_reference(attributes.get("url", ""), "instagram")
+            if attributes.get("provider") == "opencli_instagram"
+            else connected_social_reference(attributes.get("url", ""), "facebook")
+            if attributes.get("provider") == "opencli_facebook"
+            else None
+        )
         if reference is not None:
             attributes["platform_reference"] = reference
+        if (
+            attributes.get("provider") in {"linkedin_mcp", "opencli_instagram", "opencli_facebook"}
+            and attributes.get("collection", {}).get("status") == "read"
+        ):
+            # The old discovery-only notice says no profile was opened. Successful
+            # resource reads have their own view; retain discovery in provenance.
+            attributes["platform_reference"] = None
         if attributes.get("extraction") is not None:
             extracted = dict(attributes["extraction"])
             current, omitted = current_observations(session, identifier, extracted["observations"])
@@ -183,8 +210,32 @@ def result_rows(session, job_id):
             if unavailable:
                 video["metadata"] = None
             attributes["youtube"] = video
+        if (
+            attributes.get("reddit_thread") is not None
+            or attributes.get("linkedin_read") is not None
+            or attributes.get("social_read") is not None
+        ):
+            body_id = attributes.get("_collection_body_evidence_id")
+            body = (
+                ResearchRepository.get_evidence(session, body_id)
+                if isinstance(body_id, str)
+                else None
+            )
+            now = session.execute(sa.select(sa.func.clock_timestamp())).scalar_one()
+            if (
+                body is None
+                or body["object_key"] is None
+                or body["expires_at"] is not None
+                and body["expires_at"] <= now
+            ):
+                if attributes.get("reddit_thread") is not None:
+                    attributes["reddit_thread"] = None
+                if attributes.get("linkedin_read") is not None:
+                    attributes["linkedin_read"] = None
+                if attributes.get("social_read") is not None:
+                    attributes["social_read"] = None
         native = attributes.get("_source_native_id") or {}
-        if native.get("namespace") in {
+        if attributes.get("provider") == "exa_keyless" and native.get("namespace") in {
             "reddit_post",
             "reddit_comment",
             "linkedin_activity",
@@ -255,7 +306,12 @@ def discovery_handler(
     provider=None,
     *,
     x_reader: ConcreteXExecutor | None = None,
+    reddit_reader: ConcreteRedditExecutor | None = None,
+    linkedin_reader: ConcreteLinkedInExecutor | None = None,
+    instagram_reader: ConcreteSocialExecutor | None = None,
+    facebook_reader: ConcreteSocialExecutor | None = None,
     connection_store: ConnectionStore | None = None,
+    reddit_renewal: Callable[[str, str, str], bool] | None = None,
 ):
     provider = provider or ExaKeylessSearch()
     with database.tenant(actor, workspace_id_for_job(database, actor, job_id)) as session:
@@ -304,12 +360,19 @@ def discovery_handler(
         async def discover():
             data: list[dict] = []
             calls = 0
+            renewal_checked = False
+            renewal_failed = False
+            session_failed: set[str] = set()
             loop = asyncio.get_running_loop()
             # Leave checkpoint time inside the committed attempt/capacity lease.
             window = timeout_seconds - 1 if timeout_seconds > 1 else timeout_seconds * 0.8
             end = loop.time() + max(0, window)
             stop_reason = None
-            for variant in batch.variants:
+            pending: list[tuple[QueryVariant, UUID | None, UUID | None]] = [
+                (variant, None, None) for variant in batch.variants
+            ]
+            while pending:
+                variant, continuation_ref, bound_connection = pending.pop(0)
                 source = variant.source
                 entry: dict = {
                     "source": source,
@@ -318,6 +381,17 @@ def discovery_handler(
                     "failure": None,
                 }
                 entry["query_warnings"] = list(batch.warnings)
+                if source in session_failed:
+                    entry["error"] = "source_unavailable"
+                    data.append(entry)
+                    continue
+                if source == "reddit" and renewal_failed:
+                    entry["error"] = "needs_connection"
+                    data.append(entry)
+                    continue
+                if calls >= plan.limits.search_calls:
+                    stop_reason = stop_reason or "search_budget_exhausted"
+                    entry["error"] = stop_reason
                 if stop_reason:
                     data.append(entry)
                     continue
@@ -336,17 +410,60 @@ def discovery_handler(
                 calls += 1
                 try:
                     async with asyncio.timeout(time_left):
-                        if source == "x" and x_reader is not None and connection_store is not None:
+                        connected_reader = {
+                            "x": x_reader,
+                            "reddit": reddit_reader,
+                            "linkedin": linkedin_reader,
+                            "instagram": instagram_reader,
+                            "facebook": facebook_reader,
+                        }.get(source)
+                        if connected_reader is not None and connection_store is not None:
+                            if source == "reddit" and reddit_renewal and not renewal_checked:
+                                renewal_checked = True
+                                renewal = asyncio.create_task(
+                                    asyncio.to_thread(
+                                        reddit_renewal, actor, str(plan.workspace_id), job_id
+                                    )
+                                )
+                                try:
+                                    await asyncio.shield(renewal)
+                                except asyncio.CancelledError:
+                                    with contextlib.suppress(Exception):
+                                        await asyncio.shield(renewal)
+                                    raise
+                                except Exception:  # noqa: BLE001 - no private renewal errors
+                                    renewal_failed = True
+                                    entry["error"] = "needs_connection"
+                                    data.append(entry)
+                                    continue
+                                finally:
+                                    await asyncio.gather(renewal, return_exceptions=True)
+                                # Token I/O used the same wall-clock window.
+                                time_left = min(time_left, end - loop.time())
+                                if time_left <= 0:
+                                    entry["error"] = stop_reason = "deadline_exceeded"
+                                    data.append(entry)
+                                    continue
                             with database.tenant(actor, str(plan.workspace_id)) as session:
                                 connection_rows = (
                                     session.execute(
                                         sa.select(connections.c.id, connections.c.scopes)
                                         .where(
                                             connections.c.workspace_id == scope(session),
-                                            connections.c.source == "x",
-                                            connections.c.auth_kind == "oauth",
+                                            connections.c.source == source,
+                                            connections.c.auth_kind
+                                            == (
+                                                "session"
+                                                if source in SESSION_DISCOVERY_SOURCES
+                                                else "oauth"
+                                            ),
                                             connections.c.state == "active",
                                             connections.c.expires_at > sa.func.clock_timestamp(),
+                                            *(
+                                                [connections.c.created_by == actor]
+                                                if source in SESSION_DISCOVERY_SOURCES
+                                                else []
+                                            ),
                                         )
                                         .order_by(connections.c.created_at.desc())
                                         .limit(20)
@@ -359,12 +476,21 @@ def discovery_handler(
                                 for row in connection_rows
                                 if {"read", "discover"} <= set(row["scopes"])
                             ][:2]
+                            if continuation_ref is not None and account_rows != [
+                                str(bound_connection)
+                            ]:
+                                entry["error"] = "needs_connection"
+                                data.append(entry)
+                                continue
                             if len(account_rows) > 1:
                                 entry["error"] = "ambiguous_connection"
                                 data.append(entry)
                                 continue
                             if account_rows:
-                                if len(variant.query) > 500:
+                                native_query = variant.query.removeprefix(source + " ")
+                                if len(native_query) > (
+                                    200 if source in {"instagram", "facebook"} else 500
+                                ):
                                     entry["error"] = "query_bound_exceeded"
                                     data.append(entry)
                                     continue
@@ -383,27 +509,61 @@ def discovery_handler(
                                 started = asyncio.get_running_loop().time()
                                 retry_headers = None
                                 try:
-                                    with database.tenant(actor, str(plan.workspace_id)) as session:
-                                        lease = acquire(
-                                            session,
-                                            job_id,
-                                            kind="http",
-                                            source="x",
-                                            host="api.x.com",
-                                            ttl_seconds=min(60, max(1, ceil(time_left))),
-                                        )
+                                    # A following page observes the persisted cadence from
+                                    # the previous page. Wait only for a short bounded
+                                    # capacity window; this never retries a source request.
+                                    capacity_end = min(end, loop.time() + 5)
+                                    while lease is None:
+                                        try:
+                                            with database.tenant(
+                                                actor, str(plan.workspace_id)
+                                            ) as session:
+                                                remaining = permit_call(session, job_id)
+                                                if remaining <= 0:
+                                                    raise CapacityUnavailable()
+                                                lease = acquire(
+                                                    session,
+                                                    job_id,
+                                                    kind="browser"
+                                                    if source in SESSION_DISCOVERY_SOURCES
+                                                    else "http",
+                                                    source=source,
+                                                    host="api.x.com"
+                                                    if source == "x"
+                                                    else "www." + source + ".com"
+                                                    if source in SESSION_DISCOVERY_SOURCES
+                                                    else "oauth.reddit.com",
+                                                    ttl_seconds=min(
+                                                        60, max(1, ceil(min(remaining, time_left)))
+                                                    ),
+                                                )
+                                        except CapacityUnavailable:
+                                            if (
+                                                continuation_ref is None
+                                                or loop.time() + 0.25 >= capacity_end
+                                            ):
+                                                raise
+                                            await asyncio.sleep(0.25)
+                                    search_operation: Callable[..., SearchPage] = (
+                                        connected_reader.search_page
+                                    )
                                     request = asyncio.create_task(
                                         asyncio.to_thread(
-                                            x_reader.search_page,
-                                            variant.query,
+                                            search_operation,
+                                            native_query,
                                             limit=min(plan.limits.result_limit, 10),
                                             database=database,
                                             store=connection_store,
                                             context=context,
+                                            **(
+                                                {"continuation_ref": continuation_ref}
+                                                if source == "reddit"
+                                                else {}
+                                            ),
                                         )
                                     )
                                     try:
-                                        entry["page"] = await request
+                                        entry["page"] = await asyncio.shield(request)
                                     except asyncio.CancelledError:
                                         # Keep the capacity lease until the bounded
                                         # container call has stopped and cleaned up.
@@ -414,11 +574,39 @@ def discovery_handler(
                                         if not request.done():
                                             request.cancel()
                                         await asyncio.gather(request, return_exceptions=True)
-                                    entry["provider"] = "x_api_v2"
+                                    entry["provider"] = {
+                                        "x": "x_api_v2",
+                                        "reddit": "reddit_oauth",
+                                        "linkedin": "linkedin_mcp",
+                                        "instagram": "opencli_instagram",
+                                        "facebook": "opencli_facebook",
+                                    }[source]
+                                    page = entry["page"]
+                                    retained = sum(
+                                        len(item["page"].hits)
+                                        for item in data
+                                        if item["page"] is not None
+                                    )
+                                    if (
+                                        source == "reddit"
+                                        and page.continuation_ref is not None
+                                        and calls < plan.limits.search_calls
+                                        and retained + len(page.hits) < result_limit
+                                    ):
+                                        pending.append(
+                                            (variant, page.continuation_ref, connection_ref)
+                                        )
                                 except CapacityUnavailable:
                                     entry["error"] = "capacity_exhausted"
-                                except XUnavailable as exc:
+                                except (
+                                    XUnavailable,
+                                    RedditUnavailable,
+                                    LinkedInUnavailable,
+                                    SocialUnavailable,
+                                ) as exc:
                                     entry["error"] = exc.code
+                                    if source in SESSION_DISCOVERY_SOURCES:
+                                        session_failed.add(source)
                                     if exc.code == "rate_limited":
                                         stop_reason = "rate_limited"
                                         if exc.retry_after_seconds is not None:
@@ -427,6 +615,8 @@ def discovery_handler(
                                             }
                                 except (ValueError, TypeError):
                                     entry["error"] = "source_unavailable"
+                                    if source in SESSION_DISCOVERY_SOURCES:
+                                        session_failed.add(source)
                                 finally:
                                     if lease is not None:
                                         elapsed = asyncio.get_running_loop().time() - started
@@ -501,6 +691,23 @@ def discovery_handler(
                 continue
             hit = candidate.hit
             origin = candidate.provenance[0]
+            # Bind later native thread reads to the generation used for discovery.
+            # Missing/ambiguous older checkpoints require a new run, never rebinding.
+            read_bindings = (
+                {
+                    (str(page.read_connection_ref), str(page.read_credential_ref))
+                    for source, page in pages
+                    if source == origin["source"]
+                    and page.query == origin["query"]
+                    and page.read_connection_ref is not None
+                    and page.read_credential_ref is not None
+                    and any(item.url == origin["original_url"] for item in page.hits)
+                }
+                if hit.provider
+                in {"reddit_oauth", "linkedin_mcp", "opencli_instagram", "opencli_facebook"}
+                else set()
+            )
+            read_binding = next(iter(read_bindings)) if len(read_bindings) == 1 else None
             record = ResearchRepository.entity(
                 session,
                 "other",
@@ -515,6 +722,14 @@ def discovery_handler(
                     "qualification": "unverified",
                     "observed_at": origin["observed_at"],
                     "provenance": candidate.provenance,
+                    **(
+                        {
+                            "_read_connection_ref": read_binding[0],
+                            "_read_credential_ref": read_binding[1],
+                        }
+                        if read_binding
+                        else {}
+                    ),
                     **({"_source_native_id": candidate.native_id} if candidate.native_id else {}),
                 },
             )
@@ -559,7 +774,12 @@ def execute_discovery(
     *,
     collection_proxy_url=None,
     x_reader: ConcreteXExecutor | None = None,
+    reddit_reader: ConcreteRedditExecutor | None = None,
+    linkedin_reader: ConcreteLinkedInExecutor | None = None,
+    instagram_reader: ConcreteSocialExecutor | None = None,
+    facebook_reader: ConcreteSocialExecutor | None = None,
     connection_store: ConnectionStore | None = None,
+    reddit_renewal: Callable[[str, str, str], bool] | None = None,
 ):
     identity = TaskIdentity.model_validate(payload)
     from skriller.research.refinements import refinement_source, reuse_handler
@@ -580,9 +800,22 @@ def execute_discovery(
             str(identity.job_id),
             provider,
             x_reader=x_reader,
+            reddit_reader=reddit_reader,
+            linkedin_reader=linkedin_reader,
+            instagram_reader=instagram_reader,
+            facebook_reader=facebook_reader,
             connection_store=connection_store,
+            reddit_renewal=reddit_renewal,
         )
-        handler = replace(handler, dimensions={"search_calls": len(sources)})
+        maximum_calls = (
+            revision["interpretation"]["limits"]["search_calls"]
+            if (reddit_reader is not None and "reddit" in sources)
+            or (linkedin_reader is not None and "linkedin" in sources)
+            or (instagram_reader is not None and "instagram" in sources)
+            or (facebook_reader is not None and "facebook" in sources)
+            else len(sources)
+        )
+        handler = replace(handler, dimensions={"search_calls": maximum_calls})
     outcome = CheckpointWorker(database, {"discovering": handler}).execute(payload)
     if outcome["status"] not in {"checkpointed", "source_unavailable"}:
         return outcome

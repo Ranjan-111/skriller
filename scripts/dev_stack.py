@@ -4,6 +4,7 @@ PostgreSQL/RabbitMQ must already be running. Ctrl-C stops only these child
 processes; existing services or another process using the ports are never killed.
 """
 
+import argparse
 import os
 import shutil
 import signal
@@ -18,12 +19,47 @@ from skriller.settings import Settings
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def main():
-    pnpm = shutil.which("pnpm")
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--discovery-only",
+        action="store_true",
+        help="Run indexed discovery/source downloads without AI planning or direct source reads",
+    )
+    args = parser.parse_args(argv)
+    node = shutil.which("node")
+    next_cli = ROOT / "apps/web/node_modules/next/dist/bin/next"
     python = ROOT / ".venv/bin/python"
-    if not pnpm or not python.exists():
+    if not node or not next_cli.is_file() or not python.exists():
         raise SystemExit("Install the locked Python and web dependencies first; see README.md.")
-    settings = Settings(_env_file=ROOT / ".env")
+    overrides = {}
+    child_env = os.environ.copy()
+    if args.discovery_only:
+        overrides = {
+            "enable_ai_planning": False,
+            "enable_page_extraction": False,
+            "enable_dynamic_collection": False,
+            "enable_stealth_collection": False,
+            "public_collection_proxy_url": None,
+            **{
+                f"public_{source}_image": None
+                for source in (
+                    "browser",
+                    "youtube",
+                    "x",
+                    "reddit",
+                    "linkedin",
+                    "social",
+                )
+            },
+        }
+        child_env.update(
+            {
+                "SKRILLER_" + name.upper(): "false" if value is False else ""
+                for name, value in overrides.items()
+            }
+        )
+    settings = Settings(_env_file=ROOT / ".env", **overrides)
     proxy = urlsplit(settings.public_collection_proxy_url or "")
     local_proxy = proxy.hostname in {"127.0.0.1", "localhost"}
     ports = [8000, 3000] + ([proxy.port] if local_proxy else [])
@@ -51,7 +87,7 @@ def main():
         ([str(python), "-m", "skriller.research.runtime"], ROOT),
         ([str(python), "-m", "skriller.retention_runtime"], ROOT),
         (
-            [pnpm, "exec", "next", "dev", "--hostname", "127.0.0.1", "--port", "3000"],
+            [node, str(next_cli), "dev", "--hostname", "127.0.0.1", "--port", "3000"],
             ROOT / "apps/web",
         ),
     ]
@@ -68,9 +104,21 @@ def main():
     previous = signal.signal(signal.SIGTERM, stop)
     try:
         for command, directory in commands:
-            children.append(subprocess.Popen(command, cwd=directory, start_new_session=True))
+            children.append(
+                subprocess.Popen(
+                    command,
+                    cwd=directory,
+                    env=child_env,
+                    start_new_session=True,
+                )
+            )
         print("Skriller: http://localhost:3000; API: http://localhost:8000", flush=True)
         print("Keep this terminal open. Ctrl-C stops the API, worker and web app.", flush=True)
+        if args.discovery_only:
+            print(
+                "Discovery-only profile: indexed results/source downloads; no confirmed-lead quality claim.",
+                flush=True,
+            )
         while True:
             for child in children:
                 if child.poll() is not None:
@@ -83,12 +131,18 @@ def main():
         for child in children:
             if child.poll() is None:
                 # Each child owns a new session, including its own worker/dev-server descendants.
-                os.killpg(child.pid, signal.SIGTERM)
+                try:
+                    os.killpg(child.pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass  # Child exited after poll; continue stopping the other owned children.
         for child in children:
             try:
                 child.wait(timeout=10)
             except subprocess.TimeoutExpired:
-                os.killpg(child.pid, signal.SIGKILL)
+                try:
+                    os.killpg(child.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
                 child.wait(timeout=5)
 
 

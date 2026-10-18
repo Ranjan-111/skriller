@@ -13,8 +13,9 @@ from skriller.billing.access import bindings, operator
 from skriller.billing.catalog import load, queue_refresh, receive_bound
 from skriller.billing.events import MAX_BODY, InvalidBillingEvent
 from skriller.billing.inbox import inbox
-from skriller.billing.providers import fetch_subscription
+from skriller.billing.providers import fetch_reference, fetch_subscription
 from skriller.billing.reconcile import audit, reconcile
+from skriller.billing.references import resolve_pending
 
 
 @dataclass(frozen=True)
@@ -80,12 +81,13 @@ class ProviderConfiguration:
         )
 
 
-def create_ingress(engine, configurations: tuple[ProviderConfiguration, ...]):
+def create_ingress(engine, configurations: tuple[ProviderConfiguration, ...], *, checkout=None):
     """Separate operator service; never mounted in the tenant application.
 
-    Paths select reviewed endpoint config, not sender-provided account/workspace.
-    No checkout state or source credentials are accepted. TLS belongs to the
-    deployment reverse proxy. No service is started by importing this module.
+    Webhooks select reviewed account configuration; workspace claims are ignored.
+    Optional checkout routes independently verify identity and owner membership.
+    Client checkout status never grants access. TLS belongs to the deployment
+    reverse proxy. No service is started by importing this module.
     """
     if not 1 <= len(configurations) <= 8:
         raise ValueError("Configure one to eight billing endpoints")
@@ -95,6 +97,10 @@ def create_ingress(engine, configurations: tuple[ProviderConfiguration, ...]):
     with engine.connect() as connection:
         operator(connection)
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    if checkout is not None:
+        from skriller.billing.checkout_router import attach_checkout
+
+        attach_checkout(app, engine, configurations, checkout)
 
     @app.post("/webhooks/{provider}/{account_scope}")
     async def receive_webhook(provider: str, account_scope: str, request: Request):
@@ -241,14 +247,30 @@ def _process(connection, workspace, config, fetch):
 
 
 def run_once(
-    engine, configurations: tuple[ProviderConfiguration, ...], *, limit=10, fetch_current=None
+    engine,
+    configurations: tuple[ProviderConfiguration, ...],
+    *,
+    limit=10,
+    fetch_current=None,
+    resolve_reference=None,
+    resolve_checkout=None,
 ):
-    """At most ten workspaces, one bounded GET each; no unconfigured accounts."""
+    """At most ten actions (reference reads or workspace reconciliations)."""
     if type(limit) is not int or not 1 <= limit <= 10 or not 1 <= len(configurations) <= 8:
         raise ValueError("Bounded billing batch required")
     configs = {(config.provider, config.scope): config for config in configurations}
     if len(configs) != len(configurations):
         raise ValueError("Duplicate billing endpoint configuration")
+    statuses = resolve_pending(
+        engine,
+        configs,
+        limit=limit,
+        fetch=resolve_reference or fetch_reference,
+        checkout_fetch=resolve_checkout,
+    )
+    limit -= len(statuses)
+    if not limit:
+        return statuses
     with engine.begin() as connection:
         operator(connection)
         pending = sa.exists(
@@ -304,7 +326,6 @@ def run_once(
             .mappings()
             .all()
         )
-    statuses = []
     for binding in rows:
         config = configs[(binding["provider"], binding["account_scope"])]
         with engine.connect() as connection:

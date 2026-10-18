@@ -41,6 +41,7 @@ class RoleReviewInput(Contract):
 
 class RoleApproval(RoleReviewInput):
     same_subject_confirmed: bool = Field(strict=True)
+    person_subject_confirmed: bool = Field(default=False, strict=True)
     expected_review_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
@@ -58,6 +59,7 @@ class RoleReviewView(Contract):
     replacement: RoleSource
     review_origin: Literal["workspace_owner"]
     requires_same_subject_confirmation: Literal[True]
+    requires_person_confirmation: bool
     review_hash: str
 
 
@@ -128,5 +130,6 @@ def approve(
             body.replacement.observation(),
             same_subject_confirmed=body.same_subject_confirmed,
             expected_review_hash=body.expected_review_hash,
+            person_subject_confirmed=body.person_subject_confirmed,
         ),
     )

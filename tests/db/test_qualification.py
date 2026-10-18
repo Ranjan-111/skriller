@@ -46,11 +46,55 @@ def test_current_role_projection_keeps_history_out_of_qualification(database):
             ).status
             == "near_match"
         )
+        assert (
+            qualify_entity(
+                session,
+                plan(
+                    workspace,
+                    must_have=[Criterion(field="role", operator="contains", value="founder")],
+                ),
+                entity,
+            ).status
+            == "near_match"
+        )
+        assert (
+            qualify_entity(
+                session,
+                plan(
+                    workspace,
+                    must_have=[Criterion(field="role", operator="contains", value="advisor")],
+                ),
+                entity,
+            ).status
+            == "near_match"
+        )
         record_role_refresh(session, old, new)
         facts = load_facts(session, entity, now=datetime.now(UTC))
         roles = [item for item in facts if item.field == "current_role"]
         assert len(roles) == 1 and roles[0].value == "Advisor"
         assert roles[0].event_at == datetime(2025, 1, 1, tzinfo=UTC)
+        assert (
+            qualify_entity(
+                session,
+                plan(
+                    workspace,
+                    must_have=[Criterion(field="role", operator="contains", value="advisor")],
+                ),
+                entity,
+            ).status
+            == "confirmed"
+        )
+        assert (
+            qualify_entity(
+                session,
+                plan(
+                    workspace,
+                    must_have=[Criterion(field="role", operator="contains", value="founder")],
+                ),
+                entity,
+            ).status
+            == "near_match"
+        )
         assert (
             qualify_entity(
                 session,

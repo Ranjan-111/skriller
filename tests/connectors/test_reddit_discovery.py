@@ -60,7 +60,7 @@ def test_filters_cursor_source_dates_and_unknown_identity_are_preserved():
     page = parse_search_listing(
         listing(post(created_utc=1700000000), after="t3_next123"), request, observed_at=NOW
     )
-    assert page.next_cursor.after == "t3_next123"
+    assert page.next_cursor.after == "t3_next123" and page.has_more
     assert page.posts[0].published_at == datetime.fromtimestamp(1700000000, UTC)
     assert page.posts[0].author_identity == "unknown"
     assert page.posts[0].author_handle == "anonymous_handle"

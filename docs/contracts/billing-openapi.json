@@ -1,0 +1,427 @@
+{
+  "components": {
+    "schemas": {
+      "CheckoutCatalog": {
+        "properties": {
+          "can_start": {
+            "title": "Can Start",
+            "type": "boolean"
+          },
+          "current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CheckoutOutput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/CheckoutOffer"
+            },
+            "title": "Offers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "can_start",
+          "offers",
+          "current"
+        ],
+        "title": "CheckoutCatalog",
+        "type": "object"
+      },
+      "CheckoutInput": {
+        "additionalProperties": false,
+        "properties": {
+          "idempotency_key": {
+            "maxLength": 100,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          },
+          "plan": {
+            "enum": [
+              "starter",
+              "pro"
+            ],
+            "title": "Plan",
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "stripe",
+              "razorpay"
+            ],
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "plan",
+          "idempotency_key",
+          "opt_in"
+        ],
+        "title": "CheckoutInput",
+        "type": "object"
+      },
+      "CheckoutOffer": {
+        "properties": {
+          "amount_minor": {
+            "title": "Amount Minor",
+            "type": "integer"
+          },
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "currency": {
+            "enum": [
+              "USD",
+              "INR"
+            ],
+            "title": "Currency",
+            "type": "string"
+          },
+          "interval": {
+            "const": "month",
+            "default": "month",
+            "title": "Interval",
+            "type": "string"
+          },
+          "maximum_monthly_cycles": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Monthly Cycles"
+          },
+          "plan": {
+            "enum": [
+              "starter",
+              "pro"
+            ],
+            "title": "Plan",
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "stripe",
+              "razorpay"
+            ],
+            "title": "Provider",
+            "type": "string"
+          },
+          "results_per_run": {
+            "title": "Results Per Run",
+            "type": "integer"
+          },
+          "runs_per_month": {
+            "title": "Runs Per Month",
+            "type": "integer"
+          },
+          "sources_per_run": {
+            "title": "Sources Per Run",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provider",
+          "plan",
+          "amount_minor",
+          "currency",
+          "maximum_monthly_cycles",
+          "runs_per_month",
+          "results_per_run",
+          "sources_per_run",
+          "configured"
+        ],
+        "title": "CheckoutOffer",
+        "type": "object"
+      },
+      "CheckoutOutput": {
+        "properties": {
+          "checkout_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkout Url"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "maximum_monthly_cycles": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Monthly Cycles"
+          },
+          "plan": {
+            "enum": [
+              "starter",
+              "pro"
+            ],
+            "title": "Plan",
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "stripe",
+              "razorpay"
+            ],
+            "title": "Provider",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "dispatching",
+              "ready",
+              "uncertain",
+              "bound"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "provider",
+          "plan",
+          "state",
+          "expires_at",
+          "checkout_url",
+          "maximum_monthly_cycles"
+        ],
+        "title": "CheckoutOutput",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Skriller billing checkout",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/workspaces/{workspace_id}/checkout": {
+      "get": {
+        "operationId": "offers_v1_workspaces__workspace_id__checkout_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutCatalog"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Offers"
+      },
+      "post": {
+        "operationId": "start_v1_workspaces__workspace_id__checkout_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/checkout/{checkout_id}": {
+      "get": {
+        "operationId": "status_v1_workspaces__workspace_id__checkout__checkout_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "checkout_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Checkout Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Status"
+      }
+    }
+  }
+}

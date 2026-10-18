@@ -5,6 +5,7 @@ import math
 import re
 from datetime import UTC, datetime, timedelta
 from typing import Literal
+from uuid import UUID
 
 import httpx
 import sqlalchemy as sa
@@ -23,13 +24,23 @@ ENDPOINT = "https://mcp.exa.ai/mcp?tools=web_search_exa"
 MAX_RESPONSE_BYTES = 1_048_576
 
 
+DiscoveryProvider = Literal[
+    "exa_keyless",
+    "x_api_v2",
+    "reddit_oauth",
+    "linkedin_mcp",
+    "opencli_instagram",
+    "opencli_facebook",
+]
+
+
 class SearchHit(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     title: str = Field(min_length=1, max_length=300)
     url: str = Field(max_length=4096)
     snippet: str = Field(max_length=4096)
-    provider: Literal["exa_keyless", "x_api_v2"] = "exa_keyless"
-    evidence_kind: Literal["search_snippet", "public_post"] = "search_snippet"
+    provider: DiscoveryProvider = "exa_keyless"
+    evidence_kind: Literal["search_snippet", "public_post", "search_reference"] = "search_snippet"
     rank: int = Field(ge=1)
 
 
@@ -39,6 +50,9 @@ class SearchPage(BaseModel):
     rejected: int
     truncated: bool
     pagination_supported: bool = False
+    continuation_ref: UUID | None = None
+    read_connection_ref: UUID | None = None
+    read_credential_ref: UUID | None = None
     currency_cost: Literal[0] = 0
     query: str = Field(default="", max_length=2000)
     observed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

@@ -11,8 +11,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
-from scrapling.spiders.throttle import parse_retry_after
-
+from skriller._vendor.retry_after import parse_retry_after
 from skriller.connectors.x_discovery import XSearch
 
 MAX_RESPONSE_BYTES = 1_048_576

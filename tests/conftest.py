@@ -1,6 +1,7 @@
 """Keep normal tests offline; allow explicit loopback integration fixtures only."""
 
 import ipaddress
+import logging
 import os
 import socket
 
@@ -11,6 +12,14 @@ from alembic.config import Config
 from skriller.db import Database, bootstrap
 from skriller.settings import Settings
 
+
+@pytest.fixture(autouse=True)
+def restore_logging_suppression():
+    previous_level = logging.root.manager.disable
+    yield
+    logging.disable(previous_level)
+
+
 # A developer may enable live collection in .env. Ordinary fixtures must not
 # inherit those opt-ins, including modules that instantiate Settings at import.
 # Explicit Settings keyword arguments and live-test flags remain available.
@@ -18,6 +27,7 @@ for test_option, test_value in {
     "SKRILLER_PUBLIC_COLLECTION_PROXY_URL": "",
     "SKRILLER_PUBLIC_BROWSER_IMAGE": "",
     "SKRILLER_PUBLIC_YOUTUBE_IMAGE": "",
+    "SKRILLER_PUBLIC_LINKEDIN_IMAGE": "",
     "SKRILLER_ENABLE_PAGE_EXTRACTION": "false",
     "SKRILLER_REVIEWED_PAGE_TEMPLATES_FILE": "",
     "SKRILLER_ENABLE_DYNAMIC_COLLECTION": "false",

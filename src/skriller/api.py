@@ -13,7 +13,9 @@ from sqlalchemy import create_engine, text
 
 from skriller.analytics.router import router as analytics_router
 from skriller.auth import Identity, require_identity
+from skriller.connections.reddit_router import router as reddit_oauth_router
 from skriller.connections.router import router as connections_router
+from skriller.connections.x_router import router as x_oauth_router
 from skriller.connectors.router import router as connectors_router
 from skriller.connectors.search import ExaKeylessSearch
 from skriller.contracts import Capability, ExecutionContext, Failure, ProgressEvent, SearchPlan
@@ -98,6 +100,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(template_router)
     app.include_router(template_repair_router)
     app.include_router(connections_router)
+    app.include_router(x_oauth_router)
+    app.include_router(reddit_oauth_router)
     app.include_router(analytics_router)
     app.include_router(crm_router)
     app.include_router(connectors_router)

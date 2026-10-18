@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-10-17",
+  "image": "sha256:afa3e9f3a80b4b9b99f4215e056b5363de5126a8e9eb923db42268d6a8205d29",
+  "browser_base": "skriller-egress-browser@sha256:548ee64f786a3524f7114c76b4b487e16559a7cb330704014035cec747eed918",
+  "acquired_source_commit": "f1ba6aa87234526cf22812e59233e0c619073529",
+  "acquired_source_hashes_verified": true,
+  "build_network": "none",
+  "fixture_network": "none",
+  "installed_capture_pipeline": true,
+  "operations_checked": [
+    "search_people",
+    "search_posts"
+  ],
+  "search_reference_verified": true,
+  "cleanup_confirmed": true,
+  "source_live_verified": false,
+  "source_enabled_in_environment": false,
+  "frontend_native_reference_handling": "implemented_locally_verified",
+  "provider_approval_verified": false,
+  "hosted_deployment_verified": false,
+  "related_backend_checks_passed": 146,
+  "live_checks_skipped": 1,
+  "installed_capture_checks_passed": 1,
+  "frontend_client_verification": {
+    "strict_native_contract": "linkedin_mcp/search_reference requires LinkedIn candidate and provenance; connected metadata requires connected_search_reference_only, not_attempted direct read and unknown identity",
+    "indexed_contract": "Exa indexed references remain separate and source-matched",
+    "results_and_exports": "Connected search references clearly labeled; platform metadata, provider, evidence and provenance preserved in JSON/CSV",
+    "web_tests": "218 passed across 26 files",
+    "build": "Next production build passed",
+    "typescript_and_contracts": "passed",
+    "impeccable_detector": "no findings",
+    "consent_loading_race": "Reddit and X empty states/connect controls wait for metadata; regression tests pass"
+  },
+  "ticket_status": "implemented_pending_verification",
+  "remaining_acceptance": [
+    "Account-backed LinkedIn live operation and coverage (user-deferred)",
+    "Hosted deployment/acceptance (user-deferred)",
+    "Source rights/commercial-use and production operation limits"
+  ],
+  "resource_operations_checked": [
+    "read_profile",
+    "read_company",
+    "read_post"
+  ],
+  "failure_sanitization_verified": true,
+  "frontend_resource_read_handling": "implemented_locally_verified",
+  "resource_read_ticket_status": "implemented_pending_verification",
+  "resource_read_backend_checks_passed": 134,
+  "resource_read_live_checks_skipped": 1,
+  "resource_read_frontend_regression_checks_passed": 117,
+  "resource_read_frontend_tests_passed": 120,
+  "resource_read_frontend_build": "passed",
+  "resource_read_frontend_contracts": "passed",
+  "resource_read_frontend_detector": "no_findings"
+}

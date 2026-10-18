@@ -1,0 +1,178 @@
+{
+  "mode": "offline_synthetic_fixture",
+  "adapted": false,
+  "source_calls": 0,
+  "platform_enabled": false,
+  "cases": [
+    {
+      "id": "instagram-search-public-private",
+      "source": "instagram",
+      "operation": "search",
+      "outcome": "passed",
+      "requests": 1,
+      "navigations": 1,
+      "sample": [
+        {
+          "rank": 1,
+          "username": "public_fixture",
+          "name": "Synthetic Public",
+          "verified": "No",
+          "private": "No",
+          "avatar_url": "",
+          "url": "https://www.instagram.com/public_fixture"
+        },
+        {
+          "rank": 2,
+          "username": "private_fixture",
+          "name": "Synthetic Private",
+          "verified": "No",
+          "private": "Yes",
+          "avatar_url": "",
+          "url": "https://www.instagram.com/private_fixture"
+        },
+        {
+          "rank": 3,
+          "username": "unknown_fixture",
+          "name": "Unknown Visibility",
+          "verified": "No",
+          "private": "No",
+          "avatar_url": "",
+          "url": "https://www.instagram.com/unknown_fixture"
+        }
+      ]
+    },
+    {
+      "id": "instagram-profile-missing-counts",
+      "source": "instagram",
+      "operation": "profile",
+      "outcome": "passed",
+      "requests": 1,
+      "default_zero_is_not_fact": true,
+      "sample": [
+        {
+          "username": "synthetic",
+          "name": "Synthetic",
+          "bio": "First Second",
+          "followers": 0,
+          "following": 0,
+          "posts": 0,
+          "verified": "No",
+          "avatar_url": ""
+        }
+      ]
+    },
+    {
+      "id": "instagram-profile-business-fallback",
+      "source": "instagram",
+      "operation": "profile",
+      "outcome": "passed",
+      "requests": 3,
+      "sample": [
+        {
+          "username": "synthetic",
+          "name": "",
+          "bio": "",
+          "followers": 12,
+          "following": 3,
+          "posts": 2,
+          "verified": "No",
+          "avatar_url": ""
+        }
+      ]
+    },
+    {
+      "id": "instagram-profile-rate-limit",
+      "source": "instagram",
+      "operation": "profile",
+      "outcome": "passed",
+      "requests": 1,
+      "no_retry": true
+    },
+    {
+      "id": "instagram-profile-login",
+      "source": "instagram",
+      "operation": "profile",
+      "outcome": "passed",
+      "requests": 1,
+      "no_retry": true
+    },
+    {
+      "id": "instagram-profile-challenge",
+      "source": "instagram",
+      "operation": "profile",
+      "outcome": "passed",
+      "requests": 1,
+      "no_retry": true
+    },
+    {
+      "id": "instagram-profile-malformed",
+      "source": "instagram",
+      "operation": "profile",
+      "outcome": "passed",
+      "requests": 1,
+      "no_retry": true
+    },
+    {
+      "id": "facebook-search-identity-and-decoys",
+      "source": "facebook",
+      "operation": "search",
+      "outcome": "passed",
+      "requests": 0,
+      "navigations": 2,
+      "sample": [
+        {
+          "index": 1,
+          "title": "First source",
+          "text": "First source First synthetic post text.",
+          "url": "https://www.facebook.com/story.php?story_fbid=1&id=9"
+        },
+        {
+          "index": 2,
+          "title": "Second source",
+          "text": "Second source Second synthetic post text.",
+          "url": "https://www.facebook.com/story.php?story_fbid=2&id=9"
+        }
+      ]
+    },
+    {
+      "id": "facebook-search-login",
+      "source": "facebook",
+      "operation": "search",
+      "outcome": "passed",
+      "requests": 0,
+      "navigations": 2,
+      "no_retry": true
+    },
+    {
+      "id": "facebook-profile-scoped-header-and-display-count",
+      "source": "facebook",
+      "operation": "profile",
+      "outcome": "passed",
+      "requests": 0,
+      "count_preserved_as_display_text": true,
+      "sample": [
+        {
+          "name": "Synthetic Profile",
+          "username": "synthetic",
+          "friends": "-",
+          "followers": "1.2K followers",
+          "url": "https://www.facebook.com/synthetic"
+        }
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-17T17:26:52.709625+00:00",
+  "source_commit": "e6174a952c763a836a9bb0dd2f097d2962b3876b",
+  "release_gate_passed": false,
+  "scope": "Synthetic page/fetch responses only; requests are mocked, no platform or production isolation proof",
+  "implementation_sha256": {
+    "scripts/probes/opencli_read_fixture.mjs": "f3ebf5722bd8987e9f9f8f77bcb580159acce883635c6b0c495548b5e6027e64",
+    "src/skriller/_vendor/opencli/PROVENANCE.json": "10062cde0e2f59b42a9a88761459f3ccedcbcac0a669c497eef15fd4e7576bcd",
+    "src/skriller/connectors/instagram_read.py": "f7c34ceba99724144d42ec354fe9df5e11ed87a0a3cba870a99e1962605ca3eb",
+    "src/skriller/connectors/facebook_read.py": "d80545a53f62f95793d338a668ce57536488fa857eb002948c4af633247e1e54",
+    "src/skriller/connectors/social_read.py": "6f901a7c2affcb0bb4d5ea33e0f3c6e70b426f0094e113a6edacce3e33512953",
+    "src/skriller/connectors/social_worker.py": "5ef861a4b0e608754025cd4f00923fcee82aae4bc5001d6b07212a783e907863",
+    "scripts/opencli_read_modules.mjs": "31a91ee466789db83264dd459bed887a4e053bb3b28816dbbbfeab4f16a1670b",
+    "scripts/build_social_read_scripts.mjs": "9377dff82af4e6f751b40a023ca6faf6366ad861a31354471750c7629e0d9d60"
+  }
+}

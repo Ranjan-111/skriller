@@ -7,6 +7,7 @@ from hashlib import sha256
 import sqlalchemy as sa
 from agent_reach.utils.url import normalize_public_http_url
 
+from skriller.connectors.linkedin_read import LinkedInReadResult
 from skriller.db import ResearchRepository
 from skriller.db.repositories import require_owner, scope
 from skriller.db.schema import claims, entities
@@ -14,11 +15,39 @@ from skriller.erasure import privacy_lock
 from skriller.qualification.contacts import DatedRole, _dated, record_role_refresh, role_projection
 
 
+def _original_profile(session, entity, previous, replacement):
+    """An explicit type review may use only this candidate's saved profile section."""
+    attributes = entity["attributes"]
+    saved = attributes.get("linkedin_read")
+    if (
+        attributes.get("source") != "linkedin"
+        or attributes.get("provider") != "linkedin_mcp"
+        or not isinstance(saved, dict)
+        or saved.get("evidence_id") != replacement.evidence_id
+        or previous.evidence_id != replacement.evidence_id
+    ):
+        raise ValueError("Original subject review requires the saved LinkedIn profile")
+    resource = LinkedInReadResult.model_validate_json(json.dumps(saved.get("resource")))
+    evidence = ResearchRepository.get_evidence(session, replacement.evidence_id)
+    if (
+        resource.resource_kind != "profile"
+        or attributes.get("url") != resource.source_url
+        or evidence is None
+        or evidence["source_platform"] != "linkedin"
+        or evidence["source_url"] != resource.source_url
+        or evidence["excerpt"] != resource.text[:4096]
+        or evidence["collected_at"] != resource.observed_at
+    ):
+        raise ValueError("Original subject review requires unchanged profile evidence")
+
+
 def review_context(session, entity_id: str, previous: DatedRole, replacement: DatedRole):
     entity = ResearchRepository.get_entity(session, entity_id)
     if entity is None or entity["attributes"].get("erased"):
         raise LookupError("Role review unavailable")
-    if entity["kind"] != "person":
+    if entity["kind"] == "other":
+        _original_profile(session, entity, previous, replacement)
+    elif entity["kind"] != "person":
         raise ValueError("Employment chronology requires the original person record")
     now = datetime.now(UTC)
     old = _dated(session, previous, now, reviewed=False)
@@ -56,6 +85,7 @@ def review_context(session, entity_id: str, previous: DatedRole, replacement: Da
         },
         "review_origin": "workspace_owner",
         "requires_same_subject_confirmation": True,
+        "requires_person_confirmation": entity["kind"] == "other",
     }
     result["review_hash"] = sha256(
         json.dumps(result, sort_keys=True, default=str).encode()
@@ -71,6 +101,7 @@ def approve_role_refresh(
     *,
     same_subject_confirmed: bool,
     expected_review_hash: str,
+    person_subject_confirmed: bool = False,
 ):
     """Atomic audited supersession; retain source values, dates and every original claim."""
     require_owner(session)
@@ -87,6 +118,8 @@ def approve_role_refresh(
         preview = review_context(session, entity_id, previous, replacement)
         if expected_review_hash != preview["review_hash"]:
             raise ValueError("Role review evidence changed; refresh the preview")
+        if preview["requires_person_confirmation"] and person_subject_confirmed is not True:
+            raise ValueError("Owner must confirm this original profile describes a person")
         identifiers = {
             previous.role_claim_id,
             previous.date_claim_id,
@@ -107,6 +140,26 @@ def approve_role_refresh(
         )
         if outcome != "superseded":
             raise ValueError("Role refresh could not be recorded")
+        if preview["requires_person_confirmation"]:
+            entity = ResearchRepository.get_entity(session, entity_id)
+            if entity is None:
+                raise LookupError("Original profile unavailable")
+            session.execute(
+                sa.update(entities)
+                .where(entities.c.workspace_id == scope(session), entities.c.id == entity_id)
+                .values(
+                    kind="person",
+                    attributes={
+                        **entity["attributes"],
+                        "_person_subject_review": {
+                            "actor_id": session.info["actor_id"],
+                            "review_hash": expected_review_hash,
+                            "evidence_id": replacement.evidence_id,
+                            "original_kind": "other",
+                        },
+                    },
+                )
+            )
         return {
             "entity_id": entity_id,
             "outcome": outcome,

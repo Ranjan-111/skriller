@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "dimension": "prompt_planning",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_groq_free_tier",
+  "model": "openai/gpt-oss-120b",
+  "recorded_at": "2026-10-18T00:57:24.610614+00:00",
+  "case_denominator": 5,
+  "case_assertions_passed": 1,
+  "actual_model_calls": 5,
+  "source_calls": 0,
+  "automatic_retries": 0,
+  "release_gate_passed": false,
+  "release_prompt_target": 50,
+  "scope": "Same five synthetic local diagnostic assertions; not full-plan recall or representative release quality. No provider/default configuration changed. Failed and unexecuted cases remain in the denominator.",
+  "implementation_and_corpus_sha256": {
+    "src/skriller/research/planner.py": "129b25ae5fdce66ed963cbabf77322864e46e39fdd5261ae1860109b949632e7",
+    "src/skriller/extraction/models.py": "670c987eefb07a3a7d9a197d2f5e0c78af880e9a28c8fca92a41c494a35b5c91",
+    "src/skriller/extraction/groq.py": "cbf4d83b6e6c98a46ce18c0bf12049baecd91a8de06ddd23cabf398464ff0d9e",
+    "tests/db/test_planner_quality.py": "86dfeada1fd2cddde2c7cecec0ba00475ce891d5d1c08283694e4f6811b249c4",
+    "tests/db/test_planner_groq_quality.py": "181831e51dc2f5ff76f976013c38fb591ea144adc85f572e067d0f51fe94e9c7"
+  },
+  "cases": [
+    {
+      "id": "location-exclusion-preference",
+      "outcome": "failed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"person\",\"entity_quote\":\"founders\",\"rules\":[[\"must_have\",\"role\",\"contains\",\"founder\",\"founders\"],[\"must_have\",\"person_location\",\"eq\",\"Bengaluru\",\"based in Bengaluru\"],[\"exclude\",\"company_type\",\"contains\",\"agency\",\"Exclude agencies\"],[\"preference\",\"hiring_role\",\"contains\",\"engineer\",\"Prefer companies hiring engineers\"]],\"fields\":[],\"sources\":[[\"linkedin\",\"LinkedIn\"]],\"unsupported\":[],\"clarification\":null}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 874,
+        "output_tokens": 974,
+        "total_tokens": 1848,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 867
+        }
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "ungrounded_value"
+    },
+    {
+      "id": "company-geography-industry",
+      "outcome": "failed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"company\",\"entity_quote\":\"companies\",\"clarification\":null,\"fields\":[],\"rules\":[[\"must_have\",\"industry\",\"contains\",\"fintech\",\"fintech industry\"],[\"must_have\",\"company_location\",\"contains\",\"Paris\",\"headquartered in Paris\"]],\"sources\":[],\"unsupported\":[]}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 866,
+        "output_tokens": 786,
+        "total_tokens": 1652,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 718
+        }
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [
+          {
+            "field": "industry",
+            "operator": "contains",
+            "value": "fintech"
+          },
+          {
+            "field": "company_location",
+            "operator": "contains",
+            "value": "Paris"
+          }
+        ],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": true,
+        "clarification": true,
+        "must_have": false,
+        "exclusions": true,
+        "preferences": true,
+        "sources": true,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "numeric-minimum",
+      "outcome": "failed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"company\",\"entity_quote\":\"companies\",\"rules\":[[\"must_have\",\"employee_count\",\"gte\",\"25\",\"at least 25 employees\"],[\"exclude\",\"company_type\",\"contains\",\"agencies\",\"agencies\"]],\"fields\":[],\"sources\":[],\"unsupported\":[],\"clarification\":null}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 869,
+        "output_tokens": 700,
+        "total_tokens": 1569,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 632
+        }
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "exclusion_missing_cue"
+    },
+    {
+      "id": "private-output",
+      "outcome": "passed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"person\",\"entity_quote\":\"founders\",\"rules\":[[\"must_have\",\"role\",\"contains\",\"founder\",\"founders\"]],\"fields\":[],\"sources\":[],\"unsupported\":[\"private email\"],\"clarification\":null}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 863,
+        "output_tokens": 539,
+        "total_tokens": 1402,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 484
+        }
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [
+          {
+            "field": "role",
+            "operator": "contains",
+            "value": "founder"
+          }
+        ],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [
+          "private email"
+        ],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    },
+    {
+      "id": "ambiguous-location",
+      "outcome": "failed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "provider_status": 429,
+      "provider_error_code": "rate_limit_exceeded",
+      "failure_class": "ModelUnavailable",
+      "failure_code": "rate_limited"
+    }
+  ]
+}

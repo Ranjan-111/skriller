@@ -1,6 +1,5 @@
 """Real ledger/capacity and official OpenAI-compatible client, no network."""
 
-import asyncio
 import json
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
@@ -24,6 +23,15 @@ from skriller.jobs.outbox import submit
 from skriller.settings import Settings
 
 pytestmark = pytest.mark.integration_db
+
+
+@pytest.fixture(autouse=True)
+def isolate_mock_provider_cadence(monkeypatch):
+    # Real provider cooldowns must remain intact. Mock transports use a unique
+    # accounting host per case without changing their SDK endpoint validation.
+    identity = uuid4().hex
+    monkeypatch.setattr(GroqStructuredModel, "source", "groq-fixture-" + identity)
+    monkeypatch.setattr(GroqStructuredModel, "host", identity + ".groq-fixture.invalid")
 
 
 class Facts(BaseModel):
@@ -157,8 +165,6 @@ async def test_sdk_error_one_call_redacted_estimated_and_capacity_released(
         assert releases == [True]
     finally:
         await client.aclose()
-        if status == 429:
-            await asyncio.sleep(2.1)  # Persisted Retry-After cadence spans workspaces.
 
 
 async def test_transport_bounds_and_schema_invalid_known_usage(database):
@@ -198,6 +204,8 @@ def test_settings_secret_local_default_and_explicit_groq_opt_in():
     assert structured_model(Settings(ollama_model="deepseek-r1:8b")).model_name == "deepseek-r1:8b"
     with pytest.raises(ValidationError):
         Settings(ollama_model="unreviewed-model")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, groq_model="unreviewed-model")
     settings = Settings(_env_file=None, GROQ_API_KEY="synthetic-not-real-key")
     assert settings.model_provider == "ollama" and "synthetic" not in repr(settings)
     assert structured_model(settings).source == "ollama"
@@ -206,6 +214,44 @@ def test_settings_secret_local_default_and_explicit_groq_opt_in():
     with pytest.raises(ValueError, match="requires"):
         structured_model(
             settings.model_copy(update={"model_provider": "groq", "groq_api_key": None})
+        )
+
+
+async def test_reviewed_groq_model_selection_is_explicit_and_correctly_attributed(database):
+    selected = "openai/gpt-oss-120b"
+    calls = []
+
+    def transport(request):
+        calls.append(json.loads(request.content))
+        result = response('{"company":"Aurora","contact":null}')
+        result["model"] = selected
+        return httpx.Response(200, json=result)
+
+    client = GroqStructuredModel(
+        SecretStr("synthetic-not-real-key"),
+        free_tier_confirmed=True,
+        model=selected,
+        transport=httpx.MockTransport(transport),
+    )
+    try:
+        answer = await client.invoke_job(
+            database,
+            context_for(database),
+            "Extract supplied Aurora",
+            Facts,
+            operation_key="reviewed-model",
+        )
+        assert calls[0]["model"] == selected
+        assert answer.model == selected and client.model_name == selected
+        assert Settings(_env_file=None).model_provider == "ollama"
+        assert Settings(_env_file=None).groq_model == GROQ_MODEL
+    finally:
+        await client.aclose()
+    with pytest.raises(ValueError, match="Unreviewed"):
+        GroqStructuredModel(
+            SecretStr("synthetic-not-real-key"),
+            free_tier_confirmed=True,
+            model="arbitrary-unreviewed-model",
         )
 
 

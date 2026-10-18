@@ -217,6 +217,82 @@ def test_actual_restore_replays_newer_deletion_and_retains_other_tenant(
                 },
             )
             pending_crm_consent = crm_consent_store.start(session, crm_config, opt_in=True)
+            from skriller.connections.x_oauth import XConsentStore
+            from skriller.connectors.x_oauth import SCOPES as X_SCOPES
+            from skriller.connectors.x_oauth import XOAuthConfiguration
+
+            x_store = XConsentStore(key)
+            x_config = XOAuthConfiguration(
+                "fixture-client", "fixture-secret", "http://localhost:3000/callback"
+            )
+            x_consent = x_store.start(session, x_config, opt_in=True)
+            x_state = parse_qs(urlsplit(x_consent["authorization_url"]).query)["state"][0]
+            _, x_version = x_store.consume(session, x_config, x_consent["consent_id"], x_state)
+            x_store.activate(
+                session,
+                x_config,
+                x_consent["consent_id"],
+                x_version,
+                {
+                    "access_token": "fixture-x-access-token",
+                    "refresh_token": "fixture-x-refresh-token",
+                    "token_type": "Bearer",
+                    "scope": X_SCOPES,
+                    "expires_in": 7200,
+                },
+            )
+
+            from skriller.connections.reddit_oauth import RedditConsentStore
+            from skriller.connectors.reddit_oauth import SCOPES as REDDIT_SCOPES
+            from skriller.connectors.reddit_oauth import RedditOAuthConfiguration
+
+            reddit_store = RedditConsentStore(key)
+            reddit_config = RedditOAuthConfiguration(
+                "fixture-client",
+                "fixture-secret",
+                "http://localhost:3000/callback",
+                "web:skriller-fixture:v0.1 (by /u/fixture)",
+            )
+            reddit_consent = reddit_store.start(session, reddit_config, opt_in=True)
+            reddit_state = parse_qs(urlsplit(reddit_consent["authorization_url"]).query)["state"][0]
+            _, reddit_version = reddit_store.consume(
+                session, reddit_config, reddit_consent["consent_id"], reddit_state
+            )
+            reddit_reference = reddit_store.activate(
+                session,
+                reddit_config,
+                reddit_consent["consent_id"],
+                reddit_version,
+                {
+                    "access_token": "fixture-reddit-access-token",
+                    "refresh_token": "fixture-reddit-refresh-token",
+                    "token_type": "Bearer",
+                    "scope": REDDIT_SCOPES,
+                    "expires_in": 7200,
+                },
+            )
+
+            from skriller.connections.reddit_continuation import continuations
+            from skriller.connections.tables import secrets as connection_secrets
+
+            credential_id = session.execute(
+                sa.select(connection_secrets.c.id).where(
+                    connection_secrets.c.connection_id == str(reddit_reference.id)
+                )
+            ).scalar_one()
+            insert_row(
+                session,
+                continuations,
+                job_id=queued["id"],
+                actor_id=other_actor,
+                connection_id=str(reddit_reference.id),
+                credential_id=credential_id,
+                plan_revision=1,
+                request_hash="a" * 64,
+                after="t3_fixture",
+                state="ready",
+                expires_at=datetime.now(UTC) + timedelta(minutes=5),
+            )
 
             # Seed a pending delivery to verify recovery cancels outbound work.
             insert_row(
@@ -235,6 +311,24 @@ def test_actual_restore_replays_newer_deletion_and_retains_other_tenant(
         source_operator = sa.create_engine(owners[0])
         try:
             with source_operator.begin() as connection:
+                from skriller.billing.checkout import intents as checkout_intents
+
+                connection.execute(
+                    sa.insert(checkout_intents).values(
+                        id=str(uuid4()),
+                        workspace_id=workspace,
+                        created_by=actor,
+                        provider="stripe",
+                        account_scope="self:test",
+                        slug="starter",
+                        plan_id="price_fixture",
+                        request_hash="0" * 64,
+                        state="ready",
+                        remote_id="cs_test_fixture",
+                        checkout_url="https://checkout.stripe.com/c/pay/fixture",
+                        expires_at=datetime.now(UTC) + timedelta(minutes=35),
+                    )
+                )
                 bind_subscription(
                     connection,
                     other_workspace,
@@ -294,6 +388,14 @@ def test_actual_restore_replays_newer_deletion_and_retains_other_tenant(
         assert report["traffic_enabled"] is False and report["replayed_entities"] == 1
         restored = Database(apps[1])
         restored_storage = EvidenceStorage(LocalBlobBackend(objects))
+        restored_operator = sa.create_engine(owners[1])
+        try:
+            with restored_operator.connect() as connection:
+                checkout = connection.execute(sa.select(checkout_intents)).mappings().one()
+                assert checkout["state"] == "uncertain" and checkout["checkout_url"] is None
+                assert checkout["remote_id"] == "cs_test_fixture"
+        finally:
+            restored_operator.dispose()
         try:
             with restored.tenant(actor, workspace) as session:
                 assert ResearchRepository.get_entity(session, records[0][1]["id"])[
@@ -310,6 +412,11 @@ def test_actual_restore_replays_newer_deletion_and_retains_other_tenant(
                 for consent_id in (crm_consent["consent_id"], pending_crm_consent["consent_id"]):
                     consent_row = crm_consent_store.get(session, consent_id)
                     assert consent_row["state"] == "revoked" and consent_row["ciphertext"] == b""
+                x_row = x_store.get(session, x_consent["consent_id"])
+                assert x_row["state"] == "revoked" and x_row["ciphertext"] == b""
+                reddit_row = reddit_store.get(session, reddit_consent["consent_id"])
+                assert reddit_row["state"] == "revoked" and reddit_row["ciphertext"] == b""
+                assert session.execute(sa.select(continuations.c.id)).all() == []
 
                 assert (
                     session.execute(sa.select(crm_deliveries.c.state)).scalar_one() == "cancelled"

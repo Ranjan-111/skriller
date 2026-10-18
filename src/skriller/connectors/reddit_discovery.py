@@ -11,40 +11,18 @@ import re
 from datetime import UTC, datetime
 from typing import Literal
 from urllib.parse import urljoin, urlsplit
+from uuid import UUID
 
 from agent_reach.utils.url import host_matches, normalize_public_http_url
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from skriller._vendor.reddit.parser import parse_listing
 from skriller.connectors.candidates import native_reference
+from skriller.connectors.reddit_request import RedditCursor, RedditSearch
 
 
 class DiscoveryData(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True, strict=True)
-
-
-class RedditCursor(DiscoveryData):
-    after: str = Field(pattern=r"^t3_[a-z0-9]{3,13}$")
-
-
-class RedditSearch(DiscoveryData):
-    query: str = Field(min_length=1, max_length=500, pattern=r"\S")
-    subreddit: str | None = Field(default=None, pattern=r"^[A-Za-z0-9_]{1,32}$")
-    sort: Literal["relevance", "hot", "top", "new", "comments"] = "relevance"
-    time_filter: Literal["all", "hour", "day", "week", "month", "year"] = "all"
-    limit: int = Field(default=10, ge=1, le=25)
-    cursor: RedditCursor | None = None
-
-    def backend_arguments(self):
-        """Exact reviewed rdt-cli search signature, never arbitrary tool args."""
-        return {
-            "query": self.query,
-            "subreddit": self.subreddit,
-            "sort": self.sort,
-            "time_filter": self.time_filter,
-            "limit": self.limit,
-            "after": self.cursor.after if self.cursor else None,
-        }
 
 
 class RedditPostReference(DiscoveryData):
@@ -67,6 +45,10 @@ class RedditDiscoveryPage(DiscoveryData):
     request: RedditSearch
     posts: tuple[RedditPostReference, ...]
     next_cursor: RedditCursor | None
+    continuation_ref: UUID | None = None
+    read_connection_ref: UUID | None = None
+    read_credential_ref: UUID | None = None
+    has_more: bool = False
     rejected_count: int
     duplicate_count: int
     omitted_count: int
@@ -150,6 +132,7 @@ def parse_search_listing(
         request=request,
         posts=tuple(posts),
         next_cursor=cursor,
+        has_more=cursor is not None,
         rejected_count=rejected,
         duplicate_count=duplicates,
         omitted_count=omitted,

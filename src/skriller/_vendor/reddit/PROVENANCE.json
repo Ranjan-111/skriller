@@ -13,5 +13,19 @@
       "source": "rdt_cli/parser.py",
       "sha256": "5807f33ac5789ec18fc2dcd88cdf586bd2ad4e8fc1c65db764be4fdd06291811"
     }
+  },
+  "search_method_adaptation": {
+    "source": "rdt_cli/client.py:RedditClient.search",
+    "source_sha256": "7151fac3ef6e06698a916cb640cd1124b00110eefd7cc50acf89dee650208d2f",
+    "target": "search.py:SearchRequest.search",
+    "target_sha256": "9aab598128ae1c741733429bf48d9a5563f254b87d2acb72433d78533d0984ec",
+    "modifications": "Search method AST unchanged; transport-free _get seam and fixed relative URL constants; original auth/network/write client excluded."
+  },
+  "read_method_adaptation": {
+    "source": "rdt_cli/client.py:RedditClient.get_post_comments",
+    "source_sha256": "7151fac3ef6e06698a916cb640cd1124b00110eefd7cc50acf89dee650208d2f",
+    "target": "read.py:ReadRequest.get_post_comments",
+    "target_sha256": "51b3d04f26d86a7011e07dc044802b427c2c2542b6a8dc975f0fe21425b8b67c",
+    "modifications": "Method AST unchanged; transport-free _get seam and fixed relative URL constants. No morechildren expansion, writes or authentication client."
   }
 }

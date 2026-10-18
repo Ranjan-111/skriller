@@ -108,7 +108,11 @@ def evaluate(
     eligible = [
         fact
         for fact in facts
-        if fact.field == criterion.field
+        if (
+            fact.field == criterion.field
+            or criterion.field == "role"
+            and fact.field in {"job_title", "current_role"}
+        )
         and fact.status == "accepted"
         and fact.evidence_ids
         and fact.observed_at <= now

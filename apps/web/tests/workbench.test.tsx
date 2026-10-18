@@ -15,6 +15,18 @@ const mock = vi.hoisted(() => ({
   job: vi.fn(),
   results: vi.fn(),
   allowance: vi.fn(),
+  identityReviews: vi.fn(),
+  plan: vi.fn(),
+  xConsents: vi.fn(),
+  xStart: vi.fn(),
+  xComplete: vi.fn(),
+  xRefresh: vi.fn(),
+  xRevoke: vi.fn(),
+  redditConsents: vi.fn(),
+  redditStart: vi.fn(),
+  redditComplete: vi.fn(),
+  redditRefresh: vi.fn(),
+  redditRevoke: vi.fn(),
   authStatus: "signed_in",
   authUid: "account-one",
 }));
@@ -51,9 +63,81 @@ beforeEach(() => {
     used_runs: 0,
     remaining_runs: 25,
   });
+  mock.xConsents.mockResolvedValue([]);
+  mock.redditConsents.mockResolvedValue([]);
   mock.job.mockReturnValue(new Promise(() => {}));
+  mock.plan.mockReturnValue(new Promise(() => {}));
+  mock.identityReviews.mockResolvedValue([]);
 });
 describe("research workbench", () => {
+  it("keeps account panels distinct when submitting the reported founder prompt", async () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    mock.submit.mockResolvedValue({
+      id: "run-founder",
+      status: "accepted",
+      workspace_id: "w1",
+    });
+    mock.job.mockResolvedValue({
+      id: "run-founder",
+      workspace_id: "w1",
+      state: "completed",
+      stage: null,
+      version: 2,
+      terminal_reason: null,
+      result_count: 1,
+    });
+    mock.results.mockResolvedValue({
+      job_id: "run-founder",
+      workspace_id: "w1",
+      state: "completed",
+      limitations: [],
+      results: [
+        {
+          id: "source-founder",
+          title: "Synthetic founder source",
+          url: "https://example.org/founder",
+          snippet: "Synthetic indexed reference",
+          source: "web",
+          provider: "exa_keyless",
+          evidence_kind: "search_snippet",
+          qualification: "unverified",
+          observed_at: "2026-10-18T00:00:00Z",
+          provenance: [],
+        },
+      ],
+    });
+    try {
+      render(<Workbench />);
+      const start = screen.getByRole("button", { name: "Start research" });
+      await waitFor(() => expect(start).toBeEnabled());
+      fireEvent.change(
+        screen.getByRole("textbox", { name: "Research prompt" }),
+        {
+          target: {
+            value:
+              "Find fintech founders in Bengaluru. Prioritise companies hiring engineers.",
+          },
+        },
+      );
+      fireEvent.click(start);
+      expect(await screen.findByText("Research complete")).toBeVisible();
+      expect(await screen.findByText("Synthetic founder source")).toBeVisible();
+      expect(
+        screen.getByRole("button", { name: "Download sources as CSV" }),
+      ).toBeVisible();
+      expect(
+        screen.getByRole("button", { name: "Download sources as JSON" }),
+      ).toBeVisible();
+      expect(mock.submit).toHaveBeenCalledTimes(1);
+      expect(
+        errors.mock.calls.filter((call) =>
+          String(call[0]).includes("same key"),
+        ),
+      ).toEqual([]);
+    } finally {
+      errors.mockRestore();
+    }
+  });
   it("offers prompt-first empty state without fake results", async () => {
     render(<Workbench />);
     expect(
@@ -77,6 +161,47 @@ describe("research workbench", () => {
     expect(
       screen.getByText(/Start a research run to discover sources/),
     ).toBeVisible();
+  });
+  it("offers direct X as an optional source only after the owner connection is active", async () => {
+    mock.allowance.mockResolvedValue({
+      workspace_id: "w1",
+      tier: "trial",
+      enabled: true,
+      can_manage: true,
+      run_limit: 25,
+      result_cap: 25,
+      source_cap: 3,
+      result_limit: 25,
+      source_limit: 3,
+      used_runs: 0,
+      remaining_runs: 25,
+    });
+    mock.xConsents.mockResolvedValue([
+      {
+        consent_id: "11111111-1111-4111-8111-111111111111",
+        connection_id: "33333333-3333-4333-8333-333333333333",
+        state: "active",
+        expires_at: "2099-01-01T00:00:00Z",
+        access_expires_at: "2099-01-01T00:00:00Z",
+        access_state: "active",
+        remote_revocation: "not_performed",
+      },
+    ]);
+    render(<Workbench />);
+    await waitFor(() => expect(mock.xConsents).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole("button", { name: "3 sources" }));
+    const x = screen.getByLabelText(/X/);
+    expect(x).toBeEnabled();
+    fireEvent.click(x);
+    expect(x).toBeChecked();
+  });
+  it("keeps indexed Reddit enabled when no direct Reddit account is connected", async () => {
+    render(<Workbench />);
+    await waitFor(() => expect(mock.redditConsents).not.toHaveBeenCalled());
+    fireEvent.click(screen.getByRole("button", { name: "3 sources" }));
+    const reddit = screen.getByRole("checkbox", { name: /Reddit/ });
+    expect(reddit).toBeEnabled();
+    expect(reddit).toBeChecked();
   });
   it("uses examples, optional sources and result controls in actual request", async () => {
     mock.submit.mockResolvedValue({ id: "run-1", status: "accepted" });

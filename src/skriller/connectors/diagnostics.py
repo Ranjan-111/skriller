@@ -40,6 +40,9 @@ def default_registry(
     *,
     youtube_image: str | None = None,
     x_image: str | None = None,
+    reddit_image: str | None = None,
+    linkedin_image: str | None = None,
+    social_image: str | None = None,
     database=None,
     connection_store=None,
 ) -> ConnectorRegistry:
@@ -50,6 +53,40 @@ def default_registry(
     from skriller.connectors.youtube_executor import ConcreteYouTubeExecutor, public_youtube_binding
 
     registry = ConnectorRegistry(workspace_id)
+    if linkedin_image and database is not None and connection_store is not None:
+        from skriller.connectors.linkedin_executor import (
+            ConcreteLinkedInExecutor,
+            linkedin_read_binding,
+            public_linkedin_binding,
+        )
+
+        registry.register_adapter(
+            public_linkedin_binding(
+                ConcreteLinkedInExecutor(linkedin_image), database=database, store=connection_store
+            )
+        )
+        registry.register_adapter(
+            linkedin_read_binding(
+                ConcreteLinkedInExecutor(linkedin_image), database=database, store=connection_store
+            )
+        )
+    if social_image and database is not None and connection_store is not None:
+        from skriller.connectors.social_executor import (
+            ConcreteSocialExecutor,
+            social_binding,
+        )
+
+        for source in ("instagram", "facebook"):
+            for operation in ("discover", "read"):
+                registry.register_adapter(
+                    social_binding(
+                        source,
+                        ConcreteSocialExecutor(source, social_image),
+                        database=database,
+                        store=connection_store,
+                        operation=operation,
+                    )
+                )
     registry.register_adapter(public_github_binding())
     registry.register_adapter(public_rss_binding())
     registry.register_adapter(
@@ -61,6 +98,23 @@ def default_registry(
         registry.register_adapter(
             public_x_binding(ConcreteXExecutor(x_image), database=database, store=connection_store)
         )
+    if reddit_image and database is not None and connection_store is not None:
+        from skriller.connectors.reddit_executor import (
+            ConcreteRedditExecutor,
+            public_reddit_binding,
+            reddit_read_binding,
+        )
+
+        registry.register_adapter(
+            public_reddit_binding(
+                ConcreteRedditExecutor(reddit_image), database=database, store=connection_store
+            )
+        )
+        registry.register_adapter(
+            reddit_read_binding(
+                ConcreteRedditExecutor(reddit_image), database=database, store=connection_store
+            )
+        )
     return registry
 
 
@@ -71,6 +125,9 @@ def diagnose(
     search_enabled: bool = True,
     youtube_image: str | None = None,
     x_image: str | None = None,
+    reddit_image: str | None = None,
+    linkedin_image: str | None = None,
+    social_image: str | None = None,
     database=None,
     connection_store=None,
 ) -> list[SourceDiagnostic]:
@@ -80,29 +137,57 @@ def diagnose(
         UUID(scope(session)),
         youtube_image=youtube_image,
         x_image=x_image,
+        reddit_image=reddit_image,
+        linkedin_image=linkedin_image,
+        social_image=social_image,
         database=database,
         connection_store=connection_store,
     )
     if str(registry.workspace_id) != scope(session):
         raise ValueError("Diagnostic registry belongs to another workspace")
-    if x_image and database is not None and connection_store is not None:
-        from skriller.connections.tables import connections
+    connected: set[Source] = set()
+    social_discover: set[Source] = set()
+    configured: tuple[tuple[Source, str | None], ...] = (
+        ("x", x_image),
+        ("reddit", reddit_image),
+        ("linkedin", linkedin_image),
+        ("instagram", social_image),
+        ("facebook", social_image),
+    )
+    for source, image in configured:
+        if image and database is not None and connection_store is not None:
+            from skriller.connections.tables import connections
 
-        rows = (
-            session.execute(
-                sa.select(connections.c.scopes).where(
-                    connections.c.workspace_id == scope(session),
-                    connections.c.source == "x",
-                    connections.c.auth_kind == "oauth",
-                    connections.c.state == "active",
-                    connections.c.expires_at > sa.func.clock_timestamp(),
+            rows = (
+                session.execute(
+                    sa.select(connections.c.scopes).where(
+                        connections.c.workspace_id == scope(session),
+                        connections.c.source == source,
+                        connections.c.auth_kind
+                        == (
+                            "session"
+                            if source in {"linkedin", "instagram", "facebook"}
+                            else "oauth"
+                        ),
+                        connections.c.state == "active",
+                        connections.c.expires_at > sa.func.clock_timestamp(),
+                        *(
+                            [connections.c.created_by == session.info["actor_id"]]
+                            if source in {"linkedin", "instagram", "facebook"}
+                            else []
+                        ),
+                    )
                 )
+                .scalars()
+                .all()
             )
-            .scalars()
-            .all()
-        )
-        if any({"read", "discover"} <= set(value) for value in rows):
-            registry.connected_sources = frozenset({"x"})
+            if any({"read", "discover"} <= set(value) for value in rows):
+                connected.add(source)
+                if source in {"instagram", "facebook"}:
+                    social_discover.add(source)
+            elif source in {"instagram", "facebook"} and any("read" in value for value in rows):
+                connected.add(source)
+    registry.connected_sources = registry.connected_sources | frozenset(connected)
     disabled = disabled_operations(session)
     results = []
     for source in get_args(Source):
@@ -118,6 +203,13 @@ def diagnose(
             ]
             try:
                 capability = registry.capability(source, operation)
+                if (
+                    social_image
+                    and source in {"instagram", "facebook"}
+                    and operation == "discover"
+                    and source not in social_discover
+                ):
+                    capability.operational_status = "needs_connection"
                 evidence_scope: Literal["public_indexed_references", "dedicated_adapter"] = (
                     "dedicated_adapter"
                 )

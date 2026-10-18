@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "dimension": "prompt_planning",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_local_ollama",
+  "model": "llama3.2:3b",
+  "recorded_at": "2026-10-17T23:17:04.554354+00:00",
+  "case_denominator": 5,
+  "case_assertions_passed": 2,
+  "actual_model_calls": 5,
+  "source_calls": 0,
+  "release_gate_passed": false,
+  "release_prompt_target": 50,
+  "scope": "Five synthetic development checks using the declared per-case assertions, not a full-plan recall metric. Incomplete and failed cases remain in the denominator. No source, extraction, identity or pilot-quality claim.",
+  "corpus_and_labels_sha256": "86dfeada1fd2cddde2c7cecec0ba00475ce891d5d1c08283694e4f6811b249c4",
+  "implementation_sha256": {
+    "src/skriller/research/planner.py": "a78bcb716647ebfb86529c0a603d2a06db83d5be346e02bad743c608b7ee0c46",
+    "src/skriller/extraction/models.py": "670c987eefb07a3a7d9a197d2f5e0c78af880e9a28c8fca92a41c494a35b5c91"
+  },
+  "cases": [
+    {
+      "id": "location-exclusion-preference",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\",\n  \"rules\": [\n    {\n      \"group\": \"must_have\",\n      \"field\": \"location\",\n      \"operator\": \"eq\",\n      \"value\": \"Bengaluru\",\n      \"quote\": \"based in Bengaluru\"\n    },\n    {\n      \"group\": \"preference\",\n      \"field\": \"company_type\",\n      \"operator\": \"eq\",\n      \"value\": \"Company\",\n      \"quote\": \"companies hiring engineers\"\n    },\n    {\n      \"group\": \"exclude\",\n      \"field\": \"company_name\",\n      \"operator\": \"contains\",\n      \"value\": \"agency\",\n      \"quote\": \"agencies\"\n    }\n  ],\n  \"sources\": [],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 315,
+        "output_tokens": 172,
+        "total_tokens": 487
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "ungrounded_value"
+    },
+    {
+      "id": "company-geography-industry",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"fintech industry\",\n  \"rules\": [\n    {\n      \"group\": \"must_have\",\n      \"field\": \"industry\",\n      \"operator\": \"eq\",\n      \"value\": \"fintech\",\n      \"quote\": \"fintech industry\"\n    },\n    {\n      \"group\": \"preference\",\n      \"field\": \"location\",\n      \"operator\": \"contains\",\n      \"value\": \"Paris\",\n      \"quote\": \"headquartered in Paris\"\n    }\n  ],\n  \"sources\": [],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 309,
+        "output_tokens": 132,
+        "total_tokens": 441
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "preference_missing_cue"
+    },
+    {
+      "id": "numeric-minimum",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"agencies\",\n  \"rules\": [\n    {\n      \"group\": \"must_have\",\n      \"field\": \"employee_count\",\n      \"operator\": \"gte\",\n      \"value\": \"25\",\n      \"quote\": \"companies with at least 25 employees\"\n    },\n    {\n      \"group\": \"exclude\",\n      \"field\": \"company_type\",\n      \"operator\": \"eq\",\n      \"value\": \"agencies\",\n      \"quote\": \"Exclude agencies\"\n    }\n  ],\n  \"sources\": [],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 310,
+        "output_tokens": 132,
+        "total_tokens": 442
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [
+          {
+            "field": "employee_count",
+            "operator": "gte",
+            "value": 25.0
+          }
+        ],
+        "preferences": [],
+        "exclusions": [
+          {
+            "field": "company_type",
+            "operator": "eq",
+            "value": "agencies"
+          }
+        ],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": true,
+        "clarification": true,
+        "must_have": true,
+        "exclusions": false,
+        "preferences": true,
+        "sources": true,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "private-output",
+      "outcome": "passed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\"\n}\n ",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 305,
+        "output_tokens": 21,
+        "total_tokens": 326
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [
+          "private email"
+        ],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    },
+    {
+      "id": "ambiguous-location",
+      "outcome": "passed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\",\n  \"rules\": [\n    {\n      \"group\": \"must_have\",\n      \"field\": \"location\",\n      \"operator\": \"eq\",\n      \"value\": \"London\",\n      \"quote\": \"companies in London\"\n    }\n  ],\n  \"sources\": [],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 305,
+        "output_tokens": 84,
+        "total_tokens": 389
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Should location refer to the person or the company headquarters?",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    }
+  ]
+}

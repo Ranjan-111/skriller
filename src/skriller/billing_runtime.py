@@ -12,6 +12,7 @@ import uvicorn
 from agent_reach.utils.paths import read_small_text_no_follow
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
+from skriller.billing.checkout import CheckoutConfiguration
 from skriller.billing.runtime import ProviderConfiguration, create_ingress, run_once
 
 
@@ -37,10 +38,20 @@ class Endpoint(BaseModel):
         )
 
 
+class CheckoutSettings(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    firebase_project_id: str
+    return_origin: str
+
+    def configuration(self):
+        return CheckoutConfiguration(self.firebase_project_id, self.return_origin)
+
+
 class Configuration(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     operator_database_url: SecretStr
     endpoints: list[Endpoint] = Field(min_length=1, max_length=8)
+    checkout: CheckoutSettings | None = None
 
 
 def read_configuration(path):
@@ -55,6 +66,8 @@ def read_configuration(path):
         if url.get_backend_name() != "postgresql" or not url.host or not url.database:
             raise ValueError
         endpoints = tuple(endpoint.configuration() for endpoint in config.endpoints)
+        if config.checkout:
+            config.checkout.configuration()
         if len({(endpoint.provider, endpoint.scope) for endpoint in endpoints}) != len(endpoints):
             raise ValueError
         return config, endpoints
@@ -97,7 +110,11 @@ def main():
             print(json.dumps({"plans": receipts}))
         elif args.mode == "serve":
             uvicorn.run(
-                create_ingress(engine, endpoints),
+                create_ingress(
+                    engine,
+                    endpoints,
+                    checkout=config.checkout.configuration() if config.checkout else None,
+                ),
                 host=args.host,
                 port=args.port,
                 access_log=False,

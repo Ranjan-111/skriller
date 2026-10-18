@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ExternalLink, RefreshCw } from "lucide-react";
 import {
+  ApiError,
   safeSourceUrl,
   type createApi,
   type IdentityReview,
@@ -14,10 +15,19 @@ import {
   type JobUsage,
   type SourceDiagnostic,
   type ResearchCandidate,
+  type ConnectionMetadata,
+  type RebindOptions,
+  type RebindSelection,
+  type RedditThreadView,
+  type LinkedInReadView,
+  type SocialReadView,
   type YouTubeView,
+  type RoleReviewInput,
+  type RoleReviewView,
 } from "../lib/api";
 
 import { downloadSources, SOURCE_EXPORT_LIMIT } from "../lib/exports";
+import { QualifiedExportPanel } from "./qualified-export-panel";
 import { SavedListsPanel } from "./saved-lists-panel";
 import { CrmDeliveryPanel } from "./crm-delivery-panel";
 import { FollowupPanel } from "./followup-panel";
@@ -261,6 +271,233 @@ function IdentityReviewPanel({
   );
 }
 
+function CheckpointRebindPanel({
+  api,
+  jobId,
+  workspaceId,
+  onResumed,
+}: {
+  api: ReturnType<typeof createApi>;
+  jobId: string;
+  workspaceId: string;
+  onResumed: () => void;
+}) {
+  const [options, setOptions] = useState<RebindOptions | null>(null);
+  const [connections, setConnections] = useState<ConnectionMetadata[]>([]);
+  const [source, setSource] = useState<"linkedin" | "reddit" | "">("");
+  const [replacement, setReplacement] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const retryRequest = useRef<{
+    selection: RebindSelection;
+    key: string;
+  } | null>(null);
+
+  async function loadChoices() {
+    setLoading(true);
+    setError("");
+    setSuccess("");
+    try {
+      const [savedOptions, metadata] = await Promise.all([
+        api.rebindOptions(jobId, workspaceId),
+        api.connections(workspaceId),
+      ]);
+      setOptions(savedOptions);
+      setConnections(metadata);
+      setSource("");
+      setReplacement("");
+      setConfirmed(false);
+      retryRequest.current = null;
+      if (savedOptions.options.length === 0)
+        setError(
+          "No supported pending connection replacement is available. Keep these results and start a new run or ask an owner to review the checkpoint.",
+        );
+    } catch (failure) {
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Connection choices could not be verified. Saved results remain available.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const sourceOption = options?.options.find((item) => item.source === source);
+  const replacementChoices = connections.filter(
+    (item) =>
+      !!sourceOption &&
+      item.source === sourceOption.source &&
+      item.state === "active" &&
+      Date.parse(item.expires_at) > Date.now() &&
+      item.scopes.includes("read") &&
+      (item.source !== "linkedin" || item.auth_kind === "session") &&
+      (item.source !== "reddit" || item.auth_kind === "oauth") &&
+      item.id !== sourceOption.previous_connection_ref,
+  );
+
+  async function submit() {
+    if (!sourceOption || !replacement || !confirmed) return;
+    if (!retryRequest.current) {
+      retryRequest.current = {
+        key: globalThis.crypto.randomUUID(),
+        selection: {
+          source: sourceOption.source,
+          entity_ids: [...sourceOption.entity_ids],
+          expected_job_version: options!.job_version,
+          previous_connection_ref: sourceOption.previous_connection_ref,
+          replacement_connection_ref: replacement,
+        },
+      };
+    }
+    setSubmitting(true);
+    setError("");
+    setSuccess("");
+    try {
+      const snapshot = await api.rebindAndResume(
+        jobId,
+        workspaceId,
+        retryRequest.current.selection,
+        retryRequest.current.key,
+      );
+      retryRequest.current = null;
+      setSuccess(
+        `Replacement confirmed. The run is ${snapshot.state.replaceAll("_", " ")}.`,
+      );
+      onResumed();
+    } catch (failure) {
+      const status =
+        failure && typeof failure === "object" && "status" in failure
+          ? Number(failure.status)
+          : undefined;
+      if (status === 409) {
+        retryRequest.current = null;
+        setOptions(null);
+        setConfirmed(false);
+        setError(
+          "The checkpoint changed. Review the current choices and confirm again before retrying.",
+        );
+      } else {
+        setError(
+          failure instanceof Error
+            ? `${failure.message} You can retry the same confirmed request safely.`
+            : "The replacement was not confirmed. Retry the same confirmed request or check the run.",
+        );
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <details className="candidate-provenance checkpoint-rebind">
+      <summary>Replace source access for pending reads</summary>
+      <p className="candidate-meta">
+        This owner-only action changes access for the listed, undispatched
+        LinkedIn or Reddit reads and resumes this existing run. It does not
+        validate provider authorization. Your saved results stay available.
+      </p>
+      {!options && (
+        <button
+          className="text-button"
+          type="button"
+          disabled={loading}
+          onClick={() => void loadChoices()}
+        >
+          {loading ? "Loading owner choices…" : "Review connection choices"}
+        </button>
+      )}
+      {options && options.options.length > 0 && (
+        <div>
+          <label>
+            Source to resume
+            <select
+              value={source}
+              disabled={submitting}
+              onChange={(event) => {
+                setSource(event.target.value as "linkedin" | "reddit" | "");
+                setReplacement("");
+                setConfirmed(false);
+                retryRequest.current = null;
+              }}
+            >
+              <option value="">Choose a source</option>
+              {options.options.map((item) => (
+                <option key={item.source} value={item.source}>
+                  {item.source === "linkedin" ? "LinkedIn" : "Reddit"} (
+                  {item.entity_ids.length} pending read
+                  {item.entity_ids.length === 1 ? "" : "s"})
+                </option>
+              ))}
+            </select>
+          </label>
+          {sourceOption && (
+            <label>
+              Active replacement connection
+              <select
+                value={replacement}
+                disabled={submitting}
+                onChange={(event) => {
+                  setReplacement(event.target.value);
+                  setConfirmed(false);
+                  retryRequest.current = null;
+                }}
+              >
+                <option value="">Choose a connection</option>
+                {replacementChoices.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.auth_kind} · expires{" "}
+                    {new Date(item.expires_at).toLocaleDateString()}
+                  </option>
+                ))}
+              </select>
+              {replacementChoices.length === 0 && (
+                <span role="status">
+                  No other active connection is available for this source.
+                </span>
+              )}
+            </label>
+          )}
+          {sourceOption && replacement && (
+            <label className="candidate-meta">
+              <input
+                type="checkbox"
+                checked={confirmed}
+                disabled={submitting}
+                onChange={(event) => {
+                  setConfirmed(event.target.checked);
+                  retryRequest.current = null;
+                }}
+              />
+              I understand this replaces access for{" "}
+              {sourceOption.entity_ids.length} pending {sourceOption.source}{" "}
+              read{sourceOption.entity_ids.length === 1 ? "" : "s"} and resumes
+              this run.
+            </label>
+          )}
+          <button
+            className="text-button"
+            type="button"
+            disabled={submitting || !sourceOption || !replacement || !confirmed}
+            onClick={() => void submit()}
+          >
+            {submitting
+              ? "Applying confirmed change…"
+              : retryRequest.current
+                ? "Retry same confirmed request"
+                : "Replace access and resume"}
+          </button>
+        </div>
+      )}
+      {error && <p role="alert">{error}</p>}
+      {success && <p role="status">{success}</p>}
+    </details>
+  );
+}
+
 const finished = new Set([
   "completed",
   "partial",
@@ -473,6 +710,351 @@ function CandidateFit({
   );
 }
 
+type RolePair = {
+  role: string;
+  date: string;
+  evidence: string;
+  value: string;
+  dateValue: string;
+  quote: string;
+};
+function rolePairs(candidate: ResearchCandidate): RolePair[] {
+  const observations = candidate.extraction?.observations ?? [];
+  const roles = observations.filter(
+    (item) =>
+      ["job_title", "current_role"].includes(item.field) &&
+      typeof item.value === "string",
+  );
+  const dates = observations.filter(
+    (item) =>
+      item.field === "role_effective_date" &&
+      typeof item.value === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(item.value),
+  );
+  const pairs: RolePair[] = [];
+  for (const role of roles)
+    for (const date of dates) {
+      const shared = (role.evidence_ids ?? []).filter((id) =>
+        (date.evidence_ids ?? []).includes(id),
+      );
+      for (const evidence of shared)
+        pairs.push({
+          role: role.claim_id,
+          date: date.claim_id,
+          evidence,
+          value: String(role.value),
+          dateValue: String(date.value),
+          quote: role.quote,
+        });
+    }
+  return pairs.slice(0, 12);
+}
+
+export function OwnerRoleReview({
+  api,
+  workspaceId,
+  candidate,
+  onRefresh,
+}: {
+  api: ReturnType<typeof createApi>;
+  workspaceId: string;
+  candidate: ResearchCandidate;
+  onRefresh: (signal?: AbortSignal) => Promise<void>;
+}) {
+  const profile =
+    candidate.source === "linkedin" &&
+    candidate.provider === "linkedin_mcp" &&
+    candidate.linkedin_read?.resource.resource_kind === "profile";
+  const pairs = profile ? rolePairs(candidate) : [];
+  const [previousIndex, setPreviousIndex] = useState("");
+  const [replacementIndex, setReplacementIndex] = useState("");
+  const [preview, setPreview] = useState<RoleReviewView | null>(null);
+  const [sameSubject, setSameSubject] = useState(false);
+  const [personSubject, setPersonSubject] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const operations = useRef<AbortController | null>(null);
+  const pending = useRef(false);
+  useEffect(() => {
+    const controller = new AbortController();
+    operations.current = controller;
+    pending.current = false;
+    setPreviousIndex("");
+    setReplacementIndex("");
+    setPreview(null);
+    setSameSubject(false);
+    setPersonSubject(false);
+    setBusy(false);
+    setError("");
+    setSuccess("");
+    return () => controller.abort();
+  }, [api, candidate, workspaceId]);
+  if (!profile || pairs.length < 2) return null;
+  const makeReference = (index: string): RoleReviewInput["previous"] | null => {
+    if (!/^(0|[1-9]\d*)$/.test(index)) return null;
+    const pair = pairs[Number(index)];
+    return pair
+      ? {
+          role_claim_id: pair.role,
+          date_claim_id: pair.date,
+          evidence_id: pair.evidence,
+        }
+      : null;
+  };
+  const selectedPrevious = makeReference(previousIndex);
+  const selectedReplacement = makeReference(replacementIndex);
+  async function loadPreview() {
+    const controller = operations.current;
+    if (
+      !controller ||
+      controller.signal.aborted ||
+      pending.current ||
+      !selectedPrevious ||
+      !selectedReplacement ||
+      previousIndex === replacementIndex
+    )
+      return;
+    pending.current = true;
+    setBusy(true);
+    setError("");
+    setSuccess("");
+    setPreview(null);
+    setSameSubject(false);
+    setPersonSubject(false);
+    try {
+      const value = await api.previewRoleReview(
+        workspaceId,
+        {
+          entity_id: candidate.id,
+          previous: selectedPrevious,
+          replacement: selectedReplacement,
+        },
+        candidate.url,
+        controller.signal,
+      );
+      if (controller.signal.aborted) return;
+      setPreview(value);
+    } catch (failure) {
+      if (controller.signal.aborted) return;
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Unable to preview this role review.",
+      );
+      if (failure instanceof ApiError && failure.status === 409) {
+        try {
+          await onRefresh(controller.signal);
+        } catch {
+          /* Retain visible results. */
+        }
+      }
+    } finally {
+      if (!controller.signal.aborted) {
+        pending.current = false;
+        setBusy(false);
+      }
+    }
+  }
+  async function approve() {
+    const controller = operations.current;
+    if (
+      !controller ||
+      controller.signal.aborted ||
+      pending.current ||
+      !preview ||
+      !selectedPrevious ||
+      !selectedReplacement ||
+      !sameSubject ||
+      (preview.requires_person_confirmation && !personSubject)
+    )
+      return;
+    pending.current = true;
+    setBusy(true);
+    setError("");
+    setSuccess("");
+    try {
+      await api.approveRoleReview(
+        workspaceId,
+        {
+          entity_id: candidate.id,
+          previous: selectedPrevious,
+          replacement: selectedReplacement,
+          expected_review_hash: preview.review_hash,
+          same_subject_confirmed: true,
+          person_subject_confirmed: preview.requires_person_confirmation
+            ? true
+            : false,
+        },
+        controller.signal,
+      );
+      if (controller.signal.aborted) return;
+      setPreview(null);
+      setSameSubject(false);
+      setPersonSubject(false);
+      await onRefresh(controller.signal);
+      if (controller.signal.aborted) return;
+      setSuccess(
+        "Role chronology reviewed. Current fit and saved evidence have been refreshed.",
+      );
+    } catch (failure) {
+      if (controller.signal.aborted) return;
+      const message =
+        failure instanceof Error
+          ? failure.message
+          : "The role review response was unclear. Check current results before continuing.";
+      setError(message + " Load a fresh preview before confirming again.");
+      // A conflict or lost/invalid response may follow a committed classification. Never replay its old review hash.
+      setPreview(null);
+      setSameSubject(false);
+      setPersonSubject(false);
+      if (!(failure instanceof ApiError && failure.status === 403)) {
+        try {
+          await onRefresh(controller.signal);
+        } catch {
+          /* Keep current result details visible if refresh fails. */
+        }
+      }
+    } finally {
+      if (!controller.signal.aborted) {
+        pending.current = false;
+        setBusy(false);
+      }
+    }
+  }
+  const prior = preview?.previous;
+  const replacement = preview?.replacement;
+  return (
+    <details className="candidate-provenance owner-role-review">
+      <summary>Review saved LinkedIn role chronology</summary>
+      <p className="candidate-meta">
+        Choose two existing role and date observations from this saved profile.
+        They remain unverified until you review the exact source evidence. This
+        does not verify identity or link other platforms.
+      </p>
+      <label>
+        Earlier role and date{" "}
+        <select
+          aria-label="Earlier role and date"
+          value={previousIndex}
+          disabled={busy}
+          onChange={(event) => {
+            setPreviousIndex(event.target.value);
+            setPreview(null);
+          }}
+        >
+          <option value="">Choose an observation</option>
+          {pairs.map((pair, index) => (
+            <option
+              value={index}
+              key={`${pair.role}:${pair.date}:${pair.evidence}:earlier`}
+            >
+              {pair.value} · {pair.dateValue} · {pair.quote.slice(0, 100)}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Later role and date{" "}
+        <select
+          aria-label="Later role and date"
+          value={replacementIndex}
+          disabled={busy}
+          onChange={(event) => {
+            setReplacementIndex(event.target.value);
+            setPreview(null);
+          }}
+        >
+          <option value="">Choose an observation</option>
+          {pairs.map((pair, index) => (
+            <option
+              value={index}
+              key={`${pair.role}:${pair.date}:${pair.evidence}:later`}
+            >
+              {pair.value} · {pair.dateValue} · {pair.quote.slice(0, 100)}
+            </option>
+          ))}
+        </select>
+      </label>
+      <button
+        className="text-button"
+        type="button"
+        disabled={
+          busy ||
+          !selectedPrevious ||
+          !selectedReplacement ||
+          previousIndex === replacementIndex
+        }
+        onClick={() => void loadPreview()}
+      >
+        {busy ? "Loading review…" : "Preview role change"}
+      </button>
+      {preview && prior && replacement && (
+        <section aria-label="Role review preview">
+          <h5>
+            {preview.subject_name || candidate.title} · saved profile role
+            chronology
+          </h5>
+          {[prior, replacement].map((source, index) => (
+            <blockquote key={source.role_claim_id}>
+              <strong>
+                {index === 0 ? "Earlier" : "Later"}: {source.role} ·{" "}
+                {source.effective_date}
+              </strong>
+              <p>{source.excerpt}</p>
+              <a
+                href={safeSourceUrl(source.source_url) ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open saved source
+              </a>
+            </blockquote>
+          ))}
+          <label>
+            <input
+              type="checkbox"
+              checked={sameSubject}
+              onChange={(event) => setSameSubject(event.target.checked)}
+            />{" "}
+            I reviewed this evidence and confirm both roles describe the same
+            subject.
+          </label>
+          {preview.requires_person_confirmation && (
+            <label>
+              <input
+                type="checkbox"
+                checked={personSubject}
+                onChange={(event) => setPersonSubject(event.target.checked)}
+              />{" "}
+              I separately confirm the original LinkedIn profile represents a
+              person.
+            </label>
+          )}
+          <p className="candidate-meta">
+            The source identity remains unverified; role review does not
+            validate the profile owner, contact details, or intent.
+          </p>
+          <button
+            className="text-button"
+            type="button"
+            disabled={
+              busy ||
+              !sameSubject ||
+              (preview.requires_person_confirmation && !personSubject)
+            }
+            onClick={() => void approve()}
+          >
+            {busy ? "Applying reviewed change…" : "Confirm role chronology"}
+          </button>
+        </section>
+      )}
+      {error && <p role="alert">{error}</p>}
+      {success && <p role="status">{success}</p>}
+    </details>
+  );
+}
+
 function YouTubeEvidence({
   api,
   jobId,
@@ -663,16 +1245,244 @@ function YouTubeEvidence({
   );
 }
 
+function RedditThreadEvidence({ view }: { view: RedditThreadView }) {
+  const { thread } = view;
+  const parentDepth = new Map<string, number>([[thread.post.native_id, 0]]);
+  const commentDepth = thread.comments.map((comment) => {
+    const depth = Math.min((parentDepth.get(comment.parent_id) ?? 0) + 1, 6);
+    parentDepth.set(comment.native_id, depth);
+    return depth;
+  });
+  const formatDate = (date: string | null) =>
+    date ? new Date(date).toLocaleString() : "Date unavailable";
+  const postUrl = safeSourceUrl(thread.post.source_url);
+
+  return (
+    <details className="reddit-thread-evidence candidate-provenance">
+      <summary>
+        Reddit post and comments ({thread.comments.length} retained)
+      </summary>
+      <p className="candidate-meta">
+        Directly read public thread content. Handles are unverified; this
+        evidence does not establish a person, company, buyer, or buying intent.
+      </p>
+      <section aria-label="Reddit post">
+        <h5>
+          {postUrl ? (
+            <a href={postUrl} target="_blank" rel="noopener noreferrer">
+              {thread.post.title || "Untitled Reddit post"}
+              <ExternalLink size={14} aria-hidden="true" />
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          ) : (
+            thread.post.title || "Untitled Reddit post"
+          )}
+        </h5>
+        <p className="candidate-meta">
+          r/{thread.post.subreddit} · u/
+          {thread.post.author_handle ?? "author unavailable"} ·{" "}
+          {formatDate(thread.post.published_at)}
+        </p>
+        {thread.post.content_unavailable ? (
+          <p className="reddit-unavailable">
+            Post text unavailable (deleted or removed).
+          </p>
+        ) : (
+          <p className="reddit-body">
+            {thread.post.excerpt || "No post text was retained."}
+            {thread.post.truncated ? "… (post excerpt shortened)" : ""}
+          </p>
+        )}
+      </section>
+      {view.signals && view.signals.length > 0 && (
+        <section aria-label="Quoted problem signals">
+          <h5>Quoted problem signals</h5>
+          <p className="candidate-meta">
+            These exact quotes are source-specific and unverified. They do not
+            indicate buying intent.
+          </p>
+          <ul>
+            {view.signals.map((signal, index) => (
+              <li key={`${signal.resource_id}:${index}`}>
+                <blockquote className="reddit-quote">
+                  <p>{signal.quote}</p>
+                  <footer>
+                    {signal.resource_id} · {formatDate(signal.published_at)} ·{" "}
+                    <a
+                      href={safeSourceUrl(signal.source_url) ?? undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open quoted source
+                    </a>
+                  </footer>
+                </blockquote>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {thread.comments.length > 0 && (
+        <section aria-label="Reddit comments">
+          <h5>Comments</h5>
+          <ol className="reddit-comments">
+            {thread.comments.map((comment, index) => (
+              <li
+                key={comment.native_id}
+                style={{
+                  marginInlineStart: `${Math.max(0, commentDepth[index] - 1) * 12}px`,
+                }}
+              >
+                <p className="candidate-meta">
+                  {comment.author_handle
+                    ? `u/${comment.author_handle} · handle not verified`
+                    : "Author unavailable"}{" "}
+                  · {formatDate(comment.published_at)} · replies to{" "}
+                  {comment.parent_id}
+                </p>
+                {comment.content_unavailable ? (
+                  <p className="reddit-unavailable">
+                    Comment text unavailable (deleted or removed).
+                  </p>
+                ) : (
+                  <p className="reddit-body">
+                    {comment.text || "No comment text was retained."}
+                    {comment.truncated ? "… (comment shortened)" : ""}
+                  </p>
+                )}
+                <a
+                  href={safeSourceUrl(comment.source_url) ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open comment
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+      {(thread.omitted_comments > 0 ||
+        thread.unexpanded_nodes > 0 ||
+        !thread.coverage_complete) && (
+        <p className="candidate-meta" role="status">
+          Partial thread coverage: {thread.omitted_comments} comments omitted ·{" "}
+          {thread.unexpanded_nodes} reply groups unexpanded.
+        </p>
+      )}
+      {view.rejected_signals > 0 && (
+        <p className="candidate-meta" role="status">
+          {view.rejected_signals} unsupported quote
+          {view.rejected_signals === 1 ? "" : "s"} omitted.
+        </p>
+      )}
+      {view.signal_failure_code && (
+        <p className="candidate-meta" role="status">
+          Problem-signal extraction unavailable (
+          {view.signal_failure_code.replaceAll("_", " ")}).
+        </p>
+      )}
+    </details>
+  );
+}
+
+function SocialReadEvidence({ view }: { view: SocialReadView }) {
+  const { resource } = view;
+  const instagram = resource.source === "instagram";
+  return (
+    <details className="reddit-thread-evidence candidate-provenance">
+      <summary>
+        {instagram
+          ? "Instagram public profile read"
+          : "Facebook profile header read"}
+      </summary>
+      <p className="candidate-meta">
+        Collected {new Date(resource.observed_at).toLocaleString()}. Coverage is
+        partial and the subject’s identity is unverified.
+      </p>
+      <p>{resource.name || resource.username}</p>
+      {resource.source === "instagram" ? (
+        <>
+          <p className="reddit-body">
+            {resource.bio_excerpt || "No biography excerpt available."}
+          </p>
+          <p className="candidate-meta">
+            Followers: {resource.followers ?? "Unknown"} · Following:{" "}
+            {resource.following ?? "Unknown"} · Posts:{" "}
+            {resource.posts ?? "Unknown"}
+          </p>
+          <p className="candidate-meta">
+            Account type is unknown. Owner analytics are unavailable.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="candidate-meta">
+            Followers shown: {resource.followers_display ?? "Unknown"} · Friends
+            shown: {resource.friends_display ?? "Unknown"}
+          </p>
+          <p className="candidate-meta">
+            Visibility and company identity are unknown. Group access is
+            unavailable. Displayed counts retain the source’s wording.
+          </p>
+        </>
+      )}
+    </details>
+  );
+}
+
+function LinkedInReadEvidence({ view }: { view: LinkedInReadView }) {
+  const { resource } = view;
+  const sourceUrl = safeSourceUrl(resource.source_url);
+  const resourceLabel =
+    resource.resource_kind === "profile"
+      ? "Profile section"
+      : resource.resource_kind === "company"
+        ? "Company overview"
+        : "Post";
+  return (
+    <details className="reddit-thread-evidence candidate-provenance">
+      <summary>LinkedIn {resourceLabel.toLowerCase()} read</summary>
+      <p className="candidate-meta">
+        This is source text from one section. Coverage is partial; the subject’s
+        identity is unknown, contact details are unavailable, and buying intent
+        was not inferred.
+      </p>
+      <p className="candidate-meta">
+        Collected {new Date(resource.observed_at).toLocaleString()} ·{" "}
+        {resource.section.replaceAll("_", " ")}
+      </p>
+      <p className="reddit-body">
+        {resource.text}
+        {resource.text_truncated ? "… (section text shortened)" : ""}
+      </p>
+      {sourceUrl && (
+        <p className="candidate-meta">
+          <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+            Open the LinkedIn source{" "}
+            <ExternalLink size={13} aria-hidden="true" />
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        </p>
+      )}
+    </details>
+  );
+}
+
 export function ResearchResultsPanel({
   api,
   job,
   onExpanded,
   onClarification,
+  onRedditRefresh,
+  onEditPrompt,
 }: {
   api: ReturnType<typeof createApi>;
   job: ResearchJob;
   onExpanded?: (job: ResearchJob, prompt: string) => void;
   onClarification?: (job: ResearchJob) => void;
+  onRedditRefresh?: () => void;
+  onEditPrompt?: () => void;
 }) {
   const [run, setRun] = useState<ResearchRun | null>(null);
   const [results, setResults] = useState<ResearchResults | null>(null);
@@ -690,6 +1500,12 @@ export function ResearchResultsPanel({
   const [usage, setUsage] = useState<JobUsage | null>(null);
   const [usageError, setUsageError] = useState("");
   const [usageOpen, setUsageOpen] = useState(false);
+  const redditRefreshSent = useRef(false);
+  const notifyRedditRefresh = useCallback(() => {
+    if (redditRefreshSent.current) return;
+    redditRefreshSent.current = true;
+    onRedditRefresh?.();
+  }, [onRedditRefresh]);
   async function loadSourceReadiness() {
     if (!job.workspace_id) return;
     setSourceError("");
@@ -719,6 +1535,7 @@ export function ResearchResultsPanel({
         );
         if (controller.signal.aborted) return;
         setRun(snapshot);
+        if (finished.has(snapshot.state)) notifyRedditRefresh();
         if (
           snapshot.result_count !== lastCount ||
           finished.has(snapshot.state)
@@ -755,7 +1572,44 @@ export function ResearchResultsPanel({
       controller.abort();
       clearTimeout(timer);
     };
-  }, [api, job.id, job.workspace_id, retry]);
+  }, [api, job.id, job.workspace_id, retry, notifyRedditRefresh]);
+
+  useEffect(() => {
+    redditRefreshSent.current = false;
+  }, [job.id]);
+
+  useEffect(() => {
+    if (!job.workspace_id || finished.has(run?.state ?? job.status)) return;
+    const controller = new AbortController();
+    void (async () => {
+      try {
+        for await (const update of api.progressEvents(
+          { job_id: job.id, workspace_id: job.workspace_id ?? "" },
+          { signal: controller.signal },
+        )) {
+          if (controller.signal.aborted) return;
+          const event = update.data;
+          if (
+            event.kind === "source_access_renewed" &&
+            event.details.source === "reddit"
+          ) {
+            notifyRedditRefresh();
+            return;
+          }
+        }
+      } catch {
+        // Status polling remains the fallback when progress streaming is unavailable.
+      }
+    })();
+    return () => controller.abort();
+  }, [
+    api,
+    job.id,
+    job.workspace_id,
+    job.status,
+    run?.state,
+    notifyRedditRefresh,
+  ]);
 
   useEffect(() => {
     if (!job.workspace_id) return;
@@ -777,7 +1631,7 @@ export function ResearchResultsPanel({
         }
       });
     return () => controller.abort();
-  }, [api, job.id, job.workspace_id]);
+  }, [api, job.id, job.workspace_id, run?.state]);
 
   const state = run?.state ?? job.status;
   async function showSourceReadiness() {
@@ -851,69 +1705,132 @@ export function ResearchResultsPanel({
           ) : (
             <>
               <p>Interpretation status: {plan.status.replaceAll("_", " ")}</p>
-              {plan.interpretation.clarification && (
-                <p className="notice" role="status">
-                  {plan.interpretation.clarification}
-                </p>
-              )}
-              {plan.status === "clarification_required" && job.workspace_id && (
-                <ClarificationResponse
-                  api={api}
-                  jobId={job.id}
-                  workspaceId={job.workspace_id}
-                  question={
-                    plan.interpretation.clarification ??
-                    "Please clarify your research objective."
-                  }
-                  onStarted={onClarification}
-                />
-              )}
-              {(plan.interpretation.unsupported_criteria ?? []).length > 0 && (
-                <div>
-                  <h4>Criteria this run cannot evaluate</h4>
-                  <ul>
-                    {(plan.interpretation.unsupported_criteria ?? []).map(
-                      (item, index) => (
-                        <li key={`${index}-${item}`}>{item}</li>
-                      ),
-                    )}
-                  </ul>
+              {plan.status === "rejected" && plan.planning_failure && (
+                <div className="notice planning-failure" role="alert">
+                  <strong>
+                    {plan.planning_failure.reason === "invalid_interpretation"
+                      ? "This request could not be interpreted safely."
+                      : plan.planning_failure.reason === "model_unavailable"
+                        ? "The planning service is unavailable."
+                        : plan.planning_failure.reason === "budget_exhausted"
+                          ? "This run reached its planning limit."
+                          : "This run stopped before planning could finish."}
+                  </strong>
+                  <p>
+                    {plan.planning_failure.reason === "invalid_interpretation"
+                      ? "Review the prompt and make the people, companies, or evidence you want more specific."
+                      : plan.planning_failure.reason === "model_unavailable"
+                        ? "Check that the configured planning service is ready before starting another run."
+                        : plan.planning_failure.reason === "budget_exhausted"
+                          ? "Review the workspace limits before deciding whether to start another run."
+                          : "Review this run before deciding whether to start another one."}
+                  </p>
+                  <p>
+                    Source search did not begin. Nothing will retry
+                    automatically. Your original prompt is still in the
+                    composer; edit it there and start a new run only when you
+                    are ready.
+                  </p>
+                  {onEditPrompt && (
+                    <button
+                      className="text-button"
+                      type="button"
+                      onClick={onEditPrompt}
+                    >
+                      Edit original prompt
+                    </button>
+                  )}
                 </div>
               )}
-              {(["must_have", "preferences", "exclusions"] as const).map(
-                (group) => {
-                  const criteria = plan.interpretation[group] ?? [];
-                  if (!criteria.length) return null;
-                  const heading =
-                    group === "must_have"
-                      ? "Required"
-                      : group === "preferences"
-                        ? "Preferred"
-                        : "Excluded";
-                  return (
-                    <div key={group}>
-                      <h4>{heading}</h4>
+              {plan.status === "rejected" && !plan.planning_failure && (
+                <div className="notice" role="status">
+                  <strong>
+                    This run did not produce a validated interpretation.
+                  </strong>
+                  <p>
+                    Review the run, then edit the original prompt in the
+                    composer before choosing whether to start another run.
+                  </p>
+                  {onEditPrompt && (
+                    <button
+                      className="text-button"
+                      type="button"
+                      onClick={onEditPrompt}
+                    >
+                      Edit original prompt
+                    </button>
+                  )}
+                </div>
+              )}
+              {plan.status !== "rejected" && (
+                <>
+                  {plan.interpretation.clarification && (
+                    <p className="notice" role="status">
+                      {plan.interpretation.clarification}
+                    </p>
+                  )}
+                  {plan.status === "clarification_required" &&
+                    job.workspace_id && (
+                      <ClarificationResponse
+                        api={api}
+                        jobId={job.id}
+                        workspaceId={job.workspace_id}
+                        question={
+                          plan.interpretation.clarification ??
+                          "Please clarify your research objective."
+                        }
+                        onStarted={onClarification}
+                      />
+                    )}
+                  {(plan.interpretation.unsupported_criteria ?? []).length >
+                    0 && (
+                    <div>
+                      <h4>Criteria this run cannot evaluate</h4>
                       <ul>
-                        {criteria.map((criterion, index) => (
-                          <li key={`${criterion.field}-${index}`}>
-                            {criterion.field.replaceAll("_", " ")}{" "}
-                            {criterion.operator.replaceAll("_", " ")}{" "}
-                            {Array.isArray(criterion.value)
-                              ? criterion.value.join(", ")
-                              : String(criterion.value)}
-                          </li>
-                        ))}
+                        {(plan.interpretation.unsupported_criteria ?? []).map(
+                          (item, index) => (
+                            <li key={`${index}-${item}`}>{item}</li>
+                          ),
+                        )}
                       </ul>
                     </div>
-                  );
-                },
+                  )}
+                  {(["must_have", "preferences", "exclusions"] as const).map(
+                    (group) => {
+                      const criteria = plan.interpretation[group] ?? [];
+                      if (!criteria.length) return null;
+                      const heading =
+                        group === "must_have"
+                          ? "Required"
+                          : group === "preferences"
+                            ? "Preferred"
+                            : "Excluded";
+                      return (
+                        <div key={group}>
+                          <h4>{heading}</h4>
+                          <ul>
+                            {criteria.map((criterion, index) => (
+                              <li key={`${criterion.field}-${index}`}>
+                                {criterion.field.replaceAll("_", " ")}{" "}
+                                {criterion.operator.replaceAll("_", " ")}{" "}
+                                {Array.isArray(criterion.value)
+                                  ? criterion.value.join(", ")
+                                  : String(criterion.value)}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    },
+                  )}
+                  <p className="candidate-meta">
+                    Sources:{" "}
+                    {(plan.interpretation.sources ?? []).join(", ") ||
+                      "none selected"}
+                    . These are search criteria, not verified facts.
+                  </p>
+                </>
               )}
-              <p className="candidate-meta">
-                Sources:{" "}
-                {(plan.interpretation.sources ?? []).join(", ") ||
-                  "none selected"}
-                . These are search criteria, not verified facts.
-              </p>
             </>
           )}
         </section>
@@ -931,6 +1848,14 @@ export function ResearchResultsPanel({
           workspaceId={job.workspace_id}
           planId={plan.plan_id}
           candidates={results?.results ?? []}
+        />
+      )}
+      {job.workspace_id && plan?.plan_id && results?.groups && (
+        <QualifiedExportPanel
+          api={api}
+          workspaceId={job.workspace_id}
+          planId={plan.plan_id}
+          candidates={results.results}
         />
       )}
       {job.workspace_id && plan?.plan_id && results?.groups && (
@@ -1140,6 +2065,12 @@ export function ResearchResultsPanel({
               {resuming ? "Checking checkpoint…" : "Resume research"}
             </button>
           )}
+          <CheckpointRebindPanel
+            api={api}
+            jobId={job.id}
+            workspaceId={job.workspace_id}
+            onResumed={() => setRetry((value) => value + 1)}
+          />
           <button
             className="text-button"
             type="button"
@@ -1226,21 +2157,21 @@ export function ResearchResultsPanel({
           {results.results.length > 0 && (
             <div
               className="source-exports"
-              aria-label="Download search snippets"
+              aria-label="Download research sources"
             >
               <button
                 className="text-button"
                 type="button"
                 onClick={() => downloadSources(results.results, "json")}
               >
-                Download snippets as JSON
+                Download sources as JSON
               </button>
               <button
                 className="text-button"
                 type="button"
                 onClick={() => downloadSources(results.results, "csv")}
               >
-                Download snippets as CSV
+                Download sources as CSV
               </button>
               {results.results.length > SOURCE_EXPORT_LIMIT && (
                 <p>
@@ -1250,8 +2181,8 @@ export function ResearchResultsPanel({
             </div>
           )}
           <p>
-            Search snippets are unverified candidates. Check the original source
-            before judging fit or using any contact information.
+            Source excerpts and indexed references are unverified. Check each
+            original source before judging fit or using contact information.
           </p>
           {results.limitations.length > 0 && (
             <ul
@@ -1273,15 +2204,15 @@ export function ResearchResultsPanel({
               </h4>
               <p className="candidate-meta">
                 Groups use reviewed facts and are recalculated from evidence
-                still retained for this run. Indexed search references remain
-                unverified.
+                still retained for this run. A source excerpt alone does not
+                verify a person, company, or qualification.
               </p>
               {(
                 [
                   ["confirmed", "Meets required criteria"],
                   ["near_match", "Needs review"],
                   ["excluded", "Excluded by a criterion"],
-                  ["unverified", "Search reference only"],
+                  ["unverified", "Unverified sources"],
                 ] as const
               ).map(([group, heading]) => {
                 const members = results.groups?.[group] ?? [];
@@ -1335,7 +2266,13 @@ export function ResearchResultsPanel({
                       )}
                     </h4>
                     <p className="candidate-meta">
-                      {candidate.source} · Search snippet · Unverified
+                      {candidate.source} ·{" "}
+                      {candidate.evidence_kind === "search_reference"
+                        ? "Connected search reference"
+                        : candidate.evidence_kind === "public_post"
+                          ? "Public post excerpt"
+                          : "Indexed search reference"}{" "}
+                      · Unverified
                     </p>
                     <CandidateFit
                       api={api}
@@ -1343,6 +2280,22 @@ export function ResearchResultsPanel({
                       workspaceId={job.workspace_id}
                       candidate={candidate}
                     />
+                    {job.workspace_id && finished.has(state) && (
+                      <OwnerRoleReview
+                        key={`${job.workspace_id}:${job.id}:${candidate.id}`}
+                        api={api}
+                        workspaceId={job.workspace_id}
+                        candidate={candidate}
+                        onRefresh={async (signal) => {
+                          const refreshed = await api.results(
+                            job.id,
+                            job.workspace_id,
+                            signal,
+                          );
+                          if (!signal?.aborted) setResults(refreshed);
+                        }}
+                      />
+                    )}
                     {job.workspace_id && finished.has(state) && (
                       <FollowupPanel
                         api={api}
@@ -1358,7 +2311,7 @@ export function ResearchResultsPanel({
                       </time>
                     </p>
                     <p className="candidate-snippet">
-                      {candidate.snippet || "No search snippet was provided."}
+                      {candidate.snippet || "No source excerpt was provided."}
                     </p>
                     {candidate.platform_reference && (
                       <section
@@ -1368,16 +2321,26 @@ export function ResearchResultsPanel({
                         <h5>
                           {candidate.platform_reference.source === "linkedin"
                             ? "LinkedIn"
-                            : "Reddit"}{" "}
-                          {candidate.platform_reference.resource_kind ===
-                          "unknown"
-                            ? "indexed reference"
-                            : `${candidate.platform_reference.resource_kind} · indexed reference`}
+                            : candidate.platform_reference.source ===
+                                "instagram"
+                              ? "Instagram"
+                              : candidate.platform_reference.source ===
+                                  "facebook"
+                                ? "Facebook"
+                                : "Reddit"}{" "}
+                          {candidate.platform_reference.access ===
+                          "connected_search_reference_only"
+                            ? "connected search reference"
+                            : candidate.platform_reference.resource_kind ===
+                                "unknown"
+                              ? "indexed reference"
+                              : `${candidate.platform_reference.resource_kind} · indexed reference`}
                         </h5>
                         <p>
-                          Found through the search index. A direct platform read
-                          was not attempted, and the subject’s identity is
-                          unverified.
+                          {candidate.platform_reference.access ===
+                          "connected_search_reference_only"
+                            ? "Returned by connected platform search. This is a search reference; no profile or post was opened, and the subject’s identity is unverified."
+                            : "Found through the search index. A direct platform read was not attempted, and the subject’s identity is unverified."}
                         </p>
                         {(candidate.platform_reference.resource_kind ===
                           "post" ||
@@ -1398,6 +2361,24 @@ export function ResearchResultsPanel({
                         youtube={candidate.youtube}
                       />
                     )}
+                    {candidate.reddit_thread && (
+                      <RedditThreadEvidence view={candidate.reddit_thread} />
+                    )}
+                    {candidate.social_read && (
+                      <SocialReadEvidence view={candidate.social_read} />
+                    )}
+                    {candidate.linkedin_read && (
+                      <LinkedInReadEvidence view={candidate.linkedin_read} />
+                    )}
+                    {!candidate.linkedin_read &&
+                      candidate.source === "linkedin" &&
+                      candidate.provider === "linkedin_mcp" &&
+                      candidate.collection?.status === "read" && (
+                        <p className="candidate-meta" role="note">
+                          LinkedIn was read, but the retained section text has
+                          expired or is unavailable.
+                        </p>
+                      )}
                     {candidate.discussion && !candidate.platform_reference && (
                       <section aria-label="Discussion reference">
                         <h5>

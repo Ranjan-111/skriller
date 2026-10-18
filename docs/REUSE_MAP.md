@@ -1,5 +1,13 @@
 # Source reuse map
 
+**2026-10-17 A-SOCIAL acquisition:** The actual OpenCLI backend is now pinned at
+`e6174a952c763a836a9bb0dd2f097d2962b3876b` in `third_party/external/opencli` with
+2,343 unmodified files, license and archive/per-file hashes. Candidate Instagram/
+Facebook profile/search modules and their dependencies are identified in
+[SOCIAL_BACKEND_REVIEW.md](SOCIAL_BACKEND_REVIEW.md). This is source acquisition,
+not an installed/validated/activated platform operation. Runtime isolation and
+operation acceptance remain open under SKR-085/SKR-086.
+
 Date: 12 October 2026  
 Related: [Implementation tickets](IMPLEMENTATION_TICKETS.md), [PRD](PRD.md), [technical stack](TECH_STACK.md)
 
@@ -14,6 +22,17 @@ For every imported feature: record source path and snapshot hash; copy/adapt rel
 Use a provenance manifest for each copied tree plus a modification log. Any missing upstream implementation must be acquired as a separately pinned dependency/source or explicitly scoped as new integration code. Do not claim that a diagnostics module is a scraper. Runtime copies and adaptations are recorded in their provenance manifests and ticket completion reports.
 
 ## Available snapshots
+
+LinkedIn native search runtime (2026-10-17): `infra/egress/Dockerfile.linkedin`
+copies the acquired `third_party/external/linkedin/linkedin_mcp_server` package
+unchanged, with LICENSE/NOTICE/SOURCE_MANIFEST at commit
+`f1ba6aa87234526cf22812e59233e0c619073529`. The worker composes its
+`linkedin/session.py`, `navigation.py`, `content.py`, `capture.py` and permalink
+listener, while the existing adapted URL/link modules retain their recorded
+hashes. Product glue adds owner/session scopes, one-attempt capture, request
+bounds, isolated execution and durable reference provenance. The installed
+synthetic-browser fixture verifies both search operations without networking;
+it does not certify live access. See `docs/completions/LINKEDIN-WORKER-LOCAL.json`.
 
 The reference folder contains extracted directories, not top-level ZIP files. Local metadata identifies Scrapling 0.4.15, Agent-Reach 1.5.0, and ScrapeGraph-AI 2.3.1. These are metadata observations, not tested release compatibility. There is no verified upstream commit identity for these ZIP-derived snapshots. [Reference inventory](REFERENCE_INVENTORY.json) uses content hashes to identify the supplied material without inventing a commit SHA.
 
@@ -56,6 +75,16 @@ Owner YouTube Analytics is original product/provider glue; the supplied trees ha
 
 SKR-084 retains a separately pinned full `public-clis/twitter-cli` source at commit `7c634e0d396b1e7af9f63315b414925fe4f29ae7`. Its unchanged pure models/parser are copied into `src/skriller/_vendor/twitter` with byte-hash provenance and license. No upstream auth/client/CLI/write path is imported into product execution; isolated source access remains in progress.
 
+The X worker now copies Scrapling's `parse_retry_after` function unchanged into
+`src/skriller/_vendor/retry_after.py`, adapting imports to standard-library types
+and logging so the standalone worker does not load the browser/spider stack.
+An AST comparison checks it against the pinned source; the Docker image includes
+Scrapling's license. X PKCE/consent code adapts the existing product Salesforce
+transport and encrypted consent lifecycle. Two pre-existing formatting edits in
+unused reference CLI/output files are explicitly recorded in the acquisition
+manifest and `third_party/external/twitter/MODIFICATIONS.md`; the runtime parser,
+models and license remain byte-identical.
+
 SKR-093 adapts the existing copied Agent-Reach `integrations/mcp_server.py` with optional trusted product handlers, preserving its default diagnostic behavior. The product reuses that server/stdio scaffolding and calls the existing authenticated research/list/evidence APIs, rather than adding another research engine or bypassing the job ledger. The modification and hash are recorded in the Agent-Reach copy's provenance manifest.
 
 
@@ -93,3 +122,32 @@ queue. `crm/oauth.py` reuses the existing OAuth redirect validation and bounded
 native transport pattern; `crm/consents.py` adapts the existing owner OAuth AES-GCM,
 single-use consent and generation fences. No source engine was rewritten, and no
 new third-party source snapshot was imported by this batch.
+
+### 2026-10-17 Reddit OAuth discovery boundary
+
+`_vendor/reddit/search.py` copies only the pinned acquired `RedditClient.search`
+method (AST equality tested), with fixed relative URL constants and a transport-
+free `_get` seam. The existing unchanged parser/models remain in use. New
+`reddit_request.py` moves the existing request contracts without changing their
+bounds. `reddit_worker.py` and `reddit_executor.py` adapt the already tested X
+fixed-host/isolated execution pattern; shared credential, job, capacity and
+checkpoint infrastructure is reused. Upstream write/auth/anti-detection clients
+are excluded. The minimal image shares the X locked wheel closure. See
+`REDDIT_OAUTH_RUNBOOK.md`; source and live acceptance remain separate gates.
+
+Reddit OAuth lifecycle reuses `connections/x_oauth.py` encryption/ownership/replay
+controls and `connectors/x_oauth.py` bounded fixed-endpoint transport, adapting
+only Reddit's confidential-code/read-scope/nonrotating-refresh protocol. The
+new durable continuation store is product glue for actor/job/request/credential
+binding; each source page still uses the pinned copied rdt-cli search builder and
+parser. Neither acquired source authentication/session engines nor write clients
+are imported into the runtime worker.
+
+## 2026-10-18 OpenCLI runtime reuse
+
+Five selected read modules are copied into src/skriller/_vendor/opencli with license,
+source/adapted hashes and Instagram modification notices. The static READ_SCRIPTS.json
+is generated from those functions, not reimplemented extraction logic. Facebook
+search/profile and the response helper remain unchanged. Python adapters add product
+contracts, credential isolation, durable jobs and evidence lifecycle. See
+SOCIAL_BACKEND_REVIEW.md for boundaries and offline execution reports.

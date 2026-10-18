@@ -33,6 +33,9 @@ def source_status(
                 search_enabled=request.app.state.settings.search_provider != "disabled",
                 youtube_image=request.app.state.settings.public_youtube_image,
                 x_image=request.app.state.settings.public_x_image,
+                reddit_image=request.app.state.settings.public_reddit_image,
+                linkedin_image=request.app.state.settings.public_linkedin_image,
+                social_image=request.app.state.settings.public_social_image,
                 database=request.app.state.database,
                 connection_store=ConnectionStore.configured(request.app.state.settings),
             )
@@ -59,6 +62,9 @@ def source_switch(
                     search_enabled=request.app.state.settings.search_provider != "disabled",
                     youtube_image=request.app.state.settings.public_youtube_image,
                     x_image=request.app.state.settings.public_x_image,
+                    reddit_image=request.app.state.settings.public_reddit_image,
+                    linkedin_image=request.app.state.settings.public_linkedin_image,
+                    social_image=request.app.state.settings.public_social_image,
                     database=request.app.state.database,
                     connection_store=ConnectionStore.configured(request.app.state.settings),
                 )

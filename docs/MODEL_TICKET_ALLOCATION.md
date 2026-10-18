@@ -1,8 +1,73 @@
+# Core launch focus — 2026-10-18
+
+No model change required. SKR-091/092 are user-deferred for launch. Latest local
+batch fixes credential-generation/owner cache boundaries and passes the production
+web build. See RESUME_STATE.md and CORE_LAUNCH_READINESS.md for acceptance gaps.
+
+# Current allocation — 2026-10-18
+
+Active: GPT-6.1 Sol Medium. No model switch is required by the current implementation.
+The combined SKR-085/086 backend and client batch is locally implemented; both tickets
+await external acceptance, not another alternating model handoff. See RESUME_STATE.md.
+SKR-076 remains Sol quality work with two independent 2/5 local diagnostics; production
+quality cannot be marked passing without representative evidence. Language/regional
+expansion needs a product selection. Deferred external checks remain deferred.
+
+## Historical allocations (superseded where they conflict with the current state)
+
 # Model allocation for remaining tickets
 
-The user selected GPT-6.1 Sol Medium for this batch and requested larger batches between model switches. Assignment does not change completion status.
+## Latest Sol handoff — 2026-10-17
 
-**Next handoff: GPT-6.1 Sol / Medium** for remaining private analytics-summary job, CRM OAuth/queue API and checkout/refund backend work. Luna completed the082/083connection/callback and literal-report UI subtask:164frontend tests, TypeScript/contracts and isolated Next compilation passed. Real Google/browser acceptance and the summary-job backend remain open, so full tickets stay pending. The done-ticket follow-up file has no eligible entries. Remote payment plan creation remains user-deferred.
+Completed review-recovery fixes plus planner quote-schema constraints and a sanitized
+rejected-planning recovery API/strict client. 124 web checks and 102 related backend
+checks pass across the initial run plus one recovered native-broker retry; one optional
+model test skipped. Actual local planner diagnostic remains 2/5, so SKR-076 stays open.
+
+Started SKR-085/SKR-086 by acquiring actual OpenCLI source unchanged at pinned commit
+e6174a952c763a836a9bb0dd2f097d2962b3876b, with 2,343 file hashes/license and three
+offline integrity/routing checks. No source operation is enabled; copied-code fixture
+execution and isolated durable workers remain Sol work. See SOCIAL_BACKEND_REVIEW.md.
+
+Luna completed SKR-052 rejected-planning recovery rendering locally: four safe failure
+states, explicit prompt editing, no automatic retry, and no rendering of an unvalidated
+objective as accepted criteria. Fifty results tests, TypeScript, formatting, detector
+and diff checks pass. The ticket remains pending authenticated localhost browser
+acceptance under the saved browser restriction.
+
+Board: **57 done /31 pending verification /3 in_progress /5 planned**.
+**Next model: GPT-6.1 Sol Medium** for the existing SKR-076 planner quality/evaluation
+work; SKR-085/086 source integration remain in progress. No key is needed.
+
+## Prior handoff — 2026-10-17
+
+Sol completed the local SKR-025/SKR-030 explicit checkpoint replacement backend and
+strict client. Known stale native LinkedIn/Reddit bindings pause before reservation
+or I/O; an explicit initiating-owner selection atomically binds the current new
+generation and resumes the pending read. Plan/deadline/usage and route spend stay
+intact. Safe scope, expiry, cancellation, uncertain-work and replay barriers pass.
+
+SKR-068 now has two passing actual adapter/database/API scenarios for mixed-source
+reads, outage isolation, replay, unverified evidence and immutable refinement. It
+remains in progress for accepted founder/cited-report and representative live work.
+Sol also corrected LinkedIn client URL-kind/canonicality and timezone validation.
+
+Verification: **66 backend tests passed, one optional local-model skip;122 focused
+web tests passed**. TypeScript, actual generated contracts, Ruff and checked-body
+MyPy across three changed source modules pass. No source/model call, user browser,
+API key or ignored environment edit was used. Latest board: **57 done /30 pending
+verification /2 in_progress /7 planned**. No ticket was falsely promoted to done.
+
+**Next model: GPT-6 Luna Medium** for the explicit owner-confirmation results UX
+specified in model_ticket_allocation.json. No new key or manual test is needed.
+Native/account, hosted, billing sandbox and X live gates remain user-deferred.
+The localhost browser restriction remains active. Earlier checkpoints below are
+historical; docs/tickets.json and TICKET_STATUS.md are authoritative.
+
+
+The user alternates GPT-6.1 Sol Medium and GPT-6 Luna Medium to conserve usage. Assignment does not change completion status.
+
+**Earlier handoff: GPT-6 Luna / Medium** for SKR-059's native LinkedIn reference client handling and UI copy, plus the recorded parallel Reddit consent-click/loading race. Sol implemented the isolated acquired LinkedIn search worker, owner/session/generation fences, native runtime/diagnostics, browser capacity and durable budget/reference persistence. **146 distinct backend/database/security checks passed (1 live skipped)** plus an installed-container capture of both search operations with networking disabled; **104 existing client/export/results regressions**, TypeScript/contracts, Ruff and 11-module MyPy passed. SKR-059 stays in progress until native client handling is implemented and verified. Board: **57 done / 27 pending verification / 2 in progress / 10 planned**. No API key or user browser action is needed for the next local UI work. Native source configuration and live/hosted acceptance remain deferred.
 
 **Earlier grouped Sol backend batch:** SKR-093 is done: copied MCP server adaptation, actual SDK/stdio protocol, existing API authentication, scoped job submission, shared admission/checkpoint/cost accounting and no source-write tools. SKR-082/083 backend is implemented but remains pending browser/live owner acceptance; SKR-084 has a pinned copied parser foundation and remains in progress. Board: **57 done, 23 pending verification, 6 in progress, 10 planned**. The user requested continued Sol work; the next allocated batch is the Analytics UI handoff described above. Salesforce was selected under user delegation; billing is Stripe plus Razorpay. SKR-088 has tested export/upsert foundations; SKR-090 now includes operator-owned paid-access enforcement, persistent catalog, current-state provider reads, audited serialized reconciliation and refresh. Both remain in progress pending their remaining integration scope. No model switch or credentials are needed for their next local work.
 
@@ -74,16 +139,16 @@ Official guidance describes Sol as suitable for complex projects where cost matt
 | SKR-056 | 6.1 Sol / Medium | P0 | done | Implement evidence-grounded research follow-ups |
 | SKR-057 | 6.1 Sol / Medium | P0 | implemented_pending_verification | Implement conversational refinement and plan reevaluation |
 | SKR-058 | 6 Luna / Medium | P0 | done | Build partial results, reconnect and usage UX |
-| SKR-059 | 6.1 Sol / Medium | P0 | in_progress | Adapt LinkedIn discovery and candidate routing |
-| SKR-060 | 6.1 Sol / Medium | P0 | planned | Adapt LinkedIn profile, company and post reads |
-| SKR-061 | 6.1 Sol / Medium | P0 | in_progress | Adapt Reddit discussion discovery |
-| SKR-062 | 6.1 Sol / Medium | P0 | planned | Adapt Reddit post/comment reading and signal extraction |
+| SKR-059 | 6.1 Sol / Medium | P0 | implemented_pending_verification | Adapt LinkedIn discovery and candidate routing |
+| SKR-060 | 6.1 Sol / Medium | P0 | implemented_pending_verification | Adapt LinkedIn profile, company and post reads |
+| SKR-061 | 6.1 Sol / Medium | P0 | implemented_pending_verification | Adapt Reddit discussion discovery |
+| SKR-062 | 6.1 Sol / Medium | P0 | implemented_pending_verification | Adapt Reddit post/comment reading and signal extraction |
 | SKR-063 | 6 Luna / Medium | P0 | done | Adapt GitHub public research connector |
 | SKR-064 | 6 Luna / Medium | P0 | done | Adapt RSS/Atom feed connector |
 | SKR-065 | 6 Luna / Medium | P0 | done | Adapt public YouTube metadata and available transcripts |
 | SKR-066 | 6 Luna / Medium | P0 | done | Create company/directory extraction presets using copied engine |
 | SKR-067 | 6.1 Sol / Medium | P0 | implemented_pending_verification | Verify first complete prompt-to-export slice |
-| SKR-068 | 6.1 Sol / Medium | P0 | planned | Verify combined LinkedIn/Reddit research journey |
+| SKR-068 | 6.1 Sol / Medium | P0 | implemented_pending_verification | Verify combined LinkedIn/Reddit research journey |
 | SKR-069 | 6.1 Sol / Medium | P0 | done | Enforce workspace entitlements and abuse limits |
 | SKR-070 | 6 Luna / Medium | P0 | done | Instrument stages, source health and costs |
 | SKR-071 | 6.1 Sol / Medium | P0 | done | Enforce evidence and export retention |
@@ -99,13 +164,13 @@ Official guidance describes Sol as suitable for complex projects where cost matt
 | SKR-081 | 6 Luna / Medium | P1 | done | Report meaningful changes and optional notifications |
 | SKR-082 | 6.1 Sol / Medium | P1 | implemented_pending_verification | Connect owner-authorised YouTube Analytics OAuth |
 | SKR-083 | 6 Luna / Medium | P1 | implemented_pending_verification | Retrieve and summarise owner analytics reports |
-| SKR-084 | 6.1 Sol / Medium | P1 | in_progress | Adapt X discussion/professional connector |
-| SKR-085 | 6.1 Sol / Medium | P1 | planned | Adapt Instagram business/creator connector |
-| SKR-086 | 6.1 Sol / Medium | P1 | planned | Adapt Facebook company/content connector |
+| SKR-084 | 6.1 Sol / Medium | P1 | implemented_pending_verification | Adapt X discussion/professional connector |
+| SKR-085 | 6.1 Sol / Medium | P1 | in_progress | Adapt Instagram business/creator connector |
+| SKR-086 | 6.1 Sol / Medium | P1 | in_progress | Adapt Facebook company/content connector |
 | SKR-087 | 6 Luna / Medium | P1 | done | Add job/pricing/industry research presets |
-| SKR-088 | 6.1 Sol / Medium | P1 | in_progress | Export qualified records into selected CRM |
+| SKR-088 | 6.1 Sol / Medium | P1 | implemented_pending_verification | Export qualified records into selected CRM |
 | SKR-089 | 6.1 Sol / Medium | P1 | done | Deliver signed idempotent webhooks |
-| SKR-090 | 6.1 Sol / Medium | P1 | in_progress | Automate billing and entitlements |
+| SKR-090 | 6.1 Sol / Medium | P1 | implemented_pending_verification | Automate billing and entitlements |
 | SKR-091 | 6 Luna / Medium | P1 | planned | Add selected language and locale support |
 | SKR-092 | 6.1 Sol / Medium | P2 | planned | Adapt first regional-platform connector |
 | SKR-093 | 6.1 Sol / Medium | P2 | done | Expose read-only MCP research interface |
@@ -249,5 +314,311 @@ pause/restore policy using fresh provider state. Overall focused verification:
 135 tests passed, Ruff/formatting and checked-module MyPy passed, and web contract
 drift check passed. Both tickets stay in_progress because OAuth authorization/
 refresh and live X validation remain for SKR-084, and checkout/customer setup plus
-durable reference resolution for charge-only disputes remain for SKR-090. Remote
-plan creation remains user-deferred.
+durable reference resolution for charge-only disputes remained at that checkpoint.
+The follow-through below closes reference resolution. Remote plan creation remains
+user-deferred.
+
+### 2026-10-17 Sol follow-through — verified reference worker and X cancellation
+
+SKR-090 now handles verified Stripe charge-only disputes and Razorpay payment-only
+disputes/refunds through an operator-only durable lookup queue (migration 0051).
+Provider GETs validate identity/mode and resolve exactly one configured workspace;
+attempts commit before I/O, back off and quarantine after five tries. Atomic inbox
+handoff, duplicate/conflict handling, account isolation and held-lock behavior are
+locally verified. SKR-084's blocking X reader is shielded during cancellation so
+capacity remains held until it stops; a timeout workflow test verifies the order.
+
+Verification: 115 billing/monthly-quota/research workflow tests passed, plus Ruff,
+formatting, checked-body billing MyPy, research MyPy and diff checks. No external
+provider request, payment creation, browser session or deployment was performed.
+Counts remain 57 done / 24 pending verification / 5 in progress / 10 planned.
+At that checkpoint checkout remained unfinished. The user then approved 12 monthly
+Razorpay cycles; the batch below implements the initial backend. No provider key
+is requested for the user-deferred sandbox work.
+
+### 2026-10-17 Sol initial checkout completed locally — Luna UI next
+
+Migration 0052 and checkout.py/checkout_http.py/checkout_router.py implement the
+optional isolated owner checkout API: offer readiness, initial checkout creation,
+private status, exact approved plans, stable idempotency, finite write uncertainty,
+35-minute reviewed native links and no client return-based access. Known intent
+events enter the durable reference worker, whose fresh native session/subscription
+proof establishes the disabled customer/plan binding before ordinary active/paid
+reconciliation. Razorpay uses exactly 12 monthly cycles. Restores clear archived
+links. Automated plan replacement and abandoned/uncertain checkout recovery remain
+operator-managed pilot limitations; no new subscription is created to hide these.
+
+Verification: 140 billing/monthly/actual-restore tests pass, checked-body MyPy on
+seven billing modules and backup MyPy pass, Ruff/format and main/billing contract
+drift checks pass. No live provider request, keys, checkout/plan creation, service
+launch or deployment. Counts remain 57 done / 24 pending / 5 in progress / 10 planned.
+
+**Next model: GPT-6 Luna Medium**, SKR-090 web checkout controls using the separate
+`docs/contracts/billing-openapi.json`. The normal API schema is unchanged. Add a
+configured billing base URL, typed client and owner offers/explicit opt-in/current
+intent/status/validated provider link controls. Reuse normal Firebase bearer and
+workspace context; keep idempotency stable per actor/workspace/provider/plan,
+bound polling and clear state across account/context changes. Display exact
+prices/limits and 12-cycle Razorpay terms. A return query does not prove payment.
+Show unavailable/operator-managed states; do not create fake plan IDs or start
+billing services. Read apps/web/AGENTS.md, installed Next guides and frontend skill;
+verify controlled client/UI tests, type/contract checks and build. Keep SKR-090
+in_progress until remaining UI/live gates pass. Remote account creation and hosted
+work remain explicitly user-deferred; no key is needed for this next UI batch.
+
+### 2026-10-17 Luna checkpoint — SKR-090 checkout UI
+
+Added `apps/web/src/lib/billing.ts` and the owner-facing billing panel against
+the isolated `docs/contracts/billing-openapi.json` API. The panel reads owner
+workspace offers/state with Firebase bearer auth, presents only server prices,
+limits and term, requires explicit checkout opt-in, uses a stable
+workspace/provider/plan idempotency key, and exposes only a ready/unexpired
+provider URL on its exact native HTTPS host. It explains dispatching, uncertain
+and bound states and clears on sign-out. Missing billing API configuration is
+shown as unavailable. This does not infer payment or access from browser return
+state.
+
+Verification: 6 focused billing tests and the complete 175-test web suite pass;
+TypeScript, Next production build and Impeccable detector pass. No provider key,
+account, sandbox, browser session or service was used. Counts remain **57 done,
+24 implemented_pending_verification, 5 in_progress, 10 planned**; SKR-090 remains
+in_progress pending authenticated browser/provider sandbox acceptance and
+user-deferred remote plan creation. SKR-091 and later evaluation/source tickets
+depend on representative pilot evidence or unfinished upstream work, so they are
+not ready for speculative implementation. **Next model: GPT-6.1 Sol Medium** for
+the remaining backend/security queue, including SKR-084 OAuth authorization/
+refresh and SKR-090 provider-side acceptance/recovery review. No API key is needed
+to continue local work; the sandbox checks remain user-deferred.
+
+### 2026-10-17 grouped Sol follow-through — X lifecycle/image and billing safety
+
+SKR-084 now has owner PKCE list/start/complete/refresh/local-revoke routes adapted
+from the existing CRM lifecycle. Migrations 0053/0054 provide encrypted initiating-
+owner grants, one-use exchanges, replacement access references and a boolean-only
+runner fence across private owner RLS. Interrupted/rotated requests cannot replay,
+old references cannot continue after refresh or owner demotion, and actual backup
+restore/retention wipe archived access/refresh credentials. Scope is read-only.
+
+Fixed and built the minimal installed X image: offline pinned five-wheel closure,
+copied unchanged Scrapling Retry-After function with license, and lazy package
+exports. Actual native worker probe, kernel/filesystem boundary and credential
+delivery/redaction/revocation passed. Source fidelity checking also records two
+pre-existing whitespace edits in unused reference CLI/output modules; original
+hashes are retained and runtime parser/models still match upstream exactly.
+
+SKR-090 Sol review fixed visible link expiry, click-time validation, identity-
+lifetime request cancellation, stale response/poll guards, native port rejection
+and requested checkout identity validation. Verification: **95 combined backend/
+container tests, 178 web tests**, TypeScript, Next production build, eight-module
+checked-body MyPy, Ruff/format, actual generated contracts and diff checks pass.
+No live platform/payment/model request, provider key, persistent service, source
+job or production environment setting was enabled.
+
+Board remains **57 done / 24 pending verification / 5 in progress / 10 planned**.
+084 stays in progress for real source/hosted acceptance;090 stays open for its
+deferred browser/sandbox/remote-plan gates.
+
+### 2026-10-17 Luna checkpoint — SKR-084 owner connection UI
+
+Completed the local X owner connection surface on the generated main API
+contract: explicit PKCE start, strict authorization endpoint/scope/callback
+validation, immediate callback code/state cleanup, one-use tab-local consent
+bound to uid/workspace/consent/expiry, safe metadata listing, refresh to a new
+source reference, local disconnect, and distinct access/retention expiry. The X
+source option stays disabled until owner access is active and does not alter
+default sources. An auth-loading callback intent survives until identity is
+resolved, while signed-out or switched contexts clear/consume it safely.
+
+Verification: **188 web tests**, Next production build, TypeScript no-emit and
+generated contract drift checks passed. No live X account/provider call or
+browser session was used. SKR-084 remains in progress for real account/search
+coverage, quotas/rate limits and hosted deployment. No additional Luna ticket is
+eligible for local closure without live evidence or unresolved product choices;
+the next local implementation batch is Sol-owned SKR-090 billing lifecycle work.
+**Next model: GPT-6.1 Sol Medium.** Remote Stripe/Razorpay plan creation and
+provider sandbox acceptance remain deferred; local work needs no credentials.
+
+### 2026-10-17 grouped Sol checkpoint — billing recovery and native discovery
+
+Implemented SKR-090's interrupted/expired checkout recovery: retire payment links
+into uncertain state, preserve late verified receipts, keep bound state and never
+retry an uncertain purchase. Its approved pilot scope is now locally implemented;
+status moved to **implemented_pending_verification** for the deferred provider/
+browser/remote-plan gates. This does not mark it done.
+
+Fixed two actual SKR-084 client/server integration gaps: completion and refresh
+return source `ConnectionMetadata`, not consent metadata, and native X results
+must not be rejected by an Exa-only client validator. Added exact response tests
+and source/provider/evidence pairing. The user explicitly deferred X live setup.
+
+Continued SKR-061 locally: copied the pinned rdt-cli search method, reused its
+parser and the X isolated worker/executor lifecycle, wired optional OAuth Reddit
+search into durable discovery, and built/tested the actual minimal image. Capacity,
+cancellation, private token delivery and source generations are fenced. Native
+posts enter normal evidence/checkpoint persistence and are not given indexed-only
+reference metadata. Indexed defaults and actual environment settings are unchanged.
+
+Verification: **200 combined backend/container tests, 191 web tests**, Next build,
+TypeScript/contracts and ten-module checked-body MyPy passed. No live platform,
+payment, account page or provider secret was used. No source runtime was enabled.
+Board: **57 done / 25 pending verification / 4 in progress / 10 planned**.
+
+**Next model: GPT-6 Luna Medium**, one combined SKR-061/084 results UI batch:
+distinguish direct public posts from indexed search snippets in badges, explanatory
+copy, missing-excerpt text, group labels and export controls. Preserve literal
+provider/evidence/provenance and unknown subject identity. Use mixed Exa/X/Reddit
+controlled fixtures; no API key, browser login or live source setup is required.
+Sol retains Reddit bound continuation/OAuth lifecycle and all live/hosted gates.
+
+
+## Luna mixed-source results and export checkpoint — 2026-10-17
+
+The results view distinguishes native public-post excerpts from indexed search references while retaining unverified identity/qualification language. JSON and CSV preserve provider, evidence kind and provenance; CSV stores provenance as an escaped JSON cell. **192 web tests passed**, with TypeScript, generated contracts, Prettier and Impeccable detection clean. SKR-084 moved to implemented_pending_verification because live X authorization/search and hosted acceptance are user-deferred. SKR-061 remains in_progress for tenant-bound cursor continuation and Reddit OAuth onboarding/refresh. Current board: **57 done, 26 implemented_pending_verification, 3 in progress, 10 planned**. Next model: GPT-6.1 Sol Medium, continuing SKR-061.
+
+
+## Sol Reddit lifecycle and pagination checkpoint — 2026-10-17
+
+Implemented the owner Reddit OAuth backend using the existing X encryption/transport lifecycle, source-specific read-only native protocol, expiry/revocation/co-owner fences, and tenant/job/request/credential-bound single-use continuation. Durable discovery pages within reserved call/result/deadline limits, honors source cadence and retains earlier pages on rate-limit or uncertain failure. Installed worker, actual encrypted restore and shared X/connection regressions pass: **113 backend/database/container checks**, **192 web tests**, TypeScript/contracts, Ruff/format and 13-module MyPy. Board remains **57 done, 26 implemented_pending_verification, 3 in progress, 10 planned**. SKR-061 stays in progress for its owner connection UI and real acceptance gates. Next model: **GPT-6 Luna Medium**, one complete Reddit OAuth UI batch using the generated DTOs. No API key/source account is required for that local work.
+
+## Luna Reddit owner UI checkpoint — 2026-10-17
+
+SKR-061 now has a generated-contract client and optional owner panel for Reddit authorization, callback completion, access refresh and local disconnect. URL validation enforces Reddit's fixed endpoint, exact read-only `read` scope and `duration=permanent`, with no PKCE fields. OAuth values are removed before other client callback handlers run, and one-use consent intent is tab-local and account/workspace/expiry-bound. Indexed Reddit remains selected and available without a connected account. **205 web tests**, TypeScript, generated contract check, Next production build, Impeccable detector and diff passed. No account, key or browser session used. Board remains **57 done, 26 implemented_pending_verification, 3 in_progress, 10 planned** because the ticket still has local renewal/rebinding work plus user-deferred source and hosted acceptance. Next model: **GPT-6.1 Sol Medium** for SKR-061 lifecycle continuation; no new key is needed.
+
+### 2026-10-17 Luna checkpoint — SKR-059 client integration
+
+Completed the strict LinkedIn native search-reference client contract. Candidate
+and every provenance row must pair `linkedin_mcp` with `search_reference` and
+source `linkedin`. Platform metadata must pair the same source/backend with
+`connected_search_reference_only`, `direct_read_status=not_attempted` and
+`subject_identity=unknown`. Exa indexed metadata remains source-matched and
+separate. Results clearly label connected search references; JSON/CSV retain
+platform metadata and literal provider/evidence/provenance values. Reddit and X
+connection panels now expose the empty state and connect action only after their
+workspace consent metadata finishes loading, fixing the initialization race.
+
+Verification: **218 web tests passed** across 26 files; TypeScript, generated
+contract drift, Next production build and Impeccable detection passed. SKR-059
+moved to **implemented_pending_verification**, not done, because account-backed
+coverage, hosted acceptance and source commercial/rights checks remain deferred.
+Board: **57 done / 28 implemented_pending_verification / 1 in_progress / 10 planned**.
+**Next model: GPT-6.1 Sol Medium**, continuing SKR-060 and SKR-062 backend work.
+
+### 2026-10-17 Sol checkpoint — SKR-062 thread backend and source-generation controls
+
+Implemented bounded Reddit post/comment reads using copied acquired request/parser
+code, private owner OAuth execution, discovery-generation binding, durable fetch
+budgets/checkpoints, retained evidence and comment-aware erasure/expiry. Optional
+saved-evidence problem extraction reuses the copied graph and model ledger; quotes
+must match the exact resource, while identity and buying intent remain unknown.
+The related 117-test backend selection is verified (one live skipped), with the
+three preset failures corrected and the broker workflow verified after restarting
+the isolated native broker. Also passed 12 further discovery checks, final 16
+thread/parser checks, installed network-none worker, 112 web regressions and
+TypeScript/contracts/MyPy/Ruff. SKR-062 moved planned → in_progress for its next
+client/results subtask. Board: **57 done / 28 pending / 2 in_progress / 9 planned**.
+**Next model: GPT-6 Luna Medium**, SKR-062 strict DTO and thread/signal results view.
+Sol retains SKR-060. No key or live user test is required for the next local batch.
+
+### 2026-10-17 Luna checkpoint — SKR-062 client and results completion
+
+The generated `reddit_thread` DTO is strictly validated in the API client, with
+native Reddit provider/evidence pairing, bounded public Reddit links, post/comment
+IDs and parent order, deleted-body semantics, dates, coverage counts and exact
+resource-grounded signal quotes. The results panel now renders a collapsed post
+and comment thread, source links, known dates or explicit missing dates, deletion
+markers, nested replies, partial coverage and unverified problem quotes. Unknown
+identity and not-inferred buying intent remain explicit. JSON/CSV source exports
+retain their existing whitelist; a regression confirms raw Reddit thread content
+and signals stay out.
+
+Verification: **223 frontend tests passed across 26 files**, TypeScript, generated
+API/client drift check and Next production build passed; Impeccable detector found
+no UI issues. SKR-062 moved to **implemented_pending_verification** for the user's
+deferred account-backed/hosted source acceptance and unresolved commercial-rights,
+quota and retention gates. Board: **57 done / 29 pending verification / 1 in
+progress / 9 planned**.
+
+**NEXT MODEL: GPT-6.1 Sol Medium** for the remaining SKR-060 LinkedIn direct-read
+backend scope and eligible SKR-076 quality evaluation. No API key or user test is
+needed for local synthetic implementation. Preserve user-deferred live/hosted gates.
+
+### 2026-10-17 Sol checkpoint — SKR-060 profile/company/post backend
+
+Implemented typed direct resource capture with the unchanged acquired single-
+attempt backend; separate initiating-owner/read-scope runner and discovery
+credential generation pinning; fixed safe auth/restriction/rate-limit/not-found
+outcomes; durable private evidence, replay/expiry/erasure; and restricted saved
+copied-graph extraction presets. Contact fields remain unavailable, observations
+unverified and identity unknown. New optional generated `linkedin_read` resource
+DTO is bound to the original native discovery candidate. Successful resource
+read histories suppress the obsolete discovery-only not-attempted notice.
+
+Verification:134 backend/database/security checks passed (one optional live/model
+skip), actual installed network-none five-operation/exception-sanitization capture
+and cleanup passed;117 web regressions, TypeScript/contracts, Ruff and13-module
+checked-body MyPy passed. SKR-060 moved planned → in_progress for the next client
+subtask and deferred source/hosted acceptance. Board: **57 done /29 pending /2
+in_progress /8 planned**. SKR-076 representative release evaluation remains open.
+
+Luna completed strict resource DTO validation, candidate/resource binding, section
+rendering, partial-coverage and expiry states, source links and export whitelist
+regressions. Verification:120 focused web tests, TypeScript, generated contracts,
+production build and Impeccable detector passed. SKR-060 moved to
+implemented_pending_verification; live account, hosted, source-rights and provider
+operation acceptance remain open. Board: **57 done /30 pending verification /1 in
+progress /8 planned**.
+
+**Next model: GPT-6.1 Sol Medium**, continue SKR-025/SKR-030 explicit checkpoint
+credential rebind/resume batch defined in model_ticket_allocation.json. No key or
+user test is needed for local implementation. Preserve deferred account/hosted gates
+and the denied localhost-browser restriction.
+
+### 2026-10-17 Sol founder/role-review and actual planner-quality checkpoint
+
+SKR-025/SKR-030's explicit rebind UI is complete locally. SKR-068 now also has a
+passing grounded founder journey through both native adapters, private evidence,
+copied extraction, explicit owner original-profile/person and dated-role review,
+current qualification, cited reporting and immutable refinement. No draft is
+pre-accepted. New source/resource/excerpt/expiry/clock and separate-confirmation
+barriers cover type review; the raw profile identity and Reddit buying intent stay
+unknown. Planner role/title comparison and supported grammatical forms now align,
+with current chronology/conflict fences intact. Model guesses cannot silently choose
+person versus company geography; explicit user clarification remains supported.
+
+Final verification: **138 backend checks passed, 2 optional skips; 111 web checks**,
+TypeScript, generated contracts, Ruff and five-module checked-body MyPy pass. Current
+24-case qualification and 21-case identity reports/aggregate were regenerated.
+
+The actual five-case local Llama planner diagnostic remains **2 passed /3 failed**.
+Reports retain failed prompt alternatives independently; original instructions were
+restored. The 50-prompt/200-record representative gate remains open. Actual local
+configuration currently enables AI planning; no setting or cloud key was changed.
+Source/model correctness must not be claimed from these small component fixtures.
+
+**Next model: GPT-6 Luna Medium**, owner role-review strict client/results UX using
+the generated `requires_person_confirmation` and `person_subject_confirmed` fields.
+See [owner review runbook](OWNER_ROLE_REVIEW_RUNBOOK.md). This is the next dependency-
+ready UI batch; no key or user test is needed. Keep SKR-068 in_progress until the UI
+is complete and keep all deferred source/hosted and representative quality gates.
+Board: **57 done /30 pending verification /2 in_progress /7 planned**.
+
+### 2026-10-17 Luna checkpoint — SKR-068 owner role-review UI
+
+The candidate results now show a collapsed owner role-review flow for eligible
+native LinkedIn profile candidates. The owner selects existing role/date claims,
+explicitly requests the preview, reviews the returned dates, citations and links, and
+checks both confirmation boxes when required. The API client binds response references
+and profile links to the selected entity. 403 preserves results; 409 and unclear
+approval refresh and discard stale preview state; success refreshes qualification.
+
+Verification: **114 focused API/results UI tests passed**, TypeScript, Prettier and
+Impeccable detector passed. pnpm's declared version check could not run because this
+workspace has pnpm 11.1.1 instead of required 12.6.0; existing local binaries were
+used. SKR-068 moved to **implemented_pending_verification**; board: **57 done /31
+pending verification /1 in_progress /7 planned**. Representative quality and
+account/hosted/source-rights pilot acceptance remain explicit blockers.
+
+**Next model: GPT-6.1 Sol Medium**, continue SKR-076 local quality remediation and
+evaluation, preserving prior failure reports and all denominators. The five-prompt
+installed Llama diagnostic remains 2/5; no source API, paid key, invented corpus label,
+or release-quality claim is authorized by that result.

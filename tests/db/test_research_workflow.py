@@ -46,7 +46,7 @@ class Provider:
         )
 
 
-def prepare(database, monkeypatch, actor, *, settings=None, sources=None):
+def prepare(database, monkeypatch, actor, *, settings=None, sources=None, result_limit=10):
     app = create_app(settings or Settings())
     app.state.database = database
     app.dependency_overrides[require_identity] = lambda: Identity(actor)
@@ -58,7 +58,11 @@ def prepare(database, monkeypatch, actor, *, settings=None, sources=None):
         f"/v1/conversations/{conversation.json()['id']}/messages",
         json={
             "content": "Find software companies",
-            "options": {"mode": "leads", "sources": sources or ["linkedin", "web"], "result_limit": 10},
+            "options": {
+                "mode": "leads",
+                "sources": sources or ["linkedin", "web"],
+                "result_limit": result_limit,
+            },
         },
     )
     assert response.status_code == 202, response.text
@@ -67,6 +71,21 @@ def prepare(database, monkeypatch, actor, *, settings=None, sources=None):
 
 def isolate_capacity(monkeypatch, job_id):
     original_handler = service.discovery_handler
+    original_acquire = service.acquire
+
+    def isolated_acquire(session, requested_job, **kwargs):
+        if requested_job == job_id and kwargs.get("source") in {
+            "x",
+            "reddit",
+            "linkedin",
+            "instagram",
+            "facebook",
+        }:
+            label = f"test-{kwargs['source']}-{job_id.replace('-', '')}"
+            kwargs.update(source=label, host=label + ".example.invalid")
+        return original_acquire(session, requested_job, **kwargs)
+
+    monkeypatch.setattr(service, "acquire", isolated_acquire)
 
     def isolated_handler(database, actor_id, job_id, provider=None, **kwargs):
         handler = original_handler(database, actor_id, job_id, provider, **kwargs)
@@ -164,14 +183,33 @@ def test_submission_checkpoint_results_and_duplicate_delivery(database, monkeypa
     )
 
 
-def test_connected_x_posts_enter_durable_discovery_with_post_provenance(database, monkeypatch):
+@pytest.mark.parametrize(
+    "source,provider,url,native",
+    [
+        (
+            "x",
+            "x_api_v2",
+            "https://x.com/founder/status/123456",
+            {"namespace": "x_post", "id": "123456"},
+        ),
+        (
+            "reddit",
+            "reddit_oauth",
+            "https://www.reddit.com/r/startups/comments/abc123/fixture/",
+            {"namespace": "reddit_post", "id": "abc123"},
+        ),
+    ],
+)
+def test_connected_posts_enter_durable_discovery_with_post_provenance(
+    database, monkeypatch, source, provider, url, native
+):
     actor = f"x-discovery-{uuid4()}"
-    _, client, accepted = prepare(database, monkeypatch, actor, sources=["x"])
+    _, client, accepted = prepare(database, monkeypatch, actor, sources=[source])
     store = ConnectionStore(Keyring("v1", {"v1": AESGCM.generate_key(bit_length=256)}))
     with database.tenant(actor, accepted["workspace_id"]) as session:
         reference = store.create(
             session,
-            "x",
+            source,
             "oauth",
             SecretPayload(credentials={"access_token": "synthetic-x-oauth-token"}),
             expires_at=datetime.now(UTC) + timedelta(days=1),
@@ -181,13 +219,23 @@ def test_connected_x_posts_enter_durable_discovery_with_post_provenance(database
     class XReader:
         def search_page(self, query, **kwargs):
             assert kwargs["context"].connection_ref == reference.id
+            assert not query.startswith(source + " ")
+            runner = "x_read" if source == "x" else "reddit_oauth_search"
+            with database.tenant(actor, accepted["workspace_id"]) as session:
+                material = store.load_for_runner(session, kwargs["context"], runner)
+                assert material.injection() == {
+                    "X_ACCESS_TOKEN"
+                    if source == "x"
+                    else "REDDIT_ACCESS_TOKEN": "synthetic-x-oauth-token"
+                }
+                assert store.runner_current(session, kwargs["context"], material)
             return SearchPage(
                 hits=[
                     SearchHit(
                         title="@founder",
-                        url="https://x.com/founder/status/123456",
+                        url=url,
                         snippet="We are hiring a product engineer",
-                        provider="x_api_v2",
+                        provider=provider,
                         evidence_kind="public_post",
                         rank=1,
                     )
@@ -209,18 +257,24 @@ def test_connected_x_posts_enter_durable_discovery_with_post_provenance(database
         database,
         payload,
         Provider(),
-        x_reader=XReader(),
+        **{("x_reader" if source == "x" else "reddit_reader"): XReader()},
         connection_store=store,
     )
     assert outcome["status"] == "checkpointed"
     with database.tenant(actor, accepted["workspace_id"]) as session:
-        row = session.execute(sa.select(entities).where(entities.c.id == outcome["entity_ids"][0])).mappings().one()
-        assert row["attributes"]["provider"] == "x_api_v2"
+        row = (
+            session.execute(sa.select(entities).where(entities.c.id == outcome["entity_ids"][0]))
+            .mappings()
+            .one()
+        )
+        assert row["attributes"]["provider"] == provider
         assert row["attributes"]["evidence_kind"] == "public_post"
-        assert row["attributes"]["_source_native_id"] == {"namespace": "x_post", "id": "123456"}
+        assert row["attributes"]["_source_native_id"] == native
     result = client.get(f"/v1/jobs/{accepted['job_id']}/results").json()["results"][0]
     assert result["evidence_kind"] == "public_post"
     assert result["qualification"] == "unverified"
+    assert result.get("platform_reference") is None
+    assert result.get("discussion") is None
 
 
 def test_partial_source_failure_retains_unverified_results(database, monkeypatch):
@@ -237,6 +291,60 @@ def test_partial_source_failure_retains_unverified_results(database, monkeypatch
         assert summary["details"]["source_failures"] == [
             {"source": "linkedin", "code": "access_denied"}
         ]
+
+
+@pytest.mark.parametrize("source", ["x", "reddit"])
+def test_connected_timeout_holds_capacity_until_blocking_reader_has_stopped(
+    database, monkeypatch, source
+):
+    import threading
+    import time
+
+    from skriller.contracts import SearchPlan
+    from skriller.db import ConversationRepository
+
+    actor = f"x-timeout-{uuid4()}"
+    _, _, accepted = prepare(database, monkeypatch, actor, sources=[source])
+    store = ConnectionStore(Keyring("v1", {"v1": AESGCM.generate_key(bit_length=256)}))
+    with database.tenant(actor, accepted["workspace_id"]) as session:
+        store.create(
+            session,
+            source,
+            "oauth",
+            SecretPayload(credentials={"access_token": "synthetic-x-token"}),
+            expires_at=datetime.now(UTC) + timedelta(days=1),
+            scopes=("read", "discover"),
+        )
+        job = JobRepository.get(session, accepted["job_id"])
+        plan = SearchPlan.model_validate(
+            ConversationRepository.get_plan(session, job["plan_id"])["interpretation"]
+        )
+    stopped = threading.Event()
+    releases = []
+
+    class BlockingReader:
+        def search_page(self, query, **kwargs):
+            time.sleep(0.15)
+            stopped.set()
+            return SearchPage(hits=[], rejected=0, truncated=False, query=query)
+
+    monkeypatch.setattr(service, "permit_call", lambda *args: 10)
+    monkeypatch.setattr(service, "acquire", lambda *args, **kwargs: object())
+    monkeypatch.setattr(
+        service, "release", lambda *args, **kwargs: releases.append(stopped.is_set())
+    )
+    handler = service.discovery_handler(
+        database,
+        actor,
+        accepted["job_id"],
+        Provider(),
+        **{("x_reader" if source == "x" else "reddit_reader"): BlockingReader()},
+        connection_store=store,
+    )
+    data, _, _ = handler.run_with_deadline(plan, 0.05)
+    assert releases == [True]
+    assert stopped.is_set() and data[0]["error"] == "deadline_exceeded"
+    assert data[0]["page"] is None
 
 
 def test_query_stop_is_visible_failure_without_provider_io(database, monkeypatch):

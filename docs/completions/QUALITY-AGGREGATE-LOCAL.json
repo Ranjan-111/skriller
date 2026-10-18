@@ -107,7 +107,7 @@
       "dimension": "qualification",
       "source_group": "synthetic_fixture",
       "report": "docs/completions/QUALIFICATION-QUALITY-LOCAL.json",
-      "report_sha256": "f8baaf19f40559413218f84159438d7d215d11c43bac68bb3a909387b7a1fa9d",
+      "report_sha256": "5ba03e3ada97d46261fa3eadd956a3ddf7bb7df3690e9e2315d4730db1e9164c",
       "scope": "Development fixture acceptance over seeded reviewed facts; no live platform or model execution",
       "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
       "denominator": 24,
@@ -151,7 +151,7 @@
       "dimension": "identity",
       "source_group": "synthetic_fixture",
       "report": "docs/completions/IDENTITY-QUALITY-LOCAL.json",
-      "report_sha256": "b904580ec22a0a998103930eb3de398bb51d49cb880ebeb242ae6ec64f64a4be",
+      "report_sha256": "3b0767a6c499c81074cdfe0c39f39e274f6876a368f8b90ff20acb2bb69fb962",
       "scope": "Development fixture acceptance over seeded reviewed facts; no live platform or model execution",
       "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
       "denominator": 21,
@@ -208,7 +208,7 @@
           "runs_summary": [
             {
               "report": "docs/completions/QUALIFICATION-QUALITY-LOCAL.json",
-              "report_sha256": "f8baaf19f40559413218f84159438d7d215d11c43bac68bb3a909387b7a1fa9d",
+              "report_sha256": "5ba03e3ada97d46261fa3eadd956a3ddf7bb7df3690e9e2315d4730db1e9164c",
               "denominator": 24,
               "positive_denominator": 6,
               "negative_denominator": 18,
@@ -259,7 +259,7 @@
             },
             {
               "report": "docs/completions/IDENTITY-QUALITY-LOCAL.json",
-              "report_sha256": "b904580ec22a0a998103930eb3de398bb51d49cb880ebeb242ae6ec64f64a4be",
+              "report_sha256": "3b0767a6c499c81074cdfe0c39f39e274f6876a368f8b90ff20acb2bb69fb962",
               "denominator": 21,
               "positive_denominator": 6,
               "negative_denominator": 15,

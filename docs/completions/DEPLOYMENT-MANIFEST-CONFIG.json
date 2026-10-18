@@ -1,0 +1,9 @@
+{
+  "yaml_parsed": true,
+  "data_ports_unpublished": true,
+  "operator_credentials_separate": true,
+  "migration_shell_syntax_valid": true,
+  "containers_started": false,
+  "compose_config_exit_code": 0,
+  "compose_config_passed": true
+}

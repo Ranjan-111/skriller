@@ -25,6 +25,9 @@ from agent_reach.utils.process import utf8_subprocess_env
 from agent_reach.utils.text import scrub_url_credentials
 from agent_reach.utils.url import normalize_public_http_url
 
+SOCIAL_OPERATIONS = {"instagram_search", "instagram_profile", "facebook_search", "facebook_profile"}
+BROWSER_OPERATIONS = {"linkedin_search", "linkedin_resource_read", *SOCIAL_OPERATIONS}
+
 
 @dataclass(frozen=True)
 class RunResult:
@@ -132,6 +135,46 @@ def bounded_process(
 
 
 def reviewed_command(operation: str, target: str) -> list[str]:
+    if operation in SOCIAL_OPERATIONS:
+        from skriller.connectors.social_worker import OPERATIONS
+
+        social_request = OPERATIONS[operation].model_validate_json(target)
+        return [
+            "python",
+            "-m",
+            "skriller.connectors.social_worker",
+            operation,
+            social_request.model_dump_json(),
+        ]
+    if operation in {"linkedin_search", "linkedin_resource_read"}:
+        from skriller.connectors.linkedin_discovery import LinkedInSearch
+        from skriller.connectors.linkedin_read import LinkedInRead
+
+        linkedin_request = (
+            LinkedInRead.model_validate_json(target)
+            if operation == "linkedin_resource_read"
+            else LinkedInSearch.model_validate_json(target)
+        )
+        return [
+            "python",
+            "-m",
+            "skriller.connectors.linkedin_worker",
+            linkedin_request.model_dump_json(),
+        ]
+    if operation in {"reddit_oauth_search", "reddit_oauth_read"}:
+        from skriller.connectors.reddit_request import RedditRead, RedditSearch
+
+        reddit_request = (
+            RedditRead.model_validate_json(target)
+            if operation == "reddit_oauth_read"
+            else RedditSearch.model_validate_json(target)
+        )
+        return [
+            "python",
+            "-m",
+            "skriller.connectors.reddit_worker",
+            reddit_request.model_dump_json(),
+        ]
     if operation == "x_read":
         # The worker accepts only a serialized, bounded search request. It
         # chooses the one fixed official endpoint; callers cannot supply URLs.
@@ -270,13 +313,15 @@ class IsolatedRunner:
                 "--security-opt",
                 "no-new-privileges:true",
                 "--pids-limit",
-                "128",
+                "256" if operation in BROWSER_OPERATIONS else "128",
                 "--memory",
-                "512m",
+                "1g" if operation in BROWSER_OPERATIONS else "512m",
                 "--cpus",
                 "1",
                 "--tmpfs",
-                "/tmp:rw,nosuid,nodev,size=128m",
+                "/tmp:rw,nosuid,nodev,size=256m"
+                if operation in BROWSER_OPERATIONS
+                else "/tmp:rw,nosuid,nodev,size=128m",
                 "--mount",
                 f"type=bind,source={workspace},target=/work",
                 "--workdir",
@@ -296,6 +341,21 @@ class IsolatedRunner:
                 "--env",
                 f"SKRILLER_PROXY_IP={self.proxy_ip}",
                 *(["--env", "SKRILLER_X_WORKER=isolated"] if operation == "x_read" else []),
+                *(
+                    ["--env", "SKRILLER_LINKEDIN_WORKER=isolated"]
+                    if operation in {"linkedin_search", "linkedin_resource_read"}
+                    else []
+                ),
+                *(
+                    ["--env", "SKRILLER_SOCIAL_WORKER=isolated"]
+                    if operation in SOCIAL_OPERATIONS
+                    else []
+                ),
+                *(
+                    ["--env", "SKRILLER_REDDIT_WORKER=isolated"]
+                    if operation in {"reddit_oauth_search", "reddit_oauth_read"}
+                    else []
+                ),
                 "--env",
                 f"HTTPS_PROXY=http://{self.proxy_ip}:8080",
                 "--env",

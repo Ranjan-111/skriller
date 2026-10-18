@@ -3,9 +3,10 @@
 from datetime import timedelta
 
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
 
 from skriller.db.repositories import scope
-from skriller.db.schema import evidence
+from skriller.db.schema import entities, evidence
 from skriller.storage import BlobUnavailable, validate_key
 
 SOURCE_TTL_SECONDS = {
@@ -59,6 +60,16 @@ def cleanup_expired(session, storage, *, limit=100):
     else:
         purge_expired(session)
         session.execute(sa.text("SELECT expire_crm_oauth_consents()"))
+        session.execute(sa.text("SELECT expire_x_oauth_consents()"))
+        session.execute(sa.text("SELECT expire_reddit_oauth_consents()"))
+    from skriller.connections.reddit_continuation import continuations
+
+    session.execute(
+        sa.delete(continuations).where(
+            continuations.c.workspace_id == workspace,
+            continuations.c.expires_at <= now,
+        )
+    )
     rows = (
         session.execute(
             sa.select(evidence)
@@ -86,6 +97,24 @@ def cleanup_expired(session, storage, *, limit=100):
             sa.update(evidence)
             .where(evidence.c.workspace_id == workspace, evidence.c.id == row["id"])
             .values(object_key=None, excerpt=None)
+        )
+        # Source views duplicate excerpts for result rendering. Remove those
+        # payloads with their expired body rather than retaining hidden raw text.
+        session.execute(
+            sa.update(entities)
+            .where(
+                entities.c.workspace_id == workspace,
+                entities.c.attributes["_collection_body_evidence_id"].as_string() == str(row["id"]),
+            )
+            .values(
+                attributes=sa.cast(
+                    sa.cast(entities.c.attributes, JSONB)
+                    .op("-")("social_read")
+                    .op("-")("linkedin_read")
+                    .op("-")("reddit_thread"),
+                    sa.JSON,
+                )
+            )
         )
         removed += 1
     return {"status": "completed", "removed": removed}

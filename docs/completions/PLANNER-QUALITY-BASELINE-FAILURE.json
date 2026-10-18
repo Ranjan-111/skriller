@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "dimension": "prompt_planning",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_local_ollama",
+  "model": "llama3.2:3b",
+  "recorded_at": "2026-10-17T15:01:28.138262+00:00",
+  "case_denominator": 5,
+  "exact_matches": 2,
+  "actual_model_calls": 5,
+  "source_calls": 0,
+  "release_gate_passed": false,
+  "release_prompt_target": 50,
+  "scope": "Five synthetic development prompts; incomplete and failed cases remain in the denominator. No source, extraction, identity or pilot-quality claim.",
+  "corpus_and_labels_sha256": "508f2796245b18d86eaa66a2798e9ff973ccc7d4822bc4553d15ebd7760eddc2",
+  "implementation_sha256": {
+    "src/skriller/research/planner.py": "8802db475d4226054b88feb032ecf6c2e9803e40bdcc938ee16f5a2a10d18914",
+    "src/skriller/extraction/models.py": "670c987eefb07a3a7d9a197d2f5e0c78af880e9a28c8fca92a41c494a35b5c91"
+  },
+  "cases": [
+    {
+      "id": "location-exclusion-preference",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\",\n  \"rules\": [\n    [\"must_have\", \"location\", \"eq\", \"Bengaluru\", \"LinkedIn\"],\n    [\"exclude\", \"company_type\", \"eq\", \"agencies\", \"companies\"],\n    [\"preference\", \"hiring_role\", \"eq\", \"engineer\", \"companies\"]\n  ],\n  \"sources\": [],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 300,
+        "output_tokens": 100,
+        "total_tokens": 400
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "ungrounded_value"
+    },
+    {
+      "id": "company-geography-industry",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"\",\n  \"rules\": [\n    [\"must_have\", \"industry\", \"eq\", \"fintech\", \"companies in the fintech industry\"],\n    [\"must_have\", \"location\", \"eq\", \"Paris\", \"companies in Paris\"]\n  ],\n  \"sources\": [],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 294,
+        "output_tokens": 82,
+        "total_tokens": 376
+      },
+      "failure_class": "ModelUnavailable",
+      "failure_code": "schema_invalid"
+    },
+    {
+      "id": "numeric-minimum",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n    \"entity_type\": \"company\",\n    \"entity_quote\": \"\",\n    \"rules\": [\n        [\"must_have\", \"employee_count\", \"gte\", \", 25\", \"\"],\n        [\"exclude\", \"company_type\", \"eq\", \"agencies\", \"\"]\n    ],\n    \"sources\": [],\n    \"fields\": [],\n    \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 295,
+        "output_tokens": 76,
+        "total_tokens": 371
+      },
+      "failure_class": "ModelUnavailable",
+      "failure_code": "schema_invalid"
+    },
+    {
+      "id": "private-output",
+      "outcome": "passed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\"\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 290,
+        "output_tokens": 20,
+        "total_tokens": 310
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [
+          "private email"
+        ],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    },
+    {
+      "id": "ambiguous-location",
+      "outcome": "passed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\",\n  \"rules\": [\n    [\"must_have\", \"location\", \"eq\", \"London\", \"companies in London\"]\n  ],\n  \"sources\": [],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 290,
+        "output_tokens": 61,
+        "total_tokens": 351
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Should location refer to the person or the company headquarters?",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    }
+  ]
+}

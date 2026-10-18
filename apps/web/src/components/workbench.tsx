@@ -26,11 +26,29 @@ import { ResearchResultsPanel } from "./research-results";
 import { WorkspaceAllowancePanel } from "./workspace-allowance";
 import { YouTubeAnalyticsPanel } from "./youtube-analytics";
 import { SalesforcePanel } from "./salesforce-panel";
+import { BillingPanel } from "./billing-panel";
+import { RedditConnectionPanel } from "./reddit-connection-panel";
+import { XConnectionPanel } from "./x-connection-panel";
 const sources = [
   { id: "linkedin", name: "LinkedIn", detail: "Professional discovery" },
   { id: "reddit", name: "Reddit", detail: "Discussions & demand" },
   { id: "web", name: "Web", detail: "Company websites & search" },
+  {
+    id: "instagram",
+    name: "Instagram",
+    detail: "Public profile references; connected reads when configured",
+  },
+  {
+    id: "facebook",
+    name: "Facebook",
+    detail: "Page references; connected headers when configured",
+  },
   { id: "youtube", name: "YouTube", detail: "Public video references" },
+  {
+    id: "x",
+    name: "X",
+    detail: "Direct public posts (owner connection required)",
+  },
 ] as const;
 const examples = {
   leads: [
@@ -50,6 +68,10 @@ export function Workbench() {
   currentAccount.current = accountId;
   const tokenProvider = useRef(identity.getToken);
   tokenProvider.current = identity.getToken;
+  const billingToken = useCallback(
+    (force?: boolean) => tokenProvider.current(force),
+    [],
+  );
   const api = useMemo(
     () =>
       createApi(undefined, undefined, (force) => tokenProvider.current(force)),
@@ -71,6 +93,16 @@ export function Workbench() {
   const [job, setJob] = useState<ResearchJob | null>(null);
   const [jobAccount, setJobAccount] = useState<string | undefined>();
   const [showSources, setShowSources] = useState(false);
+  const [xConnected, setXConnected] = useState(false);
+  const [redditRefreshKey, setRedditRefreshKey] = useState(0);
+  const reportRedditRefresh = useCallback(() => {
+    setRedditRefreshKey((value) => value + 1);
+  }, []);
+  const reportXConnection = useCallback((connected: boolean) => {
+    setXConnected(connected);
+    if (!connected)
+      setSelected((current) => current.filter((source) => source !== "x"));
+  }, []);
   const mounted = useRef(true);
   const composer = useRef<HTMLTextAreaElement>(null);
   const checkHealth = useCallback(async () => {
@@ -305,7 +337,7 @@ export function Workbench() {
                     <input
                       type="checkbox"
                       checked={selected.includes(source.id)}
-                      disabled={busy}
+                      disabled={busy || (source.id === "x" && !xConnected)}
                       onChange={(e) =>
                         setSelected(
                           e.target.checked
@@ -367,9 +399,10 @@ export function Workbench() {
             identity.status === "signed_in" &&
             jobAccount === accountId && (
               <ResearchResultsPanel
-                key={job.id}
+                key={`research:${job.id}`}
                 api={api}
                 job={job}
+                onRedditRefresh={reportRedditRefresh}
                 onExpanded={(next, nextPrompt) => {
                   setPrompt(nextPrompt);
                   setJob(next);
@@ -379,21 +412,47 @@ export function Workbench() {
                   setJob(next);
                   setJobAccount(accountId);
                 }}
+                onEditPrompt={() => {
+                  composer.current?.focus();
+                }}
               />
             )}
           {identity.status === "signed_in" && accountId && (
             <WorkspaceAllowancePanel
-              key={accountId}
+              key={`allowance:${accountId}`}
               api={api}
               refreshKey={job?.id}
             />
           )}
+          <BillingPanel
+            key={`billing:${accountId || "signed-out"}`}
+            api={api}
+            userId={accountId}
+            identityStatus={identity.status}
+            getToken={billingToken}
+          />
           <YouTubeAnalyticsPanel
             api={api}
             userId={accountId}
             identityStatus={identity.status}
           />
-          <SalesforcePanel api={api} userId={identity.user?.uid} identityStatus={identity.status} />
+          <SalesforcePanel
+            api={api}
+            userId={identity.user?.uid}
+            identityStatus={identity.status}
+          />
+          <XConnectionPanel
+            api={api}
+            userId={identity.user?.uid}
+            identityStatus={identity.status}
+            onConnectedChange={reportXConnection}
+          />
+          <RedditConnectionPanel
+            api={api}
+            userId={identity.user?.uid}
+            identityStatus={identity.status}
+            refreshKey={redditRefreshKey}
+          />
           <section className="examples" aria-labelledby="examples-title">
             <h2 id="examples-title">Start with a question</h2>
             {examples[mode].map((example) => (

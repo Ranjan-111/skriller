@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "dimension": "prompt_planning",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_local_ollama",
+  "model": "llama3.2:3b",
+  "recorded_at": "2026-10-17T15:04:15.289830+00:00",
+  "case_denominator": 5,
+  "exact_matches": 0,
+  "actual_model_calls": 5,
+  "source_calls": 0,
+  "release_gate_passed": false,
+  "release_prompt_target": 50,
+  "scope": "Five synthetic development prompts; incomplete and failed cases remain in the denominator. No source, extraction, identity or pilot-quality claim.",
+  "corpus_and_labels_sha256": "508f2796245b18d86eaa66a2798e9ff973ccc7d4822bc4553d15ebd7760eddc2",
+  "implementation_sha256": {
+    "src/skriller/research/planner.py": "465e4685ef28bd8297d3d353565a03fdd65fdf3515d1e619fbeb70396dd335d0",
+    "src/skriller/extraction/models.py": "670c987eefb07a3a7d9a197d2f5e0c78af880e9a28c8fca92a41c494a35b5c91"
+  },
+  "cases": [
+    {
+      "id": "location-exclusion-preference",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\",\n  \"rules\": [\n    [\"must_have\", \"person_location\", \"eq\", \"Bengaluru\", \"founders based in Bengaluru\"],\n    [\"exclude\", \"company_type\", \"contains\", \"agencies\", \"Exclude agencies\"],\n    [\"preference\", \"company_name\", \"contains\", \"LinkedIn\", \"Prefer companies hiring engineers\"]\n  ],\n  \"sources\": [\n    [\"linkedin\", \"LinkedIn\"]\n  ],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 412,
+        "output_tokens": 118,
+        "total_tokens": 530
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "ungrounded_value"
+    },
+    {
+      "id": "company-geography-industry",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"fintech\",\n  \"rules\": [\n    [\"must_have\", \"industry\", \"contains\", \"fintech\", \"fintech\"],\n    [\"must_have\", \"company_location\", \"eq\", \"Paris\", \"headquartered in Paris\"]\n  ],\n  \"sources\": [\n    [\"web\", \"Wikipedia\"]\n  ],\n  \"fields\": [\n    [\"name\", \"exact quote\"],\n    [\"employee_count\", \"gte\"],\n    [\"industry\", \"omit\"]\n  ]\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 406,
+        "output_tokens": 116,
+        "total_tokens": 522
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "ungrounded_quote"
+    },
+    {
+      "id": "numeric-minimum",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"companies\",\n  \"rules\": [\n    [\"must_have\", \"employee_count\", \"gte\", \"25\", \"at least 25 employees\"],\n    [\"exclude\", \"company_type\", \"contains\", \"agencies\", \"Exclude agencies\"]\n  ],\n  \"sources\": [\n    [\"reddit\", \"Reddit\"]\n  ],\n  \"fields\": [],\n  \"unsupported\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 407,
+        "output_tokens": 91,
+        "total_tokens": 498
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "ungrounded_quote"
+    },
+    {
+      "id": "private-output",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"founders\",\n  \"rules\": [\n    [\"must_have\", \"role\", \"contains\", \"founders\", \"founders\"],\n    [\"must_have\", \"person_location\", \"eq\", \"\", \"\"],\n    [\"must_have\", \"company_location\", \"eq\", \"\", \"\"],\n    [\"exclude\", \"company_type\", \"contains\", \"private\", \"Exclude private\"]\n  ],\n  \"sources\": [\n    [\"reddit\", \"Reddit\"]\n  ],\n  \"fields\": [\n    [\"name\", \"email\"],\n    [\"unsupported\", \"private_email\"]\n  ]\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 402,
+        "output_tokens": 130,
+        "total_tokens": 532
+      },
+      "failure_class": "ModelUnavailable",
+      "failure_code": "schema_invalid"
+    },
+    {
+      "id": "ambiguous-location",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"founders\",\n  \"rules\": [\n    [\"must_have\", \"company_location\", \"eq\", \"London\", \"founders at companies in London\"],\n    [\"must_have\", \"person_location\", \"contains\", \"founder\", \"founders\"]\n  ],\n  \"sources\": [],\n  \"fields\": []\n}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 402,
+        "output_tokens": 80,
+        "total_tokens": 482
+      },
+      "failure_class": "PlanningInvalid",
+      "failure_code": "ungrounded_value"
+    }
+  ]
+}

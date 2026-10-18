@@ -1,0 +1,90 @@
+# Optional single-host private data layer; combine with compose.yaml.
+x-data-logging: &data-logging
+  driver: json-file
+  options: {max-size: 10m, max-file: "3"}
+
+services:
+  postgres:
+    image: ${SKRILLER_POSTGRES_IMAGE:?Set the reviewed PostgreSQL 18 image reference}
+    environment:
+      POSTGRES_USER: skriller
+      POSTGRES_DB: skriller
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
+    volumes: [postgres_data:/var/lib/postgresql]
+    networks: [data]
+    restart: unless-stopped
+    logging: *data-logging
+    pids_limit: 256
+    mem_limit: ${SKRILLER_POSTGRES_MEMORY_LIMIT:?Set the measured database memory budget}
+    healthcheck:
+      test: [CMD, pg_isready, -U, skriller, -d, skriller]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  rabbitmq:
+    image: ${SKRILLER_RABBIT_IMAGE:?Set the reviewed RabbitMQ 4 image reference}
+    env_file: ["${SKRILLER_RABBIT_ENV_FILE:?Set the absolute protected RabbitMQ env-file path}"]
+    environment:
+      RABBITMQ_DEFAULT_USER: skriller
+    volumes: [rabbitmq_data:/var/lib/rabbitmq]
+    networks: [data]
+    restart: unless-stopped
+    logging: *data-logging
+    pids_limit: 256
+    mem_limit: ${SKRILLER_RABBIT_MEMORY_LIMIT:?Set the measured broker memory budget}
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    networks: [services, outbound, data]
+    depends_on:
+      postgres: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+  research:
+    networks: [services, outbound, data]
+    depends_on:
+      postgres: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+  retention:
+    networks: [services, outbound, data]
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  migrate:
+    image: ${SKRILLER_API_IMAGE:?Set the reviewed backend image reference}
+    profiles: [operator]
+    mem_limit: ${SKRILLER_API_MEMORY_LIMIT:?Set the operator task memory budget}
+    pids_limit: 128
+    env_file: ["${SKRILLER_OPERATOR_ENV_FILE:?Set the absolute protected operator env-file path}"]
+    command:
+      - /bin/sh
+      - -ec
+      - >-
+        python -c 'import os; from skriller.db.core import bootstrap; from skriller.settings import Settings; bootstrap(Settings().database_url, application_password=os.environ["SKRILLER_APPLICATION_PASSWORD"])'
+        && alembic upgrade head
+    networks: [data]
+    depends_on:
+      postgres: {condition: service_healthy}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck: {disable: true}
+    tmpfs: [/tmp]
+    restart: "no"
+
+networks:
+  data:
+    internal: true
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+secrets:
+  postgres_password:
+    file: ${SKRILLER_POSTGRES_PASSWORD_FILE:?Set the protected database password-file path}

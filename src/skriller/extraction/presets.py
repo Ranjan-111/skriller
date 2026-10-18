@@ -19,8 +19,18 @@ from skriller.extraction.validation import literal_value
 from skriller.settings import Settings
 
 PresetId = Literal[
-    "company", "team", "careers", "jobs", "pricing", "services", "contact", "directory",
+    "company",
+    "team",
+    "careers",
+    "jobs",
+    "pricing",
+    "services",
+    "contact",
+    "directory",
     "industry_directory",
+    "linkedin_profile",
+    "linkedin_company",
+    "linkedin_post",
 ]
 
 
@@ -73,23 +83,39 @@ class DirectoryPresetResult(BaseModel):
 
 
 _FIELDS: dict[PresetId, tuple[str, ...]] = {
+    # Dates are literal drafts for explicit owner review, never automatic acceptance.
+    "linkedin_profile": ("person_name", "job_title", "location", "role_effective_date"),
+    "linkedin_company": ("company_name", "description", "headquarters", "industry"),
+    "linkedin_post": ("post_text", "post_published_date"),
     "company": ("company_name", "description", "headquarters", "employee_count", "industry"),
     "team": ("person_name", "job_title", "team_page_url"),
     # A page may state when a role was posted. This is retained as a literal
     # source observation; it does not assert that the role is still open.
     "careers": (
-        "job_title", "location", "employment_type", "careers_url", "job_posted_date",
+        "job_title",
+        "location",
+        "employment_type",
+        "careers_url",
+        "job_posted_date",
         "job_listing_status",
     ),
     "jobs": (
-        "job_title", "location", "employment_type", "careers_url", "job_posted_date",
+        "job_title",
+        "location",
+        "employment_type",
+        "careers_url",
+        "job_posted_date",
         "job_listing_status",
     ),
     # Keep the site's literal amount, currency, period, effective date and
     # availability as separate observations. In particular, do not parse
     # localized punctuation or convert currencies in this extraction layer.
     "pricing": (
-        "product_name", "price", "currency", "billing_period", "price_effective_date",
+        "product_name",
+        "price",
+        "currency",
+        "billing_period",
+        "price_effective_date",
         "price_availability",
     ),
     "services": ("service_name", "service_description", "customer_type", "service_area"),
@@ -103,7 +129,11 @@ _FIELDS: dict[PresetId, tuple[str, ...]] = {
         "service_name",
     ),
     "industry_directory": (
-        "company_name", "description", "headquarters", "employee_count", "industry",
+        "company_name",
+        "description",
+        "headquarters",
+        "employee_count",
+        "industry",
         "service_name",
     ),
 }
@@ -185,13 +215,12 @@ async def extract_directory_page(
     """Use the copied graph and shared model ledger for one already-fetched page."""
     fields = preset_fields(preset)
     instruction = (
-        f"Extract only these fields when explicitly stated: {', '.join(fields)}. "
-        "For each fact return its field, exact value, and a verbatim supporting quote. "
-        "Preserve source spelling, punctuation, currency, billing period, dates, and availability exactly; "
-        "do not convert currencies, normalize localized amounts/dates, or infer current availability. "
-        "For job listings, an expired, closed, filled, or no-longer-accepting source must never be described as current, open, active, or hiring. "
-        "Return a claims array of objects with exactly field, value, quote keys. "
-        "Do not infer contacts or merge claims from other pages. Unknowns are omitted from the array; never return null claim values."
+        f"Extract explicitly stated fields: {', '.join(fields)}. "
+        "Return claims [{field,value,quote}] with exact values and verbatim supporting quotes. "
+        "Preserve spelling, punctuation, currency, billing period, dates and availability; "
+        "do not convert currencies or normalize amounts/dates. "
+        "Expired, closed, filled or no-longer-accepting jobs cannot be current/open/active/hiring. "
+        "Omit unknowns and null values. Never infer contacts or merge other pages."
     )
     extraction = await extract_saved(
         database,

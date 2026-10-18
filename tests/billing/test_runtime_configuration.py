@@ -29,6 +29,30 @@ def test_private_file_loads_and_secrets_stay_redacted(tmp_path):
 
 
 @pytest.mark.parametrize(
+    "origin,valid",
+    [
+        ("http://localhost:3000", True),
+        ("https://app.example", True),
+        ("http://public.example", False),
+        ("https://app.example/path", False),
+    ],
+)
+def test_optional_checkout_settings_are_explicit_and_validated(tmp_path, origin, valid):
+    path = tmp_path / "billing.json"
+    document = configuration() | {
+        "checkout": {"firebase_project_id": "skriller-fixture", "return_origin": origin}
+    }
+    path.write_text(json.dumps(document))
+    path.chmod(0o600)
+    if valid:
+        config, _ = read_configuration(path)
+        assert config.checkout.configuration().return_origin == origin
+    else:
+        with pytest.raises(ValueError, match="valid private billing configuration"):
+            read_configuration(path)
+
+
+@pytest.mark.parametrize(
     "kind", ["permissions", "symlink", "too_large", "invalid", "duplicate", "sqlite", "extra"]
 )
 def test_invalid_file_fails_without_disclosing_content(tmp_path, kind):

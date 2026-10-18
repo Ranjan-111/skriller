@@ -1,0 +1,12 @@
+{$SKRILLER_DOMAIN} {
+	encode zstd gzip
+
+	@api path /health/* /v1/*
+	handle @api {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}

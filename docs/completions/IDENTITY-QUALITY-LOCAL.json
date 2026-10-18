@@ -9,10 +9,10 @@
   "implementation_sha256": {
     "src/skriller/qualification/identity.py": "e454b2d7c3d698f6792c4778d1560615e2d47f35f7d4b4febebab647ee9bb8e9",
     "src/skriller/qualification/service.py": "51d2aafa851685207e26cf5c4d4ed10a2f43a8e199ba1e0549d9d896132c21aa",
-    "src/skriller/qualification/criteria.py": "058cdbe058ced654d93f646ed0c801d73373b1b6bcb28e02eadba58a813979ce",
+    "src/skriller/qualification/criteria.py": "14a37d042e317269b2f6a12c65de87c80ce51525628a4338a7a88e796d7efe24",
     "src/skriller/qualification/contacts.py": "39a20fbd5a399e8ba165c382fa42319758122cf4e94353defd2515a4c33c326a"
   },
-  "recorded_at": "2026-10-16T11:59:11.269072+00:00",
+  "recorded_at": "2026-10-17T15:10:21.163016+00:00",
   "accuracy_definition": "Common eligibility accuracy counts all cases; exact_label_accuracy separately requires the exact labelled status/decision, including near matches and unknowns.",
   "exact_label_denominator": 21,
   "exact_label_correct": 21,

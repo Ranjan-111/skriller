@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "dimension": "prompt_planning",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_local_ollama",
+  "model": "llama3.2:3b",
+  "recorded_at": "2026-10-17T23:15:35.436258+00:00",
+  "case_denominator": 5,
+  "case_assertions_passed": 1,
+  "actual_model_calls": 5,
+  "source_calls": 0,
+  "release_gate_passed": false,
+  "release_prompt_target": 50,
+  "scope": "Five synthetic development checks using the declared per-case assertions, not a full-plan recall metric. Incomplete and failed cases remain in the denominator. No source, extraction, identity or pilot-quality claim.",
+  "corpus_and_labels_sha256": "86dfeada1fd2cddde2c7cecec0ba00475ce891d5d1c08283694e4f6811b249c4",
+  "implementation_sha256": {
+    "src/skriller/research/planner.py": "d95e0a5c0accae70330eff4e4718badc6e5bff1993920b75e7635b866a9416f6",
+    "src/skriller/extraction/models.py": "670c987eefb07a3a7d9a197d2f5e0c78af880e9a28c8fca92a41c494a35b5c91"
+  },
+  "cases": [
+    {
+      "id": "location-exclusion-preference",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"LinkedIn\"\n}\n  \t\t   \t\t\t\t \t\t\t\t\t \t\t",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 317,
+        "output_tokens": 29,
+        "total_tokens": 346
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Please confirm the requested exclusion, preference, person location, linkedin source selection.",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": false,
+        "clarification": false,
+        "must_have": false,
+        "exclusions": false,
+        "preferences": false,
+        "sources": false,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "company-geography-industry",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"Paris\"\n}\n  \t\t   \t\t",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 311,
+        "output_tokens": 24,
+        "total_tokens": 335
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Please confirm the requested company headquarters.",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": true,
+        "clarification": false,
+        "must_have": false,
+        "exclusions": true,
+        "preferences": true,
+        "sources": true,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "numeric-minimum",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"agencies\"\n}\n  \t\t   \t\t\t\t \t\t\t\t\t \t\t",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 312,
+        "output_tokens": 30,
+        "total_tokens": 342
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Please confirm the requested exclusion, minimum employee count.",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": true,
+        "clarification": false,
+        "must_have": false,
+        "exclusions": false,
+        "preferences": true,
+        "sources": true,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "private-output",
+      "outcome": "passed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"person\",\n  \"entity_quote\": \"private email\"\n}\n\n  \t\t   \t\t",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 307,
+        "output_tokens": 25,
+        "total_tokens": 332
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [
+          "private email"
+        ],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    },
+    {
+      "id": "ambiguous-location",
+      "outcome": "failed",
+      "calls": 1,
+      "synthetic_response": "{\n  \"entity_type\": \"company\",\n  \"entity_quote\": \"London\"\n}\n\n  \t\t   \t\t",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 307,
+        "output_tokens": 24,
+        "total_tokens": 331
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    }
+  ]
+}

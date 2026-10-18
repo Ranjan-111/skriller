@@ -1,0 +1,11 @@
+{
+  "state": "completed",
+  "result_count": 2,
+  "all_snippets_unverified": true,
+  "source": "exa_keyless",
+  "paid_key_used": false,
+  "firebase_user_roundtrip": false,
+  "elapsed_seconds": 7.884,
+  "recorded_at": "2026-10-18T01:30:17.599162+00:00",
+  "scope": "Actual project PostgreSQL -> RabbitMQ -> running research worker -> one bounded free public search -> persisted unverified results. Firebase browser and confirmed export are separate acceptance checks."
+}

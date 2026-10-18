@@ -156,7 +156,10 @@
         "SKR-024"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "implemented_pending_verification",
+      "next_ui_subtask_model": "gpt-6-luna",
+      "ui_subtask_status": "completed_locally",
+      "execution_note": "2026-10-17: explicit owner-authorized rebind/resume backend, safe pre-dispatch pause, scoped choices, strict web client and explicit owner-confirmation results UI implemented and locally verified. Account-backed/hosted acceptance remains deferred."
     },
     {
       "ticket_id": "SKR-027",
@@ -215,7 +218,10 @@
         "SKR-029"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "implemented_pending_verification",
+      "next_ui_subtask_model": "gpt-6-luna",
+      "ui_subtask_status": "completed_locally",
+      "execution_note": "2026-10-17: explicit owner-authorized rebind/resume backend, safe pre-dispatch pause, scoped choices, strict web client and explicit owner-confirmation results UI implemented and locally verified. Account-backed/hosted acceptance remains deferred."
     },
     {
       "ticket_id": "SKR-032",
@@ -536,7 +542,10 @@
         "SKR-096"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "implemented_pending_verification"
+      "current_status": "implemented_pending_verification",
+      "next_ui_subtask_model": "gpt-6-luna",
+      "ui_subtask_status": "locally_verified_including_async_plan_refresh",
+      "execution_note": "Luna UI subtask complete: four safe failure explanations, explicit prompt edit focus, no automatic retry, neutral old-API fallback. 50 results tests, TypeScript, formatting and detector passed. Authenticated localhost browser acceptance remains pending."
     },
     {
       "ticket_id": "SKR-053",
@@ -654,8 +663,11 @@
         "SKR-034",
         "SKR-035"
       ],
-      "reason": "Remaining work is selected platform backend integration and security/live-operation semantics; Sol owns architecture and source-account boundary. Luna completed the results UI slice.",
-      "current_status": "in_progress"
+      "reason": "Frontend contract, results and export locally verified; account-backed and hosted gates remain user-deferred.",
+      "current_status": "implemented_pending_verification",
+      "next_ui_subtask_model": "gpt-6-luna",
+      "ui_subtask_status": "pending",
+      "ui_subtask": "completed_locally"
     },
     {
       "ticket_id": "SKR-060",
@@ -673,7 +685,10 @@
         "SKR-051"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification",
+      "ui_subtask": "completed_locally_verified",
+      "execution_note": "2026-10-17 Sol backend and Luna client/results subtask complete locally; account-backed/hosted acceptance and source rights remain deferred.",
+      "ui_subtask_evidence": "Strict optional resource DTO validation binds canonical candidate URLs, sections, kinds, bounds, dates and privacy constants; result view shows literal content, limits, source link and expiry state. 120 API/results/export tests, TypeScript, generated contracts, production build and Impeccable detector passed. Account-backed, hosted, rights and production-limit gates remain."
     },
     {
       "ticket_id": "SKR-061",
@@ -690,8 +705,10 @@
         "SKR-034",
         "SKR-035"
       ],
-      "reason": "Remaining work is selected platform backend integration and security/live-operation semantics; Sol owns architecture and source-account boundary. Luna completed the results UI slice.",
-      "current_status": "in_progress"
+      "reason": "Local discovery, owner UI and on-demand renewal implemented. Source/hosted acceptance deferred; general explicit checkpoint rebind remains SKR-025/SKR-030.",
+      "current_status": "implemented_pending_verification",
+      "ui_subtask_status": "implemented_locally_verified",
+      "ui_subtask_evidence": "Authenticated Reddit renewal event and terminal fallback trigger one metadata reload; 210 web tests pass sequentially, TypeScript and production build pass. Parent ticket remains pending live/hosted acceptance."
     },
     {
       "ticket_id": "SKR-062",
@@ -707,7 +724,10 @@
         "SKR-050"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification",
+      "ui_subtask": "implemented_locally_verified",
+      "execution_note": "2026-10-17: local bounded post/comment read and copied-graph quoted-problem backend implemented and verified; strict client/results view is next Luna work. Direct live/hosted gates remain deferred.",
+      "ui_subtask_evidence": "Strict generated DTO validation, readable Reddit post/comment/signal results, date/deletion/coverage states and export privacy passed 223 frontend tests, TypeScript, generated contracts, production build and Impeccable detector. Direct account-backed/hosted and commercial-rights acceptance remains open."
     },
     {
       "ticket_id": "SKR-063",
@@ -824,7 +844,10 @@
         "SKR-067"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification",
+      "execution_note": "2026-10-17 Sol review: blank choices, pending scope changes, lost/invalid approval responses and decision projections fixed; 124 web checks pass. Local founder journey/owner UI are verified; live/hosted/rights and representative quality remain open.",
+      "next_ui_subtask_model": "gpt-6-luna",
+      "ui_subtask_status": "implemented_locally_verified"
     },
     {
       "ticket_id": "SKR-069",
@@ -921,7 +944,7 @@
         "SKR-073"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "in_progress"
     },
     {
       "ticket_id": "SKR-075",
@@ -962,7 +985,8 @@
         "SKR-068"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "in_progress"
+      "current_status": "in_progress",
+      "execution_note": "2026-10-17 Sol: generation schema carries existing quote bounds, prior report retained, actual local Llama remains 2/5 with literal-grounding failures. Safe recovery contract ready. Representative 50-prompt/200-record gate stays open."
     },
     {
       "ticket_id": "SKR-077",
@@ -1102,7 +1126,7 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "in_progress"
+      "current_status": "implemented_pending_verification"
     },
     {
       "ticket_id": "SKR-085",
@@ -1119,7 +1143,9 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification",
+      "execution_note": "Strict source client contracts, optional source controls, bounded profile observations and raw-body export exclusion implemented; live/container/hosted acceptance remains pending.",
+      "ui_subtask_status": "locally_implemented_and_verified"
     },
     {
       "ticket_id": "SKR-086",
@@ -1136,7 +1162,9 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "implemented_pending_verification",
+      "execution_note": "Strict source client contracts, optional source controls, bounded profile observations and raw-body export exclusion implemented; live/container/hosted acceptance remains pending.",
+      "ui_subtask_status": "locally_implemented_and_verified"
     },
     {
       "ticket_id": "SKR-087",
@@ -1198,7 +1226,7 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "in_progress"
+      "current_status": "implemented_pending_verification"
     },
     {
       "ticket_id": "SKR-091",
@@ -1214,7 +1242,8 @@
         "SKR-076"
       ],
       "reason": "Bounded UI, configuration, standard public-source adaptation, serialization, diagnostics or repeatable verification on established contracts.",
-      "current_status": "planned"
+      "current_status": "planned",
+      "launch_scope": "deferred_by_user"
     },
     {
       "ticket_id": "SKR-092",
@@ -1231,7 +1260,8 @@
         "SKR-079"
       ],
       "reason": "Architecture, tenant/security boundaries, credentials, durable execution, semantic correctness, sensitive integrations or end-to-end production acceptance.",
-      "current_status": "planned"
+      "current_status": "planned",
+      "launch_scope": "deferred_by_user"
     },
     {
       "ticket_id": "SKR-093",
@@ -1286,7 +1316,7 @@
   ],
   "execution_rules": [
     "Sol grouped041public304,048durable repair orchestration/review and076initial labelled evaluation recorded; shared model/source/hosted quality gates remain explicit.",
-    "Next Luna076reporting support: bounded report/corpus validation and correct denominator aggregation only; Sol retains model/semantic/security ownership.",
+    "Luna owns bounded UI/reporting on established contracts; Sol retains semantic, source-worker, authorization and budget ownership.",
     "Use dependency-ready execution; independent local tooling/documentation may proceed before deferred hosted gates, with those acceptance dependencies explicit.",
     "Preserve existing copied source engines; do not rewrite verified components.",
     "Only mark done after the whole acceptance scope and required checks pass; retain live/deployment gaps.",
@@ -1297,13 +1327,12 @@
   ],
   "active_model": "gpt-6.1-sol",
   "active_reasoning_effort": "medium",
-  "execution_note": "2026-10-17 Sol: private summary admission/API/reporting worker plus Salesforce owner API/PKCE/automatic refresh/disconnect/expiry/restore implemented and verified offline.088 advances to implemented_pending_verification. Board57done/24pending/5in_progress/10planned. Next allocated frontend batch is Luna, not a claim that all Sol backlog is done.",
+  "execution_note": "2026-10-18: SKR-074 in progress with prepared non-root locked backend image definition and env-context exclusions. Container execution/hosted acceptance remain deferred; no image build/deploy claimed. Board 57 done/33 pending verification/2 in progress/4 planned. Deployment plan records nine acceptance work packages and conditional effort estimates.",
   "unfinished_ticket_count": 39,
-  "next_model": "gpt-6-luna",
+  "next_model": "gpt-6.1-sol",
   "next_reasoning_effort": "medium",
   "next_batch": [
-    "SKR-083",
-    "SKR-088"
+    "SKR-074"
   ],
-  "next_batch_scope": "Luna UI: add private analytics summary submit/status/cancel to existing analytics panel; implement Salesforce owner connect/callback/destination/qualified-selection/delivery controls using generated real contracts. Read apps/web/AGENTS.md and frontend skill. Keep code/state promptly stripped and tab-bound to initiating uid/workspace/consent; no tokens or private metrics in persistent browser/shared research state. No browser/session inspection under existing restriction. Actual Google/Salesforce account gates stay pending. Sol retains billing090 checkout/customer binding/refund/dispute backend and084 isolated X executor, plus security/live reviews; no provider plan creation or key requests, which remain user-deferred."
+  "next_batch_scope": "Independent local core launch work only. Model-quality acceptance is user-pending on base M4 Air; no heavy downloads or repeated model experiments. Deployment/accounts/containers and language/regional expansion stay deferred. No coding-model switch required."
 }

@@ -1,0 +1,8 @@
+# Reuse the reviewed browser closure; generated copied scripts need no Node runtime.
+ARG BROWSER_BASE=skriller-egress-browser@sha256:548ee64f786a3524f7114c76b4b487e16559a7cb330704014035cec747eed918
+FROM ${BROWSER_BASE}
+COPY src/skriller /app/src/skriller
+COPY src/skriller/_vendor/opencli/LICENSE /app/licenses/OpenCLI-LICENSE
+COPY src/skriller/_vendor/opencli/PROVENANCE.json /app/licenses/OpenCLI-PROVENANCE.json
+ENV PYTHONPATH=/app/src:/app/third_party/scrapling:/app/third_party/agent-reach SKRILLER_SOCIAL_WORKER=isolated
+ENTRYPOINT ["/usr/local/bin/guarded-worker"]

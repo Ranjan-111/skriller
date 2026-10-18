@@ -72,9 +72,11 @@ def test_runtime_code_and_license_are_unchanged_pinned_source_without_auth_or_cl
     assert not any((subset / name).exists() for name in ["auth.py", "client.py", "cli.py"])
     acquired = json.loads((SOURCE / "PROVENANCE.json").read_text())
     for record in acquired["files"]:
-        assert (
-            hashlib.sha256((SOURCE / record["path"]).read_bytes()).hexdigest() == record["sha256"]
+        assert hashlib.sha256((SOURCE / record["path"]).read_bytes()).hexdigest() == record.get(
+            "workspace_sha256", record["sha256"]
         )
+    changed = {record["path"] for record in acquired["files"] if "workspace_sha256" in record}
+    assert changed == {"twitter_cli/cli.py", "twitter_cli/output.py"}
 
 
 @pytest.mark.parametrize(

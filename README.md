@@ -73,7 +73,7 @@ See [PRD](docs/PRD.md), [tickets](docs/IMPLEMENTATION_TICKETS.md), [reuse map](d
 
 ## Current native PostgreSQL test alternative
 
-Docker now runs the reviewed guarded proxy/browser containers. An isolated official PostgreSQL 18.4 runtime was built in `.runtime/postgres` and is running on loopback port 54439. It was used for the real database checks; RabbitMQ is also running natively and has passed real delivery/restart checks; full hosted collection packaging and release gates remain open. Build provenance and cluster start/stop commands are in `.runtime/postgres/NATIVE_RUNTIME.md`.
+This workspace currently uses native PostgreSQL and RabbitMQ; container execution remains deferred. An isolated official PostgreSQL 18.4 runtime was built in `.runtime/postgres` and is running on loopback port 54439. It was used for the real database checks; RabbitMQ is also running natively and has passed real delivery/restart checks; full hosted collection packaging and release gates remain open. Build provenance and cluster start/stop commands are in `.runtime/postgres/NATIVE_RUNTIME.md`.
 
 To run the database suite against this cluster:
 
@@ -104,10 +104,18 @@ Actual probes found company, LinkedIn and Reddit references. Free-tier limits, u
 
 ## Start the complete local application
 
+For the current passing indexed-discovery/manual source-export profile, use
+`.venv/bin/python scripts/dev_stack.py --discovery-only`. It overrides experimental
+planning/extraction/direct source reads in child processes without editing `.env`.
+Full native PostgreSQL/RabbitMQ startup, health and browser test commands are in
+[local run and manual test](docs/LOCAL_RUN_AND_MANUAL_TEST.md). The ordered future
+[deployment/hosting guide](docs/DEPLOYMENT_HOSTING_GUIDE.md) separates staging from
+the still-open semantic, source, recovery and hosted acceptance gates.
+
 After PostgreSQL/RabbitMQ are running, use one foreground terminal:
 
 ```sh
-.venv/bin/python scripts/dev_stack.py
+.venv/bin/python scripts/dev_stack.py --discovery-only
 ```
 
 This starts the API, durable research worker and web app together. Keep that terminal open. Existing processes on ports3000/8000 are left running, and Ctrl-C stops only the children started by this command. Separate worker command: `.venv/bin/python -m skriller.research.runtime`. macOS uses the local solo pool to avoid multiprocessing spawn incompatibility; Linux defaults to prefork. Application I/O deadlines remain bounded in both modes. Production process/container isolation is still a separate acceptance gate.

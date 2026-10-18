@@ -54,8 +54,10 @@ def schedule_extraction(session, job):
         entity = ResearchRepository.get_entity(session, identifier)
         if (
             entity is None
-            or entity["attributes"].get("source") != "web"
+            or entity["attributes"].get("source") not in {"web", "reddit", "linkedin"}
             or entity["attributes"].get("collection", {}).get("status") != "read"
+            or entity["attributes"].get("source") == "reddit"
+            and not entity["attributes"].get("reddit_thread")
         ):
             continue
         attempt = JobRepository.attempt(
@@ -81,7 +83,16 @@ def preset_for_source_url(source_url: str) -> PresetId:
     intentionally explicit so query strings and unrelated words in a hostname
     cannot silently select a more specialized extraction schema.
     """
-    path = urlsplit(source_url).path.lower().rstrip("/")
+    parsed = urlsplit(source_url)
+    path = parsed.path.lower().rstrip("/")
+    if parsed.hostname == "www.linkedin.com":
+        return (
+            "linkedin_profile"
+            if path.startswith("/in/")
+            else "linkedin_company"
+            if path.startswith("/company/")
+            else "linkedin_post"
+        )
     segments = {segment for segment in path.split("/") if segment}
     if segments & {"team", "people", "leadership", "founders", "founder"}:
         return "team"
@@ -133,6 +144,13 @@ def extraction_handler(database, identity, storage, settings, model):
             raise LookupError("Collected candidate unavailable")
         body_id = entity["attributes"]["_collection_body_evidence_id"]
         created_at = job["created_at"]
+
+    if entity["attributes"].get("source") == "reddit":
+        from skriller.research.reddit_signal_stage import reddit_signal_handler
+
+        return reddit_signal_handler(
+            database, identity, entity_id, body_id, created_at, storage, settings, model
+        )
 
     def run(plan, timeout_seconds):
         result = None
@@ -280,7 +298,10 @@ def extraction_handler(database, identity, storage, settings, model):
             "failure_code": failure_code,
             "observations": observations,
             "rejected_claims": rejected,
-            "coverage_complete": result.coverage_complete if result else False,
+            "coverage_complete": result.coverage_complete
+            and entity["attributes"].get("source") != "linkedin"
+            if result
+            else False,
             "omitted_chunks": result.omitted_chunks if result else 0,
         }
         entity = ResearchRepository.get_entity(session, entity_id)

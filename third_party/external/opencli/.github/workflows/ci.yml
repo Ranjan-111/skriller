@@ -1,0 +1,141 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  schedule:
+    - cron: '0 8 * * 1'  # Weekly Monday 08:00 UTC — smoke tests
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Fast gate: typecheck + build ──
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && fromJSON('["ubuntu-latest","macos-latest","windows-latest"]') || fromJSON('["ubuntu-latest"]') }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # Guard: committed cli-manifest.json must match the one build regenerates.
+      # Prevents silent drift where unrelated adapter entries vanish or change
+      # across PRs (agent hits unexpected manifest diff → surgical-merge churn).
+      - name: Check cli-manifest.json is up-to-date
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          if ! git diff --exit-code -- cli-manifest.json; then
+            echo "::error::cli-manifest.json is out of sync with the source. Run 'npm run build' and commit the result."
+            exit 1
+          fi
+
+      # Guard: adapter rows must not silently emit keys omitted from `columns`.
+      # Existing findings are tracked in scripts/silent-column-drop-baseline.json;
+      # this gate rejects newly introduced drops while allowing incremental cleanup.
+      - name: Check silent column drops
+        if: runner.os == 'Linux'
+        run: npm run check:silent-column-drop
+
+      # Guard: adapters should fail with typed errors instead of silently
+      # returning empty arrays, clamping user input, or inventing sentinel data.
+      # Existing findings are tracked in scripts/typed-error-lint-baseline.json.
+      - name: Check typed-error lint baseline
+        if: runner.os == 'Linux'
+        run: npm run check:typed-error-lint
+
+      - name: Verify offline CLI contracts
+        if: runner.os == 'Linux'
+        run: npx vitest run --project e2e
+
+  # ── Unit tests (vitest shard) ──
+  # Every PR/push runs all offline tests on Linux; scheduled/manual runs
+  # additionally check core behavior on macOS and Windows.
+  unit-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && fromJSON('["ubuntu-latest","macos-latest","windows-latest"]') || fromJSON('["ubuntu-latest"]') }}
+        node-version: [22]
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run all offline tests (Linux, shard ${{ matrix.shard }}/2)
+        if: runner.os == 'Linux'
+        run: npm test -- --shard=${{ matrix.shard }}/2
+
+      - name: Run cross-platform core tests (shard ${{ matrix.shard }}/2)
+        if: runner.os != 'Linux'
+        run: npx vitest run --project unit --shard=${{ matrix.shard }}/2
+
+  # ── Bun compatibility check ──
+  bun-test:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests under Bun
+        run: bun vitest run --project unit --reporter=verbose
+
+  # ── Smoke tests (scheduled / manual only) ──
+  smoke-test:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run API health smoke tests
+        run: npx vitest run --project smoke --reporter=verbose
+    timeout-minutes: 15

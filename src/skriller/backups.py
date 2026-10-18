@@ -333,6 +333,12 @@ def restore_backup(
             )
             connection.execute(
                 sa.text(
+                    "UPDATE billing_checkout_intents SET checkout_url=NULL,state=CASE "
+                    "WHEN state IN ('dispatching','ready') THEN 'uncertain' ELSE state END"
+                )
+            )
+            connection.execute(
+                sa.text(
                     "UPDATE crm_destinations SET enabled=false,ciphertext=''::bytea,generation=generation+1"
                 )
             )
@@ -356,6 +362,19 @@ def restore_backup(
                     "ciphertext=''::bytea,version=version+1"
                 )
             )
+            connection.execute(
+                sa.text(
+                    "UPDATE x_oauth_consents SET state='revoked',state_hash=NULL,"
+                    "ciphertext=''::bytea,version=version+1"
+                )
+            )
+            connection.execute(
+                sa.text(
+                    "UPDATE reddit_oauth_consents SET state='revoked',state_hash=NULL,"
+                    "ciphertext=''::bytea,version=version+1"
+                )
+            )
+            connection.execute(sa.text("DELETE FROM reddit_search_continuations"))
             restored_workspaces = {
                 str(value)
                 for value in connection.execute(sa.text("SELECT id FROM workspaces")).scalars()

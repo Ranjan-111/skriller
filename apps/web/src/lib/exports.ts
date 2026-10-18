@@ -6,9 +6,12 @@ const columns = [
   "url",
   "snippet",
   "source",
+  "provider",
   "evidence_kind",
+  "platform_reference",
   "qualification",
   "observed_at",
+  "provenance",
 ] as const;
 export type SourceExportFormat = "json" | "csv";
 
@@ -30,7 +33,16 @@ export function serializeSources(
   if (format === "json") return JSON.stringify(rows, null, 2);
   return [
     columns.map(csvCell).join(","),
-    ...rows.map((row) => columns.map((key) => csvCell(row[key])).join(",")),
+    ...rows.map((row) =>
+      columns
+        .map((key) => {
+          const value = row[key];
+          return csvCell(
+            typeof value === "string" ? value : (JSON.stringify(value) ?? ""),
+          );
+        })
+        .join(","),
+    ),
   ].join("\r\n");
 }
 
@@ -48,7 +60,7 @@ export function downloadSources(
   const anchor = document.createElement("a");
   anchor.href = url;
   // A constant name keeps prompts, IDs and source-provided text out of filenames.
-  anchor.download = `skriller-search-snippets.${format}`;
+  anchor.download = `skriller-research-sources.${format}`;
   document.body.append(anchor);
   anchor.click();
   anchor.remove();

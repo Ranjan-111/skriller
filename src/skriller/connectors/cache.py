@@ -25,6 +25,7 @@ from scrapling.spiders.cache import ResponseCacheManager
 from sqlalchemy.dialects.postgresql import insert
 
 from skriller.connections.store import ConnectionStore, ConnectionUnavailable
+from skriller.connections.tables import connections, secrets
 from skriller.connectors.fetch import _EngineLogFilter
 from skriller.contracts import ExecutionContext, Source
 from skriller.db.repositories import scope
@@ -74,6 +75,7 @@ class CacheKey(BaseModel):
 class CacheMetadata(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     version: Literal[1] = 1
+    credential_generation: UUID | None = None
     evidence_id: UUID
     content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     collected_at: datetime
@@ -129,9 +131,31 @@ class ScopedResponseCache:
         self.max_body_bytes = max_body_bytes
         self.connections = ConnectionStore(None)
 
+    def _generation(self, session, key: CacheKey):
+        if key.connection_ref is None:
+            return None
+        row = session.execute(
+            sa.select(secrets.c.id, connections.c.created_by)
+            .join(
+                connections,
+                sa.and_(
+                    secrets.c.workspace_id == connections.c.workspace_id,
+                    secrets.c.connection_id == connections.c.id,
+                ),
+            )
+            .where(
+                secrets.c.workspace_id == scope(session),
+                secrets.c.connection_id == str(key.connection_ref),
+            )
+        ).one_or_none()
+        if row is None or row.created_by != session.info["actor_id"]:
+            raise ConnectionUnavailable()
+        return UUID(str(row.id))
+
     def _access(self, session, key: CacheKey):
         workspace = scope(session)
         if key.connection_ref is not None:
+            self._generation(session, key)
             reference = self.connections.metadata(session, key.connection_ref)
             if (
                 reference.state != "active"
@@ -161,7 +185,12 @@ class ScopedResponseCache:
             )
             .limit(1)
         ).scalar_one_or_none()
-        return CacheMetadata.model_validate(row) if row is not None else None
+        if row is None:
+            return None
+        metadata = CacheMetadata.model_validate(row)
+        if metadata.credential_generation != self._generation(session, key):
+            return None
+        return metadata
 
     async def put(
         self,
@@ -176,6 +205,9 @@ class ScopedResponseCache:
         published_at: datetime | None = None,
         context: ExecutionContext | None = None,
     ):
+        with database.tenant(actor_id, workspace_id) as session:
+            self._access(session, key)
+            generation = self._generation(session, key)
         now = datetime.now(UTC)
         if (
             isinstance(ttl_seconds, bool)
@@ -229,6 +261,8 @@ class ScopedResponseCache:
                 from skriller.erasure import privacy_lock, suppressed
 
                 workspace = self._access(session, key)
+                if generation != self._generation(session, key):
+                    raise ConnectionUnavailable()
                 if context is not None:
                     from skriller.connectors.switches import is_disabled
                     from skriller.jobs.control import permit_call
@@ -249,6 +283,7 @@ class ScopedResponseCache:
                     raise BlobUnavailable("Suppressed response cannot be cached")
                 metadata = CacheMetadata(
                     evidence_id=UUID(int=0),
+                    credential_generation=generation,
                     content_hash=hashlib.sha256(response.body).hexdigest(),
                     collected_at=collected_at,
                     expires_at=collected_at + timedelta(seconds=ttl_seconds),
@@ -341,7 +376,9 @@ class ScopedResponseCache:
                 from skriller.erasure import suppressed
 
                 self._access(session, key)
-                return not suppressed(session, url=key.source_url)
+                return metadata.credential_generation == self._generation(
+                    session, key
+                ) and not suppressed(session, url=key.source_url)
 
         if not await asyncio.to_thread(check_access):
             return None

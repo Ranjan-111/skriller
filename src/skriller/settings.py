@@ -35,7 +35,11 @@ class Settings(BaseSettings):
     public_browser_image: str | None = None
     public_youtube_image: str | None = None
     public_x_image: str | None = None
+    public_reddit_image: str | None = None
+    public_linkedin_image: str | None = None
+    public_social_image: str | None = None
     model_provider: Literal["ollama", "groq"] = "ollama"
+    groq_model: Literal["openai/gpt-oss-20b", "openai/gpt-oss-120b"] = "openai/gpt-oss-20b"
     ollama_model: Literal["llama3.2:3b", "deepseek-r1:8b"] = "llama3.2:3b"
     groq_api_key: SecretStr | None = Field(
         default=None, validation_alias="GROQ_API_KEY", repr=False
@@ -61,6 +65,13 @@ class Settings(BaseSettings):
     salesforce_oauth_client_secret: SecretStr | None = Field(default=None, repr=False)
     salesforce_oauth_redirect_uri: str | None = None
     salesforce_oauth_sandbox: bool = False
+    reddit_oauth_client_id: str | None = Field(default=None, repr=False)
+    reddit_oauth_client_secret: SecretStr | None = Field(default=None, repr=False)
+    reddit_oauth_redirect_uri: str | None = None
+    reddit_oauth_user_agent: str | None = Field(default=None, repr=False)
+    x_oauth_client_id: str | None = Field(default=None, repr=False)
+    x_oauth_client_secret: SecretStr | None = Field(default=None, repr=False)
+    x_oauth_redirect_uri: str | None = None
     youtube_analytics_oauth_client_id: str | None = Field(default=None, repr=False)
     youtube_analytics_oauth_client_secret: SecretStr | None = Field(default=None, repr=False)
     youtube_analytics_oauth_redirect_uri: str | None = None
@@ -71,6 +82,9 @@ class Settings(BaseSettings):
         "public_browser_image",
         "public_youtube_image",
         "public_x_image",
+        "public_reddit_image",
+        "public_linkedin_image",
+        "public_social_image",
         "reviewed_page_templates_file",
         "s3_endpoint_url",
         "s3_bucket",
@@ -128,10 +142,27 @@ class Settings(BaseSettings):
             from skriller.connectors.youtube_executor import ConcreteYouTubeExecutor
 
             ConcreteYouTubeExecutor(self.public_youtube_image)
+        if self.public_reddit_image:
+            from skriller.connectors.reddit_executor import ConcreteRedditExecutor
+
+            ConcreteRedditExecutor(
+                self.public_reddit_image, user_agent=self.reddit_oauth_user_agent
+            )
+            if self.environment == "production" and not self.reddit_oauth_user_agent:
+                raise ValueError("Reddit source execution requires a descriptive app User-Agent")
         if self.public_x_image:
             from skriller.connectors.x_executor import ConcreteXExecutor
 
             ConcreteXExecutor(self.public_x_image)
+        if self.public_linkedin_image:
+            from skriller.connectors.linkedin_executor import ConcreteLinkedInExecutor
+
+            ConcreteLinkedInExecutor(self.public_linkedin_image)
+        if self.public_social_image:
+            from skriller.connectors.social_executor import ConcreteSocialExecutor
+
+            ConcreteSocialExecutor("instagram", self.public_social_image)
+            ConcreteSocialExecutor("facebook", self.public_social_image)
         if self.enable_dynamic_collection:
             if not self.public_collection_proxy_url or not self.public_browser_image:
                 raise ValueError(

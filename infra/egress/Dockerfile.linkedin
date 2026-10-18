@@ -1,0 +1,10 @@
+# Reuse the already reviewed installed browser closure; no new downloaded dependencies.
+ARG BROWSER_BASE=skriller-egress-browser@sha256:548ee64f786a3524f7114c76b4b487e16559a7cb330704014035cec747eed918
+FROM ${BROWSER_BASE}
+COPY third_party/external/linkedin/linkedin_mcp_server /app/third_party/linkedin/linkedin_mcp_server
+COPY third_party/external/linkedin/LICENSE /app/licenses/LinkedIn-LICENSE
+COPY third_party/external/linkedin/NOTICE /app/licenses/LinkedIn-NOTICE
+COPY third_party/external/linkedin/SOURCE_MANIFEST.json /app/licenses/LinkedIn-SOURCE_MANIFEST.json
+COPY src/skriller /app/src/skriller
+ENV PYTHONPATH=/app/src:/app/third_party/scrapling:/app/third_party/agent-reach:/app/third_party/linkedin SKRILLER_LINKEDIN_WORKER=isolated
+ENTRYPOINT ["/usr/local/bin/guarded-worker"]

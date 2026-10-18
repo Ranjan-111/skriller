@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-17",
+  "image": "sha256:a65c2d2475cc3276a54a9df869f803f7dda175dbf1f6c7e0ff1e6562f0748803",
+  "base": "sha256:1f545e03d388697e527d64bcf573d3a91a7d0a52457fca2b14923c9bdbd9cc68",
+  "architecture": "aarch64",
+  "build_network": "none",
+  "dependency_source": "Five uv.lock wheels staged with exact byte-size and SHA-256 checks",
+  "installed_worker_probe": "passed; native request contract, credential-file guard, literal post citation, no browser, unprivileged UID and zero effective capabilities",
+  "kernel_filesystem_boundary": "passed; guarded network, direct/private/loopback/UDP denial and host file/environment/socket exclusion",
+  "credential_delivery_and_revocation": "passed; synthetic encrypted credential delivery, inspection exclusion, output redaction and revocation cleanup",
+  "temporary_containers_removed": true,
+  "live_source_tested": false,
+  "hosted_deployment_tested": false,
+  "production_env_enabled": false
+}

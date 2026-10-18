@@ -187,6 +187,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/jobs/{job_id}/rebind-and-resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Rebind Resume Job */
+        post: operations["rebind_resume_job_v1_jobs__job_id__rebind_and_resume_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/jobs/{job_id}/rebind-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Rebind Options */
+        get: operations["read_rebind_options_v1_jobs__job_id__rebind_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/jobs/{job_id}/refine": {
         parameters: {
             query?: never;
@@ -859,6 +893,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/workspaces/{workspace_id}/reddit/oauth": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Consents */
+        get: operations["list_consents_v1_workspaces__workspace_id__reddit_oauth_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/reddit/oauth/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete */
+        post: operations["complete_v1_workspaces__workspace_id__reddit_oauth_complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/reddit/oauth/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start */
+        post: operations["start_v1_workspaces__workspace_id__reddit_oauth_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/reddit/oauth/{consent_id}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh */
+        post: operations["refresh_v1_workspaces__workspace_id__reddit_oauth__consent_id__refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/reddit/oauth/{consent_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke */
+        post: operations["revoke_v1_workspaces__workspace_id__reddit_oauth__consent_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/workspaces/{workspace_id}/research-schedules": {
         parameters: {
             query?: never;
@@ -1042,6 +1161,91 @@ export interface paths {
         get: operations["history_v1_workspaces__workspace_id__webhooks__endpoint_id__deliveries_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/x/oauth": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Consents */
+        get: operations["list_consents_v1_workspaces__workspace_id__x_oauth_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/x/oauth/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete */
+        post: operations["complete_v1_workspaces__workspace_id__x_oauth_complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/x/oauth/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start */
+        post: operations["start_v1_workspaces__workspace_id__x_oauth_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/x/oauth/{consent_id}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh */
+        post: operations["refresh_v1_workspaces__workspace_id__x_oauth__consent_id__refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/workspaces/{workspace_id}/x/oauth/{consent_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke */
+        post: operations["revoke_v1_workspaces__workspace_id__x_oauth__consent_id__revoke_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1870,6 +2074,59 @@ export interface components {
              */
             status: "observed" | "unavailable";
         };
+        /** FacebookProfile */
+        FacebookProfile: {
+            /**
+             * Company Identity
+             * @default unknown
+             * @constant
+             */
+            company_identity: "unknown";
+            /**
+             * Coverage Complete
+             * @default false
+             * @constant
+             */
+            coverage_complete: false;
+            /** Followers Display */
+            followers_display: string | null;
+            /** Friends Display */
+            friends_display: string | null;
+            /**
+             * Group Access
+             * @default unavailable
+             * @constant
+             */
+            group_access: "unavailable";
+            /** Name */
+            name: string;
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            source: "facebook";
+            /** Source Url */
+            source_url: string;
+            /**
+             * Subject Identity
+             * @default unknown
+             * @constant
+             */
+            subject_identity: "unknown";
+            /** Username */
+            username: string;
+            /**
+             * Visibility
+             * @default unknown
+             * @constant
+             */
+            visibility: "unknown";
+        };
         /** Failure */
         Failure: {
             /**
@@ -2210,6 +2467,71 @@ export interface components {
             /** Kind */
             kind: string;
         };
+        /** InstagramProfile */
+        InstagramProfile: {
+            /**
+             * Account Kind
+             * @default unknown
+             * @constant
+             */
+            account_kind: "unknown";
+            /** Bio Excerpt */
+            bio_excerpt: string;
+            /**
+             * Coverage Complete
+             * @default false
+             * @constant
+             */
+            coverage_complete: false;
+            /** Followers */
+            followers: number | null;
+            /** Following */
+            following: number | null;
+            /** Name */
+            name: string;
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /**
+             * Owner Analytics
+             * @default unavailable
+             * @constant
+             */
+            owner_analytics: "unavailable";
+            /** Posts */
+            posts: number | null;
+            /**
+             * Resource Kind
+             * @default profile
+             * @constant
+             */
+            resource_kind: "profile";
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            source: "instagram";
+            /** Source Url */
+            source_url: string;
+            /**
+             * Subject Identity
+             * @default unknown
+             * @constant
+             */
+            subject_identity: "unknown";
+            /** Username */
+            username: string;
+            /** Verified */
+            verified?: boolean | null;
+            /**
+             * Visibility
+             * @default public
+             * @constant
+             */
+            visibility: "public";
+        };
         /** JobSnapshot */
         JobSnapshot: {
             /**
@@ -2319,6 +2641,75 @@ export interface components {
              * @default 100000
              */
             token_cap: number;
+        };
+        /** LinkedInReadResult */
+        LinkedInReadResult: {
+            /**
+             * Buying Intent
+             * @default not_inferred
+             * @constant
+             */
+            buying_intent: "not_inferred";
+            /**
+             * Contact Details
+             * @default unavailable
+             * @constant
+             */
+            contact_details: "unavailable";
+            /**
+             * Coverage Complete
+             * @default false
+             * @constant
+             */
+            coverage_complete: false;
+            /**
+             * Evidence Kind
+             * @default resource_section_read
+             * @constant
+             */
+            evidence_kind: "resource_section_read";
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /**
+             * Resource Kind
+             * @enum {string}
+             */
+            resource_kind: "profile" | "company" | "post";
+            /**
+             * Section
+             * @enum {string}
+             */
+            section: "main_profile" | "about" | "post";
+            /**
+             * Source
+             * @default linkedin
+             * @constant
+             */
+            source: "linkedin";
+            /** Source Url */
+            source_url: string;
+            /**
+             * Subject Identity
+             * @default unknown
+             * @constant
+             */
+            subject_identity: "unknown";
+            /** Text */
+            text: string;
+            /** Text Truncated */
+            text_truncated: boolean;
+        };
+        /** LinkedInReadView */
+        LinkedInReadView: {
+            /**
+             * Evidence Id
+             * Format: uuid
+             */
+            evidence_id: string;
+            resource: components["schemas"]["LinkedInReadResult"];
         };
         /** ListInput */
         ListInput: {
@@ -2449,20 +2840,46 @@ export interface components {
              * Format: uuid
              */
             plan_id: string;
+            planning_failure?: components["schemas"]["PlanningFailureView"] | null;
             /**
              * Status
              * @enum {string}
              */
             status: "search_objective" | "planning" | "ready" | "clarification_required" | "unsupported_criteria" | "rejected" | "stopped";
         };
+        /** PlanningFailureView */
+        PlanningFailureView: {
+            /**
+             * Automatic Retry Allowed
+             * @default false
+             * @constant
+             */
+            automatic_retry_allowed: false;
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "invalid_interpretation" | "model_unavailable" | "budget_exhausted" | "execution_interrupted";
+            /**
+             * Recovery
+             * @enum {string}
+             */
+            recovery: "revise_prompt" | "check_service" | "check_limits" | "review_run";
+            /**
+             * Source Search Started
+             * @default false
+             * @constant
+             */
+            source_search_started: false;
+        };
         /** PlatformReference */
         PlatformReference: {
             /**
              * Access
              * @default indexed_reference_only
-             * @constant
+             * @enum {string}
              */
-            access: "indexed_reference_only";
+            access: "indexed_reference_only" | "connected_search_reference_only";
             /**
              * Direct Read Status
              * @default not_attempted
@@ -2472,19 +2889,19 @@ export interface components {
             /**
              * Discovery Backend
              * @default exa_keyless
-             * @constant
+             * @enum {string}
              */
-            discovery_backend: "exa_keyless";
+            discovery_backend: "exa_keyless" | "linkedin_mcp" | "opencli_instagram" | "opencli_facebook";
             /**
              * Resource Kind
              * @enum {string}
              */
-            resource_kind: "profile" | "company" | "post" | "comment" | "community" | "unknown";
+            resource_kind: "profile" | "company" | "page" | "post" | "comment" | "community" | "unknown";
             /**
              * Source
              * @enum {string}
              */
-            source: "linkedin" | "reddit";
+            source: "linkedin" | "reddit" | "instagram" | "facebook";
             /**
              * Subject Identity
              * @default unknown
@@ -2518,7 +2935,7 @@ export interface components {
              * Evidence Kind
              * @enum {string}
              */
-            evidence_kind: "search_snippet" | "public_post";
+            evidence_kind: "search_snippet" | "public_post" | "search_reference";
             /**
              * Observed At
              * Format: date-time
@@ -2530,7 +2947,7 @@ export interface components {
              * Provider
              * @enum {string}
              */
-            provider: "exa_keyless" | "x_api_v2";
+            provider: "exa_keyless" | "x_api_v2" | "reddit_oauth" | "linkedin_mcp" | "opencli_instagram" | "opencli_facebook";
             /** Query */
             query: string;
             /** Rank */
@@ -2540,6 +2957,66 @@ export interface components {
              * @enum {string}
              */
             source: "linkedin" | "reddit" | "web" | "github" | "rss" | "youtube" | "x" | "instagram" | "facebook";
+        };
+        /** RebindOptionsView */
+        RebindOptionsView: {
+            /**
+             * Confirmation Required
+             * @default true
+             * @constant
+             */
+            confirmation_required: true;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Job Version */
+            job_version: number;
+            /** Options */
+            options: components["schemas"]["RebindSourceOption"][];
+            /**
+             * Resume Status
+             * @enum {string}
+             */
+            resume_status: "not_paused" | "available" | "new_prompt_required" | "deadline_expired" | "requires_reconciliation" | "budget_exhausted";
+        };
+        /** RebindResumeInput */
+        RebindResumeInput: {
+            /** Entity Ids */
+            entity_ids: string[];
+            /** Expected Job Version */
+            expected_job_version: number;
+            /**
+             * Previous Connection Ref
+             * Format: uuid
+             */
+            previous_connection_ref: string;
+            /**
+             * Replacement Connection Ref
+             * Format: uuid
+             */
+            replacement_connection_ref: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "linkedin" | "reddit";
+        };
+        /** RebindSourceOption */
+        RebindSourceOption: {
+            /** Entity Ids */
+            entity_ids: string[];
+            /**
+             * Previous Connection Ref
+             * Format: uuid
+             */
+            previous_connection_ref: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "linkedin" | "reddit";
         };
         /** ReconnectInput */
         ReconnectInput: {
@@ -2553,6 +3030,213 @@ export interface components {
             payload: components["schemas"]["SecretPayload"];
             /** Scopes */
             scopes?: ("read" | "discover")[] | null;
+        };
+        /** RedditComment */
+        RedditComment: {
+            /** Author Handle */
+            author_handle: string | null;
+            /**
+             * Author Identity
+             * @default unknown
+             * @constant
+             */
+            author_identity: "unknown";
+            /** Content Unavailable */
+            content_unavailable: boolean;
+            /** Native Id */
+            native_id: string;
+            /** Parent Id */
+            parent_id: string;
+            /** Published At */
+            published_at: string | null;
+            /** Source Url */
+            source_url: string;
+            /** Text */
+            text: string;
+            /** Truncated */
+            truncated: boolean;
+        };
+        /** RedditCompletionInput */
+        RedditCompletionInput: {
+            /**
+             * Code
+             * Format: password
+             */
+            code: string;
+            /**
+             * Consent Id
+             * Format: uuid
+             */
+            consent_id: string;
+            /**
+             * State
+             * Format: password
+             */
+            state: string;
+        };
+        /** RedditConsentInput */
+        RedditConsentInput: {
+            /** Opt In */
+            opt_in: boolean;
+        };
+        /** RedditConsentMetadata */
+        RedditConsentMetadata: {
+            /** Access Expires At */
+            access_expires_at?: string | null;
+            /** Access State */
+            access_state?: ("active" | "expired" | "revoked") | null;
+            /** Connection Id */
+            connection_id: string | null;
+            /**
+             * Consent Id
+             * Format: uuid
+             */
+            consent_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Remote Revocation
+             * @default not_performed
+             * @constant
+             */
+            remote_revocation: "not_performed";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "pending" | "exchanging" | "active";
+        };
+        /** RedditConsentOutput */
+        RedditConsentOutput: {
+            /** Authorization Url */
+            authorization_url: string;
+            /**
+             * Consent Id
+             * Format: uuid
+             */
+            consent_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+        };
+        /** RedditPostReference */
+        RedditPostReference: {
+            /** Author Handle */
+            author_handle: string | null;
+            /**
+             * Author Identity
+             * @default unknown
+             * @constant
+             */
+            author_identity: "unknown";
+            /** Content Unavailable */
+            content_unavailable: boolean;
+            /** Excerpt */
+            excerpt: string;
+            /** Native Id */
+            native_id: string;
+            /** Published At */
+            published_at: string | null;
+            /** Source Url */
+            source_url: string;
+            /** Subreddit */
+            subreddit: string;
+            /** Title */
+            title: string;
+            /** Truncated */
+            truncated: boolean;
+        };
+        /** RedditSignal */
+        RedditSignal: {
+            /**
+             * Buying Intent
+             * @default not_inferred
+             * @constant
+             */
+            buying_intent: "not_inferred";
+            /** Published At */
+            published_at: string | null;
+            /** Quote */
+            quote: string;
+            /** Resource Id */
+            resource_id: string;
+            /** Source Url */
+            source_url: string;
+            /**
+             * Status
+             * @default source_specific_unverified
+             * @constant
+             */
+            status: "source_specific_unverified";
+        };
+        /** RedditThread */
+        RedditThread: {
+            /**
+             * Buying Intent
+             * @default not_inferred
+             * @constant
+             */
+            buying_intent: "not_inferred";
+            /** Comments */
+            comments: components["schemas"]["RedditComment"][];
+            /** Coverage Complete */
+            coverage_complete: boolean;
+            /**
+             * Evidence Kind
+             * @default post_comment_read
+             * @constant
+             */
+            evidence_kind: "post_comment_read";
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /** Omitted Comments */
+            omitted_comments: number;
+            post: components["schemas"]["RedditPostReference"];
+            /**
+             * Source
+             * @default reddit
+             * @constant
+             */
+            source: "reddit";
+            /**
+             * Subject Identity
+             * @default unknown
+             * @constant
+             */
+            subject_identity: "unknown";
+            /** Unexpanded Nodes */
+            unexpanded_nodes: number;
+        };
+        /** RedditThreadView */
+        RedditThreadView: {
+            /**
+             * Evidence Id
+             * Format: uuid
+             */
+            evidence_id: string;
+            /**
+             * Rejected Signals
+             * @default 0
+             */
+            rejected_signals: number;
+            /**
+             * Signal Coverage Complete
+             * @default false
+             */
+            signal_coverage_complete: boolean;
+            /** Signal Failure Code */
+            signal_failure_code?: string | null;
+            /** Signals */
+            signals?: components["schemas"]["RedditSignal"][];
+            thread: components["schemas"]["RedditThread"];
         };
         /** RefinementInput */
         RefinementInput: {
@@ -2663,7 +3347,7 @@ export interface components {
              * Evidence Kind
              * @enum {string}
              */
-            evidence_kind: "search_snippet" | "public_post";
+            evidence_kind: "search_snippet" | "public_post" | "search_reference";
             extraction?: components["schemas"]["ExtractionView"] | null;
             feed?: components["schemas"]["FeedView"] | null;
             fit?: components["schemas"]["Fit"] | null;
@@ -2672,6 +3356,7 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            linkedin_read?: components["schemas"]["LinkedInReadView"] | null;
             /**
              * Observed At
              * Format: date-time
@@ -2684,14 +3369,16 @@ export interface components {
              * Provider
              * @enum {string}
              */
-            provider: "exa_keyless" | "x_api_v2";
+            provider: "exa_keyless" | "x_api_v2" | "reddit_oauth" | "linkedin_mcp" | "opencli_instagram" | "opencli_facebook";
             /**
              * Qualification
              * @constant
              */
             qualification: "unverified";
+            reddit_thread?: components["schemas"]["RedditThreadView"] | null;
             /** Snippet */
             snippet: string;
+            social_read?: components["schemas"]["SocialReadView"] | null;
             /**
              * Source
              * @enum {string}
@@ -2855,6 +3542,11 @@ export interface components {
             entity_id: string;
             /** Expected Review Hash */
             expected_review_hash: string;
+            /**
+             * Person Subject Confirmed
+             * @default false
+             */
+            person_subject_confirmed: boolean;
             previous: components["schemas"]["RoleReference"];
             replacement: components["schemas"]["RoleReference"];
             /** Same Subject Confirmed */
@@ -2934,6 +3626,8 @@ export interface components {
             entity_id: string;
             previous: components["schemas"]["RoleSource"];
             replacement: components["schemas"]["RoleSource"];
+            /** Requires Person Confirmation */
+            requires_person_confirmation: boolean;
             /**
              * Requires Same Subject Confirmation
              * @constant
@@ -3251,6 +3945,20 @@ export interface components {
             /** Value */
             value: string | number | boolean;
         };
+        /** SocialReadView */
+        SocialReadView: {
+            /** Api Requests */
+            api_requests: number;
+            /**
+             * Evidence Id
+             * Format: uuid
+             */
+            evidence_id: string;
+            /** Network Requests Seen */
+            network_requests_seen: number;
+            /** Resource */
+            resource: components["schemas"]["InstagramProfile"] | components["schemas"]["FacebookProfile"];
+        };
         /** SourceDiagnostic */
         SourceDiagnostic: {
             capability: components["schemas"]["Capability"];
@@ -3419,6 +4127,74 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /** XCompletionInput */
+        XCompletionInput: {
+            /**
+             * Code
+             * Format: password
+             */
+            code: string;
+            /**
+             * Consent Id
+             * Format: uuid
+             */
+            consent_id: string;
+            /**
+             * State
+             * Format: password
+             */
+            state: string;
+        };
+        /** XConsentInput */
+        XConsentInput: {
+            /** Opt In */
+            opt_in: boolean;
+        };
+        /** XConsentMetadata */
+        XConsentMetadata: {
+            /** Access Expires At */
+            access_expires_at?: string | null;
+            /** Access State */
+            access_state?: ("active" | "expired" | "revoked") | null;
+            /** Connection Id */
+            connection_id: string | null;
+            /**
+             * Consent Id
+             * Format: uuid
+             */
+            consent_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Remote Revocation
+             * @default not_performed
+             * @constant
+             */
+            remote_revocation: "not_performed";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "pending" | "exchanging" | "active";
+        };
+        /** XConsentOutput */
+        XConsentOutput: {
+            /** Authorization Url */
+            authorization_url: string;
+            /**
+             * Consent Id
+             * Format: uuid
+             */
+            consent_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
         };
         /** YouTubeCaptionView */
         YouTubeCaptionView: {
@@ -3927,6 +4703,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlanView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rebind_resume_job_v1_jobs__job_id__rebind_and_resume_post: {
+        parameters: {
+            query?: {
+                workspace_id?: string | null;
+            };
+            header: {
+                "idempotency-key": string;
+            };
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RebindResumeInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobSnapshot"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_rebind_options_v1_jobs__job_id__rebind_options_get: {
+        parameters: {
+            query?: {
+                workspace_id?: string | null;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RebindOptionsView"];
                 };
             };
             /** @description Validation Error */
@@ -5419,6 +6267,169 @@ export interface operations {
             };
         };
     };
+    list_consents_v1_workspaces__workspace_id__reddit_oauth_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RedditConsentMetadata"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_v1_workspaces__workspace_id__reddit_oauth_complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RedditCompletionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_v1_workspaces__workspace_id__reddit_oauth_start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RedditConsentInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RedditConsentOutput"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_v1_workspaces__workspace_id__reddit_oauth__consent_id__refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_v1_workspaces__workspace_id__reddit_oauth__consent_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     listing_v1_workspaces__workspace_id__research_schedules_get: {
         parameters: {
             query?: never;
@@ -5837,6 +6848,169 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["skriller__webhooks__router__DeliveryOutput"][];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_consents_v1_workspaces__workspace_id__x_oauth_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["XConsentMetadata"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_v1_workspaces__workspace_id__x_oauth_complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["XCompletionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_v1_workspaces__workspace_id__x_oauth_start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["XConsentInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["XConsentOutput"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_v1_workspaces__workspace_id__x_oauth__consent_id__refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionMetadata"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_v1_workspaces__workspace_id__x_oauth__consent_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspace_id: string;
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -779,6 +779,95 @@ footer {
 .workspace-allowance p {
   margin: 10px 0;
 }
+.billing-panel {
+  max-width: 100%;
+}
+.billing-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-block: 16px;
+}
+.billing-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.billing-table caption {
+  text-align: left;
+  font-weight: 600;
+  padding-block: 8px;
+}
+.billing-table th,
+.billing-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+.billing-table thead th {
+  color: var(--muted);
+  font-size: 12px;
+}
+.billing-table tbody th {
+  font-weight: 600;
+}
+.billing-choice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 14px 22px;
+  margin-block: 20px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.billing-choice legend {
+  padding-inline: 6px;
+  font-weight: 600;
+}
+.billing-choice > label:not(.billing-opt-in) {
+  display: grid;
+  gap: 6px;
+}
+.billing-choice select {
+  min-width: 140px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--paper);
+}
+.billing-opt-in {
+  display: flex;
+  flex-basis: 100%;
+  gap: 9px;
+  align-items: start;
+  color: var(--ink);
+}
+.billing-opt-in input {
+  flex: 0 0 auto;
+  margin: 4px 0 0;
+  accent-color: var(--accent);
+}
+.billing-current {
+  margin-block: 20px;
+  padding-block: 16px;
+  border-top: 1px solid var(--line);
+}
+.billing-current h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+.billing-error {
+  color: var(--danger);
+}
+.billing-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 12px;
+  text-decoration: none;
+}
 .allowance-toggle {
   display: flex;
   align-items: center;
@@ -1048,6 +1137,38 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+.reddit-thread-evidence section {
+  margin-top: 14px;
+}
+.reddit-thread-evidence h5 {
+  margin-bottom: 4px;
+}
+.reddit-body {
+  max-width: 72ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.reddit-unavailable {
+  color: var(--muted);
+  font-style: italic;
+}
+.reddit-comments {
+  padding-left: 22px;
+}
+.reddit-comments > li {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.reddit-quote {
+  margin: 8px 0;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.reddit-quote footer {
+  color: var(--muted);
+  font-size: 0.875em;
 }
 .saved-lists {
   padding: 16px 0;

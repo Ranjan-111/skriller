@@ -1,0 +1,103 @@
+# Application layer only. Private PostgreSQL, RabbitMQ and object storage must
+# already exist; schema bootstrap uses separate operator credentials.
+name: skriller-pilot
+
+x-backend: &backend
+  image: ${SKRILLER_API_IMAGE:?Set the reviewed backend image reference}
+  env_file:
+    - ${SKRILLER_RUNTIME_ENV_FILE:?Set the absolute protected runtime env-file path}
+  environment:
+    SKRILLER_ENVIRONMENT: production
+    SKRILLER_ALLOW_DEMO_AUTH: "false"
+    SKRILLER_ENABLE_AI_PLANNING: "false"
+    # The isolated source controller is a separate acceptance/deployment gate.
+    SKRILLER_PUBLIC_COLLECTION_PROXY_URL: ""
+    SKRILLER_ENABLE_PAGE_EXTRACTION: "false"
+    SKRILLER_ENABLE_DYNAMIC_COLLECTION: "false"
+    SKRILLER_ENABLE_STEALTH_COLLECTION: "false"
+    SKRILLER_PUBLIC_BROWSER_IMAGE: ""
+    SKRILLER_PUBLIC_YOUTUBE_IMAGE: ""
+    SKRILLER_PUBLIC_LINKEDIN_IMAGE: ""
+    SKRILLER_PUBLIC_REDDIT_IMAGE: ""
+    SKRILLER_PUBLIC_X_IMAGE: ""
+    SKRILLER_PUBLIC_SOCIAL_IMAGE: ""
+    SKRILLER_OBJECT_BACKEND: s3
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  init: true
+  restart: unless-stopped
+  stop_grace_period: 60s
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,size=64m
+    - /app/.runtime:rw,noexec,nosuid,uid=10001,gid=10001,size=64m
+    - /app/.cache:rw,noexec,nosuid,uid=10001,gid=10001,size=32m
+  networks: [services, outbound]
+  logging:
+    driver: json-file
+    options: {max-size: 10m, max-file: "3"}
+
+services:
+  api:
+    <<: *backend
+    mem_limit: ${SKRILLER_API_MEMORY_LIMIT:?Set the measured API memory budget}
+    expose: ["8000"]
+    pids_limit: 128
+
+  research:
+    <<: *backend
+    mem_limit: ${SKRILLER_RESEARCH_MEMORY_LIMIT:?Set the measured research memory budget}
+    command: [python, -m, skriller.research.runtime]
+    # The inherited image check is API-specific. Admission uses API readiness
+    # plus the existing durable worker heartbeat, not an HTTP probe here.
+    healthcheck: {disable: true}
+    pids_limit: 256
+
+  retention:
+    <<: *backend
+    mem_limit: ${SKRILLER_RETENTION_MEMORY_LIMIT:?Set the measured retention memory budget}
+    command: [python, -m, skriller.retention_runtime]
+    healthcheck: {disable: true}
+    pids_limit: 128
+
+  web:
+    image: ${SKRILLER_WEB_IMAGE:?Set the reviewed standalone web image reference}
+    mem_limit: ${SKRILLER_WEB_MEMORY_LIMIT:?Set the measured web memory budget}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    restart: unless-stopped
+    expose: ["3000"]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=32m
+    pids_limit: 128
+    networks: [services]
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: "3"}
+
+  caddy:
+    image: ${SKRILLER_CADDY_IMAGE:?Set the reviewed Caddy image reference}
+    mem_limit: ${SKRILLER_CADDY_MEMORY_LIMIT:?Set the measured ingress memory budget}
+    environment:
+      SKRILLER_DOMAIN: ${SKRILLER_DOMAIN:?Set the public DNS hostname}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    networks: [services, outbound]
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: "3"}
+
+networks:
+  services:
+    internal: true
+  outbound: {}
+
+volumes:
+  caddy_data:
+  caddy_config:

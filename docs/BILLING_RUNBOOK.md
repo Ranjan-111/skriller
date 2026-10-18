@@ -43,6 +43,20 @@ connection), and `endpoints` (one to eight entries). Each entry declares:
 - `webhook_secret`, `api_key`, and Razorpay `api_secret`.
 - `stripe_version`: explicitly reviewed API version for Stripe.
 
+Optional top-level `checkout` configuration enables the owner checkout routes:
+
+```json
+{"firebase_project_id":"your-firebase-project","return_origin":"http://localhost:3000"}
+```
+
+Use the same Firebase project as the web app. `return_origin` must be an exact
+origin with no path/query/credentials, HTTPS except for local loopback development.
+It controls both the fixed return URLs and browser CORS. The service verifies
+normal Firebase bearer tokens and independently checks workspace owner membership;
+source credentials, provider keys and the operator database URL stay server-side.
+Configure exactly one checkout account per provider. Omit `checkout` to leave all
+customer routes disabled. No configuration or listener was enabled during testing.
+
 Do not commit a populated configuration or pass credentials in command arguments.
 Test keys may be supplied in ignored local `.env` for local operator setup;
 they are not automatically used or copied into the tenant app.
@@ -60,16 +74,65 @@ uv run python -m skriller.billing_runtime serve --config-file .runtime/billing.j
 ```
 
 `provision` creates Starter and Pro in each configured account, recording actual
-native IDs only after a verified response. `once` scans at most ten due
-workspaces. `worker` repeats the bounded scan every ten seconds. `serve` binds
-127.0.0.1:8011 by default and exposes only
-`POST /webhooks/{provider}/{account_scope}`. Configure TLS and ingress controls
+native IDs only after a verified response. `once` performs at most ten actions:
+due reference lookups first, then due workspace reconciliations with any remaining
+budget. A resolved reference is reconciled on a later available action. `worker`
+repeats the bounded scan every ten seconds. `serve` binds
+127.0.0.1:8011 by default and exposes
+`POST /webhooks/{provider}/{account_scope}` and the opt-in checkout routes below.
+Configure TLS and ingress controls
 before hosted use. Public docs/OpenAPI/access logs are disabled for this service.
 Do not mount it on the tenant app or start it with the restricted app DB role.
 
-Subscription binding and finite customer/plan catalog setup require explicit
-operator action. The local customer checkout flow and provider sandbox approval
-remain unfinished; a provider plan receipt alone does not grant access.
+Existing manual subscription bindings still require operator action. Initial
+checkout can establish its own binding only after the worker verifies the native
+receipt as described below. A plan receipt or client return alone never grants
+access. Actual provider sandbox acceptance remains pending.
+
+## Initial customer checkout
+
+All routes are owner-authenticated and return `Cache-Control: no-store`:
+
+- `GET /v1/workspaces/{workspace_id}/checkout`: approved offers in integer
+  cents/paise, configured-plan readiness, current intent and `can_start`.
+- `POST /v1/workspaces/{workspace_id}/checkout`: JSON `provider` (`stripe` or
+  `razorpay`), `plan` (`starter` or `pro`), `idempotency_key` (16–100 URL-safe
+  characters) and explicit boolean `opt_in: true`.
+- `GET /v1/workspaces/{workspace_id}/checkout/{checkout_id}`: private current
+  intent status and an unexpired provider link when ready.
+
+Razorpay authorizes **12 monthly cycles**, approved by the user; each cycle has
+the approved monthly price. Stripe uses a recurring monthly subscription without
+an end date. No add-on, discount, trial or new price is silently created.
+Remote plans must already have verified ready provisioning receipts. Checkout
+uses native provider pages to collect customer/payment information; no email,
+card or payment credentials are collected by these API routes.
+
+Migration 0052 persists intent before the first provider POST, bound to the
+initiating owner/workspace/provider/account/approved plan. Stripe also receives
+a stable native idempotency key. The initial pilot allows one checkout intent
+per workspace; a matching retry reuses its state, while another key cannot create
+a second subscription. Lost/malformed creation receipts leave `uncertain` state;
+process loss leaves `dispatching`. Neither state retries the POST automatically.
+Ready links expire after 35 minutes and are restricted to the reviewed Stripe
+or Razorpay host. Expired, uncertain, subscription-replacement and plan-change
+workflows require operator reconciliation; they are not automated in this pilot.
+
+Subscription callbacks containing a known server-created intent ID enqueue a
+reference lookup. The worker retrieves the saved native session/subscription,
+verifies its identity, account/mode, approved plan, quantity, intent marker and
+expected subscription. Stripe additionally requires a complete paid session;
+Razorpay must retain the approved 12-cycle count. An owner membership recheck
+precedes binding. Arbitrary workspace claims or an unrelated callback cannot
+establish authority. Binding/catalog setup and inbox handoff are atomic; the
+binding starts disabled until a separate fresh paid/active subscription read
+passes normal reconciliation. Restores clear archived checkout URLs and require
+fresh provider proof to resolve known receipts.
+
+The backend-only OpenAPI contract is `docs/contracts/billing-openapi.json`.
+Export/check it locally with `scripts/export_contracts.py --service billing
+--output docs/contracts/billing-openapi.json [--check]`; public API docs remain
+disabled. The web checkout controls are the next Luna UI task.
 
 ## Runtime behaviour
 
@@ -101,12 +164,19 @@ Refund/dispute event policy currently pauses access on a classified full refund
 or open/lost dispute. Partial refunds preserve access only if the fresh provider
 read remains active and paid. A later refresh may restore access only after a
 fresh active/paid read. Customer-only events must resolve to one configured
-workspace; ambiguity fails closed. Standard Stripe dispute callbacks containing
-only a charge reference, and Razorpay dispute callbacks, are not yet mapped into
-the subscription inbox and therefore fail closed pending a durable reference
-resolver.
+workspace; ambiguity fails closed. Migration 0051 adds an operator-only reference
+queue for Stripe charge-only and Razorpay payment-only disputes. Ingress verifies
+the signature/account/mode and commits only the event hash, normalized action and
+reference ID, without provider I/O or raw payment data. The worker uses fixed
+provider GET endpoints, validates returned identity/mode, and resolves only a
+unique configured customer/subscription in the same provider account. Missing
+or ambiguous identities retry with persisted backoff and quarantine after five
+attempts. Session advisory locks prevent simultaneous lookups, and each attempt
+commits before I/O so process loss cannot erase it. Resolution and subscription
+inbox insertion commit together; only normal reconciliation changes access.
 
-Pending: authenticated checkout/customer lifecycle, durable dispute-reference
-resolution, provider sandbox acceptance, and any production tax/renewal changes
-beyond these approved monthly prices. No live billing, provider keys or customer
+Pending: web checkout controls, provider sandbox acceptance, and any production
+tax/renewal changes beyond these approved monthly prices. Initial checkout backend
+is locally verified; this is not a complete self-service subscription-management
+product. No live billing, provider keys or customer
 payment data were used by the development tests.

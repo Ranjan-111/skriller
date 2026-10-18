@@ -1,7 +1,7 @@
 """Detached, grounded prompt interpretation; initial-job routing is not wired here."""
 
 import re
-from typing import Literal, get_args
+from typing import Annotated, Literal, get_args
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -18,7 +18,8 @@ from skriller.settings import Settings
 Group = Literal["must_have", "preference", "exclude"]
 Operator = Literal["eq", "contains", "gte", "lte", "recent"]
 # Compact tuple schemas keep format instructions inside the local context bound.
-Rule = tuple[Group, str, Operator, str, str]
+IntentText = Annotated[str, Field(min_length=1, max_length=500)]
+Rule = tuple[Group, IntentText, Operator, IntentText, IntentText]
 FIELDS = {
     "role",
     "industry",
@@ -60,11 +61,11 @@ FIELD_WORDS = {
 class Interpretation(BaseModel):
     model_config = ConfigDict(extra="forbid")
     entity_type: Literal["person", "company", "creator", "discussion"]
-    entity_quote: str
+    entity_quote: IntentText
     rules: list[Rule] = Field(default_factory=list, max_length=12)
-    sources: list[tuple[Source, str]] = Field(default_factory=list, max_length=9)
-    fields: list[tuple[str, str]] = Field(default_factory=list, max_length=12)
-    unsupported: list[str] = Field(default_factory=list, max_length=8)
+    sources: list[tuple[Source, IntentText]] = Field(default_factory=list, max_length=9)
+    fields: list[tuple[IntentText, IntentText]] = Field(default_factory=list, max_length=12)
+    unsupported: list[IntentText] = Field(default_factory=list, max_length=8)
     clarification: str | None = None
 
     @model_validator(mode="after")
@@ -135,6 +136,23 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
     groups: dict[str, list[Criterion]] = {"must_have": [], "preference": [], "exclude": []}
     clarification = interpretation.clarification
     unsupported = list(interpretation.unsupported)
+    geography_answers = {
+        "company headquarters": "company_location",
+        "company location": "company_location",
+        "person location": "person_location",
+        "person's location": "person_location",
+        "the person's location": "person_location",
+    }
+    # Only an exact subsequent user clarification resolves this ambiguity; a
+    # model's guess or a phrase inside an unrelated sentence does not.
+    geography_choice = next(
+        (
+            geography_answers[part.strip().casefold()]
+            for part in reversed(prompt.split("\n\n")[1:])
+            if part.strip().casefold() in geography_answers
+        ),
+        None,
+    )
     for value in unsupported:
         quote(value)
     for group, field, operator, value, evidence in interpretation.rules:
@@ -170,10 +188,16 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
         comparison_cues = {
             "gte": r"\b(?:at\s+least|minimum(?:\s+of)?|no\s+fewer\s+than)\b",
             "lte": r"\b(?:at\s+most|maximum(?:\s+of)?|no\s+more\s+than)\b",
-            "recent": r"\b(?:last|past|within)\s+\d+\s+days?\b",
+            "recent": r"\b(?:last|past|within)\b",
         }
-        if numeric and not re.search(comparison_cues[operator], original):
-            raise PlanningInvalid("Numeric comparison must be explicitly grounded")
+        if numeric:
+            # A broad quote can contain several bounds. Bind this comparison
+            # to its own exact numeric token, rather than any number in it.
+            bound = comparison_cues[operator] + r"\s+" + re.escape(value) + r"(?![\w.,])"
+            if operator == "recent":
+                bound += r"\s+days?\b"
+            if not re.search(bound, original):
+                raise PlanningInvalid("Numeric comparison must be explicitly grounded")
         if group == "preference" and not any(
             word in original
             for word in ("prefer", "prioritis", "prioritiz", "ideally", "nice to have")
@@ -187,7 +211,19 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
             raise PlanningInvalid(
                 "An exclusion must be explicitly requested", reason="exclusion_missing_cue"
             )
-        if field == "location":
+        ambiguous_person_company = (
+            interpretation.entity_type == "person"
+            and re.search(r"\bat\s+companies\s+in\b", prompt, re.IGNORECASE)
+            and (
+                field == "company_location"
+                and "headquartered" not in original
+                and geography_choice != "company_location"
+                or field == "person_location"
+                and not re.search(r"\b(?:based|located|living)\s+in\b", original)
+                and geography_choice != "person_location"
+            )
+        )
+        if field == "location" or ambiguous_person_company:
             clarification = (
                 clarification or "Should location refer to the person or the company headquarters?"
             )
@@ -198,6 +234,10 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
                 parsed = float(value)
             except ValueError:
                 raise PlanningInvalid("Numeric criterion needs an explicit numeric value") from None
+        if field == "role" and operator == "contains" and isinstance(parsed, str):
+            # Normalize only the grammatical forms already admitted above. A
+            # plural user request must still match a saved singular job title.
+            parsed = {"founders": "founder", "engineers": "engineer"}.get(parsed.casefold(), parsed)
         criterion = Criterion(field=field, operator=operator, value=parsed)
         groups[group].append(criterion)
     selected: list[Source] = []
@@ -237,16 +277,31 @@ def grounded_plan(prompt: str, interpretation: Interpretation, scope: PlanScope)
             "person location",
         ),
         (
-            r"\bat\s+least\s+\d+\s+employees\b",
+            r"\b(?:at\s+least|minimum(?:\s+of)?|no\s+fewer\s+than)\s+\d+\s+employees\b",
             any(
                 rule.field == "employee_count" and rule.operator == "gte"
                 for rule in groups["must_have"]
             ),
             "minimum employee count",
         ),
+        (
+            r"\b(?:at\s+most|maximum(?:\s+of)?|no\s+more\s+than)\s+\d+\s+employees\b",
+            any(
+                rule.field == "employee_count" and rule.operator == "lte"
+                for rule in groups["must_have"]
+            ),
+            "maximum employee count",
+        ),
+        (
+            r"\bin\s+(?:the\s+)?[A-Za-z][A-Za-z -]{0,80}\s+industry\b",
+            any(rule.field == "industry" for rules in groups.values() for rule in rules),
+            "industry",
+        ),
     ]
     missing = [
-        name for pattern, present, name in cues if re.search(pattern, prompt, re.IGNORECASE) and not present
+        name
+        for pattern, present, name in cues
+        if re.search(pattern, prompt, re.IGNORECASE) and not present
     ]
     represented_sources = {source for source, _ in interpretation.sources}
     for source in get_args(Source):

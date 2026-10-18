@@ -364,3 +364,43 @@ def test_cancelled_run_has_no_qualification_checkpoint(database):
             session.execute(sa.select(sa.func.count()).select_from(qualifications)).scalar_one()
             == 0
         )
+
+
+def test_checkpointed_confirmed_records_export_via_private_api(database, tmp_path):
+    """Reviewed fixture facts, not model-quality or full prompt-chain acceptance."""
+    import csv
+    import io
+
+    actor, workspace, job_id = fixture(database)
+    with database.tenant(actor, workspace) as session:
+        job = locked_job(session, job_id)
+        checkpoint_qualification(session, job, result_rows(session, job_id))
+        finish_collection_pipeline(session, JobRepository.get(session, job_id))
+        plan_id = job["plan_id"]
+    app = create_app(Settings())
+    app.state.database = database
+    app.state.evidence_storage = EvidenceStorage(LocalBlobBackend(tmp_path / "exports"))
+    app.dependency_overrides[require_identity] = lambda: Identity(actor)
+    client = TestClient(app)
+    results = client.get(f"/v1/jobs/{job_id}/results?workspace_id={workspace}").json()
+    confirmed = results["groups"]["confirmed"]
+    assert len(confirmed) == 1
+    endpoint = f"/v1/workspaces/{workspace}/exports"
+    created = client.post(
+        endpoint, json={"plan_id": plan_id, "entity_ids": confirmed, "format": "csv"}
+    )
+    assert created.status_code == 200, created.text
+    assert created.json()["row_count"] == 1
+    downloaded = client.get(f"{endpoint}/{created.json()['id']}")
+    assert downloaded.status_code == 200
+    assert downloaded.headers["cache-control"] == "no-store"
+    rows = list(csv.DictReader(io.StringIO(downloaded.text)))
+    assert len(rows) == 1 and rows[0]["entity_id"] == confirmed[0]
+    assert rows[0]["fit"] == "confirmed" and rows[0]["schema_version"] == "skriller-qualified-v1"
+    assert rows[0]["evidence_ids"]
+    # A UI-stale confirmed selection must not bypass server requalification.
+    selected = results["groups"]["excluded"]
+    rejected = client.post(
+        endpoint, json={"plan_id": plan_id, "entity_ids": selected, "format": "csv"}
+    )
+    assert rejected.status_code == 422

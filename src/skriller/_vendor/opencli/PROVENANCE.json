@@ -1,0 +1,35 @@
+{
+  "repository": "https://github.com/jackwener/OpenCLI",
+  "commit": "e6174a952c763a836a9bb0dd2f097d2962b3876b",
+  "license": "Apache-2.0",
+  "files": {
+    "clis/instagram/search.js": {
+      "source": "clis/instagram/search.js",
+      "source_sha256": "a38879e761271d167bef752359442b0be84611cca727b2b323467772d2d45239",
+      "adapted_sha256": "d8fbd7a8ddedbf35e3599f31835fe232e55348913c50853eea4e9c1e747f1fd4"
+    },
+    "clis/instagram/profile.js": {
+      "source": "clis/instagram/profile.js",
+      "source_sha256": "40f400cdabdcfcc216c5e7fa4bb321f1b70e00a5a5b83bac3c2ee1c276fca312",
+      "adapted_sha256": "897166beb3d47722f9c05326a6f7e826c784ace0464d61adc35d5cfcac5e86fb"
+    },
+    "clis/instagram/_shared/read-response.js": {
+      "source": "clis/instagram/_shared/read-response.js",
+      "source_sha256": "7805d4fc63e6ecb767136a6c7ae5415a000c41768b047f2ee539eb23f76bb513",
+      "adapted_sha256": "7805d4fc63e6ecb767136a6c7ae5415a000c41768b047f2ee539eb23f76bb513"
+    },
+    "clis/facebook/search.js": {
+      "source": "clis/facebook/search.js",
+      "source_sha256": "65f51af51a6de3c7894d44de210e1f3333449f04d0838a256c6fad9a65bbd7cd",
+      "adapted_sha256": "65f51af51a6de3c7894d44de210e1f3333449f04d0838a256c6fad9a65bbd7cd"
+    },
+    "clis/facebook/profile.js": {
+      "source": "clis/facebook/profile.js",
+      "source_sha256": "8746f04a559d40391f7b00daf52f9c8ef71736b028f0cfb7e40b6c272a416588",
+      "adapted_sha256": "8746f04a559d40391f7b00daf52f9c8ef71736b028f0cfb7e40b6c272a416588"
+    }
+  },
+  "modifications": "MODIFICATIONS.md",
+  "activation": "Not registered or enabled; isolated fixture compatibility only.",
+  "license_sha256": "0210b8b66cf00358242cb921ba2be3a46dfe0190159b1b952388a3880ce1ff54"
+}

@@ -137,7 +137,62 @@ def test_razorpay_refund_event_resolves_by_customer_when_subscription_is_omitted
     assert hint.event_type == "refund.processed:full"
 
 
+@pytest.mark.parametrize(
+    "suffix,expected",
+    [
+        ("created", "open"),
+        ("under_review", "open"),
+        ("action_required", "open"),
+        ("won", "won"),
+        ("lost", "lost"),
+        ("closed", "closed"),
+    ],
+)
+def test_razorpay_dispute_keeps_only_verified_payment_reference(suffix, expected):
+    doc = {
+        "account_id": "acc_fixture",
+        "event": "payment.dispute." + suffix,
+        "payload": {
+            "payment": {"entity": {"id": "pay_fixture", "email": "discard@example.com"}},
+            "dispute": {"entity": {"entity": "dispute", "payment_id": "pay_fixture"}},
+        },
+    }
+    hint = signed("razorpay", doc, account_id="acc_fixture")
+    assert hint.reference_id == "pay_fixture" and hint.customer_id is None
+    assert hint.subscription_id is None and hint.event_type == "billing.dispute." + expected
+    doc["payload"]["payment"]["entity"]["id"] = "pay_other"
+    with pytest.raises(InvalidBillingEvent):
+        signed("razorpay", doc, account_id="acc_fixture")
+
+
 def test_body_bounds_and_weak_missing_config():
     for body, secret in [(b"x" * (256 * 1024 + 1), SECRET), (b"{}", b"")]:
         with pytest.raises(InvalidBillingEvent):
             verify_event("razorpay", body, "a" * 64, secret=secret, now=NOW)
+
+
+@pytest.mark.parametrize("refunded,expected", [(1000, "full"), (250, "partial")])
+def test_razorpay_refund_without_customer_queues_payment_reference(refunded, expected):
+    doc = {
+        "account_id": "acc_fixture",
+        "event": "refund.processed",
+        "payload": {
+            "refund": {
+                "entity": {"entity": "refund", "status": "processed", "payment_id": "pay_fixture"}
+            },
+            "payment": {
+                "entity": {
+                    "entity": "payment",
+                    "id": "pay_fixture",
+                    "amount": 1000,
+                    "amount_refunded": refunded,
+                }
+            },
+        },
+    }
+    hint = signed("razorpay", doc, account_id="acc_fixture")
+    assert hint.reference_id == "pay_fixture" and hint.customer_id is None
+    assert hint.event_type == "refund.processed:" + expected
+    doc["payload"]["refund"]["entity"]["payment_id"] = "pay_other"
+    with pytest.raises(InvalidBillingEvent):
+        signed("razorpay", doc, account_id="acc_fixture")

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "dimension": "prompt_planning",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_groq_free_tier",
+  "model": "openai/gpt-oss-20b",
+  "recorded_at": "2026-10-18T00:54:19.549179+00:00",
+  "case_denominator": 5,
+  "case_assertions_passed": 0,
+  "actual_model_calls": 1,
+  "source_calls": 0,
+  "automatic_retries": 0,
+  "release_gate_passed": false,
+  "release_prompt_target": 50,
+  "scope": "Same five synthetic local diagnostic assertions; not full-plan recall or representative release quality. No provider/default configuration changed. Failed and unexecuted cases remain in the denominator.",
+  "implementation_and_corpus_sha256": {
+    "src/skriller/research/planner.py": "84b0c29bf6a95b16044646ad27b3b2275ff4cc59c6446a4534b0f10a8dab1251",
+    "src/skriller/extraction/models.py": "670c987eefb07a3a7d9a197d2f5e0c78af880e9a28c8fca92a41c494a35b5c91",
+    "src/skriller/extraction/groq.py": "fc4128ef10ec836129a9d679e3848335525cb48f6aec6b369f7f6897d5e20711",
+    "tests/db/test_planner_quality.py": "86dfeada1fd2cddde2c7cecec0ba00475ce891d5d1c08283694e4f6811b249c4",
+    "tests/db/test_planner_groq_quality.py": "f95a716a160aad4da8ce581974729d975c0e1913a605e57e06170fec143c4a83"
+  },
+  "cases": [
+    {
+      "id": "location-exclusion-preference",
+      "outcome": "not_executed",
+      "calls": 0
+    },
+    {
+      "id": "company-geography-industry",
+      "outcome": "not_executed",
+      "calls": 0
+    },
+    {
+      "id": "numeric-minimum",
+      "outcome": "failed",
+      "calls": 1,
+      "provider_status": 400,
+      "provider_error_code": "json_validate_failed",
+      "failure_class": "ModelUnavailable",
+      "failure_code": "source_unavailable"
+    },
+    {
+      "id": "private-output",
+      "outcome": "not_executed",
+      "calls": 0
+    },
+    {
+      "id": "ambiguous-location",
+      "outcome": "not_executed",
+      "calls": 0
+    }
+  ]
+}

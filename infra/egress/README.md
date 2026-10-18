@@ -98,10 +98,12 @@ separate, user-deferred hosted task.
 
 ## Official X API worker
 
-Build the fixed OAuth-only recent-search worker from the pinned Python 3.12 base:
+Stage the minimal locked closure and build the fixed OAuth-only recent-search worker
+from the pinned guarded Python 3.12 base:
 
 ```sh
-docker build --network=none -f infra/egress/Dockerfile.x -t skriller-egress-x .
+.venv/bin/python -m scripts.provision_x_assets --download
+docker build --network=none --build-context x_wheels=.runtime/x-build -f infra/egress/Dockerfile.x -t skriller-egress-x .
 ```
 
 Set `SKRILLER_PUBLIC_X_IMAGE` to the immutable local image ID. The worker joins
@@ -112,3 +114,26 @@ shared job/source capacity accounting; no browser session or cookie reader is
 installed. The API's recent-search window and account quota apply. Image build
 and synthetic request-contract tests do not certify a live X account or hosted
 egress deployment.
+
+The owner-consented PKCE and refresh API is documented in
+`docs/X_OAUTH_RUNBOOK.md`. The current installed worker and kernel boundary were
+locally verified with synthetic data; see `docs/completions/X-WORKER-LOCAL.json`.
+
+The optional Reddit OAuth search image uses `Dockerfile.reddit` and the same
+`x_wheels` build context/locked closure as X. It is not enabled automatically.
+See `docs/REDDIT_OAUTH_RUNBOOK.md` for the build, current restrictions and actual
+local image evidence. No user browser bridge is part of this worker.
+
+LinkedIn connected search uses `Dockerfile.linkedin`, inheriting the existing
+immutable browser image and copying the complete pinned acquired extraction
+package with its notices. It adds no downloaded dependency or host browser mount.
+The installed copied capture passed synthetic people/post search with networking
+disabled; source configuration remains opt-in and live access unverified. See
+`docs/LINKEDIN_SEARCH_RUNBOOK.md` and `docs/completions/LINKEDIN-WORKER-LOCAL.json`.
+
+## Prepared social worker
+
+Dockerfile.social uses the reviewed pinned browser base and Python social worker;
+there is no Node/global OpenCLI runtime. SKRILLER_PUBLIC_SOCIAL_IMAGE defaults off.
+Image build, egress/isolation and live account checks remain user-deferred until
+final deployment; local fixtures do not establish those properties.

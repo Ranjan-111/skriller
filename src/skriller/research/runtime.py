@@ -93,23 +93,95 @@ def execute(self, payload):
         outcome = execute_planning(database, payload, settings)
     elif stage == "discovering":
         x_reader = None
+        reddit_reader = None
+        linkedin_reader = None
+        instagram_reader = None
+        facebook_reader = None
+        reddit_renewal = None
         connection_store = None
+        if settings.public_linkedin_image:
+            from skriller.connections.store import ConnectionStore
+            from skriller.connectors.linkedin_executor import ConcreteLinkedInExecutor
+
+            linkedin_reader = ConcreteLinkedInExecutor(settings.public_linkedin_image)
+            connection_store = ConnectionStore.configured(settings)
+        if settings.public_social_image:
+            from skriller.connections.store import ConnectionStore
+            from skriller.connectors.social_executor import ConcreteSocialExecutor
+
+            instagram_reader = ConcreteSocialExecutor("instagram", settings.public_social_image)
+            facebook_reader = ConcreteSocialExecutor("facebook", settings.public_social_image)
+            connection_store = ConnectionStore.configured(settings)
         if settings.public_x_image:
             from skriller.connections.store import ConnectionStore
             from skriller.connectors.x_executor import ConcreteXExecutor
 
             x_reader = ConcreteXExecutor(settings.public_x_image)
             connection_store = ConnectionStore.configured(settings)
+        if settings.public_reddit_image:
+            from skriller.connections.store import ConnectionStore
+            from skriller.connectors.reddit_executor import ConcreteRedditExecutor
+
+            reddit_reader = ConcreteRedditExecutor(
+                settings.public_reddit_image, user_agent=settings.reddit_oauth_user_agent
+            )
+            connection_store = ConnectionStore.configured(settings)
+            from skriller.connections.reddit_oauth import RedditConsentStore
+            from skriller.connections.reddit_renewal import RedditAccessRenewal
+            from skriller.connectors.reddit_oauth import (
+                RedditOAuth,
+                RedditOAuthUnavailable,
+                configuration,
+            )
+
+            try:
+                config = configuration(settings)
+            except RedditOAuthUnavailable:
+                pass  # Imported access references do not imply a refresh grant.
+            else:
+                reddit_renewal = RedditAccessRenewal(
+                    database,
+                    RedditConsentStore(connection_store.keyring),
+                    config,
+                    RedditOAuth(),
+                ).prepare
         outcome = execute_discovery(
             database,
             payload,
             collection_proxy_url=settings.public_collection_proxy_url,
             x_reader=x_reader,
+            reddit_reader=reddit_reader,
+            linkedin_reader=linkedin_reader,
+            instagram_reader=instagram_reader,
+            facebook_reader=facebook_reader,
             connection_store=connection_store,
+            reddit_renewal=reddit_renewal,
         )
     elif stage == "collecting" and settings.public_collection_proxy_url:
         browser = None
         youtube_reader = None
+        reddit_reader = linkedin_reader = instagram_reader = facebook_reader = connection_store = (
+            None
+        )
+        if settings.public_linkedin_image:
+            from skriller.connections.store import ConnectionStore
+            from skriller.connectors.linkedin_executor import ConcreteLinkedInExecutor
+
+            linkedin_reader = ConcreteLinkedInExecutor(settings.public_linkedin_image)
+            connection_store = ConnectionStore.configured(settings)
+        if settings.public_social_image:
+            from skriller.connections.store import ConnectionStore
+            from skriller.connectors.social_executor import ConcreteSocialExecutor
+
+            instagram_reader = ConcreteSocialExecutor("instagram", settings.public_social_image)
+            facebook_reader = ConcreteSocialExecutor("facebook", settings.public_social_image)
+            connection_store = ConnectionStore.configured(settings)
+        if settings.public_reddit_image:
+            from skriller.connections.store import ConnectionStore
+            from skriller.connectors.reddit_executor import ConcreteRedditExecutor
+
+            reddit_reader = ConcreteRedditExecutor(settings.public_reddit_image)
+            connection_store = ConnectionStore.configured(settings)
         if settings.public_youtube_image:
             from skriller.connectors.youtube_executor import ConcreteYouTubeExecutor
 
@@ -132,6 +204,11 @@ def execute(self, payload):
             browser=browser,
             cache_ttl_seconds=settings.public_response_cache_ttl_seconds,
             youtube_reader=youtube_reader,
+            reddit_reader=reddit_reader,
+            linkedin_reader=linkedin_reader,
+            instagram_reader=instagram_reader,
+            facebook_reader=facebook_reader,
+            connection_store=connection_store,
         )
     elif stage == "extracting" and purpose == "template_repair" and settings.enable_page_extraction:
         from skriller.research.template_repair import execute_template_repair

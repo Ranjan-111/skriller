@@ -10,7 +10,7 @@
           "tests/fixtures/research/company.html"
         ],
         "createdAt": "2026-10-12T14:34:35.405Z",
-        "reason": "Fixture HTML is synthetic source content for extraction tests, not a rendered product interface."
+        "reason": "Intentional synthetic source HTML fixture used by research extraction tests; it models article content, not a product UI, so heading hierarchy is not a design target."
       },
       {
         "rule": "flat-type-hierarchy",
@@ -19,7 +19,7 @@
           "tests/fixtures/research/changed.html"
         ],
         "createdAt": "2026-10-12T14:34:35.466Z",
-        "reason": "Fixture HTML is synthetic source content for extraction tests, not a rendered product interface."
+        "reason": "Intentional synthetic changed-DOM source HTML fixture used by research extraction tests; it models article content, not a product UI, so heading hierarchy is not a design target."
       }
     ]
   }

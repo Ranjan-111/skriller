@@ -1577,6 +1577,100 @@
         "title": "ExtractionView",
         "type": "object"
       },
+      "FacebookProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "company_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Company Identity",
+            "type": "string"
+          },
+          "coverage_complete": {
+            "const": false,
+            "default": false,
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "followers_display": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followers Display"
+          },
+          "friends_display": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Friends Display"
+          },
+          "group_access": {
+            "const": "unavailable",
+            "default": "unavailable",
+            "title": "Group Access",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "source": {
+            "const": "facebook",
+            "default": "facebook",
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "subject_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Subject Identity",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "visibility": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Visibility",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "username",
+          "source_url",
+          "observed_at",
+          "friends_display",
+          "followers_display"
+        ],
+        "title": "FacebookProfile",
+        "type": "object"
+      },
       "Failure": {
         "additionalProperties": false,
         "properties": {
@@ -2383,6 +2477,138 @@
         "title": "IdentitySubjectView",
         "type": "object"
       },
+      "InstagramProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "account_kind": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Account Kind",
+            "type": "string"
+          },
+          "bio_excerpt": {
+            "maxLength": 120,
+            "title": "Bio Excerpt",
+            "type": "string"
+          },
+          "coverage_complete": {
+            "const": false,
+            "default": false,
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "followers": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followers"
+          },
+          "following": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Following"
+          },
+          "name": {
+            "maxLength": 500,
+            "title": "Name",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "owner_analytics": {
+            "const": "unavailable",
+            "default": "unavailable",
+            "title": "Owner Analytics",
+            "type": "string"
+          },
+          "posts": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posts"
+          },
+          "resource_kind": {
+            "const": "profile",
+            "default": "profile",
+            "title": "Resource Kind",
+            "type": "string"
+          },
+          "source": {
+            "const": "instagram",
+            "default": "instagram",
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "subject_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Subject Identity",
+            "type": "string"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified"
+          },
+          "visibility": {
+            "const": "public",
+            "default": "public",
+            "title": "Visibility",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "name",
+          "source_url",
+          "observed_at",
+          "bio_excerpt",
+          "followers",
+          "following",
+          "posts"
+        ],
+        "title": "InstagramProfile",
+        "type": "object"
+      },
       "JobSnapshot": {
         "additionalProperties": false,
         "properties": {
@@ -2605,6 +2831,113 @@
           }
         },
         "title": "Limits",
+        "type": "object"
+      },
+      "LinkedInReadResult": {
+        "additionalProperties": false,
+        "properties": {
+          "buying_intent": {
+            "const": "not_inferred",
+            "default": "not_inferred",
+            "title": "Buying Intent",
+            "type": "string"
+          },
+          "contact_details": {
+            "const": "unavailable",
+            "default": "unavailable",
+            "title": "Contact Details",
+            "type": "string"
+          },
+          "coverage_complete": {
+            "const": false,
+            "default": false,
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "evidence_kind": {
+            "const": "resource_section_read",
+            "default": "resource_section_read",
+            "title": "Evidence Kind",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "resource_kind": {
+            "enum": [
+              "profile",
+              "company",
+              "post"
+            ],
+            "title": "Resource Kind",
+            "type": "string"
+          },
+          "section": {
+            "enum": [
+              "main_profile",
+              "about",
+              "post"
+            ],
+            "title": "Section",
+            "type": "string"
+          },
+          "source": {
+            "const": "linkedin",
+            "default": "linkedin",
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "subject_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Subject Identity",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 16384,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "text_truncated": {
+            "title": "Text Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "resource_kind",
+          "source_url",
+          "section",
+          "text",
+          "text_truncated",
+          "observed_at"
+        ],
+        "title": "LinkedInReadResult",
+        "type": "object"
+      },
+      "LinkedInReadView": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "resource": {
+            "$ref": "#/components/schemas/LinkedInReadResult"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "resource"
+        ],
+        "title": "LinkedInReadView",
         "type": "object"
       },
       "ListInput": {
@@ -2882,6 +3215,16 @@
             "title": "Plan Id",
             "type": "string"
           },
+          "planning_failure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanningFailureView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "status": {
             "enum": [
               "search_objective",
@@ -2905,12 +3248,58 @@
         "title": "PlanView",
         "type": "object"
       },
+      "PlanningFailureView": {
+        "additionalProperties": false,
+        "properties": {
+          "automatic_retry_allowed": {
+            "const": false,
+            "default": false,
+            "title": "Automatic Retry Allowed",
+            "type": "boolean"
+          },
+          "reason": {
+            "enum": [
+              "invalid_interpretation",
+              "model_unavailable",
+              "budget_exhausted",
+              "execution_interrupted"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "recovery": {
+            "enum": [
+              "revise_prompt",
+              "check_service",
+              "check_limits",
+              "review_run"
+            ],
+            "title": "Recovery",
+            "type": "string"
+          },
+          "source_search_started": {
+            "const": false,
+            "default": false,
+            "title": "Source Search Started",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "reason",
+          "recovery"
+        ],
+        "title": "PlanningFailureView",
+        "type": "object"
+      },
       "PlatformReference": {
         "additionalProperties": false,
         "properties": {
           "access": {
-            "const": "indexed_reference_only",
             "default": "indexed_reference_only",
+            "enum": [
+              "indexed_reference_only",
+              "connected_search_reference_only"
+            ],
             "title": "Access",
             "type": "string"
           },
@@ -2921,8 +3310,13 @@
             "type": "string"
           },
           "discovery_backend": {
-            "const": "exa_keyless",
             "default": "exa_keyless",
+            "enum": [
+              "exa_keyless",
+              "linkedin_mcp",
+              "opencli_instagram",
+              "opencli_facebook"
+            ],
             "title": "Discovery Backend",
             "type": "string"
           },
@@ -2930,6 +3324,7 @@
             "enum": [
               "profile",
               "company",
+              "page",
               "post",
               "comment",
               "community",
@@ -2941,7 +3336,9 @@
           "source": {
             "enum": [
               "linkedin",
-              "reddit"
+              "reddit",
+              "instagram",
+              "facebook"
             ],
             "title": "Source",
             "type": "string"
@@ -3035,7 +3432,8 @@
           "evidence_kind": {
             "enum": [
               "search_snippet",
-              "public_post"
+              "public_post",
+              "search_reference"
             ],
             "title": "Evidence Kind",
             "type": "string"
@@ -3053,7 +3451,11 @@
           "provider": {
             "enum": [
               "exa_keyless",
-              "x_api_v2"
+              "x_api_v2",
+              "reddit_oauth",
+              "linkedin_mcp",
+              "opencli_instagram",
+              "opencli_facebook"
             ],
             "title": "Provider",
             "type": "string"
@@ -3094,6 +3496,137 @@
           "evidence_kind"
         ],
         "title": "QueryProvenance",
+        "type": "object"
+      },
+      "RebindOptionsView": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation_required": {
+            "const": true,
+            "default": true,
+            "title": "Confirmation Required",
+            "type": "boolean"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "job_version": {
+            "minimum": 1.0,
+            "title": "Job Version",
+            "type": "integer"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/RebindSourceOption"
+            },
+            "maxItems": 2,
+            "title": "Options",
+            "type": "array"
+          },
+          "resume_status": {
+            "enum": [
+              "not_paused",
+              "available",
+              "new_prompt_required",
+              "deadline_expired",
+              "requires_reconciliation",
+              "budget_exhausted"
+            ],
+            "title": "Resume Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "job_version",
+          "resume_status",
+          "options"
+        ],
+        "title": "RebindOptionsView",
+        "type": "object"
+      },
+      "RebindResumeInput": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Entity Ids",
+            "type": "array"
+          },
+          "expected_job_version": {
+            "minimum": 1.0,
+            "title": "Expected Job Version",
+            "type": "integer"
+          },
+          "previous_connection_ref": {
+            "format": "uuid",
+            "title": "Previous Connection Ref",
+            "type": "string"
+          },
+          "replacement_connection_ref": {
+            "format": "uuid",
+            "title": "Replacement Connection Ref",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "linkedin",
+              "reddit"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "previous_connection_ref",
+          "replacement_connection_ref",
+          "expected_job_version",
+          "entity_ids"
+        ],
+        "title": "RebindResumeInput",
+        "type": "object"
+      },
+      "RebindSourceOption": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Entity Ids",
+            "type": "array"
+          },
+          "previous_connection_ref": {
+            "format": "uuid",
+            "title": "Previous Connection Ref",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "linkedin",
+              "reddit"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "previous_connection_ref",
+          "entity_ids"
+        ],
+        "title": "RebindSourceOption",
         "type": "object"
       },
       "ReconnectInput": {
@@ -3149,6 +3682,468 @@
           "expires_at"
         ],
         "title": "ReconnectInput",
+        "type": "object"
+      },
+      "RedditComment": {
+        "additionalProperties": false,
+        "properties": {
+          "author_handle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Handle"
+          },
+          "author_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Author Identity",
+            "type": "string"
+          },
+          "content_unavailable": {
+            "title": "Content Unavailable",
+            "type": "boolean"
+          },
+          "native_id": {
+            "title": "Native Id",
+            "type": "string"
+          },
+          "parent_id": {
+            "title": "Parent Id",
+            "type": "string"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "native_id",
+          "parent_id",
+          "source_url",
+          "text",
+          "author_handle",
+          "published_at",
+          "content_unavailable",
+          "truncated"
+        ],
+        "title": "RedditComment",
+        "type": "object"
+      },
+      "RedditCompletionInput": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "format": "password",
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string",
+            "writeOnly": true
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "state": {
+            "format": "password",
+            "maxLength": 128,
+            "minLength": 43,
+            "title": "State",
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "consent_id",
+          "state",
+          "code"
+        ],
+        "title": "RedditCompletionInput",
+        "type": "object"
+      },
+      "RedditConsentInput": {
+        "additionalProperties": false,
+        "properties": {
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "opt_in"
+        ],
+        "title": "RedditConsentInput",
+        "type": "object"
+      },
+      "RedditConsentMetadata": {
+        "properties": {
+          "access_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires At"
+          },
+          "access_state": {
+            "anyOf": [
+              {
+                "enum": [
+                  "active",
+                  "expired",
+                  "revoked"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access State"
+          },
+          "connection_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Connection Id"
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "remote_revocation": {
+            "const": "not_performed",
+            "default": "not_performed",
+            "title": "Remote Revocation",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "exchanging",
+              "active"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "consent_id",
+          "connection_id",
+          "state",
+          "expires_at"
+        ],
+        "title": "RedditConsentMetadata",
+        "type": "object"
+      },
+      "RedditConsentOutput": {
+        "properties": {
+          "authorization_url": {
+            "title": "Authorization Url",
+            "type": "string"
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "consent_id",
+          "authorization_url",
+          "expires_at"
+        ],
+        "title": "RedditConsentOutput",
+        "type": "object"
+      },
+      "RedditPostReference": {
+        "additionalProperties": false,
+        "properties": {
+          "author_handle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Handle"
+          },
+          "author_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Author Identity",
+            "type": "string"
+          },
+          "content_unavailable": {
+            "title": "Content Unavailable",
+            "type": "boolean"
+          },
+          "excerpt": {
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "native_id": {
+            "title": "Native Id",
+            "type": "string"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "subreddit": {
+            "title": "Subreddit",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "native_id",
+          "source_url",
+          "title",
+          "subreddit",
+          "author_handle",
+          "excerpt",
+          "content_unavailable",
+          "truncated",
+          "published_at"
+        ],
+        "title": "RedditPostReference",
+        "type": "object"
+      },
+      "RedditSignal": {
+        "additionalProperties": false,
+        "properties": {
+          "buying_intent": {
+            "const": "not_inferred",
+            "default": "not_inferred",
+            "title": "Buying Intent",
+            "type": "string"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "quote": {
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          },
+          "resource_id": {
+            "pattern": "^t[13]_[a-z0-9]{3,13}$",
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 4096,
+            "title": "Source Url",
+            "type": "string"
+          },
+          "status": {
+            "const": "source_specific_unverified",
+            "default": "source_specific_unverified",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource_id",
+          "quote",
+          "source_url",
+          "published_at"
+        ],
+        "title": "RedditSignal",
+        "type": "object"
+      },
+      "RedditThread": {
+        "additionalProperties": false,
+        "properties": {
+          "buying_intent": {
+            "const": "not_inferred",
+            "default": "not_inferred",
+            "title": "Buying Intent",
+            "type": "string"
+          },
+          "comments": {
+            "items": {
+              "$ref": "#/components/schemas/RedditComment"
+            },
+            "title": "Comments",
+            "type": "array"
+          },
+          "coverage_complete": {
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "evidence_kind": {
+            "const": "post_comment_read",
+            "default": "post_comment_read",
+            "title": "Evidence Kind",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "omitted_comments": {
+            "title": "Omitted Comments",
+            "type": "integer"
+          },
+          "post": {
+            "$ref": "#/components/schemas/RedditPostReference"
+          },
+          "source": {
+            "const": "reddit",
+            "default": "reddit",
+            "title": "Source",
+            "type": "string"
+          },
+          "subject_identity": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Subject Identity",
+            "type": "string"
+          },
+          "unexpanded_nodes": {
+            "title": "Unexpanded Nodes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "post",
+          "comments",
+          "observed_at",
+          "coverage_complete",
+          "unexpanded_nodes",
+          "omitted_comments"
+        ],
+        "title": "RedditThread",
+        "type": "object"
+      },
+      "RedditThreadView": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "rejected_signals": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Rejected Signals",
+            "type": "integer"
+          },
+          "signal_coverage_complete": {
+            "default": false,
+            "title": "Signal Coverage Complete",
+            "type": "boolean"
+          },
+          "signal_failure_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signal Failure Code"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/RedditSignal"
+            },
+            "maxItems": 10,
+            "title": "Signals",
+            "type": "array"
+          },
+          "thread": {
+            "$ref": "#/components/schemas/RedditThread"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "thread"
+        ],
+        "title": "RedditThreadView",
         "type": "object"
       },
       "RefinementInput": {
@@ -3432,7 +4427,8 @@
           "evidence_kind": {
             "enum": [
               "search_snippet",
-              "public_post"
+              "public_post",
+              "search_reference"
             ],
             "title": "Evidence Kind",
             "type": "string"
@@ -3472,6 +4468,16 @@
             "title": "Id",
             "type": "string"
           },
+          "linkedin_read": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LinkedInReadView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "observed_at": {
             "format": "date-time",
             "title": "Observed At",
@@ -3498,7 +4504,11 @@
           "provider": {
             "enum": [
               "exa_keyless",
-              "x_api_v2"
+              "x_api_v2",
+              "reddit_oauth",
+              "linkedin_mcp",
+              "opencli_instagram",
+              "opencli_facebook"
             ],
             "title": "Provider",
             "type": "string"
@@ -3508,10 +4518,30 @@
             "title": "Qualification",
             "type": "string"
           },
+          "reddit_thread": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RedditThreadView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "snippet": {
             "maxLength": 4096,
             "title": "Snippet",
             "type": "string"
+          },
+          "social_read": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SocialReadView"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "source": {
             "enum": [
@@ -3948,6 +4978,11 @@
             "title": "Expected Review Hash",
             "type": "string"
           },
+          "person_subject_confirmed": {
+            "default": false,
+            "title": "Person Subject Confirmed",
+            "type": "boolean"
+          },
           "previous": {
             "$ref": "#/components/schemas/RoleReference"
           },
@@ -4119,6 +5154,10 @@
           "replacement": {
             "$ref": "#/components/schemas/RoleSource"
           },
+          "requires_person_confirmation": {
+            "title": "Requires Person Confirmation",
+            "type": "boolean"
+          },
           "requires_same_subject_confirmation": {
             "const": true,
             "title": "Requires Same Subject Confirmation",
@@ -4152,6 +5191,7 @@
           "replacement",
           "review_origin",
           "requires_same_subject_confirmation",
+          "requires_person_confirmation",
           "review_hash"
         ],
         "title": "RoleReviewView",
@@ -4821,6 +5861,54 @@
         "title": "SnapshotValue",
         "type": "object"
       },
+      "SocialReadView": {
+        "additionalProperties": false,
+        "properties": {
+          "api_requests": {
+            "maximum": 3.0,
+            "minimum": 0.0,
+            "title": "Api Requests",
+            "type": "integer"
+          },
+          "evidence_id": {
+            "format": "uuid",
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "network_requests_seen": {
+            "maximum": 80.0,
+            "minimum": 0.0,
+            "title": "Network Requests Seen",
+            "type": "integer"
+          },
+          "resource": {
+            "discriminator": {
+              "mapping": {
+                "facebook": "#/components/schemas/FacebookProfile",
+                "instagram": "#/components/schemas/InstagramProfile"
+              },
+              "propertyName": "source"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InstagramProfile"
+              },
+              {
+                "$ref": "#/components/schemas/FacebookProfile"
+              }
+            ],
+            "title": "Resource"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "resource",
+          "api_requests",
+          "network_requests_seen"
+        ],
+        "title": "SocialReadView",
+        "type": "object"
+      },
       "SourceDiagnostic": {
         "additionalProperties": false,
         "properties": {
@@ -5239,6 +6327,155 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "XCompletionInput": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "format": "password",
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string",
+            "writeOnly": true
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "state": {
+            "format": "password",
+            "maxLength": 128,
+            "minLength": 43,
+            "title": "State",
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "consent_id",
+          "state",
+          "code"
+        ],
+        "title": "XCompletionInput",
+        "type": "object"
+      },
+      "XConsentInput": {
+        "additionalProperties": false,
+        "properties": {
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "opt_in"
+        ],
+        "title": "XConsentInput",
+        "type": "object"
+      },
+      "XConsentMetadata": {
+        "properties": {
+          "access_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Expires At"
+          },
+          "access_state": {
+            "anyOf": [
+              {
+                "enum": [
+                  "active",
+                  "expired",
+                  "revoked"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access State"
+          },
+          "connection_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Connection Id"
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "remote_revocation": {
+            "const": "not_performed",
+            "default": "not_performed",
+            "title": "Remote Revocation",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "exchanging",
+              "active"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "consent_id",
+          "connection_id",
+          "state",
+          "expires_at"
+        ],
+        "title": "XConsentMetadata",
+        "type": "object"
+      },
+      "XConsentOutput": {
+        "properties": {
+          "authorization_url": {
+            "title": "Authorization Url",
+            "type": "string"
+          },
+          "consent_id": {
+            "format": "uuid",
+            "title": "Consent Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "consent_id",
+          "authorization_url",
+          "expires_at"
+        ],
+        "title": "XConsentOutput",
         "type": "object"
       },
       "YouTubeCaptionView": {
@@ -6291,6 +7528,141 @@
           }
         },
         "summary": "Job Plan"
+      }
+    },
+    "/v1/jobs/{job_id}/rebind-and-resume": {
+      "post": {
+        "operationId": "rebind_resume_job_v1_jobs__job_id__rebind_and_resume_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RebindResumeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobSnapshot"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rebind Resume Job"
+      }
+    },
+    "/v1/jobs/{job_id}/rebind-options": {
+      "get": {
+        "operationId": "read_rebind_options_v1_jobs__job_id__rebind_options_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workspace_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RebindOptionsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Rebind Options"
       }
     },
     "/v1/jobs/{job_id}/refine": {
@@ -8596,6 +9968,243 @@
         "summary": "Rollback"
       }
     },
+    "/v1/workspaces/{workspace_id}/reddit/oauth": {
+      "get": {
+        "operationId": "list_consents_v1_workspaces__workspace_id__reddit_oauth_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RedditConsentMetadata"
+                  },
+                  "title": "Response List Consents V1 Workspaces  Workspace Id  Reddit Oauth Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Consents"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/reddit/oauth/complete": {
+      "post": {
+        "operationId": "complete_v1_workspaces__workspace_id__reddit_oauth_complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedditCompletionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionMetadata"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/reddit/oauth/start": {
+      "post": {
+        "operationId": "start_v1_workspaces__workspace_id__reddit_oauth_start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedditConsentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedditConsentOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/reddit/oauth/{consent_id}/refresh": {
+      "post": {
+        "operationId": "refresh_v1_workspaces__workspace_id__reddit_oauth__consent_id__refresh_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "consent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Consent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionMetadata"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/reddit/oauth/{consent_id}/revoke": {
+      "post": {
+        "operationId": "revoke_v1_workspaces__workspace_id__reddit_oauth__consent_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "consent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Consent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke"
+      }
+    },
     "/v1/workspaces/{workspace_id}/research-schedules": {
       "get": {
         "operationId": "listing_v1_workspaces__workspace_id__research_schedules_get",
@@ -9260,6 +10869,243 @@
           }
         },
         "summary": "History"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/x/oauth": {
+      "get": {
+        "operationId": "list_consents_v1_workspaces__workspace_id__x_oauth_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/XConsentMetadata"
+                  },
+                  "title": "Response List Consents V1 Workspaces  Workspace Id  X Oauth Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Consents"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/x/oauth/complete": {
+      "post": {
+        "operationId": "complete_v1_workspaces__workspace_id__x_oauth_complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/XCompletionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionMetadata"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/x/oauth/start": {
+      "post": {
+        "operationId": "start_v1_workspaces__workspace_id__x_oauth_start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/XConsentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/XConsentOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/x/oauth/{consent_id}/refresh": {
+      "post": {
+        "operationId": "refresh_v1_workspaces__workspace_id__x_oauth__consent_id__refresh_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "consent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Consent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionMetadata"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh"
+      }
+    },
+    "/v1/workspaces/{workspace_id}/x/oauth/{consent_id}/revoke": {
+      "post": {
+        "operationId": "revoke_v1_workspaces__workspace_id__x_oauth__consent_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "consent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Consent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke"
       }
     },
     "/v1/workspaces/{workspace_id}/youtube-analytics/grants": {

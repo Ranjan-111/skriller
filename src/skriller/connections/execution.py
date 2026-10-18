@@ -6,6 +6,7 @@ transaction. This boundary cannot authorize a command absent from reviewed_comma
 
 from datetime import UTC, datetime
 from time import monotonic
+from uuid import UUID
 
 from skriller.connections.store import ConnectionStore, ConnectionUnavailable
 from skriller.contracts import ExecutionContext
@@ -22,6 +23,7 @@ def run_connected(
     *,
     timeout: float = 60,
     max_output: int = 1024 * 1024,
+    expected_credential_ref: UUID | None = None,
 ) -> RunResult:
     """Load once, poll persisted authority, discard output after authority changes."""
     started = monotonic()
@@ -32,7 +34,10 @@ def run_connected(
     try:
         with database.tenant(context.actor_id, str(context.workspace_id)) as session:
             material = store.load_for_runner(session, context, operation)
-            if not store.runner_current(session, context, material):
+            if (
+                expected_credential_ref is not None
+                and material.credential_ref != expected_credential_ref
+            ) or not store.runner_current(session, context, material):
                 return stopped("needs_connection")
     except ConnectionUnavailable:
         return stopped("needs_connection")

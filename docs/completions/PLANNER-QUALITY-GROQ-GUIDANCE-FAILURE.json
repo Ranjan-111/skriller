@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "dimension": "prompt_planning",
+  "source_group": "synthetic_fixture",
+  "model_mode": "actual_groq_free_tier",
+  "model": "openai/gpt-oss-20b",
+  "recorded_at": "2026-10-18T00:55:41.910501+00:00",
+  "case_denominator": 5,
+  "case_assertions_passed": 2,
+  "actual_model_calls": 5,
+  "source_calls": 0,
+  "automatic_retries": 0,
+  "release_gate_passed": false,
+  "release_prompt_target": 50,
+  "scope": "Same five synthetic local diagnostic assertions; not full-plan recall or representative release quality. No provider/default configuration changed. Failed and unexecuted cases remain in the denominator.",
+  "implementation_and_corpus_sha256": {
+    "src/skriller/research/planner.py": "e13966d1bdc271241954cc08dfe89623614c33361e41aa9370c399ac8a539dfd",
+    "src/skriller/extraction/models.py": "670c987eefb07a3a7d9a197d2f5e0c78af880e9a28c8fca92a41c494a35b5c91",
+    "src/skriller/extraction/groq.py": "fc4128ef10ec836129a9d679e3848335525cb48f6aec6b369f7f6897d5e20711",
+    "tests/db/test_planner_quality.py": "86dfeada1fd2cddde2c7cecec0ba00475ce891d5d1c08283694e4f6811b249c4",
+    "tests/db/test_planner_groq_quality.py": "3adf8c0d9aafb3781d46943e20cda4eb81d8d27add54381bc1620859dbda02ea"
+  },
+  "cases": [
+    {
+      "id": "location-exclusion-preference",
+      "outcome": "failed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"person\",\"entity_quote\":\"founders\",\"rules\":[[\"must_have\",\"location\",\"eq\",\"Bengaluru\",\"based in Bengaluru\"],[\"exclude\",\"company_type\",\"eq\",\"agencies\",\"Exclude agencies\"],[\"preference\",\"hiring_role\",\"contains\",\"engineers\",\"Prefer companies hiring engineers\"]],\"fields\":[],\"sources\":[[\"linkedin\",\"Find founders based in Bengaluru on LinkedIn.\"]],\"unsupported\":[],\"clarification\":null}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 839,
+        "output_tokens": 963,
+        "total_tokens": 1802,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 863
+        }
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [
+          {
+            "field": "hiring_role",
+            "operator": "contains",
+            "value": "engineers"
+          }
+        ],
+        "exclusions": [
+          {
+            "field": "company_type",
+            "operator": "eq",
+            "value": "agencies"
+          }
+        ],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Should location refer to the person or the company headquarters?",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": true,
+        "clarification": false,
+        "must_have": false,
+        "exclusions": false,
+        "preferences": true,
+        "sources": true,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "company-geography-industry",
+      "outcome": "failed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"clarification\":null,\"entity_quote\":\"companies\",\"entity_type\":\"company\",\"fields\":[],\"rules\":[[\"must_have\",\"industry\",\"contains\",\"fintech industry\",\"fintech industry\"],[\"must_have\",\"location\",\"eq\",\"Paris\",\"headquartered in Paris\"]],\"sources\":[],\"unsupported\":[]}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 831,
+        "output_tokens": 821,
+        "total_tokens": 1652,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 753
+        }
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [
+          {
+            "field": "industry",
+            "operator": "contains",
+            "value": "fintech industry"
+          }
+        ],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Should location refer to the person or the company headquarters?",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": true,
+        "clarification": false,
+        "must_have": false,
+        "exclusions": true,
+        "preferences": true,
+        "sources": true,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "numeric-minimum",
+      "outcome": "failed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"company\",\"entity_quote\":\"companies\",\"rules\":[[\"must_have\",\"employee_count\",\"gte\",\"25\",\"at least 25 employees\"],[\"exclude\",\"company_type\",\"eq\",\"agencies\",\"Exclude agencies\"]],\"fields\":[],\"sources\":[],\"unsupported\":[],\"clarification\":null}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 834,
+        "output_tokens": 947,
+        "total_tokens": 1781,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 879
+        }
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "company",
+        "must_have": [
+          {
+            "field": "employee_count",
+            "operator": "gte",
+            "value": 25.0
+          }
+        ],
+        "preferences": [],
+        "exclusions": [
+          {
+            "field": "company_type",
+            "operator": "eq",
+            "value": "agencies"
+          }
+        ],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      },
+      "checks": {
+        "entity_type": true,
+        "clarification": true,
+        "must_have": true,
+        "exclusions": false,
+        "preferences": true,
+        "sources": true,
+        "unsupported_criteria": true
+      }
+    },
+    {
+      "id": "private-output",
+      "outcome": "passed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"person\",\"entity_quote\":\"founders\",\"clarification\":null,\"fields\":[],\"rules\":[],\"sources\":[],\"unsupported\":[\"private email\"]}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 828,
+        "output_tokens": 268,
+        "total_tokens": 1096,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 227
+        }
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [
+          "private email"
+        ],
+        "clarification": null,
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    },
+    {
+      "id": "ambiguous-location",
+      "outcome": "passed",
+      "calls": 1,
+      "output_token_cap": 1024,
+      "synthetic_response": "{\"entity_type\":\"person\",\"entity_quote\":\"founders\",\"rules\":[[\"must_have\",\"location\",\"eq\",\"London\",\"London\"]],\"fields\":[],\"sources\":[],\"unsupported\":[],\"clarification\":null}",
+      "response_truncated": false,
+      "usage_metadata": {
+        "input_tokens": 828,
+        "output_tokens": 512,
+        "total_tokens": 1340,
+        "input_token_details": {},
+        "output_token_details": {
+          "reasoning": 462
+        }
+      },
+      "observed_plan": {
+        "schema_version": 1,
+        "revision": 2,
+        "entity_type": "person",
+        "must_have": [],
+        "preferences": [],
+        "exclusions": [],
+        "requested_fields": [
+          "name",
+          "source_url"
+        ],
+        "sources": [
+          "linkedin",
+          "reddit",
+          "web"
+        ],
+        "freshness_days": null,
+        "unsupported_criteria": [],
+        "clarification": "Should location refer to the person or the company headquarters?",
+        "limits": {
+          "result_limit": 10,
+          "search_calls": 2,
+          "candidates": 20,
+          "fetch_attempts": 10,
+          "llm_calls": 2,
+          "token_cap": 8192,
+          "deadline_seconds": 90,
+          "currency_cap": "0"
+        }
+      }
+    }
+  ]
+}

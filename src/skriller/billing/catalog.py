@@ -101,6 +101,10 @@ def receive_bound(
     if hint is None:
         return "ignored"
     account_scope = (account_id or "self") + (":live" if live_mode else ":test")
+    if hint.subscription_id is None and hint.customer_id is None and hint.reference_id:
+        from skriller.billing.references import receive_reference
+
+        return receive_reference(connection, hint, account_scope)
     if hint.subscription_id is not None:
         binding_rows = (
             connection.execute(
@@ -135,6 +139,13 @@ def receive_bound(
     # Customer-only payment events are accepted only when they resolve to one
     # configured workspace/subscription. Ambiguity fails closed without a write.
     binding = binding_rows[0] if len(binding_rows) == 1 else None
+    if binding is None and hint.checkout_id:
+        from skriller.billing.checkout import CheckoutUnavailable, queue_checkout_event
+
+        try:
+            return queue_checkout_event(connection, hint, account_scope)
+        except CheckoutUnavailable:
+            raise InvalidBillingEvent() from None
     if binding is None:
         raise InvalidBillingEvent()
     # Ensure configured commercial ceilings exist before accepting work.

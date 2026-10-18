@@ -8,6 +8,10 @@ reference
 **/.next
 .env
 .env.*
-!\.env.example
+!.env.example
 .impeccable/review
 **/elements_storage.db
+
+**/.env
+**/.env.*
+!**/.env.example

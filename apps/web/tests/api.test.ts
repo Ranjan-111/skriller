@@ -48,6 +48,102 @@ const fitView = () => ({
   ],
 });
 
+const redditThreadView = () => ({
+  evidence_id: "00000000-0000-4000-8000-000000000062",
+  rejected_signals: 0,
+  signal_coverage_complete: true,
+  signals: [
+    {
+      resource_id: "t1_comment",
+      quote: "We still coordinate this manually.",
+      source_url:
+        "https://www.reddit.com/r/synthetic/comments/postabc/thread-title/comment/",
+      published_at: "2026-10-14T00:00:00Z",
+      status: "source_specific_unverified",
+      buying_intent: "not_inferred",
+    },
+  ],
+  thread: {
+    source: "reddit",
+    evidence_kind: "post_comment_read",
+    observed_at: "2026-10-14T01:00:00Z",
+    coverage_complete: false,
+    omitted_comments: 1,
+    unexpanded_nodes: 0,
+    buying_intent: "not_inferred",
+    subject_identity: "unknown",
+    post: {
+      native_id: "t3_postabc",
+      source_url:
+        "https://www.reddit.com/r/synthetic/comments/postabc/thread-title/",
+      title: "Synthetic workflow question",
+      subreddit: "synthetic",
+      author_handle: "example_handle",
+      author_identity: "unknown",
+      excerpt: "How do you handle operations?",
+      content_unavailable: false,
+      truncated: false,
+      published_at: "2026-10-13T00:00:00Z",
+    },
+    comments: [
+      {
+        native_id: "t1_comment",
+        parent_id: "t3_postabc",
+        source_url:
+          "https://www.reddit.com/r/synthetic/comments/postabc/thread-title/comment/",
+        text: "We still coordinate this manually.",
+        author_handle: null,
+        author_identity: "unknown",
+        published_at: "2026-10-14T00:00:00Z",
+        content_unavailable: false,
+        truncated: false,
+      },
+      {
+        native_id: "t1_deleted",
+        parent_id: "t1_comment",
+        source_url:
+          "https://www.reddit.com/r/synthetic/comments/postabc/thread-title/deleted/",
+        text: "",
+        author_handle: null,
+        author_identity: "unknown",
+        published_at: null,
+        content_unavailable: true,
+        truncated: false,
+      },
+    ],
+  },
+});
+
+const linkedinReadView = (
+  kind: "profile" | "company" | "post" = "profile",
+) => ({
+  evidence_id: "00000000-0000-4000-8000-000000000063",
+  resource: {
+    source: "linkedin",
+    evidence_kind: "resource_section_read",
+    resource_kind: kind,
+    source_url:
+      kind === "profile"
+        ? "https://www.linkedin.com/in/synthetic-person/"
+        : kind === "company"
+          ? "https://www.linkedin.com/company/synthetic-company/about/"
+          : "https://www.linkedin.com/feed/update/urn:li:activity:123456/",
+    section:
+      kind === "profile"
+        ? "main_profile"
+        : kind === "company"
+          ? "about"
+          : "post",
+    text: "Synthetic source section text.",
+    text_truncated: false,
+    observed_at: "2026-10-14T01:00:00Z",
+    coverage_complete: false,
+    subject_identity: "unknown",
+    contact_details: "unavailable",
+    buying_intent: "not_inferred",
+  },
+});
+
 it("preserves evidence-backed fit separately from an unverified indexed reference", async () => {
   const view = fitView();
   const api = createApi(
@@ -57,6 +153,130 @@ it("preserves evidence-backed fit separately from an unverified indexed referenc
   const result = await api.results("j1", "w1");
   expect(result.results[0].fit?.status).toBe("confirmed");
   expect(result.results[0].qualification).toBe("unverified");
+});
+
+it("accepts bounded Reddit thread evidence and rejects invented or misbound signals", async () => {
+  const valid = fitView();
+  const candidate = valid.results[0] as Record<string, unknown>;
+  candidate.source = "reddit";
+  candidate.provider = "reddit_oauth";
+  candidate.evidence_kind = "public_post";
+  candidate.url =
+    "https://www.reddit.com/r/synthetic/comments/postabc/thread-title/";
+  candidate.reddit_thread = redditThreadView();
+  const api = createApi(
+    "http://api",
+    vi.fn().mockResolvedValue(response(valid)),
+  );
+  expect(
+    (await api.results("j1", "w1")).results[0].reddit_thread?.signals,
+  ).toHaveLength(1);
+
+  for (const corrupt of [
+    (view: ReturnType<typeof redditThreadView>) => {
+      view.signals[0].quote = "A quote absent from the comment.";
+    },
+    (view: ReturnType<typeof redditThreadView>) => {
+      view.signals[0].source_url = "https://www.reddit.com/r/other/comments/x/";
+    },
+    (view: ReturnType<typeof redditThreadView>) => {
+      view.thread.comments[1].parent_id = "t1_missing";
+    },
+    (view: ReturnType<typeof redditThreadView>) => {
+      view.thread.comments[1].content_unavailable = true;
+      view.thread.comments[1].text = "removed text must not remain";
+    },
+  ]) {
+    const invalid = fitView();
+    const invalidCandidate = invalid.results[0] as Record<string, unknown>;
+    invalidCandidate.source = "reddit";
+    invalidCandidate.provider = "reddit_oauth";
+    invalidCandidate.evidence_kind = "public_post";
+    invalidCandidate.url = candidate.url;
+    const thread = redditThreadView();
+    corrupt(thread);
+    invalidCandidate.reddit_thread = thread;
+    const invalidApi = createApi(
+      "http://api",
+      vi.fn().mockResolvedValue(response(invalid)),
+    );
+    await expect(invalidApi.results("j1", "w1")).rejects.toThrow(
+      "unexpected results",
+    );
+  }
+});
+
+it("rejects Reddit thread evidence attached to another source", async () => {
+  const view = fitView();
+  (view.results[0] as Record<string, unknown>).reddit_thread =
+    redditThreadView();
+  const api = createApi(
+    "http://api",
+    vi.fn().mockResolvedValue(response(view)),
+  );
+  await expect(api.results("j1", "w1")).rejects.toThrow("unexpected results");
+});
+
+it("accepts typed LinkedIn reads only when resource and candidate identities match", async () => {
+  for (const kind of ["profile", "company", "post"] as const) {
+    const view = fitView();
+    const candidate = view.results[0] as Record<string, unknown>;
+    candidate.source = "linkedin";
+    candidate.provider = "linkedin_mcp";
+    candidate.evidence_kind = "search_reference";
+    candidate.url = linkedinReadView(kind).resource.source_url;
+    if (kind === "company")
+      candidate.url = "https://www.linkedin.com/company/synthetic-company";
+    candidate.linkedin_read = linkedinReadView(kind);
+    const api = createApi(
+      "http://api",
+      vi.fn().mockResolvedValue(response(view)),
+    );
+    expect(
+      (await api.results("j1", "w1")).results[0].linkedin_read?.resource
+        .resource_kind,
+    ).toBe(kind);
+  }
+
+  for (const corrupt of [
+    (resource: Record<string, unknown>) => {
+      resource.source_url = "https://www.linkedin.com/in/another-person/";
+    },
+    (resource: Record<string, unknown>) => {
+      resource.text = "x".repeat(16385);
+    },
+    (resource: Record<string, unknown>) => {
+      resource.contact_details = "visible";
+    },
+    (resource: Record<string, unknown>) => {
+      resource.section = "about";
+    },
+    (resource: Record<string, unknown>) => {
+      resource.resource_kind = "company";
+      resource.section = "about";
+    },
+    (resource: Record<string, unknown>) => {
+      resource.observed_at = "2026-10-14T01:00:00";
+    },
+    (resource: Record<string, unknown>) => {
+      resource.source_url = "https://www.linkedin.com/in/synthetic-person";
+    },
+  ]) {
+    const view = fitView();
+    const candidate = view.results[0] as Record<string, unknown>;
+    candidate.source = "linkedin";
+    candidate.provider = "linkedin_mcp";
+    candidate.evidence_kind = "search_reference";
+    candidate.url = "https://www.linkedin.com/in/synthetic-person/";
+    const read = linkedinReadView();
+    corrupt(read.resource);
+    candidate.linkedin_read = read;
+    const api = createApi(
+      "http://api",
+      vi.fn().mockResolvedValue(response(view)),
+    );
+    await expect(api.results("j1", "w1")).rejects.toThrow("unexpected results");
+  }
 });
 
 it("accepts legacy results without resume readiness but rejects unknown readiness values", async () => {
@@ -80,6 +300,7 @@ it("accepts legacy results without resume readiness but rejects unknown readines
 it("accepts only honest indexed LinkedIn and Reddit access metadata", async () => {
   const valid = fitView();
   const candidate: Record<string, unknown> = valid.results[0];
+  candidate.source = "linkedin";
   candidate.platform_reference = {
     source: "linkedin",
     resource_kind: "profile",
@@ -106,6 +327,85 @@ it("accepts only honest indexed LinkedIn and Reddit access metadata", async () =
     "unexpected results",
   );
 });
+
+it("accepts connected LinkedIn search references only with matching provenance", async () => {
+  const valid = fitView();
+  const candidate = valid.results[0] as Record<string, unknown>;
+  candidate.source = "linkedin";
+  candidate.provider = "linkedin_mcp";
+  candidate.evidence_kind = "search_reference";
+  candidate.url = "https://www.linkedin.com/in/synthetic-person";
+  candidate.platform_reference = {
+    source: "linkedin",
+    resource_kind: "profile",
+    discovery_backend: "linkedin_mcp",
+    access: "connected_search_reference_only",
+    direct_read_status: "not_attempted",
+    subject_identity: "unknown",
+  };
+  candidate.provenance = [
+    {
+      source: "linkedin",
+      original_url: candidate.url,
+      query: "synthetic researcher",
+      rank: 1,
+      provider: "linkedin_mcp",
+      observed_at: "2026-10-14T00:00:00Z",
+      evidence_kind: "search_reference",
+    },
+  ];
+  const api = createApi(
+    "http://api",
+    vi.fn().mockResolvedValue(response(valid)),
+  );
+  expect((await api.results("j1", "w1")).results[0]).toMatchObject({
+    provider: "linkedin_mcp",
+    evidence_kind: "search_reference",
+    platform_reference: {
+      access: "connected_search_reference_only",
+      direct_read_status: "not_attempted",
+      subject_identity: "unknown",
+    },
+  });
+
+  candidate.source = "reddit";
+  const mixed = createApi(
+    "http://api",
+    vi.fn().mockResolvedValue(response(valid)),
+  );
+  await expect(mixed.results("j1", "w1")).rejects.toThrow("unexpected results");
+});
+
+it.each([
+  ["backend", { discovery_backend: "exa_keyless" }],
+  ["access", { access: "indexed_reference_only" }],
+  ["source", { source: "reddit" }],
+  ["read status", { direct_read_status: "success" }],
+  ["identity", { subject_identity: "verified" }],
+])(
+  "rejects mixed connected LinkedIn reference metadata: %s",
+  async (_name, patch) => {
+    const valid = fitView();
+    const candidate = valid.results[0] as Record<string, unknown>;
+    candidate.source = "linkedin";
+    candidate.provider = "linkedin_mcp";
+    candidate.evidence_kind = "search_reference";
+    candidate.platform_reference = {
+      source: "linkedin",
+      resource_kind: "profile",
+      discovery_backend: "linkedin_mcp",
+      access: "connected_search_reference_only",
+      direct_read_status: "not_attempted",
+      subject_identity: "unknown",
+      ...patch,
+    };
+    const api = createApi(
+      "http://api",
+      vi.fn().mockResolvedValue(response(valid)),
+    );
+    await expect(api.results("j1", "w1")).rejects.toThrow("unexpected results");
+  },
+);
 
 it("accepts bounded YouTube public metadata and timestamped caption evidence", async () => {
   const view = fitView();
@@ -658,6 +958,59 @@ describe("research service client", () => {
       "http://api/v1/workspaces/w%20%2F1/sources",
     );
   });
+  it("loads only strict, scoped connection metadata for checkpoint choices", async () => {
+    const metadata = [
+      {
+        id: "00000000-0000-4000-8000-000000000001",
+        workspace_id: "w /1",
+        source: "linkedin",
+        auth_kind: "session",
+        scopes: ["read", "discover"],
+        state: "active",
+        expires_at: "2099-01-01T00:00:00Z",
+        access_validation: "not_performed",
+        remote_revocation: "not_performed",
+      },
+    ];
+    const fetcher = vi.fn().mockResolvedValue(response(metadata));
+    await expect(
+      createApi("http://api", fetcher).connections("w /1"),
+    ).resolves.toEqual(metadata);
+    expect(fetcher.mock.calls[0][0]).toBe(
+      "http://api/v1/workspaces/w%20%2F1/connections",
+    );
+  });
+  it("rejects secret-bearing or cross-workspace connection metadata", async () => {
+    const secret = {
+      id: "00000000-0000-4000-8000-000000000001",
+      workspace_id: "w1",
+      source: "linkedin",
+      auth_kind: "session",
+      scopes: ["read", "discover"],
+      state: "active",
+      expires_at: "2099-01-01T00:00:00Z",
+      access_validation: "not_performed",
+      remote_revocation: "not_performed",
+      cookie: "must-not-reach-the-ui",
+    };
+    const wrongWorkspace = {
+      ...secret,
+      workspace_id: "w2",
+      cookie: undefined,
+    };
+    await expect(
+      createApi(
+        "http://api",
+        vi.fn().mockResolvedValue(response([secret])),
+      ).connections("w1"),
+    ).rejects.toThrow("unexpected connection metadata");
+    await expect(
+      createApi(
+        "http://api",
+        vi.fn().mockResolvedValue(response([wrongWorkspace])),
+      ).connections("w1"),
+    ).rejects.toThrow("unexpected connection metadata");
+  });
   it("checks liveness and readiness separately", async () => {
     const fetcher = vi
       .fn()
@@ -671,6 +1024,26 @@ describe("research service client", () => {
       "http://api/health/live",
       "http://api/health/ready",
     ]);
+  });
+  it("uses same-origin health routes when production has no API URL override", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(response({}))
+      .mockResolvedValueOnce(response({}));
+    try {
+      expect(await createApi(undefined, fetcher).health()).toEqual({
+        live: true,
+        ready: true,
+      });
+      expect(fetcher.mock.calls.map((call) => call[0])).toEqual([
+        "/health/live",
+        "/health/ready",
+      ]);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
   it("uses the conversation/message contract and encodes IDs", async () => {
     const fetcher = vi
@@ -1180,4 +1553,383 @@ it("validates review proof subjects and source links before exposing owner decis
       ).identityReview("w1", detail.id),
     ).rejects.toThrow("unexpected identity context");
   }
+});
+
+it.each([
+  ["x", "x_api_v2"],
+  ["reddit", "reddit_oauth"],
+])(
+  "accepts direct %s citations with matching provider evidence and rejects mismatched claims",
+  async (source, provider) => {
+    const data = fitView();
+    const candidate = data.results[0];
+    candidate.source = source;
+    candidate.provider = provider;
+    candidate.evidence_kind = "public_post";
+    const client = createApi(
+      "http://api",
+      vi.fn().mockImplementation(async () => response(data)),
+    );
+    expect((await client.results("j1", "w1")).results[0].provider).toBe(
+      provider,
+    );
+    candidate.evidence_kind = "search_snippet";
+    await expect(client.results("j1", "w1")).rejects.toThrow(
+      "unexpected results",
+    );
+  },
+);
+
+it("loads advisory rebind choices without mutating and requires an explicit replacement request", async () => {
+  const option = {
+    source: "linkedin" as const,
+    previous_connection_ref: "00000000-0000-4000-8000-000000000001",
+    entity_ids: ["00000000-0000-4000-8000-000000000002"],
+  };
+  const choices = {
+    job_id: "j1",
+    job_version: 3,
+    resume_status: "available",
+    confirmation_required: true,
+    options: [option],
+  };
+  const fetcher = vi
+    .fn()
+    .mockResolvedValueOnce(response(choices))
+    .mockResolvedValueOnce(
+      response({
+        id: "j1",
+        workspace_id: "w1",
+        state: "queued",
+        stage: "collecting",
+        version: 4,
+        terminal_reason: null,
+      }),
+    );
+  const api = createApi("http://api", fetcher);
+  expect((await api.rebindOptions("j1", "w1")).options).toEqual([option]);
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  const selection = {
+    ...option,
+    replacement_connection_ref: "00000000-0000-4000-8000-000000000003",
+    expected_job_version: 3,
+  };
+  await expect(
+    api.rebindAndResume("j1", "w1", selection, "retained-request-key"),
+  ).resolves.toMatchObject({ state: "queued" });
+  const init = fetcher.mock.calls[1][1] as RequestInit;
+  expect(new Headers(init.headers).get("Idempotency-Key")).toBe(
+    "retained-request-key",
+  );
+  expect(new Headers(init.headers).get("Content-Type")).toBe(
+    "application/json",
+  );
+  expect(JSON.parse(String(init.body))).toEqual(selection);
+});
+
+it("rejects malformed rebind choices, invalid selections and conflicting checkpoints", async () => {
+  const option = {
+    source: "linkedin" as const,
+    previous_connection_ref: "00000000-0000-4000-8000-000000000001",
+    entity_ids: ["00000000-0000-4000-8000-000000000002"],
+  };
+  for (const invalid of [
+    {
+      job_id: "another",
+      job_version: 3,
+      resume_status: "available",
+      confirmation_required: true,
+      options: [option],
+    },
+    {
+      job_id: "j1",
+      job_version: 3,
+      resume_status: "deadline_expired",
+      confirmation_required: true,
+      options: [option],
+    },
+    {
+      job_id: "j1",
+      job_version: 3,
+      resume_status: "available",
+      confirmation_required: true,
+      options: [option, option],
+    },
+  ]) {
+    const api = createApi(
+      "http://api",
+      vi.fn().mockResolvedValue(response(invalid)),
+    );
+    await expect(api.rebindOptions("j1", "w1")).rejects.toThrow(
+      "choices could not be verified",
+    );
+  }
+  const fetcher = vi.fn().mockResolvedValue(response({}, 409));
+  const api = createApi("http://api", fetcher);
+  const selection = {
+    ...option,
+    replacement_connection_ref: "invalid",
+    expected_job_version: 3,
+  };
+  await expect(
+    api.rebindAndResume("j1", "w1", selection, "key"),
+  ).rejects.toThrow("Choose the replacement");
+  expect(fetcher).not.toHaveBeenCalled();
+  selection.replacement_connection_ref = "00000000-0000-4000-8000-000000000003";
+  await expect(
+    api.rebindAndResume("j1", "w1", selection, "key"),
+  ).rejects.toThrow("checkpoint or replacement access changed");
+  for (const [status, message] of [
+    [403, "initiating workspace owner"],
+    [503, "Connected source collection is disabled"],
+  ] as const) {
+    fetcher.mockResolvedValueOnce(response({}, status));
+    await expect(
+      api.rebindAndResume("j1", "w1", selection, "key"),
+    ).rejects.toThrow(message);
+  }
+  fetcher.mockResolvedValueOnce(response({}, 403));
+  await expect(api.rebindOptions("j1", "w1")).rejects.toThrow(
+    "initiating workspace owner",
+  );
+});
+
+describe("owner role review API", () => {
+  const roleRef = (suffix: string) => ({
+    role_claim_id: `00000000-0000-4000-8000-00000000000${suffix}`,
+    date_claim_id: `00000000-0000-4000-8000-00000000001${suffix}`,
+    evidence_id: "00000000-0000-4000-8000-000000000099",
+  });
+  const preview = {
+    entity_id: "00000000-0000-4000-8000-000000000001",
+    requires_person_confirmation: true,
+    requires_same_subject_confirmation: true,
+    review_hash: "a".repeat(64),
+    review_origin: "workspace_owner",
+    subject_name: "Synthetic profile",
+    previous: {
+      ...roleRef("1"),
+      role: "Engineer",
+      effective_date: "2021-01-01",
+      excerpt: "Engineer since 2021",
+      source_url: "https://www.linkedin.com/in/example/",
+    },
+    replacement: {
+      ...roleRef("2"),
+      role: "Founder",
+      effective_date: "2025-01-01",
+      excerpt: "Founder since 2025",
+      source_url: "https://www.linkedin.com/in/example/",
+    },
+  };
+  it("binds preview to the exact candidate refs and sends separate approval confirmations", async () => {
+    const fetcher = vi.fn().mockResolvedValue(response(preview));
+    const api = createApi("http://api", fetcher);
+    const input = {
+      entity_id: preview.entity_id,
+      previous: roleRef("1"),
+      replacement: roleRef("2"),
+    };
+    await expect(
+      api.previewRoleReview(
+        "workspace-1",
+        input,
+        "https://www.linkedin.com/in/example/",
+      ),
+    ).resolves.toEqual(preview);
+    expect(fetcher.mock.calls[0][0]).toBe(
+      "http://api/v1/workspaces/workspace-1/role-refreshes/preview",
+    );
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual(input);
+    fetcher.mockResolvedValueOnce(
+      response({
+        entity_id: preview.entity_id,
+        outcome: "superseded",
+        review_origin: "workspace_owner",
+        roles: [
+          {
+            claim_id: roleRef("1").role_claim_id,
+            value: "Engineer",
+            freshness: "historical",
+            event_at: "2021-01-01T00:00:00Z",
+          },
+          {
+            claim_id: roleRef("2").role_claim_id,
+            value: "Founder",
+            freshness: "current",
+            event_at: "2025-01-01T00:00:00Z",
+          },
+        ],
+      }),
+    );
+    await api.approveRoleReview("workspace-1", {
+      ...input,
+      expected_review_hash: preview.review_hash,
+      same_subject_confirmed: true,
+      person_subject_confirmed: true,
+    });
+    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toMatchObject({
+      same_subject_confirmed: true,
+      person_subject_confirmed: true,
+      expected_review_hash: preview.review_hash,
+    });
+    fetcher.mockResolvedValueOnce(
+      response({
+        entity_id: preview.entity_id,
+        outcome: "superseded",
+        review_origin: "workspace_owner",
+        roles: [],
+      }),
+    );
+    await expect(
+      api.approveRoleReview("workspace-1", {
+        ...input,
+        expected_review_hash: preview.review_hash,
+        same_subject_confirmed: true,
+        person_subject_confirmed: true,
+      }),
+    ).rejects.toThrow("response was unclear");
+  });
+  it("rejects changed preview refs and preserves owner/conflict status", async () => {
+    const altered = {
+      ...preview,
+      replacement: {
+        ...preview.replacement,
+        role_claim_id: roleRef("3").role_claim_id,
+      },
+    };
+    const fetcher = vi.fn().mockResolvedValue(response(altered));
+    const api = createApi("http://api", fetcher);
+    const input = {
+      entity_id: preview.entity_id,
+      previous: roleRef("1"),
+      replacement: roleRef("2"),
+    };
+    await expect(
+      api.previewRoleReview(
+        "workspace-1",
+        input,
+        "https://www.linkedin.com/in/example/",
+      ),
+    ).rejects.toThrow("selected evidence");
+    fetcher.mockResolvedValueOnce(
+      response({
+        ...preview,
+        previous: {
+          ...preview.previous,
+          source_url: "https://attacker.example/",
+        },
+      }),
+    );
+    await expect(
+      api.previewRoleReview(
+        "workspace-1",
+        input,
+        "https://www.linkedin.com/in/example/",
+      ),
+    ).rejects.toThrow("selected evidence");
+    for (const [status, message] of [
+      [403, "Only a workspace owner"],
+      [409, "evidence changed"],
+    ] as const) {
+      fetcher.mockResolvedValueOnce(response({}, status));
+      await expect(
+        api.previewRoleReview(
+          "workspace-1",
+          input,
+          "https://www.linkedin.com/in/example/",
+        ),
+      ).rejects.toThrow(message);
+    }
+  });
+});
+
+describe("safe planning failure details", () => {
+  const detail = {
+    reason: "invalid_interpretation",
+    recovery: "revise_prompt",
+    automatic_retry_allowed: false,
+    source_search_started: false,
+  };
+  const plan = {
+    job_id: "j1",
+    plan_id: "p1",
+    interpretation: { workspace_id: "w1" },
+    status: "rejected",
+    planning_failure: detail,
+  };
+  it("accepts the sanitized rejected-plan recovery contract", async () => {
+    const api = createApi(
+      "http://api",
+      vi.fn().mockResolvedValue(response(plan)),
+    );
+    await expect(api.plan("j1", "w1")).resolves.toEqual(plan);
+  });
+  it.each([
+    { ...detail, automatic_retry_allowed: true },
+    { ...detail, source_search_started: true },
+    { ...detail, recovery: "check_service" },
+    { ...detail, reason: "private provider error" },
+    { ...detail, raw_response: "secret" },
+  ])(
+    "rejects misleading or unrecognized failure metadata %#",
+    async (planning_failure) => {
+      const api = createApi(
+        "http://api",
+        vi.fn().mockResolvedValue(response({ ...plan, planning_failure })),
+      );
+      await expect(api.plan("j1", "w1")).rejects.toThrow(
+        "unexpected planning failure",
+      );
+    },
+  );
+});
+
+describe("connected social profile responses", () => {
+  it.each(["instagram", "facebook"] as const)(
+    "accepts aligned %s observations",
+    async (source) => {
+      const { socialCandidate } = await import("./social-fixtures");
+      const payload = {
+        ...fitView(),
+        groups: null,
+        results: [socialCandidate(source)],
+      };
+      const api = createApi(
+        "http://api",
+        vi.fn().mockResolvedValue(response(payload)),
+      );
+      await expect(api.results("j1", "w1")).resolves.toEqual(payload);
+    },
+  );
+  it.each([
+    "wrong_source",
+    "negative_count",
+    "private",
+    "identity",
+    "url",
+    "network",
+    "analytics",
+  ])("rejects misleading social metadata: %s", async (issue) => {
+    const { socialCandidate } = await import("./social-fixtures");
+    const candidate = socialCandidate("instagram");
+    const view = candidate.social_read!;
+    const resource = view.resource as unknown as Record<string, unknown>;
+    if (issue === "wrong_source") resource.source = "facebook";
+    if (issue === "negative_count") resource.followers = -1;
+    if (issue === "private") resource.visibility = "private";
+    if (issue === "identity") resource.subject_identity = "person";
+    if (issue === "url") resource.source_url = "https://example.com/";
+    if (issue === "network") view.network_requests_seen = 0;
+    if (issue === "analytics") resource.owner_analytics = "available";
+    const api = createApi(
+      "http://api",
+      vi
+        .fn()
+        .mockResolvedValue(
+          response({ ...fitView(), groups: null, results: [candidate] }),
+        ),
+    );
+    await expect(api.results("j1", "w1")).rejects.toThrow();
+  });
 });

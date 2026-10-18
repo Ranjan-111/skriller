@@ -21,7 +21,31 @@ from skriller.db import ConversationRepository, JobRepository, WorkspaceAccessDe
 from skriller.db.repositories import insert_row, require_owner, scope
 from skriller.jobs.control import permit_call
 
+SESSION_READ_RUNNERS = {
+    "linkedin_search",
+    "linkedin_resource_read",
+    "instagram_search",
+    "instagram_profile",
+    "facebook_search",
+    "facebook_profile",
+}
+SESSION_SEARCH_RUNNERS = {"linkedin_search", "instagram_search", "facebook_search"}
+
 RUNNERS = {
+    "instagram_search": ("instagram", {"session_cookie": "INSTAGRAM_SESSION_COOKIE"}),
+    "instagram_profile": ("instagram", {"session_cookie": "INSTAGRAM_SESSION_COOKIE"}),
+    "facebook_search": (
+        "facebook",
+        {"session_cookie": "FACEBOOK_SESSION_COOKIE", "user_id": "FACEBOOK_USER_ID"},
+    ),
+    "facebook_profile": (
+        "facebook",
+        {"session_cookie": "FACEBOOK_SESSION_COOKIE", "user_id": "FACEBOOK_USER_ID"},
+    ),
+    "linkedin_search": ("linkedin", {"session_cookie": "LINKEDIN_SESSION_COOKIE"}),
+    "linkedin_resource_read": ("linkedin", {"session_cookie": "LINKEDIN_SESSION_COOKIE"}),
+    "reddit_oauth_search": ("reddit", {"access_token": "REDDIT_ACCESS_TOKEN"}),
+    "reddit_oauth_read": ("reddit", {"access_token": "REDDIT_ACCESS_TOKEN"}),
     "proxy_route": ("proxy", {"api_key": "SKR_PROXY_CONFIGURATION"}),
     "linkedin_read": (
         "linkedin",
@@ -44,6 +68,21 @@ RUNNERS = {
 }
 
 
+def _session_owner_current(session, connection_id):
+    try:
+        require_owner(session)
+    except WorkspaceAccessDenied:
+        return False
+    return (
+        session.execute(
+            sa.select(connections.c.created_by).where(
+                connections.c.workspace_id == scope(session), connections.c.id == str(connection_id)
+            )
+        ).scalar_one_or_none()
+        == session.info["actor_id"]
+    )
+
+
 class ConnectionUnavailable(RuntimeError):
     state = "needs_connection"
 
@@ -60,6 +99,7 @@ class SecretPayload(BaseModel):
     def bounds(self):
         if not 1 <= len(self.credentials) <= 3 or not set(self.credentials) <= {
             "session_cookie",
+            "user_id",
             "access_token",
             "refresh_token",
             "api_key",
@@ -157,6 +197,22 @@ def _lock(session, connection_id):
     )
 
 
+def _oauth_owner_current(session, connection_id, source):
+    # Boolean-only definer fence sees consent state even for other workspace
+    # members, whose RLS view deliberately cannot inspect refresh grants.
+    query = {
+        "x": "SELECT x_connection_allowed(CAST(:workspace AS uuid), CAST(:connection AS uuid))",
+        "reddit": "SELECT reddit_connection_allowed(CAST(:workspace AS uuid), CAST(:connection AS uuid))",
+    }[source]
+    return (
+        session.execute(
+            sa.text(query),
+            {"workspace": scope(session), "connection": str(connection_id)},
+        ).scalar_one()
+        is True
+    )
+
+
 class ConnectionStore:
     def __init__(self, keyring: Keyring | None):
         self.keyring = keyring
@@ -182,7 +238,7 @@ class ConnectionStore:
         if self.keyring is None:
             raise ConnectionUnavailable("encryption_key_missing")
         allowed_fields = {
-            "session": {"session_cookie"},
+            "session": {"session_cookie", "user_id"},
             "oauth": {"access_token", "refresh_token"},
             "api_key": {"api_key"},
         }
@@ -196,6 +252,12 @@ class ConnectionStore:
             or not set(payload.credentials) <= allowed_fields[auth_kind]
         ):
             raise ValueError("Credential fields do not match authentication kind")
+        if "user_id" in payload.credentials and (
+            source != "facebook"
+            or auth_kind != "session"
+            or "session_cookie" not in payload.credentials
+        ):
+            raise ValueError("A source account ID is only supported alongside a Facebook session")
         if source == "x" and (auth_kind != "oauth" or set(payload.credentials) != {"access_token"}):
             raise ValueError(
                 "X reads require an OAuth access token; session cookies are unsupported"
@@ -308,9 +370,35 @@ class ConnectionStore:
             reference.state != "active"
             or reference.source != source
             or "read" not in reference.scopes
+            or (
+                runner in SESSION_READ_RUNNERS
+                and (
+                    reference.auth_kind != "session"
+                    or runner in SESSION_SEARCH_RUNNERS
+                    and "discover" not in reference.scopes
+                    or not _session_owner_current(session, reference.id)
+                )
+            )
+            or (
+                source in {"x", "reddit"}
+                and runner in {"reddit_oauth_search", "reddit_oauth_read"}
+                and (
+                    reference.auth_kind != "oauth"
+                    or runner == "reddit_oauth_search"
+                    and "discover" not in reference.scopes
+                )
+            )
             or (source == "x" and "discover" not in reference.scopes)
+            or (
+                (source == "x" or runner in {"reddit_oauth_search", "reddit_oauth_read"})
+                and not _oauth_owner_current(session, reference.id, source)
+            )
             or (runner != "proxy_route" and source not in plan["interpretation"]["sources"])
             or (runner != "proxy_route" and is_disabled(session, source, "read"))
+            or (
+                runner in {"x_read", "reddit_oauth_search", *SESSION_SEARCH_RUNNERS}
+                and is_disabled(session, source, "discover")
+            )
         ):
             raise ConnectionUnavailable("source_scope_unavailable")
         row = (
@@ -337,6 +425,8 @@ class ConnectionStore:
         environment = {
             bindings[name]: value for name, value in payload.credentials.items() if name in bindings
         }
+        if runner in SESSION_READ_RUNNERS and set(environment) != set(bindings.values()):
+            raise ConnectionUnavailable("credential_kind_unavailable")
         if not environment:
             raise ConnectionUnavailable("credential_kind_unavailable")
         insert_row(
@@ -380,6 +470,8 @@ class ConnectionStore:
             and source not in plan["interpretation"]["sources"]
             or source != "proxy"
             and is_disabled(session, source, "read")
+            or material.runner in {"x_read", "reddit_oauth_search", *SESSION_SEARCH_RUNNERS}
+            and is_disabled(session, source, "discover")
         ):
             return False
         _lock(session, material.connection_ref)
@@ -391,7 +483,29 @@ class ConnectionStore:
             reference.source != source
             or reference.state != "active"
             or "read" not in reference.scopes
+            or (
+                material.runner in SESSION_READ_RUNNERS
+                and (
+                    reference.auth_kind != "session"
+                    or material.runner in SESSION_SEARCH_RUNNERS
+                    and "discover" not in reference.scopes
+                    or not _session_owner_current(session, reference.id)
+                )
+            )
+            or (
+                source in {"x", "reddit"}
+                and material.runner in {"reddit_oauth_search", "reddit_oauth_read"}
+                and (
+                    reference.auth_kind != "oauth"
+                    or material.runner == "reddit_oauth_search"
+                    and "discover" not in reference.scopes
+                )
+            )
             or (source == "x" and "discover" not in reference.scopes)
+            or (
+                (source == "x" or material.runner in {"reddit_oauth_search", "reddit_oauth_read"})
+                and not _oauth_owner_current(session, reference.id, source)
+            )
         ):
             return False
         return (

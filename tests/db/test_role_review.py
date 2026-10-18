@@ -11,8 +11,9 @@ from test_contacts import dated, setup
 
 from skriller.api import create_app
 from skriller.auth import Identity, require_identity
+from skriller.connectors.linkedin_read import LinkedInReadResult
 from skriller.db import ResearchRepository, WorkspaceRepository
-from skriller.db.schema import claims, evidence
+from skriller.db.schema import claims, entities, evidence
 from skriller.qualification.contacts import role_history, role_projection
 from skriller.settings import Settings
 
@@ -143,3 +144,147 @@ def test_reviewed_pair_does_not_suppress_a_third_unresolved_role_conflict(databa
     assert result.status_code == 200, result.text
     with database.tenant(actor, workspace) as session:
         assert not any(row["freshness"] == "current" for row in role_projection(session, entity))
+
+
+def native_profile(database):
+    actor, workspace, _, _, _, app, client, _ = prepared(database)
+    now = datetime.now(UTC)
+    text = "Engineer; effective 2021-01-01. Founder; effective 2025-01-01."
+    resource = LinkedInReadResult(
+        resource_kind="profile",
+        source_url="https://www.linkedin.com/in/synthetic/",
+        section="main_profile",
+        text=text,
+        text_truncated=False,
+        observed_at=now,
+    )
+    with database.tenant(actor, workspace) as session:
+        saved = ResearchRepository.add_evidence(
+            session,
+            source_url=resource.source_url,
+            source_platform="linkedin",
+            collected_at=now,
+            excerpt=text,
+        )
+        attributes = {
+            "source": "linkedin",
+            "provider": "linkedin_mcp",
+            "url": resource.source_url,
+            "linkedin_read": {
+                "evidence_id": saved["id"],
+                "resource": resource.model_dump(mode="json"),
+            },
+        }
+        entity = ResearchRepository.entity(
+            session, "other", "Unreviewed profile", attributes=attributes
+        )["id"]
+        refs = []
+        for role, effective in (("Engineer", "2021-01-01"), ("Founder", "2025-01-01")):
+            role_claim = ResearchRepository.claim(
+                session,
+                entity,
+                "job_title",
+                role,
+                mode="observed",
+                status="unverified",
+                evidence_ids=[saved["id"]],
+            )
+            date_claim = ResearchRepository.claim(
+                session,
+                entity,
+                "role_effective_date",
+                effective,
+                mode="observed",
+                status="unverified",
+                evidence_ids=[saved["id"]],
+            )
+            refs.append(
+                {
+                    "role_claim_id": role_claim["id"],
+                    "date_claim_id": date_claim["id"],
+                    "evidence_id": saved["id"],
+                }
+            )
+    return (
+        actor,
+        workspace,
+        entity,
+        saved["id"],
+        attributes,
+        app,
+        client,
+        {"entity_id": entity, "previous": refs[0], "replacement": refs[1]},
+    )
+
+
+@pytest.mark.parametrize(
+    "change",
+    [None, "confirmation", "company", "platform", "resource", "excerpt", "expired", "future"],
+)
+def test_native_person_confirmation_requires_current_exact_original_profile(database, change):
+    actor, workspace, entity, evidence_id, attributes, _app, client, body = native_profile(database)
+    with database.tenant(actor, workspace) as session:
+        if change == "company":
+            session.execute(
+                sa.update(entities).where(entities.c.id == entity).values(kind="company")
+            )
+        elif change == "platform":
+            attributes["source"] = "reddit"
+        elif change == "resource":
+            attributes["linkedin_read"]["resource"]["resource_kind"] = "post"
+        elif change == "excerpt":
+            session.execute(
+                sa.update(evidence)
+                .where(evidence.c.id == evidence_id)
+                .values(excerpt="Changed source text")
+            )
+        elif change == "expired":
+            session.execute(
+                sa.update(evidence)
+                .where(evidence.c.id == evidence_id)
+                .values(expires_at=datetime.now(UTC) - timedelta(seconds=1))
+            )
+        elif change == "future":
+            future = datetime.now(UTC) + timedelta(days=1)
+            attributes["linkedin_read"]["resource"]["observed_at"] = future.isoformat()
+            session.execute(
+                sa.update(evidence).where(evidence.c.id == evidence_id).values(collected_at=future)
+            )
+        session.execute(
+            sa.update(entities).where(entities.c.id == entity).values(attributes=attributes)
+        )
+    path = f"/v1/workspaces/{workspace}/role-refreshes"
+    preview = client.post(path + "/preview", json=body)
+    if change not in {None, "confirmation"}:
+        assert preview.status_code == 409, preview.text
+    else:
+        assert preview.status_code == 200, preview.text
+        assert preview.json()["requires_person_confirmation"] is True
+        approved = client.post(
+            path,
+            json={
+                **body,
+                "same_subject_confirmed": True,
+                "person_subject_confirmed": change is None,
+                "expected_review_hash": preview.json()["review_hash"],
+            },
+        )
+        assert approved.status_code == (200 if change is None else 409), approved.text
+    with database.tenant(actor, workspace) as session:
+        current = ResearchRepository.get_entity(session, entity)
+        assert current["kind"] == (
+            "person" if change is None else "company" if change == "company" else "other"
+        )
+        assert current["attributes"]["linkedin_read"]["resource"]["subject_identity"] == "unknown"
+        if change is None:
+            assert (
+                current["attributes"]["_person_subject_review"]["review_hash"]
+                == preview.json()["review_hash"]
+            )
+            assert current["attributes"]["_person_subject_review"]["actor_id"] == actor
+        else:
+            assert "_person_subject_review" not in current["attributes"]
+            assert not any(
+                row["status"] == "accepted"
+                for row in ResearchRepository.claims_for(session, entity)
+            )

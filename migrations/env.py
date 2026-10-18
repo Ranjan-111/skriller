@@ -6,10 +6,15 @@ from alembic import context
 import skriller.analytics.tables
 import skriller.billing.access
 import skriller.billing.catalog
+import skriller.billing.checkout
 import skriller.billing.inbox
 import skriller.billing.provisioning
 import skriller.billing.reconcile
+import skriller.billing.references
+import skriller.connections.reddit_continuation
+import skriller.connections.reddit_oauth
 import skriller.connections.tables
+import skriller.connections.x_oauth
 import skriller.connectors.switches
 import skriller.crm.consents
 import skriller.crm.queue

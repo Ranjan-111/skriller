@@ -7,10 +7,15 @@ from uuid import UUID, uuid4
 
 import sqlalchemy as sa
 from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Request, Response
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, TypeAdapter, field_validator, model_validator
 
 from skriller.auth import Identity, require_identity
+from skriller.connectors.facebook_read import FacebookProfile
+from skriller.connectors.instagram_read import InstagramProfile
+from skriller.connectors.linkedin_read import LinkedInReadResult, request_for_url
 from skriller.connectors.platform_references import PlatformReference
+from skriller.connectors.reddit_read import RedditThread
+from skriller.connectors.search import DiscoveryProvider
 from skriller.connectors.youtube import YouTubeVideoEvidence
 from skriller.contracts import (
     Contract,
@@ -45,6 +50,13 @@ from skriller.research.followups import (
     expand_research,
     followup_view,
     refine_research,
+)
+from skriller.research.planning_failure import PlanningFailureView, planning_failure
+from skriller.research.rebind import (
+    RebindOptionsView,
+    RebindResumeInput,
+    rebind_and_resume,
+    rebind_options,
 )
 from skriller.research.service import LIMITATIONS, dispatch, locate, personal_workspace, result_rows
 
@@ -92,6 +104,7 @@ class PlanView(Contract):
     job_id: UUID
     plan_id: UUID
     interpretation: SearchPlan
+    planning_failure: PlanningFailureView | None = None
     status: Literal[
         "search_objective",
         "planning",
@@ -198,9 +211,9 @@ class QueryProvenance(Contract):
     original_url: str = Field(max_length=4096)
     query: str = Field(max_length=2000)
     rank: int = Field(ge=1)
-    provider: Literal["exa_keyless", "x_api_v2"]
+    provider: DiscoveryProvider
     observed_at: datetime
-    evidence_kind: Literal["search_snippet", "public_post"]
+    evidence_kind: Literal["search_snippet", "public_post", "search_reference"]
 
 
 class CollectionView(Contract):
@@ -283,14 +296,108 @@ class YouTubeView(Contract):
     evidence_expired: bool
 
 
+class RedditSignal(Contract):
+    resource_id: str = Field(pattern=r"^t[13]_[a-z0-9]{3,13}$")
+    quote: str = Field(min_length=1, max_length=512)
+    source_url: str = Field(max_length=4096)
+    published_at: datetime | None
+    status: Literal["source_specific_unverified"] = "source_specific_unverified"
+    buying_intent: Literal["not_inferred"] = "not_inferred"
+
+
+class RedditThreadView(Contract):
+    evidence_id: UUID
+    thread: RedditThread
+    signals: list[RedditSignal] = Field(default_factory=list, max_length=10)
+    rejected_signals: int = Field(default=0, ge=0)
+    signal_coverage_complete: bool = False
+    signal_failure_code: str | None = None
+
+    @field_validator("thread", mode="before")
+    @classmethod
+    def decode_saved_thread(cls, value):
+        if isinstance(value, dict):
+            import json
+
+            return RedditThread.model_validate_json(json.dumps(value, allow_nan=False))
+        return value
+
+    @model_validator(mode="after")
+    def bound_signals_to_resources(self):
+        records = {
+            self.thread.post.native_id: (
+                self.thread.post.excerpt,
+                self.thread.post.source_url,
+                self.thread.post.published_at,
+            ),
+            **{
+                c.native_id: (c.text, c.source_url, c.published_at)
+                for c in self.thread.comments
+                if not c.content_unavailable
+            },
+        }
+        for signal in self.signals:
+            resource = records.get(signal.resource_id)
+            if (
+                resource is None
+                or signal.quote not in resource[0]
+                or (signal.source_url != resource[1] or signal.published_at != resource[2])
+            ):
+                raise ValueError("Signal does not match its source resource")
+        return self
+
+
+class LinkedInReadView(Contract):
+    evidence_id: UUID
+    resource: "LinkedInReadResult"
+
+    @field_validator("resource", mode="before")
+    @classmethod
+    def decode_saved_resource(cls, value):
+        if isinstance(value, dict):
+            import json
+
+            return LinkedInReadResult.model_validate_json(json.dumps(value, allow_nan=False))
+        return value
+
+
+SocialProfile = Annotated[InstagramProfile | FacebookProfile, Field(discriminator="source")]
+
+
+class SocialReadView(Contract):
+    evidence_id: UUID
+    resource: SocialProfile
+    api_requests: int = Field(strict=True, ge=0, le=3)
+    network_requests_seen: int = Field(strict=True, ge=0, le=80)
+
+    @field_validator("resource", mode="before")
+    @classmethod
+    def decode_saved_resource(cls, value):
+        if isinstance(value, dict):
+            import json
+
+            return TypeAdapter(SocialProfile).validate_json(json.dumps(value, allow_nan=False))
+        return value
+
+    @model_validator(mode="after")
+    def operation_counts(self):
+        if (
+            self.api_requests > self.network_requests_seen
+            or (self.resource.source == "facebook" and self.api_requests != 0)
+            or (self.resource.source == "instagram" and self.api_requests < 1)
+        ):
+            raise ValueError("Source request counts do not match the profile operation")
+        return self
+
+
 class ResearchCandidate(Contract):
     id: UUID
     title: str = Field(max_length=300)
     url: str = Field(max_length=4096)
     snippet: str = Field(max_length=4096)
     source: Source
-    provider: Literal["exa_keyless", "x_api_v2"]
-    evidence_kind: Literal["search_snippet", "public_post"]
+    provider: DiscoveryProvider
+    evidence_kind: Literal["search_snippet", "public_post", "search_reference"]
     qualification: Literal["unverified"]
     fit: Fit | None = None
     observed_at: datetime
@@ -301,6 +408,27 @@ class ResearchCandidate(Contract):
     discussion: DiscussionView | None = None
     platform_reference: PlatformReference | None = None
     youtube: YouTubeView | None = None
+    reddit_thread: RedditThreadView | None = None
+    linkedin_read: LinkedInReadView | None = None
+    social_read: SocialReadView | None = None
+
+    @model_validator(mode="after")
+    def linked_resource_matches_candidate(self):
+        if self.social_read is not None and (
+            self.source != self.social_read.resource.source
+            or self.provider != "opencli_" + self.source
+            or self.evidence_kind != "search_reference"
+            or self.url.rstrip("/") != self.social_read.resource.source_url.rstrip("/")
+        ):
+            raise ValueError("Social read does not match its discovery candidate")
+        if self.linkedin_read is not None and (
+            self.source != "linkedin"
+            or self.provider != "linkedin_mcp"
+            or self.evidence_kind != "search_reference"
+            or request_for_url(self.url).target_url() != self.linkedin_read.resource.source_url
+        ):
+            raise ValueError("LinkedIn read does not match its discovery candidate")
+        return self
 
 
 class QualificationGroups(Contract):
@@ -696,7 +824,16 @@ def message(
             requested_fields=["title", "url", "snippet"],
             limits=Limits(
                 result_limit=body.options.result_limit,
-                search_calls=len(body.options.sources),
+                search_calls=min(
+                    20,
+                    len(body.options.sources)
+                    + (
+                        (body.options.result_limit + 9) // 10 - 1
+                        if "reddit" in body.options.sources
+                        and request.app.state.settings.public_reddit_image
+                        else 0
+                    ),
+                ),
                 fetch_attempts=min(30, body.options.result_limit * 3)
                 if request.app.state.settings.public_collection_proxy_url
                 and not request.app.state.settings.enable_ai_planning
@@ -816,7 +953,13 @@ def job_plan(
         )
     else:
         status = "search_objective"
-    return {"job_id": job_id, "plan_id": job["plan_id"], "interpretation": plan, "status": status}
+    return {
+        "job_id": job_id,
+        "plan_id": job["plan_id"],
+        "interpretation": plan,
+        "status": status,
+        "planning_failure": planning_failure(job["failure_code"]) if status == "rejected" else None,
+    }
 
 
 @router.get("/jobs/{job_id}/usage", response_model=JobUsage)
@@ -1107,6 +1250,66 @@ def resume_job(
         request.app.state.settings.broker_url,
         identity.uid,
         workspace,
+    )
+    return {
+        key: job[key]
+        for key in ("id", "workspace_id", "state", "stage", "version", "terminal_reason")
+    }
+
+
+@router.get("/jobs/{job_id}/rebind-options", response_model=RebindOptionsView)
+def read_rebind_options(
+    job_id: UUID,
+    request: Request,
+    identity: Annotated[Identity, Depends(require_identity)],
+    workspace_id: UUID | None = None,
+):
+    workspace, _job = read_job(request, identity, job_id, workspace_id)
+    try:
+        with request.app.state.database.tenant(identity.uid, workspace) as session:
+            job = JobRepository.get(session, str(job_id))
+            return rebind_options(session, job)
+    except WorkspaceAccessDenied:
+        raise HTTPException(
+            403, "Only the initiating workspace owner can inspect bindings"
+        ) from None
+
+
+@router.post("/jobs/{job_id}/rebind-and-resume", response_model=JobSnapshot)
+def rebind_resume_job(
+    job_id: UUID,
+    body: RebindResumeInput,
+    request: Request,
+    background: BackgroundTasks,
+    identity: Annotated[Identity, Depends(require_identity)],
+    idempotency_key: Annotated[str, Header(min_length=1, max_length=200)],
+    workspace_id: UUID | None = None,
+):
+    from skriller.connections.router import configured_store
+    from skriller.connections.store import ConnectionUnavailable
+
+    workspace, _job = read_job(request, identity, job_id, workspace_id)
+    settings = request.app.state.settings
+    if not settings.public_collection_proxy_url or not getattr(
+        settings, f"public_{body.source}_image"
+    ):
+        raise HTTPException(503, "Connected source collection is disabled")
+    try:
+        with request.app.state.database.tenant(identity.uid, workspace) as session:
+            job = rebind_and_resume(
+                session, str(job_id), idempotency_key, body, configured_store(request)
+            )
+    except WorkspaceAccessDenied:
+        raise HTTPException(
+            403, "Only the initiating workspace owner can replace this binding"
+        ) from None
+    except (ValueError, LookupError, ConnectionUnavailable):
+        raise HTTPException(
+            409,
+            "The saved checkpoint or replacement connection is unavailable. Start a fresh run if needed.",
+        ) from None
+    background.add_task(
+        safe_dispatch, request.app.state.database, settings.broker_url, identity.uid, workspace
     )
     return {
         key: job[key]

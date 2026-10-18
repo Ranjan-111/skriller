@@ -11,6 +11,7 @@ import json
 import re
 from dataclasses import dataclass
 from typing import Literal
+from uuid import UUID
 
 Provider = Literal["stripe", "razorpay"]
 MAX_BODY = 256 * 1024
@@ -29,6 +30,8 @@ class ReconcileHint:
     subscription_id: str | None
     event_type: str
     customer_id: str | None = None
+    reference_id: str | None = None
+    checkout_id: str | None = None
 
 
 def _unique(pairs):
@@ -110,7 +113,7 @@ def verify_event(
     doc = _document(body)
     digest = hashlib.sha256(body).hexdigest()
     try:
-        customer = None
+        customer = reference = checkout = None
         if provider == "stripe":
             # Separate signing secrets/configuration must be used for test/live.
             if type(doc.get("livemode")) is not bool or doc["livemode"] != live_mode:
@@ -128,6 +131,12 @@ def verify_event(
                 if obj["object"] != "subscription":
                     raise InvalidBillingEvent()
                 subscription = _identifier(obj["id"], "sub_")
+                checkout = obj.get("metadata", {}).get("skriller_checkout_intent")
+                if checkout is not None:
+                    if not isinstance(checkout, str):
+                        raise InvalidBillingEvent()
+                    checkout = str(UUID(checkout))
+                    customer = _identifier(obj.get("customer"), "cus_")
             elif kind in {
                 "charge.refunded",
                 "charge.dispute.created",
@@ -136,7 +145,9 @@ def verify_event(
                 "charge.dispute.funds_withdrawn",
             }:
                 obj = doc["data"]["object"]
-                if not isinstance(obj, dict):
+                if not isinstance(obj, dict) or obj.get("object") != (
+                    "charge" if kind == "charge.refunded" else "dispute"
+                ):
                     raise InvalidBillingEvent()
                 # Resolve only by an explicit subscription ID or provider
                 # customer ID. Never infer from email or arbitrary metadata.
@@ -166,7 +177,10 @@ def verify_event(
                     _identifier(customer_value, "cus_") if customer_value is not None else None
                 )
                 if subscription is None and customer is None:
-                    raise InvalidBillingEvent()
+                    reference = _identifier(
+                        obj.get("id") if kind == "charge.refunded" else charge,
+                        "ch_",
+                    )
                 if kind == "charge.refunded":
                     amount, refunded = obj.get("amount"), obj.get("amount_refunded")
                     if (
@@ -208,6 +222,12 @@ def verify_event(
                 if obj["entity"] != "subscription":
                     raise InvalidBillingEvent()
                 subscription = _identifier(obj["id"], "sub_")
+                checkout = (obj.get("notes") or {}).get("skriller_checkout_intent")
+                if checkout is not None:
+                    if not isinstance(checkout, str):
+                        raise InvalidBillingEvent()
+                    checkout = str(UUID(checkout))
+                    customer = _identifier(obj.get("customer_id"), "cust_")
                 payment = doc.get("payload", {}).get("payment", {}).get("entity")
                 if isinstance(payment, dict) and payment.get("entity") == "payment":
                     amount, refunded = payment.get("amount"), payment.get("amount_refunded", 0)
@@ -219,6 +239,30 @@ def verify_event(
                         and refunded > 0
                     ):
                         kind += ".full_refund" if refunded == amount else ".partial_refund"
+            elif kind in {
+                "payment.dispute.created",
+                "payment.dispute.won",
+                "payment.dispute.lost",
+                "payment.dispute.closed",
+                "payment.dispute.under_review",
+                "payment.dispute.action_required",
+            }:
+                obj = doc["payload"]["dispute"]["entity"]
+                if obj.get("entity") != "dispute":
+                    raise InvalidBillingEvent()
+                reference = _identifier(obj.get("payment_id"), "pay_")
+                payment = doc["payload"].get("payment", {}).get("entity")
+                if isinstance(payment, dict) and payment.get("id") != reference:
+                    raise InvalidBillingEvent()
+                subscription = None
+                if kind.endswith(".won"):
+                    kind = "billing.dispute.won"
+                elif kind.endswith(".lost"):
+                    kind = "billing.dispute.lost"
+                elif kind.endswith(".closed"):
+                    kind = "billing.dispute.closed"
+                else:
+                    kind = "billing.dispute.open"
             elif kind == "refund.processed":
                 payload = doc.get("payload", {})
                 payment = payload.get("payment", {}).get("entity")
@@ -241,7 +285,15 @@ def verify_event(
                     _identifier(customer_value, "cust_") if customer_value is not None else None
                 )
                 if subscription is None and customer is None:
-                    return None
+                    reference = _identifier(payment.get("id"), "pay_")
+                refund = payload.get("refund", {}).get("entity")
+                if refund is not None and (
+                    not isinstance(refund, dict)
+                    or refund.get("entity") != "refund"
+                    or refund.get("status") != "processed"
+                    or refund.get("payment_id") != payment.get("id")
+                ):
+                    raise InvalidBillingEvent()
                 amount, refunded = payment.get("amount"), payment.get("amount_refunded")
                 if (
                     type(amount) is not int
@@ -254,6 +306,8 @@ def verify_event(
             else:
                 return None
             event_key = "sha256:" + digest
-        return ReconcileHint(provider, event_key, digest, subscription, kind, customer)
-    except (KeyError, TypeError):
+        return ReconcileHint(
+            provider, event_key, digest, subscription, kind, customer, reference, checkout
+        )
+    except (KeyError, TypeError, AttributeError, ValueError):
         raise InvalidBillingEvent() from None

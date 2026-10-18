@@ -68,6 +68,44 @@ def setup(database):
     return context, scope, parent["id"]
 
 
+@pytest.mark.parametrize(
+    "word,expected",
+    [("founders", "founder"), ("engineers", "engineer"), ("designers", "designers")],
+)
+def test_role_grammar_normalization_is_bounded_and_keeps_user_intent(database, word, expected):
+    _, scope, _ = setup(database)
+    plan = grounded_plan(
+        "Find " + word,
+        Interpretation(
+            entity_type="person",
+            entity_quote=word,
+            rules=[("must_have", "role", "contains", word, word)],
+        ),
+        scope,
+    )
+    assert [(rule.field, rule.operator, rule.value) for rule in plan.must_have] == [
+        ("role", "contains", expected)
+    ]
+    assert plan.limits == scope.limits
+
+
+@pytest.mark.parametrize("field", ["person_location", "company_location"])
+def test_model_cannot_silently_resolve_ambiguous_person_company_geography(database, field):
+    _, scope, _ = setup(database)
+    plan = grounded_plan(
+        "Find founders at companies in London.",
+        Interpretation(
+            entity_type="person",
+            entity_quote="founders",
+            rules=[("must_have", field, "eq", "London", "companies in London")],
+        ),
+        scope,
+    )
+    assert plan.clarification
+    assert not plan.must_have
+    assert plan.limits == scope.limits
+
+
 def test_cancelled_planning_job_cannot_publish_a_late_successor(database):
     from skriller.jobs.control import cancel
 
@@ -469,12 +507,16 @@ def test_omitted_private_field_is_still_reported_unsupported():
 @pytest.mark.parametrize("source", ["LinkedIn", "Reddit", "GitHub", "YouTube", "X", "web"])
 def test_omitted_explicit_source_pauses_instead_of_expanding_search(source):
     scope = PlanScope(
-        workspace_id=uuid4(), conversation_id=uuid4(), revision=1,
-        limits=Limits(), allowed_sources=["linkedin", "reddit", "web"],
+        workspace_id=uuid4(),
+        conversation_id=uuid4(),
+        revision=1,
+        limits=Limits(),
+        allowed_sources=["linkedin", "reddit", "web"],
     )
     plan = grounded_plan(
         f"Find founders on {source}.",
-        Interpretation(entity_type="person", entity_quote="founders"), scope,
+        Interpretation(entity_type="person", entity_quote="founders"),
+        scope,
     )
     assert "source selection" in plan.clarification
 
@@ -491,11 +533,15 @@ def test_omitted_explicit_source_pauses_instead_of_expanding_search(source):
 )
 def test_numeric_filter_preserves_explicit_comparison(operator, phrase, accepted):
     scope = PlanScope(
-        workspace_id=uuid4(), conversation_id=uuid4(), revision=1,
-        limits=Limits(), allowed_sources=["web"],
+        workspace_id=uuid4(),
+        conversation_id=uuid4(),
+        revision=1,
+        limits=Limits(),
+        allowed_sources=["web"],
     )
     interpretation = Interpretation(
-        entity_type="company", entity_quote="companies",
+        entity_type="company",
+        entity_quote="companies",
         rules=[("must_have", "employee_count", operator, "25", phrase)],
     )
     if accepted:
@@ -644,3 +690,48 @@ async def test_planner_configured_provider_lifecycle_and_injected_ownership(monk
     async with planner.PromptPlanner(injected):
         pass
     assert not injected.closed
+
+
+@pytest.mark.parametrize(
+    "constraint,label",
+    [
+        ("at most 25 employees", "maximum employee count"),
+        ("maximum of 25 employees", "maximum employee count"),
+        ("no more than 25 employees", "maximum employee count"),
+        ("minimum of 25 employees", "minimum employee count"),
+        ("no fewer than 25 employees", "minimum employee count"),
+        ("in the fintech industry", "industry"),
+    ],
+)
+def test_omitted_explicit_company_constraints_pause_instead_of_weakening_search(
+    database, constraint, label
+):
+    _, scope, _ = setup(database)
+    result = grounded_plan(
+        f"Find companies with {constraint}.",
+        Interpretation(entity_type="company", entity_quote="companies"),
+        scope,
+    )
+    assert result.clarification and label in result.clarification
+    assert result.must_have == []
+
+
+def test_grounded_maximum_and_industry_are_preserved_without_false_clarification(database):
+    _, scope, _ = setup(database)
+    result = grounded_plan(
+        "Find companies in the fintech industry with at most 25 employees.",
+        Interpretation(
+            entity_type="company",
+            entity_quote="companies",
+            rules=[
+                ("must_have", "industry", "contains", "fintech", "in the fintech industry"),
+                ("must_have", "employee_count", "lte", "25", "at most 25 employees"),
+            ],
+        ),
+        scope,
+    )
+    assert not result.clarification
+    assert {(rule.field, rule.operator, rule.value) for rule in result.must_have} == {
+        ("industry", "contains", "fintech"),
+        ("employee_count", "lte", 25.0),
+    }

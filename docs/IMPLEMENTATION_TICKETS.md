@@ -1550,7 +1550,13 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-059"></a>
 #### SKR-059 — Adapt LinkedIn discovery and candidate routing
 
-**Phase:** P0 · **Size:** M · **Status:** in_progress
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
+
+**Current local work:** acquired isolated LinkedIn search, owner-session controls,
+shared job/browser budgets and durable connected-search reference provenance are
+implemented and verified. New native reference client/UI integration is allocated
+to Luna; live account/session coverage and hosted acceptance remain deferred.
+See [current evidence](completions/SKR-059.md).
 
 **Dependencies:** [SKR-009](#skr-009), [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-034](#skr-034), [SKR-035](#skr-035)
 
@@ -1573,7 +1579,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-060"></a>
 #### SKR-060 — Adapt LinkedIn profile, company and post reads
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-059](#skr-059), [SKR-037](#skr-037), [SKR-039](#skr-039), [SKR-040](#skr-040), [SKR-047](#skr-047), [SKR-051](#skr-051)
 
@@ -1596,7 +1602,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-061"></a>
 #### SKR-061 — Adapt Reddit discussion discovery
 
-**Phase:** P0 · **Size:** M · **Status:** in_progress
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-010](#skr-010), [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-034](#skr-034), [SKR-035](#skr-035)
 
@@ -1616,10 +1622,20 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 - **contract** — Available bridge but inaccessible search. Expected: discovery capability stays unavailable.
 - **live** — Fixed community/topic query. Expected: actual relevance, pagination and limits documented.
 
+**Local implementation status:** Reddit indexed and optional direct discovery,
+encrypted owner OAuth backend, tenant/credential-bound pagination and the owner
+connection/callback/refresh/local-disconnect UI are implemented and locally
+verified. All 207 web tests, TypeScript, generated contracts and production build
+passed. Due access is renewed automatically before fresh initiating-owner runs;
+background scheduling and same-checkpoint rebinding are unsupported. Explicit
+direct-source rebind/resume remains with SKR-025/SKR-030. Real authorization, search
+quality/limits, provider rights/cost/quota and hosted acceptance remain open;
+see [current evidence](completions/SKR-061.md).
+
 <a id="skr-062"></a>
 #### SKR-062 — Adapt Reddit post/comment reading and signal extraction
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-061](#skr-061), [SKR-037](#skr-037), [SKR-047](#skr-047), [SKR-050](#skr-050)
 
@@ -1759,7 +1775,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-068"></a>
 #### SKR-068 — Verify combined LinkedIn/Reddit research journey
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-056](#skr-056), [SKR-057](#skr-057), [SKR-059](#skr-059), [SKR-060](#skr-060), [SKR-061](#skr-061), [SKR-062](#skr-062), [SKR-067](#skr-067)
 
@@ -1899,7 +1915,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-074"></a>
 #### SKR-074 — Package and deploy bounded hosted pilot
 
-**Phase:** P0 · **Size:** M · **Status:** planned
+**Phase:** P0 · **Size:** M · **Status:** in_progress
 
 **Dependencies:** [SKR-008](#skr-008), [SKR-027](#skr-027), [SKR-028](#skr-028), [SKR-029](#skr-029), [SKR-069](#skr-069), [SKR-070](#skr-070), [SKR-071](#skr-071), [SKR-073](#skr-073)
 
@@ -2133,7 +2149,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-084"></a>
 #### SKR-084 — Adapt X discussion/professional connector
 
-**Phase:** P1 · **Size:** M · **Status:** in_progress
+**Phase:** P1 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-047](#skr-047), [SKR-079](#skr-079)
 
@@ -2156,7 +2172,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-085"></a>
 #### SKR-085 — Adapt Instagram business/creator connector
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-047](#skr-047), [SKR-079](#skr-079)
 
@@ -2179,7 +2195,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-086"></a>
 #### SKR-086 — Adapt Facebook company/content connector
 
-**Phase:** P1 · **Size:** M · **Status:** planned
+**Phase:** P1 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-028](#skr-028), [SKR-030](#skr-030), [SKR-031](#skr-031), [SKR-047](#skr-047), [SKR-079](#skr-079)
 
@@ -2271,7 +2287,7 @@ Start with SKR-001, then source import tickets SKR-002–004, dependency lock SK
 <a id="skr-090"></a>
 #### SKR-090 — Automate billing and entitlements
 
-**Phase:** P1 · **Size:** M · **Status:** in_progress
+**Phase:** P1 · **Size:** M · **Status:** implemented_pending_verification
 
 **Dependencies:** [SKR-024](#skr-024), [SKR-069](#skr-069), [SKR-079](#skr-079)
 

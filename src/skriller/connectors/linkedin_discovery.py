@@ -7,7 +7,7 @@ browser, import cookies, bind a connection or verify an operation as ready.
 import json
 from datetime import datetime
 from typing import Literal
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, urljoin, urlsplit
 
 from agent_reach.utils.url import host_matches, normalize_public_http_url
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -124,7 +124,10 @@ def parse_search_response(
             rejected += 1
             continue
         try:
-            reference_url = normalize_public_http_url(raw["url"])
+            raw_url = raw["url"]
+            if raw_url.startswith("/") and not raw_url.startswith("//"):
+                raw_url = "https://www.linkedin.com" + raw_url
+            reference_url = normalize_public_http_url(raw_url)
             normalized = classify_link(reference_url)
             if (
                 not host_matches(reference_url, "linkedin.com")
@@ -135,7 +138,12 @@ def parse_search_response(
                 and not isinstance(raw["text"], str)
             ):
                 raise ValueError("Unsupported search reference")
-            entry: Reference = {"kind": normalized[0], "url": normalized[1]}
+            entry: Reference = {
+                "kind": normalized[0],
+                "url": normalize_public_http_url(
+                    urljoin("https://www.linkedin.com", normalized[1])
+                ),
+            }
             if raw.get("text"):
                 entry["text"] = raw["text"][:300]
             accepted.append(entry)

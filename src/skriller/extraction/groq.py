@@ -5,6 +5,7 @@ No retry, fallback, tools, arbitrary endpoint, or paid account activation occurs
 """
 
 import math
+from typing import Literal
 
 import httpx
 from langchain_openai import ChatOpenAI
@@ -14,7 +15,8 @@ from scrapling.spiders.throttle import parse_retry_after
 
 from skriller.extraction.models import LocalStructuredModel, ModelBounds, ModelUnavailable
 
-GROQ_MODEL = "openai/gpt-oss-20b"
+GroqModel = Literal["openai/gpt-oss-20b", "openai/gpt-oss-120b"]
+GROQ_MODEL: GroqModel = "openai/gpt-oss-20b"
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
 
@@ -57,6 +59,7 @@ class GroqStructuredModel(LocalStructuredModel):
         key: SecretStr,
         *,
         free_tier_confirmed: bool,
+        model: GroqModel = GROQ_MODEL,
         bounds: ModelBounds | None = None,
         transport: httpx.AsyncBaseTransport | None = None,
     ):
@@ -66,6 +69,9 @@ class GroqStructuredModel(LocalStructuredModel):
             raise ValueError(
                 "Groq requires explicit operator confirmation of free-tier configuration"
             )
+        if model not in {"openai/gpt-oss-20b", "openai/gpt-oss-120b"}:
+            raise ValueError("Unreviewed Groq model")
+        self._model_name = model
         self.bounds = bounds or ModelBounds()
         self.http_client = httpx.AsyncClient(
             transport=BoundedTransport(transport),
@@ -75,7 +81,7 @@ class GroqStructuredModel(LocalStructuredModel):
             headers={"Accept-Encoding": "identity"},
         )
         self.model = ChatOpenAI(
-            model=GROQ_MODEL,
+            model=model,
             api_key=key,
             base_url=GROQ_BASE_URL,
             temperature=0,
@@ -87,7 +93,7 @@ class GroqStructuredModel(LocalStructuredModel):
 
     @property
     def model_name(self):
-        return GROQ_MODEL
+        return self._model_name
 
     def invocation_model(self, schema):
         # Best-effort JSON schema accepts richer Pydantic constraints; the copied
@@ -133,4 +139,5 @@ def structured_model(settings):
     return GroqStructuredModel(
         settings.groq_api_key,
         free_tier_confirmed=settings.groq_free_tier_confirmed,
+        model=settings.groq_model,
     )

@@ -62,6 +62,11 @@ def collection_handler(
     github_reader=None,
     cache_ttl_seconds=0,
     youtube_reader=None,
+    reddit_reader=None,
+    linkedin_reader=None,
+    instagram_reader=None,
+    facebook_reader=None,
+    connection_store=None,
 ):
     """Each leased attempt reads one persisted, discovery-owned candidate."""
     with database.tenant(identity.actor_id, str(identity.workspace_id)) as session:
@@ -99,6 +104,45 @@ def collection_handler(
         attributes = dict(candidate["attributes"])
         created_at = job["created_at"]
 
+    if attributes["source"] in {"instagram", "facebook"}:
+        from skriller.research.social_collection import social_collection_handler
+
+        return social_collection_handler(
+            database,
+            identity,
+            attributes,
+            entity_id,
+            storage,
+            created_at,
+            instagram_reader if attributes["source"] == "instagram" else facebook_reader,
+            connection_store,
+        )
+    if attributes["source"] == "linkedin":
+        from skriller.research.linkedin_collection import linkedin_collection_handler
+
+        return linkedin_collection_handler(
+            database,
+            identity,
+            attributes,
+            entity_id,
+            storage,
+            created_at,
+            linkedin_reader,
+            connection_store,
+        )
+    if attributes["source"] == "reddit":
+        from skriller.research.reddit_collection import reddit_collection_handler
+
+        return reddit_collection_handler(
+            database,
+            identity,
+            attributes,
+            entity_id,
+            storage,
+            created_at,
+            reddit_reader,
+            connection_store,
+        )
     if attributes["source"] == "youtube":
         from skriller.research.youtube_collection import youtube_collection_handler
 
@@ -347,6 +391,11 @@ def execute_collection(
     github_reader=None,
     cache_ttl_seconds=0,
     youtube_reader=None,
+    reddit_reader=None,
+    linkedin_reader=None,
+    instagram_reader=None,
+    facebook_reader=None,
+    connection_store=None,
 ):
     if (
         isinstance(cache_ttl_seconds, bool)
@@ -357,6 +406,16 @@ def execute_collection(
     identity = TaskIdentity.model_validate(payload)
     if identity.attempt_id is None:
         raise ValueError("Collection attempt required")
+    from skriller.research.rebind import pause_for_read_connection
+
+    paused = pause_for_read_connection(
+        database,
+        identity,
+        connection_store,
+        {"linkedin": linkedin_reader is not None, "reddit": reddit_reader is not None},
+    )
+    if paused is not None:
+        return paused
     if storage is None:
         from skriller.settings import Settings
         from skriller.storage.configuration import configured_storage
@@ -372,6 +431,11 @@ def execute_collection(
                 github_reader=github_reader,
                 cache_ttl_seconds=cache_ttl_seconds,
                 youtube_reader=youtube_reader,
+                reddit_reader=reddit_reader,
+                linkedin_reader=linkedin_reader,
+                instagram_reader=instagram_reader,
+                facebook_reader=facebook_reader,
+                connection_store=connection_store,
             )
     handler = collection_handler(
         database,
@@ -382,6 +446,11 @@ def execute_collection(
         github_reader,
         cache_ttl_seconds,
         youtube_reader=youtube_reader,
+        reddit_reader=reddit_reader,
+        linkedin_reader=linkedin_reader,
+        instagram_reader=instagram_reader,
+        facebook_reader=facebook_reader,
+        connection_store=connection_store,
     )
     outcome = CheckpointWorker(database, {"collecting": handler}).execute(payload)
     if outcome["status"] not in {"checkpointed", "source_unavailable"}:

@@ -1,0 +1,45 @@
+{
+  "recorded_at": "2026-10-18T01:31:12.757036+00:00",
+  "checks": {
+    "api_live": {
+      "http_status": 200,
+      "body": {
+        "status": "ok",
+        "service": "skriller-api"
+      }
+    },
+    "api_ready": {
+      "http_status": 200,
+      "body": {
+        "status": "ready",
+        "dependencies": {
+          "database": true,
+          "broker": true,
+          "worker": true
+        }
+      }
+    },
+    "frontend": {
+      "http_status": 200,
+      "html": true
+    },
+    "application_database": {
+      "connected": true,
+      "superuser": false,
+      "bypass_rls": false
+    },
+    "migrations": {
+      "current": [
+        "0056"
+      ],
+      "expected": [
+        "0056"
+      ],
+      "at_head": true
+    }
+  },
+  "profile": "discovery-only launched explicitly; root .env left unchanged",
+  "firebase_browser_roundtrip": false,
+  "production_deployment_verified": false,
+  "passed": true
+}

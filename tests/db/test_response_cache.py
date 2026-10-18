@@ -292,3 +292,100 @@ async def test_connection_expiration_and_revocation_during_replay_are_rechecked(
         await cache.get(
             database, actor, workspace, key(access_mode="connection", connection_ref=expired.id)
         )
+
+
+async def test_private_replay_rejects_rotated_credentials_and_other_member(database, cache):
+    import sqlalchemy as sa
+
+    from skriller.connections.tables import secrets
+    from skriller.db.repositories import WorkspaceRepository
+
+    actor, workspace = identity(database)
+    member = str(uuid4())
+    store = ConnectionStore(Keyring("v1", {"v1": AESGCM.generate_key(bit_length=256)}))
+    with database.tenant(actor, workspace) as session:
+        reference = store.create(
+            session,
+            "linkedin",
+            "session",
+            SecretPayload(credentials={"session_cookie": "fixture"}),
+            expires_at=datetime.now(UTC) + timedelta(hours=1),
+        )
+        WorkspaceRepository.add_member(session, member, "member")
+    private = key(access_mode="connection", connection_ref=reference.id)
+    metadata = await cache.put(
+        database, actor, workspace, private, response(), collected_at=datetime.now(UTC)
+    )
+    assert metadata.credential_generation is not None
+    with pytest.raises(ConnectionUnavailable):
+        await cache.get(database, member, workspace, private)
+    with pytest.raises(ConnectionUnavailable):
+        await cache.put(
+            database, member, workspace, private, response(), collected_at=datetime.now(UTC)
+        )
+    with database.tenant(actor, workspace) as session:
+        session.execute(
+            sa.update(secrets)
+            .where(
+                secrets.c.workspace_id == workspace,
+                secrets.c.connection_id == str(reference.id),
+            )
+            .values(id=str(uuid4()))
+        )
+    assert await cache.get(database, actor, workspace, private) is None
+    with database.tenant(actor, workspace) as session:
+        assert cache.conditional_headers(session, private) == {}
+    fresh = await cache.put(
+        database, actor, workspace, private, response(), collected_at=datetime.now(UTC)
+    )
+    assert fresh.credential_generation != metadata.credential_generation
+    assert await cache.get(database, actor, workspace, private)
+
+
+@pytest.mark.parametrize("phase", ["write", "read"])
+async def test_rotation_during_copied_cache_staging_fails_closed(
+    database, cache, monkeypatch, phase
+):
+    import sqlalchemy as sa
+
+    from skriller.connections.tables import secrets
+
+    actor, workspace = identity(database)
+    store = ConnectionStore(Keyring("v1", {"v1": AESGCM.generate_key(bit_length=256)}))
+    with database.tenant(actor, workspace) as session:
+        reference = store.create(
+            session,
+            "linkedin",
+            "session",
+            SecretPayload(credentials={"session_cookie": "fixture"}),
+            expires_at=datetime.now(UTC) + timedelta(hours=1),
+        )
+    private = key(access_mode="connection", connection_ref=reference.id)
+    if phase == "read":
+        await cache.put(
+            database, actor, workspace, private, response(), collected_at=datetime.now(UTC)
+        )
+    method = "put" if phase == "write" else "get"
+    original = getattr(ResponseCacheManager, method)
+
+    async def rotate_after_staging(*args, **kwargs):
+        result = await original(*args, **kwargs)
+        with database.tenant(actor, workspace) as session:
+            session.execute(
+                sa.update(secrets)
+                .where(
+                    secrets.c.workspace_id == workspace,
+                    secrets.c.connection_id == str(reference.id),
+                )
+                .values(id=str(uuid4()))
+            )
+        return result
+
+    monkeypatch.setattr(ResponseCacheManager, method, rotate_after_staging)
+    if phase == "write":
+        with pytest.raises(ConnectionUnavailable):
+            await cache.put(
+                database, actor, workspace, private, response(), collected_at=datetime.now(UTC)
+            )
+    else:
+        assert await cache.get(database, actor, workspace, private) is None

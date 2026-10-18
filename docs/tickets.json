@@ -574,19 +574,25 @@
       "verification": {
         "reports": [
           "docs/completions/SKR-012.md",
-          "docs/completions/OLLAMA-llama3.2-3b-benchmark.json"
+          "docs/completions/OLLAMA-llama3.2-3b-benchmark.json",
+          "docs/completions/PRIORITY-LAUNCH-LOCAL.md",
+          "docs/completions/PLANNER-QUALITY-GROQ.json",
+          "docs/completions/PLANNER-QUALITY-GROQ-120B.json",
+          "docs/completions/PLANNER-QUALITY-GROQ-120B-GUIDANCE-FAILURE.json"
         ],
         "passed_checks": [
           "uv run python -m pytest -q tests/probes/test_model_benchmark.py tests/probes/test_model_evaluation.py: 7 passed",
           "Ruff and formatting checks passed for local model benchmark implementation and tests",
           "Five synthetic records through copied SmartScraperGraph and local llama3.2:3b: 4/5 factual records; 5/5 model calls and token usage observed; 3,289 total tokens; mean 1.606 s, median 1.608 s",
-          "Only localhost Ollama and synthetic fixtures used; no hosted model or external API called"
+          "Only localhost Ollama and synthetic fixtures used; no hosted model or external API called",
+          "Nine mocked Groq adapter/ledger checks pass, including allowlisted 120B attribution, unchanged Ollama/default model configuration and isolated mock cadence; no claim of live semantic acceptance"
         ],
         "remaining": [
           "Select and validate a hosted-pilot model/provider with explicit token/cost and data-handling evidence",
-          "Run representative release-scale labelled evaluation; five synthetic records are diagnostic only"
+          "Run representative release-scale labelled evaluation; five synthetic records are diagnostic only",
+          "Authorized Groq 20B and 120B five-case baseline diagnostics each score 2/5; rejected guidance variants retained; final remote experiment hit HTTP 429 and stopped; representative quality remains open"
         ],
-        "recorded_at": "2026-10-15T13:47:32.759358+00:00"
+        "recorded_at": "2026-10-18T00:59:38.709793+00:00"
       }
     },
     {
@@ -1163,7 +1169,8 @@
         "reports": [
           "docs/completions/SKR-025.md",
           "docs/completions/SKR-038.md",
-          "docs/completions/SKR-078.md"
+          "docs/completions/SKR-078.md",
+          "docs/CHECKPOINT_REBIND_RUNBOOK.md"
         ],
         "passed_checks": [
           "114 final backend integration tests passed",
@@ -1172,12 +1179,16 @@
           "Actual active Chromium cancellation/removal 0.213s; estimated usage and capacity release verified",
           "17 actual Python 3.12 kernel/runner/cancellation tests passed",
           "2026-10-15 storage/runtime/controls integration: 45 passed, 1 skipped; storage/collector/extractor/API regression 56 passed, 2 skipped; final S3 SDK/DB swap configuration 12 passed; Ruff and nine-module MyPy passed",
-          "Shared advisory/locked resume preflight and post-reply failure recovery: 15 final checks passed"
+          "Shared advisory/locked resume preflight and post-reply failure recovery: 15 final checks passed",
+          "Explicit initiating-owner checkpoint replacement and pre-dispatch stale-binding pause pass 16 real PostgreSQL/API cases for LinkedIn and Reddit",
+          "66 related backend checks passed, one optional local-model test skipped; 122 focused web checks, generated contracts, TypeScript, Ruff and 3-module checked-body MyPy passed",
+          "Paused-run owner UI requires explicit source/replacement/confirmation; exact request key and payload persist across ambiguous retry; stale checkpoints require refreshed choices and renewed confirmation; 111 focused web tests, TypeScript, contract check and production build passed"
         ],
         "remaining": [
-          "Direct account-backed connection rebind/resume and hosted source-operation acceptance remain deferred"
+          "Account-backed authorization, credential expiry/remote revocation and direct-source resume acceptance remain user-deferred",
+          "Hosted source-operation acceptance remains user-deferred"
         ],
-        "recorded_at": "2026-10-16T01:07:46.440521+00:00"
+        "recorded_at": "2026-10-17T11:26:48+00:00"
       }
     },
     {
@@ -1415,18 +1426,22 @@
       "verification": {
         "reports": [
           "docs/completions/SKR-030.md",
-          "docs/completions/SKR-029.md"
+          "docs/completions/SKR-029.md",
+          "docs/CHECKPOINT_REBIND_RUNBOOK.md"
         ],
         "passed_checks": [
           "Metadata-only lifecycle and encrypted-vault regressions passed",
           "Generation/revoke/reconnect/expiry and late-output checks passed in final 66-test selection",
-          "Actual installed worker revocation/cancellation passed using synthetic encrypted credentials"
+          "Actual installed worker revocation/cancellation passed using synthetic encrypted credentials",
+          "Explicit initiating-owner checkpoint replacement and pre-dispatch stale-binding pause pass 16 real PostgreSQL/API cases for LinkedIn and Reddit",
+          "66 related backend checks passed, one optional local-model test skipped; 122 focused web checks, generated contracts, TypeScript, Ruff and 3-module checked-body MyPy passed",
+          "Paused-run owner UI requires explicit source/replacement/confirmation; exact request key and payload persist across ambiguous retry; stale checkpoints require refreshed choices and renewed confirmation; 111 focused web tests, TypeScript, contract check and production build passed"
         ],
         "remaining": [
-          "Explicit same-checkpoint direct-source credential rebind/resume remains unimplemented",
-          "Account-backed provider authorization and remote revocation acceptance remain user-deferred"
+          "Account-backed authorization, credential expiry/remote revocation and direct-source resume acceptance remain user-deferred",
+          "Hosted source-operation acceptance remains user-deferred"
         ],
-        "recorded_at": "2026-10-15T22:58:59.246816+00:00"
+        "recorded_at": "2026-10-17T11:26:48+00:00"
       }
     },
     {
@@ -1563,12 +1578,13 @@
           "docs/completions/SKR-033.md"
         ],
         "passed_checks": [
-          "14 SDK/adapter tests and3genuinePostgreSQL budget/cancellation tests pass; actual keyless search succeeds"
+          "14 SDK/adapter tests and3genuinePostgreSQL budget/cancellation tests pass; actual keyless search succeeds",
+          "Durable candidate/stage wiring verified: three targeted actual PostgreSQL submission/checkpoint/idempotency/partial-failure/query-stop workflow checks pass"
         ],
         "remaining": [
-          "Deployment egress027 and providerreview011 gates; full candidate/stage wiring pending"
+          "Deployment egress SKR-027 and provider-use/storage review SKR-011 remain open; complete evidenced qualified export acceptance is tracked under SKR-067"
         ],
-        "recorded_at": "2026-10-12T15:50:25.450154+00:00"
+        "recorded_at": "2026-10-17T22:54:52.278229+00:00"
       }
     },
     {
@@ -1982,13 +1998,14 @@
           "Ruff and MyPy --check-untyped-defs passed",
           "Public conditional HTTP304 through copied fetcher and collector with real PostgreSQL/guarded loopback: scope, body hash, dates, TTL, accounting and rejected late/unbound replies verified",
           "Related HTTP/cache/collection selection45passed/1opt-in skipped; final changed-code selection54passed/1opt-in skipped",
-          "Ruff/format and checked-body MyPy passed"
+          "Ruff/format and checked-body MyPy passed",
+          "Credential-generation and initiating-owner binding verified, including rotation during read/write staging; 15 targeted DB/cache/conditional collection checks pass; Ruff/format/MyPy pass"
         ],
         "remaining": [
-          "Authenticated-source cache policy and integration remain open",
+          "Authenticated source workers deliberately use fresh reads; optional authenticated replay integration remains open",
           "User-deferred hosted access controls and live private S3 verification remain open"
         ],
-        "recorded_at": "2026-10-16T11:04:30.509199+00:00"
+        "recorded_at": "2026-10-17T22:54:12.736480+00:00"
       }
     },
     {
@@ -2547,19 +2564,28 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-096.md"
+          "docs/completions/SKR-096.md",
+          "docs/completions/PRIORITY-LAUNCH-LOCAL.md",
+          "docs/completions/PLANNER-QUALITY-GROQ.json",
+          "docs/completions/PLANNER-QUALITY-GROQ-120B.json",
+          "docs/completions/PLANNER-QUALITY-GROQ-120B-GUIDANCE-FAILURE.json",
+          "docs/completions/LOCAL-RELEASE-CHECK.md"
         ],
         "passed_checks": [
           "Source omission and numeric comparison regression tests passed",
           "PostgreSQL omitted-platform bootstrap pauses with no discovery dispatch and one metered call",
           "Combined routing/planner/bootstrap/discovery/follow-up regression: 83 passed, 2 optional skips; actual broker and runtime retries separately passed",
-          "Ruff, four-module MyPy, TypeScript and generated contract checks passed"
+          "Ruff, four-module MyPy, TypeScript and generated contract checks passed",
+          "Numeric comparison/value binding: 57 planner/schema checks passed, 1 optional actual-model test skipped; 11 real database bootstrap checks passed including replay/no successor/no discovery",
+          "Nine mocked Groq adapter/ledger checks pass, including allowlisted 120B attribution, unchanged Ollama/default model configuration and isolated mock cadence; no claim of live semantic acceptance",
+          "Final local planner/bootstrap/resume and related end-to-end selection passes as part of 139 backend checks; 1 optional actual-model test skipped; representative model-quality gate unchanged"
         ],
         "remaining": [
           "Representative local-model semantic acceptance remains failing",
-          "Authenticated browser acceptance remains unverified under saved localhost browser restriction"
+          "Authenticated browser acceptance remains unverified under saved localhost browser restriction",
+          "Authorized Groq 20B and 120B five-case baseline diagnostics each score 2/5; rejected guidance variants retained; final remote experiment hit HTTP 429 and stopped; representative quality remains open"
         ],
-        "recorded_at": "2026-10-15T13:00:00.577393+00:00"
+        "recorded_at": "2026-10-18T01:36:17.547858+00:00"
       }
     },
     {
@@ -2600,19 +2626,23 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-052.md"
+          "docs/completions/SKR-052.md",
+          "docs/PLANNING_FAILURE_RUNBOOK.md",
+          "docs/completions/WORKBENCH-KEY-REGRESSION.md"
         ],
         "passed_checks": [
-          "28 PostgreSQL planner/follow-up/usage tests passed (one optional live-source test skipped)",
-          "Local llama3.2:3b synthetic ambiguous-geography planner test passed",
-          "124 frontend tests passed",
-          "OpenAPI drift, TypeScript, Next production build, Ruff, MyPy and diff checks passed",
-          "Local API and worker readiness passed with planning enabled"
+          "50 apps/web/tests/results.test.tsx tests passed, including four sanitized planning-failure categories, explicit prompt editing, no automatic submission, hidden unvalidated criteria and legacy metadata absence",
+          "apps/web TypeScript noEmit passed",
+          "Prettier passed for changed components and fixture",
+          "Impeccable detector completed on both changed components without findings",
+          "Backend rejected-plan metadata, authorization and strict transport checks were verified in the preceding Sol batch",
+          "Delayed plan-state refresh and saved-result recovery pass component fixtures",
+          "Fixed reproduced allowance/billing React key collision; workspace-backed submission regression verifies completed results and CSV/JSON controls; 74 related web tests and typecheck pass"
         ],
         "remaining": [
-          "Authenticated end-to-end browser check of clarification and resubmission remains; browser permission blocks localhost access"
+          "Authenticated localhost browser acceptance of clarification and resubmission remains pending; saved browser permission blocks localhost access"
         ],
-        "recorded_at": "2026-10-14T17:48:30.359766+00:00"
+        "recorded_at": "2026-10-18T01:58:52.143798+00:00"
       }
     },
     {
@@ -2931,7 +2961,7 @@
       "title": "Adapt LinkedIn discovery and candidate routing",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "in_progress",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-009",
@@ -2968,19 +2998,21 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-059.md"
+          "docs/completions/SKR-059.md",
+          "docs/LINKEDIN_SEARCH_RUNBOOK.md",
+          "docs/completions/LINKEDIN-WORKER-LOCAL.json"
         ],
         "passed_checks": [
-          "52 source adapter/probe/indexed routing tests passed; 2 credential-dependent live tests skipped",
-          "Pinned copied-source hash and request/filter/source boundary tests passed",
-          "Ruff and four-module checked-body MyPy passed",
-          "Previously verified indexed-reference UX:127 frontend tests, TypeScript/contracts/Impeccable passed"
+          "146 distinct backend/database/security checks passed (129 grouped plus 17 request/metadata boundary checks); one live test skipped",
+          "Installed copied LinkedIn extractor passed synthetic people and post search with Docker networking disabled and cleanup confirmed",
+          "218 web tests passed across 26 files, including native result validation/rendering/export and Reddit/X consent-panel loading behavior",
+          "TypeScript, generated API contract drift, Next production build, Ruff, checked-body MyPy and Impeccable detector passed"
         ],
         "remaining": [
-          "Isolated tenant-owned backend execution with credential rebinding and shared job budget/evidence integration",
-          "User-deferred selected account-backed live discovery/coverage acceptance"
+          "User-deferred account-backed LinkedIn operation/coverage and hosted acceptance remain unverified; native LinkedIn environment setting stays disabled",
+          "Source rights/commercial use and production operation limits remain unverified"
         ],
-        "recorded_at": "2026-10-15T13:19:26.861802+00:00"
+        "recorded_at": "2026-10-17T10:01:43.395047+00:00"
       }
     },
     {
@@ -2988,7 +3020,7 @@
       "title": "Adapt LinkedIn profile, company and post reads",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-059",
@@ -3024,14 +3056,34 @@
           "scenario": "Supported profile/company/post fixtures and real probe",
           "expected": "field/evidence correctness measured"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-060.md",
+          "docs/completions/LINKEDIN-WORKER-LOCAL.json",
+          "docs/LINKEDIN_SEARCH_RUNBOOK.md"
+        ],
+        "passed_checks": [
+          "134 backend/database/security tests passed; one optional live/model test skipped",
+          "Installed immutable LinkedIn worker passed five operations and four sanitized exception outcomes with Docker networking disabled",
+          "120 focused web API/results/export tests passed, including LinkedIn binding, malformed payload and visible/expired evidence cases",
+          "Web TypeScript, generated API/client contract check, production build and Impeccable detector passed",
+          "Ruff and checked-body MyPy passed on the affected backend modules"
+        ],
+        "remaining": [
+          "User-deferred account-backed LinkedIn field, coverage and session-expiry acceptance",
+          "Hosted deployment/acceptance remains user-deferred",
+          "Provider commercial-use rights and production operation limits remain unverified"
+        ],
+        "recorded_at": "2026-10-17T11:08:59.027408+00:00"
+      }
     },
     {
       "id": "SKR-061",
       "title": "Adapt Reddit discussion discovery",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "in_progress",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-010",
@@ -3068,19 +3120,25 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-061.md"
+          "docs/completions/SKR-061.md",
+          "docs/REDDIT_OAUTH_RUNBOOK.md",
+          "docs/completions/REDDIT-WORKER-LOCAL.json"
         ],
         "passed_checks": [
-          "52 source adapter/probe/indexed routing tests passed; 2 credential-dependent live tests skipped",
-          "Pinned copied-source hash and request/filter/source boundary tests passed",
-          "Ruff and four-module checked-body MyPy passed",
-          "Previously verified indexed-reference UX:127 frontend tests, TypeScript/contracts/Impeccable passed"
+          "Copied rdt-cli search/parser, isolated OAuth discovery, owner consent UI and tenant/credential-bound durable pagination implemented and verified locally",
+          "Automatic due-access renewal before a fresh initiating-owner discovery reuses encrypted one-use refresh; expected-connection compare-and-swap, original deadline/retention, ambiguity, cancellation, uncertainty/no-fallback and checkpoint replay verified",
+          "98 distinct related backend/database/transport checks passed, including 11 renewal tests and read/discover kill-switch prevention of token I/O; prior 113-test installed worker/restore and pagination evidence retained in the report",
+          "207 web tests, Next production build, TypeScript, generated contracts, Ruff, four-module checked-body MyPy and diff checks passed; X/Reddit consent account-switch race and strict URL/receipt checks verified",
+          "Authenticated source_access_renewed progress for reddit refreshes the connection metadata once; terminal completion provides a deduplicated fallback",
+          "Reddit panel refresh-key test confirms renewal reloads the selected workspace metadata; indexed search remains ungated",
+          "38 focused connection/results tests passed; complete web suite passed sequentially: 210 tests across 26 files",
+          "TypeScript no-emit and Next production webpack build passed after UI changes"
         ],
         "remaining": [
-          "Isolated tenant-owned backend execution with credential rebinding and shared job budget/evidence integration",
-          "User-deferred selected account-backed live discovery/coverage acceptance"
+          "User-deferred account-backed authorization/search relevance/coverage/pagination/limits and real provider token lifetime/refresh acceptance remain open",
+          "Provider rights/commercial use/cost/quota, acquired-source licensing acceptance and hosted verification remain unvalidated"
         ],
-        "recorded_at": "2026-10-15T13:19:26.870575+00:00"
+        "recorded_at": "2026-10-17T01:28:03.612928+00:00"
       }
     },
     {
@@ -3088,7 +3146,7 @@
       "title": "Adapt Reddit post/comment reading and signal extraction",
       "phase": "P0",
       "epic": "Launch platforms",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-061",
@@ -3121,7 +3179,26 @@
           "scenario": "Anonymous complaint about software",
           "expected": "discussion result with cited problem, no invented email/company"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-062.md",
+          "docs/completions/REDDIT-WORKER-LOCAL.json",
+          "docs/REDDIT_OAUTH_RUNBOOK.md"
+        ],
+        "passed_checks": [
+          "Bounded native post/comment reads, initiating-owner OAuth read scope, credential-generation binding, durable evidence retention/erasure and copied-graph quoted-signal extraction verified in the reported backend/database/container suites",
+          "Strict generated reddit_thread DTO validation rejects invalid source/provider pairs, parent and URL mismatches, tombstone text, and unsupported or misbound signal quotes",
+          "223 web tests passed across 26 files, including thread display, partial coverage, API validation and CSV/JSON export-boundary regressions",
+          "TypeScript no-emit, generated API/client contract drift check and Next production build passed",
+          "Impeccable detector returned no findings for changed results UI and stylesheet"
+        ],
+        "remaining": [
+          "User-deferred direct Reddit account-backed source coverage and hosted acceptance remain unverified; native Reddit runtime is disabled",
+          "Provider commercial-use/redistribution rights, production quota/cost and retention acceptance remain unverified"
+        ],
+        "recorded_at": "2026-10-17T10:53:00.459123+00:00"
+      }
     },
     {
       "id": "SKR-063",
@@ -3398,15 +3475,28 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-067.md"
+          "docs/completions/SKR-067.md",
+          "docs/QUALIFIED_EXPORT_RUNBOOK.md",
+          "docs/completions/PRIORITY-LAUNCH-LOCAL.md",
+          "docs/completions/LOCAL-RELEASE-CHECK.md",
+          "docs/completions/LOCAL-RELEASE-WORKFLOW.json",
+          "docs/completions/LOCAL-RELEASE-READINESS.json",
+          "docs/completions/WORKBENCH-KEY-REGRESSION.md"
         ],
         "passed_checks": [
-          "Recorded focused checks and combined 99-check component suite; see report"
+          "Recorded focused checks and combined 99-check component suite; see report",
+          "Confirmed-record export client/results UI wired to private backend; 58 focused web checks and types pass",
+          "Actual PostgreSQL qualification checkpoint -> private CSV download integration verifies exact selection/evidence and rejects stale excluded records",
+          "Combined copied-extraction/owner-review/private JSON export journey: 3 variants passed; export/resume selection: 20 passed; unconfirmed discussion export rejected",
+          "Actual native PostgreSQL/RabbitMQ/running-worker/free-search probe completed with 2 unverified results in 7.884s; no Firebase browser or confirmed semantic export claim",
+          "Final selected frontend API/workbench/results/source and qualified-export checks: 176 passed; build/typecheck/client-contract pass; reviewed copied-source private export included in backend selection",
+          "Fixed reproduced allowance/billing React key collision; workspace-backed submission regression verifies completed results and CSV/JSON controls; 74 related web tests and typecheck pass"
         ],
         "remaining": [
-          "Full evidenced semantic qualification and prompt-to-accepted-export gate remain open"
+          "Full actual-model prompt-to-evidenced-qualified-export gate remains open; reviewed fixture facts do not establish semantic quality",
+          "Authenticated browser export acceptance remains unverified under the saved localhost browser restriction"
         ],
-        "recorded_at": "2026-10-12T19:03:44.402578+00:00"
+        "recorded_at": "2026-10-18T01:58:52.153964+00:00"
       }
     },
     {
@@ -3414,7 +3504,7 @@
       "title": "Verify combined LinkedIn/Reddit research journey",
       "phase": "P0",
       "epic": "Integration gates",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-056",
@@ -3451,7 +3541,26 @@
           "scenario": "Advertised operations tested under pilot configuration",
           "expected": "readiness report must record genuine success/gaps"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-068.md",
+          "docs/OWNER_ROLE_REVIEW_RUNBOOK.md"
+        ],
+        "passed_checks": [
+          "Three synthetic PostgreSQL/API combined-source cases pass, including reviewed founder qualification/report/refinement",
+          "Eight native-profile confirmation and evidence-admission cases pass",
+          "Owner role-review API/results UI tests: 114 passed",
+          "TypeScript noEmit, Prettier check, and Impeccable detector pass on changed UI",
+          "Sol follow-up fixes blank selection, pending scope changes, transport/conflict/permission failures and decision projection validation; final API/results selection 124 passed"
+        ],
+        "remaining": [
+          "Representative release semantic/extraction quality remains open under SKR-076",
+          "Account-backed advertised LinkedIn/Reddit and hosted pilot acceptance remain user-deferred",
+          "Provider commercial-use rights and production operation limits remain unverified"
+        ],
+        "recorded_at": "2026-10-17T16:26:35.139138+00:00"
+      }
     },
     {
       "id": "SKR-069",
@@ -3718,7 +3827,7 @@
       "title": "Package and deploy bounded hosted pilot",
       "phase": "P0",
       "epic": "Operations",
-      "status": "planned",
+      "status": "in_progress",
       "estimate": "M",
       "depends_on": [
         "SKR-008",
@@ -3751,7 +3860,34 @@
           "scenario": "API/broker/worker restarted separately",
           "expected": "no lost committed job or credential leak"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-074.md",
+          "docs/DEPLOYMENT_LAUNCH_PLAN.md",
+          "docs/completions/PRIORITY-LAUNCH-LOCAL.md",
+          "docs/completions/LOCAL-RELEASE-CHECK.md",
+          "docs/completions/LOCAL-RELEASE-READINESS.json",
+          "docs/completions/DEPLOYMENT-MANIFEST-CONFIG.json",
+          "docs/DEPLOYMENT_HOSTING_GUIDE.md",
+          "docs/LOCAL_RUN_AND_MANUAL_TEST.md"
+        ],
+        "passed_checks": [
+          "Prepared locked non-editable backend image definition and non-root runtime for API/research/retention commands; static source review only",
+          "Root/web Docker contexts exclude local environment-file variants; no container execution or deployment performed",
+          "Production web API defaults to same-origin; focused API suite passed 89 tests, web typecheck and production build passed",
+          "Added initial Caddy routing rule for /health/* and /v1/* to API and remaining paths to web",
+          "Application Compose service definitions added; YAML parsing and private exposure/production gate invariants checked without Docker or deployment",
+          "Native local stack restarted with discovery-only launcher profile; API/live/readiness, frontend, real restricted app-role SQL, migration 0056 and actual worker job pass",
+          "Private PostgreSQL/RabbitMQ data overlay and profile-gated operator bootstrap/migration prepared; combined Docker Compose config --quiet validates with synthetic files without starting containers"
+        ],
+        "remaining": [
+          "Image build, target-architecture/Linux package and asset closure, filesystem permissions and isolated worker egress remain unverified; container execution user-deferred",
+          "Hosted private networking, final domain/TLS/secrets and service names, actual service orchestration, operator bootstrap/migrations and readiness/restart smoke acceptance remain unverified on the target host",
+          "Private off-host backup/storage acceptance remains user-deferred; do not mark hosted pilot Done"
+        ],
+        "recorded_at": "2026-10-18T01:36:17.570771+00:00"
+      }
     },
     {
       "id": "SKR-075",
@@ -3869,20 +4005,50 @@
           "docs/completions/REPAIR-QUALITY-LOCAL.json",
           "docs/completions/QUALIFICATION-QUALITY-LOCAL.json",
           "docs/completions/IDENTITY-QUALITY-FUTURE-FAILURE.json",
-          "docs/completions/IDENTITY-QUALITY-LOCAL.json"
+          "docs/completions/IDENTITY-QUALITY-LOCAL.json",
+          "docs/completions/PLANNER-QUALITY-LOCAL.json",
+          "docs/completions/PLANNER-QUALITY-BASELINE-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-GROUNDING-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-PROMPT-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-COMPACT-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-PRE-BOUNDS-FAILURE.json",
+          "docs/PLANNING_FAILURE_RUNBOOK.md",
+          "docs/completions/PLANNER-QUALITY-EXAMPLES-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-DEEPSEEK-LOCAL.json",
+          "docs/completions/PLANNER-QUALITY-TUPLE-LABELS-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-REQUIRED-LISTS-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-NAMED-RULES-FAILURE.json",
+          "docs/completions/PLANNER-QUALITY-NAMED-GUIDANCE-FAILURE.json",
+          "docs/completions/PRIORITY-LAUNCH-LOCAL.md",
+          "docs/completions/PLANNER-QUALITY-GROQ.json",
+          "docs/completions/PLANNER-QUALITY-GROQ-120B.json",
+          "docs/completions/PLANNER-QUALITY-GROQ-120B-GUIDANCE-FAILURE.json",
+          "docs/completions/LOCAL-RELEASE-CHECK.md"
         ],
         "passed_checks": [
           "Unchanged actual local repair development gate passed: 19/20 targets, zero wrong targets, 4/4 adversarial rejection",
           "Actual database seeded-reviewed-fact quality corpus: 24/24 exact qualification statuses, 21/21 identity decisions; each has 6/6 accepted/eligible precision",
           "Bounded report aggregation retains failed trials, unknown cases, original run/source denominators and explicit reported-origin limits",
-          "Final related selection: 78 passed, 1 optional local test separately passed; Ruff/format, MyPy and aggregate generation passed"
+          "Final related selection: 78 passed, 1 optional local test separately passed; Ruff/format, MyPy and aggregate generation passed",
+          "Five-prompt actual-local-model diagnostic now records every failure/unexecuted case, bounded synthetic responses, available usage and pre-execution implementation hashes; source calls remain zero and release gate remains false",
+          "Unchanged 24-case qualification and 21-case identity corpus passed through current scoped services; current reports and independent-run aggregate regenerated",
+          "Role grammar/current-reviewed-title and ambiguity/explicit-clarification regressions pass in the final 138-check backend selection; Ruff and five-module checked-body MyPy pass",
+          "Generation JSON schema now carries existing nonempty quote bounds; one local Llama rerun remains 2/5, all failure cases retained",
+          "102 related backend checks pass across original run plus single broker readiness retry; one optional model test skipped. 124 web tests, types/contracts, Ruff and three-module MyPy pass",
+          "Both installed local models independently score 2/5; examples experiment reverted; quality gate remains open",
+          "Explicit omitted industry and min/max employee constraints pause safely; seven added cases; final planner/schema suite 50 passed/1 optional model skip, Ruff/format/MyPy pass",
+          "New seven-case comparison regression exposed four baseline failures; corrected production guard passes all seven, without a new model-quality claim",
+          "Nine mocked Groq adapter/ledger checks pass, including allowlisted 120B attribution, unchanged Ollama/default model configuration and isolated mock cadence; no claim of live semantic acceptance",
+          "Final local planner/bootstrap/resume and related end-to-end selection passes as part of 139 backend checks; 1 optional actual-model test skipped; representative model-quality gate unchanged"
         ],
         "remaining": [
           "Representative 200-record source/engine-stratified field/contact corpus and execution remain incomplete",
           "50-prompt semantic acceptance and broader pilot qualification/merge quality remain open",
-          "Account-backed LinkedIn/Reddit acceptance remains user-deferred"
+          "Account-backed LinkedIn/Reddit acceptance remains user-deferred",
+          "Current bounded-schema Llama diagnostic remains 2/5; compound and company/numeric cases fail unchanged literal grounding guards; existing local AI planning setting is unchanged",
+          "Authorized Groq 20B and 120B five-case baseline diagnostics each score 2/5; rejected guidance variants retained; final remote experiment hit HTTP 429 and stopped; representative quality remains open"
         ],
-        "recorded_at": "2026-10-16T12:03:27.681195+00:00"
+        "recorded_at": "2026-10-18T01:36:17.558503+00:00"
       }
     },
     {
@@ -4062,14 +4228,15 @@
         ],
         "passed_checks": [
           "Runbook route names and commands checked against current implementation",
-          "Local benchmark command and its 5-test suite passed"
+          "Local benchmark command and its 5-test suite passed",
+          "Local launcher uses installed Node/project Next without global pnpm; dependency preflight and child-exit cleanup fixtures pass (2 checks), Ruff/format pass"
         ],
         "remaining": [
           "No repeated real customer pilot has been run across three prospective workspaces",
           "Hosted deployment and direct LinkedIn/Reddit account reads are user-deferred",
           "Accuracy, review time, actual workflow cost, user value, and willingness to pay remain unmeasured"
         ],
-        "recorded_at": "2026-10-15T23:53:21.155444+00:00"
+        "recorded_at": "2026-10-17T23:27:25.353715+00:00"
       }
     },
     {
@@ -4285,7 +4452,7 @@
       "title": "Adapt X discussion/professional connector",
       "phase": "P1",
       "epic": "Expansion",
-      "status": "in_progress",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-028",
@@ -4320,17 +4487,19 @@
       ],
       "verification": {
         "reports": [
-          "docs/completions/SKR-084.md"
+          "docs/completions/SKR-084.md",
+          "docs/X_OAUTH_RUNBOOK.md",
+          "docs/completions/X-WORKER-LOCAL.json"
         ],
         "passed_checks": [
-          "18 pinned parser/provenance/upstream fixture/product boundary tests passed",
-          "Ruff/MyPy passed"
+          "Pinned X parser, isolated worker/executor, OAuth owner-consent API and UI, installed image, and native result contract verified locally",
+          "Mixed X/Reddit/Exa result labels and provenance exports verified; all 192 web tests passed, TypeScript and generated contracts passed, Prettier and Impeccable detector clean"
         ],
         "remaining": [
-          "Isolated account-backed executor, pinned transaction dependency closure and shared source budget/checkpoint/evidence integration remain open",
-          "Actual selected X read/search session/coverage/usage acceptance not performed"
+          "User-deferred X developer app/live authorization, search coverage, cost/quota/rate-limit acceptance remain unverified",
+          "Hosted deployment remains user-deferred and unverified"
         ],
-        "recorded_at": "2026-10-16T16:36:46.357871+00:00"
+        "recorded_at": "2026-10-17T00:24:16.987085+00:00"
       }
     },
     {
@@ -4338,7 +4507,7 @@
       "title": "Adapt Instagram business/creator connector",
       "phase": "P1",
       "epic": "Expansion",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-028",
@@ -4370,14 +4539,32 @@
           "scenario": "Selected creator/business operation",
           "expected": "actual supported fields and failures recorded"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-085.md",
+          "docs/SOCIAL_BACKEND_REVIEW.md",
+          "docs/completions/SOCIAL-READ-UPSTREAM-LOCAL.json",
+          "docs/completions/SOCIAL-READ-ADAPTED-LOCAL.json"
+        ],
+        "passed_checks": [
+          "Actual copied upstream/adapted JavaScript executes against 10/13 synthetic scenarios, zero source calls",
+          "Scoped worker, durable discovery/collection, budgets, cancellation, revocation, evidence expiry and erasure pass related local backend checks",
+          "Strict client source contracts, optional source controls, bounded observation rendering and raw-body export exclusion implemented"
+        ],
+        "remaining": [
+          "Container verification deferred by user until final deployment",
+          "Live account-backed operation, operation rights and hosted isolation acceptance remain unverified"
+        ],
+        "recorded_at": "2026-10-17T22:49:17.354410+00:00"
+      }
     },
     {
       "id": "SKR-086",
       "title": "Adapt Facebook company/content connector",
       "phase": "P1",
       "epic": "Expansion",
-      "status": "planned",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-028",
@@ -4409,7 +4596,25 @@
           "scenario": "Named company-page operation",
           "expected": "usable output and restrictions recorded"
         }
-      ]
+      ],
+      "verification": {
+        "reports": [
+          "docs/completions/SKR-086.md",
+          "docs/SOCIAL_BACKEND_REVIEW.md",
+          "docs/completions/SOCIAL-READ-UPSTREAM-LOCAL.json",
+          "docs/completions/SOCIAL-READ-ADAPTED-LOCAL.json"
+        ],
+        "passed_checks": [
+          "Actual copied upstream/adapted JavaScript executes against 10/13 synthetic scenarios, zero source calls",
+          "Scoped worker, durable discovery/collection, budgets, cancellation, revocation, evidence expiry and erasure pass related local backend checks",
+          "Strict client source contracts, optional source controls, bounded observation rendering and raw-body export exclusion implemented"
+        ],
+        "remaining": [
+          "Container verification deferred by user until final deployment",
+          "Live account-backed operation, operation rights and hosted isolation acceptance remain unverified"
+        ],
+        "recorded_at": "2026-10-17T22:49:17.364384+00:00"
+      }
     },
     {
       "id": "SKR-087",
@@ -4575,7 +4780,7 @@
       "title": "Automate billing and entitlements",
       "phase": "P1",
       "epic": "Expansion",
-      "status": "in_progress",
+      "status": "implemented_pending_verification",
       "estimate": "M",
       "depends_on": [
         "SKR-024",
@@ -4611,17 +4816,22 @@
           "docs/CRM_AND_BILLING_DECISIONS.md"
         ],
         "passed_checks": [
-          "Isolated HTTP intake→PostgreSQL→worker→normal policy, periodic cancellation, committed retries/backoff/five-attempt quarantine and actual once child verified",
+          "Isolated HTTP intake\u2192PostgreSQL\u2192worker\u2192normal policy, periodic cancellation, committed retries/backoff/five-attempt quarantine and actual once child verified",
           "User-approved Starter/Pro monthly prices implemented for USD/INR; native provider creation requests and durable uncertainty/reuse receipts verified with controlled HTTP",
           "Monthly provider-window quota accounting and stale-window rejection preserve historical admissions; DB timestamp guard prevents backdated-insert bypass",
           "Actual owner/restricted-role/cross-tenant guards, concurrency, current-state reconciliation, admission retention and backup invalidation passed",
-          "Ruff and checked-body MyPy passed for all changed backend modules"
+          "Ruff and checked-body MyPy passed for all changed backend modules",
+          "Billing web client and owner checkout UI passed 6 focused tests and all 175 web tests; TypeScript and Next production build passed; Impeccable detector and git diff checks passed",
+          "Sol review fixed ready-link expiry, account-change request cancellation and stale-response/poll guards; 9 billing tests and all 178 web tests, Next build and TypeScript passed",
+          "Expired dispatching/ready checkout intents retire links into uncertain state; late native receipts remain reconcilable without repeated purchases or changing bound state",
+          "Combined 200 backend/container and 191 web tests, TypeScript/contracts and Next production build passed"
         ],
         "remaining": [
-          "Remote Stripe/Razorpay plan creation and live/sandbox account acceptance explicitly deferred by user",
-          "Authenticated customer checkout/subscription setup and refund/dispute reconciliation remain unfinished"
+          "Authenticated browser acceptance and provider sandbox acceptance remain open",
+          "Remote plan creation is user-deferred",
+          "Automated subscription replacement after the 12-cycle Razorpay term, plan changes, and abandoned/uncertain checkout recovery remain operator-managed pilot limitations"
         ],
-        "recorded_at": "2026-10-16T20:09:19.000969+00:00"
+        "recorded_at": "2026-10-17T00:18:48.737973+00:00"
       }
     },
     {
@@ -4661,7 +4871,9 @@
           "scenario": "Ambiguous date/currency and Unicode CSV",
           "expected": "safe explicit interpretation"
         }
-      ]
+      ],
+      "launch_scope": "deferred_by_user",
+      "deferral_note": "2026-10-18: User explicitly deferred language and regional-platform expansion for launch; prioritize core launch tickets."
     },
     {
       "id": "SKR-092",
@@ -4700,7 +4912,9 @@
           "scenario": "Named discovery/read route",
           "expected": "independent coverage/access/cost report"
         }
-      ]
+      ],
+      "launch_scope": "deferred_by_user",
+      "deferral_note": "2026-10-18: User explicitly deferred language and regional-platform expansion for launch; prioritize core launch tickets."
     },
     {
       "id": "SKR-093",
@@ -4837,6 +5051,10 @@
   "user_deferred_gates": [
     "Direct account-backed LinkedIn/Reddit reads: keep pending until a required scenario is blocked; indexed search remains available. Session expiration requires reconnection.",
     "Hosted deployment and private off-host backup custody: keep pending; local implementation and recovery verification continue.",
-    "2026-10-17: User explicitly deferred remote Stripe/Razorpay plan creation; continue local implementation without requesting provider keys again."
+    "2026-10-17: User explicitly deferred remote Stripe/Razorpay plan creation; continue local implementation without requesting provider keys again.",
+    "X developer app and live authorization/search tests are user-deferred (2026-10-17); keep local/indexed routes available without asking again.",
+    "2026-10-18: User deferred Docker/container verification until final deployment; continue local code without requesting Docker again.",
+    "2026-10-18: SKR-091 language expansion and SKR-092 regional-platform expansion are user-deferred for launch; retain planned status and exclude from core launch work.",
+    "2026-10-18: User keeps model-quality acceptance pending on base M4 Air; do not download or run heavier models or repeat quality experiments without a new decision. Continue independent local work."
   ]
 }

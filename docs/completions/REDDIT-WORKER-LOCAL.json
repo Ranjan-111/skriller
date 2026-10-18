@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-10-17",
+  "image": "sha256:bb0d6bc2336bc01fa7e1b11877bcf59bd15f74c630ad6c1e94cfce09d48f26ac",
+  "build_network": "none",
+  "installed_module_probe": true,
+  "synthetic_credentials_only": true,
+  "source_live_verified": false,
+  "provider_approval_verified": false,
+  "hosted_deployment_verified": false,
+  "source_enabled_in_environment": false,
+  "shared_locked_wheels": 5,
+  "typed_cursor_read_verified": true,
+  "thread_read_verified": true,
+  "thread_transport_requests_per_read": 1,
+  "nested_parser_verified": true,
+  "deleted_content_preserved": true,
+  "discovery_generation_binding_verified": true,
+  "private_thread_erasure_and_expiry_verified": true,
+  "quoted_signal_extraction_via_copied_graph_verified": true,
+  "live_account_acceptance": false
+}

@@ -6,8 +6,11 @@ from uuid import uuid4
 
 import pytest
 import sqlalchemy as sa
+from fastapi.testclient import TestClient
 from langchain_core.messages import AIMessage
 
+from skriller.api import create_app
+from skriller.auth import Identity, require_identity
 from skriller.contracts import Limits, SearchPlan
 from skriller.db import ConversationRepository, JobRepository
 from skriller.db.schema import attempts, jobs, outbox, plans, reservations, stage_checkpoints
@@ -138,6 +141,9 @@ def test_invalid_planning_is_visible_pause_and_never_empty_completion(database, 
     with database.tenant(payload["actor_id"], payload["workspace_id"]) as session:
         job = JobRepository.get(session, payload["job_id"])
         assert job["state"] == "paused" and job["failure_code"] == status and fixture.calls == 1
+        assert session.execute(
+            sa.select(attempts.c.stage).where(attempts.c.job_id == job["id"])
+        ).scalars().all() == ["planning"]
         assert (
             session.execute(
                 sa.select(sa.func.count())
@@ -150,6 +156,30 @@ def test_invalid_planning_is_visible_pause_and_never_empty_completion(database, 
             event["kind"] == "planning_summary" and event["details"]["status"] == status
             for event in JobRepository.events_after(session, job["id"])
         )
+    app = create_app(SETTINGS)
+    app.state.database = database
+    app.dependency_overrides[require_identity] = lambda: Identity(payload["actor_id"])
+    client = TestClient(app)
+    response = client.get(
+        f"/v1/jobs/{payload['job_id']}/plan", params={"workspace_id": payload["workspace_id"]}
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "rejected"
+    assert body["planning_failure"] == {
+        "reason": "invalid_interpretation",
+        "recovery": "revise_prompt",
+        "automatic_retry_allowed": False,
+        "source_search_started": False,
+    }
+    assert "secret" not in json.dumps(body) and "invented" not in json.dumps(body)
+    app.dependency_overrides[require_identity] = lambda: Identity(str(uuid4()))
+    assert (
+        client.get(
+            f"/v1/jobs/{payload['job_id']}/plan", params={"workspace_id": payload["workspace_id"]}
+        ).status_code
+        == 404
+    )
 
 
 def test_clarification_commits_grounded_plan_without_search_dispatch(database):
@@ -187,11 +217,49 @@ def test_missing_explicit_platform_pauses_without_discovery_or_repeat_model_call
         job = JobRepository.get(session, payload["job_id"])
         assert job["state"] == "paused" and fixture.calls == 1
         assert current_usage(session, job["id"])[1]["llm_calls"] == 1
-        assert session.execute(
-            sa.select(sa.func.count()).select_from(attempts).where(
-                attempts.c.job_id == job["id"], attempts.c.stage == "discovering"
+        assert (
+            session.execute(
+                sa.select(sa.func.count())
+                .select_from(attempts)
+                .where(attempts.c.job_id == job["id"], attempts.c.stage == "discovering")
+            ).scalar_one()
+            == 0
+        )
+
+
+def test_swapped_numeric_bounds_cannot_publish_or_dispatch_a_weaker_plan(database):
+    quote = "at least 25 and at most 100 employees"
+    payload = setup(database, "Find companies with " + quote)
+    fixture = Fixture(
+        {
+            "entity_type": "company",
+            "entity_quote": "companies",
+            "rules": [["must_have", "employee_count", "gte", "100", quote]],
+        }
+    )
+    run(database, payload, fixture)
+    run(database, payload, fixture)
+    with database.tenant(payload["actor_id"], payload["workspace_id"]) as session:
+        job = JobRepository.get(session, payload["job_id"])
+        assert job["state"] == "paused"
+        assert fixture.calls == 1
+        assert current_usage(session, job["id"])[1]["llm_calls"] == 1
+        assert (
+            session.scalar(
+                sa.select(sa.func.count())
+                .select_from(plans)
+                .where(plans.c.conversation_id == job["conversation_id"])
             )
-        ).scalar_one() == 0
+            == 1
+        )
+        assert (
+            session.scalar(
+                sa.select(sa.func.count())
+                .select_from(attempts)
+                .where(attempts.c.job_id == job["id"], attempts.c.stage == "discovering")
+            )
+            == 0
+        )
 
 
 @pytest.mark.parametrize("control", ["cancel", "deadline", "disabled"])

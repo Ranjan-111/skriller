@@ -2,6 +2,7 @@
 
 import re
 import time
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
 import httpx
@@ -13,6 +14,89 @@ from skriller.billing.reconcile import CurrentSubscription
 class BillingProviderUnavailable(RuntimeError):
     def __init__(self):
         super().__init__("Authoritative billing state unavailable")
+
+
+@dataclass(frozen=True)
+class PaymentReference:
+    customer_id: str | None
+    subscription_id: str | None = None
+
+    def __post_init__(self):
+        if (
+            self.customer_id is None
+            and self.subscription_id is None
+            or self.customer_id is not None
+            and (
+                not isinstance(self.customer_id, str)
+                or not re.fullmatch(r"(?:cus|cust)_[A-Za-z0-9_]{1,180}", self.customer_id)
+            )
+            or self.subscription_id is not None
+            and (
+                not isinstance(self.subscription_id, str)
+                or not re.fullmatch(r"sub_[A-Za-z0-9_]{1,180}", self.subscription_id)
+            )
+        ):
+            raise BillingProviderUnavailable()
+
+
+def fetch_reference(config, reference_id, *, transport=None):
+    """Fixed-origin GET; discard payment details after extracting routing IDs."""
+    config.__post_init__()
+    stripe = config.provider == "stripe"
+    prefix = "ch_" if stripe else "pay_"
+    if not isinstance(reference_id, str) or not re.fullmatch(
+        prefix + r"[A-Za-z0-9_]{1,180}", reference_id
+    ):
+        raise BillingProviderUnavailable()
+    headers, auth = {}, None
+    if stripe:
+        headers = {
+            "Authorization": "Bearer " + config.api_key,
+            "Stripe-Version": config.stripe_version,
+        }
+        if config.account_id:
+            headers["Stripe-Account"] = config.account_id
+        url = "https://api.stripe.com/v1/charges/" + reference_id
+    else:
+        auth = httpx.BasicAuth(config.api_key, config.api_secret)
+        url = "https://api.razorpay.com/v1/payments/" + reference_id
+    deadline = time.monotonic() + 10
+    try:
+        with (
+            httpx.Client(
+                timeout=httpx.Timeout(5, connect=3),
+                transport=transport,
+                trust_env=False,
+                follow_redirects=False,
+            ) as client,
+            client.stream("GET", url, headers=headers, auth=auth) as response,
+        ):
+            if response.status_code != 200:
+                raise BillingProviderUnavailable()
+            body = bytearray()
+            for chunk in response.iter_bytes():
+                if time.monotonic() > deadline or len(body) + len(chunk) > 256 * 1024:
+                    raise BillingProviderUnavailable()
+                body.extend(chunk)
+            doc = _document(bytes(body))
+        if doc.get("id") != reference_id or doc.get("object" if stripe else "entity") != (
+            "charge" if stripe else "payment"
+        ):
+            raise BillingProviderUnavailable()
+        if stripe and (
+            type(doc.get("livemode")) is not bool or doc["livemode"] != config.live_mode
+        ):
+            raise BillingProviderUnavailable()
+        customer = doc.get("customer" if stripe else "customer_id")
+        subscription = doc.get("subscription_id") if not stripe else None
+        if customer is not None and (
+            not isinstance(customer, str)
+            or not re.fullmatch(("cus_" if stripe else "cust_") + r"[A-Za-z0-9_]{1,180}", customer)
+        ):
+            raise BillingProviderUnavailable()
+        return PaymentReference(customer, subscription)
+    except (httpx.HTTPError, InvalidBillingEvent):
+        raise BillingProviderUnavailable() from None
 
 
 def _timestamp(value):
